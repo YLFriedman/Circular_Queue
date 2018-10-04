@@ -15,7 +15,7 @@
         android:paddingRight="20dp">
 
         <EditText
-            android:id="@+id/editText"
+            android:id="@+id/field_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -23,7 +23,7 @@
             android:inputType="textPersonName" />
 
         <EditText
-            android:id="@+id/editText2"
+            android:id="@+id/field_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
@@ -42,6 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:onClick="onCreateAccountClick"
                 android:text="@string/btn_sign_up" />
 
             <Button
@@ -49,6 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:onClick="onSignInClick"
                 android:text="@string/btn_sign_in" />
 
         </LinearLayout>
@@ -68,6 +70,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginRight="15dp"
+                    android:contentDescription="@string/cq_logo"
                     android:src="@drawable/q1a"
                     android:visibility="visible" />
 

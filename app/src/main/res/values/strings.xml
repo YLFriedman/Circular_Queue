@@ -15,4 +15,5 @@
     <string name="company_name">Company Name</string>
     <string name="view_acount">View Account Details</string>
     <string name="title_activity_user_account">UserAccount</string>
+    <string name="cq_logo">Circular Queue Logo</string>
 </resources>
