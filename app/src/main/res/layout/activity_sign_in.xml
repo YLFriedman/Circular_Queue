@@ -71,8 +71,9 @@
                     android:layout_height="40dp"
                     android:layout_marginRight="15dp"
                     android:contentDescription="@string/cq_logo"
-                    android:src="@drawable/q1a"
-                    android:visibility="visible" />
+                    android:padding="5dp"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/q1a" />
 
                 <TextView
                     android:id="@+id/textView"
