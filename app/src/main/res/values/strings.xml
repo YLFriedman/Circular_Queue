@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">CQ On Demand</string>
+    <string name="btn_sign_in">SIgn In</string>
+    <string name="btn_sign_up">Sign Up</string>
+    <string name="signature">Created by Circular Queue</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="create_account">Create Account</string>
+    <string name="homeowner">Homeowner</string>
+    <string name="service_provider">Service Provider</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="email">Email</string>
+    <string name="password_confirm">Confirm Password</string>
+    <string name="company_name">Company Name</string>
+    <string name="view_acount">View Account Details</string>
+    <string name="title_activity_user_account">UserAccount</string>
+</resources>
