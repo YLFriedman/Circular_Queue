@@ -17,3 +17,33 @@ $RECYCLE.BIN/
 
 # Development
 _untracked
+
+#Android Studio
+*.iml
+.idea
+.gradle
+build/
+.navigation
+captures
+output.json
+
+#generated files
+bin/
+gen/
+
+#Java class files
+*.class
+
+#local configuration file
+local.properties
+
+#built application files
+*.apk
+*.ap_
+
+# files for the dex VM
+*.dex
+
+#NDK
+obj/
+.externalNativeBuild
