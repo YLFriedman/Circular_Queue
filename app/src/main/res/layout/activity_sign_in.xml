@@ -69,8 +69,8 @@
                 android:layout_height="50dp"
                 android:contentDescription="@string/cq_logo"
                 android:padding="0dp"
-                android:visibility="visible"
-                app:srcCompat="@drawable/ic_q1c" />
+                android:src="@drawable/ic_q1c"
+                android:visibility="visible" />
 
             <TextView
                 android:id="@+id/textView"
