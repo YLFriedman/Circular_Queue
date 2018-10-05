@@ -12,13 +12,12 @@
         <activity android:name=".SignIn">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".CreateAccount" android:exported="true" />
-        <activity android:name=".UserHome" />
-        <activity android:name=".UserAccount" />
+        <activity android:name=".UserHome" android:exported="true" />
+        <activity android:name=".UserAccount" android:exported="true" />
     </application>
 
 </manifest>

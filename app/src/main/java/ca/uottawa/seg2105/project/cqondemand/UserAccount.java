@@ -47,7 +47,6 @@ public class UserAccount extends AppCompatActivity {
     }
 
     private void setView(Views view) {
-
         LinearLayout layout_user_view = findViewById(R.id.layout_user_view);
         LinearLayout layout_user_edit = findViewById(R.id.layout_user_edit);
         LinearLayout layout_change_password = findViewById(R.id.layout_change_password);
@@ -61,7 +60,6 @@ public class UserAccount extends AppCompatActivity {
             case CHANGE_PASSWORD: layout_change_password.setVisibility(View.VISIBLE); return;
             default: layout_user_view.setVisibility(View.VISIBLE);
         }
-
     }
 
 }

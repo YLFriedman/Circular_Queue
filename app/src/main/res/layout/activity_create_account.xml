@@ -80,6 +80,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:checked="true"
+                android:onClick="onTypeTglClick"
                 android:textOff="@string/homeowner"
                 android:textOn="@string/homeowner" />
 
@@ -88,6 +89,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:onClick="onTypeTglClick"
                 android:textOff="@string/service_provider"
                 android:textOn="@string/service_provider" />
 
