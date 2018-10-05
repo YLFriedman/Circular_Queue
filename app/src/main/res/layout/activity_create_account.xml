@@ -7,6 +7,7 @@
     tools:context=".CreateAccount">
 
     <LinearLayout
+        android:id="@+id/layout_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical|center_horizontal"
@@ -18,14 +19,16 @@
             android:id="@+id/field_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
             android:ems="10"
             android:hint="@string/username"
-            android:inputType="textPersonName" />
+            android:inputType="text|textNoSuggestions" />
 
         <EditText
             android:id="@+id/field_first_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
             android:ems="10"
             android:hint="@string/first_name"
             android:inputType="textPersonName" />
@@ -34,6 +37,7 @@
             android:id="@+id/field_last_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
             android:ems="10"
             android:hint="@string/last_name"
             android:inputType="textPersonName" />
@@ -42,14 +46,16 @@
             android:id="@+id/field_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
             android:ems="10"
             android:hint="@string/email"
-            android:inputType="textPersonName" />
+            android:inputType="textEmailAddress" />
 
         <EditText
             android:id="@+id/field_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
             android:ems="10"
             android:hint="@string/password"
             android:inputType="textPassword" />
@@ -58,6 +64,7 @@
             android:id="@+id/field_password_confirm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
             android:ems="10"
             android:hint="@string/password_confirm"
             android:inputType="textPassword" />
@@ -77,11 +84,10 @@
                 android:textOn="@string/homeowner" />
 
             <ToggleButton
-                android:id="@+id/toggleButton3"
+                android:id="@+id/tgl_service_provider"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="ToggleButton"
                 android:textOff="@string/service_provider"
                 android:textOn="@string/service_provider" />
 
@@ -91,6 +97,7 @@
             android:id="@+id/btn_create_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
             android:text="@string/create_account" />
 
     </LinearLayout>

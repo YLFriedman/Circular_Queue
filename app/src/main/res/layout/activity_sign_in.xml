@@ -7,6 +7,7 @@
     tools:context=".SignIn">
 
     <LinearLayout
+        android:id="@+id/layout_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical|center_horizontal"
@@ -55,35 +56,30 @@
 
         </LinearLayout>
 
-        <TableLayout
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="25dp">
+            android:layout_marginTop="50dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="horizontal">
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical">
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="@string/cq_logo"
+                android:padding="0dp"
+                android:visibility="visible"
+                app:srcCompat="@drawable/ic_q1c" />
 
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginRight="15dp"
-                    android:contentDescription="@string/cq_logo"
-                    android:padding="5dp"
-                    android:visibility="visible"
-                    app:srcCompat="@drawable/q1a" />
-
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/signature"
-                    android:textSize="18sp" />
-            </TableRow>
-
-        </TableLayout>
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="@string/signature"
+                android:textSize="22sp" />
+        </LinearLayout>
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

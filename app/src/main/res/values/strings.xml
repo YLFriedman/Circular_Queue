@@ -2,7 +2,7 @@
     <string name="app_name">CQ On Demand</string>
     <string name="btn_sign_in">SIgn In</string>
     <string name="btn_sign_up">Sign Up</string>
-    <string name="signature">Created by Circular Queue</string>
+    <string name="signature">Created by CircularQueue</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="create_account">Create Account</string>
@@ -16,4 +16,8 @@
     <string name="view_acount">View Account Details</string>
     <string name="title_activity_user_account">UserAccount</string>
     <string name="cq_logo">Circular Queue Logo</string>
+    <string name="save">Save</string>
+    <string name="edit">Edit</string>
+    <string name="change_password">Change Passsword</string>
+    <string name="delete_account">Delete Account</string>
 </resources>

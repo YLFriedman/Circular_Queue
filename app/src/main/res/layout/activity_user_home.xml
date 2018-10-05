@@ -7,6 +7,7 @@
     tools:context=".UserHome">
 
     <LinearLayout
+        android:id="@+id/layout_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
@@ -18,8 +19,8 @@
             android:id="@+id/txt_welcome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
             android:layout_marginTop="30dp"
+            android:layout_marginBottom="15dp"
             android:gravity="center_horizontal"
             android:text="Hello Hudi Person"
             android:textSize="24sp" />
