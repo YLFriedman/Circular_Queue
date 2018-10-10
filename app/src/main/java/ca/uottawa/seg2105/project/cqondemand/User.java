@@ -1,6 +1,8 @@
 package ca.uottawa.seg2105.project.cqondemand;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
 
     /**
      *The class User allows for the creation of User objects, and stores the pertinent values for each User.
@@ -9,14 +11,28 @@ public class User {
      *
      */
 
-    private String fName, lName, uName, email, companyName;
+    private String fName, lName, uName, email;
 
     private final Types type;
     /**
      *A simple enum for distinguishing different types of user accounts
      */
-    private enum Types{
+    protected enum Types{
         ADMIN, HOMEOWNER, SERVICEPROVIDER;
+
+        public String toString(){
+            switch(this){
+                case ADMIN:
+                    return "Admin";
+                case HOMEOWNER:
+                    return "Homeowner";
+                case SERVICEPROVIDER:
+                    return "Service Provider";
+                default:
+                    return "Unknown Error";
+
+            }
+        }
     }
     /**
      *Constructor for User objects. This constructor supports users of type Homeowner and of type Service Provider
@@ -67,9 +83,17 @@ public class User {
      *
      *@return The user's email
      */
+
+
     public String getEmail(){
         return this.email;
     }
+
+    /**Simple getter for the user's type
+     *
+     * @return the user's type
+     */
+    public Types getType(){ return this.type; }
 
     /**
      *Simple setter for the user's first name
@@ -79,6 +103,8 @@ public class User {
     public void setFirstName(String input){
         fName = input;
     }
+
+
 
     /**
      *Simple setter for the user's last name

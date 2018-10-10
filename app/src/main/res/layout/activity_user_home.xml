@@ -44,6 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
+                android:onClick="onAccountDetailsClick"
                 android:text="@string/view_acount"
                 tools:layout_editor_absoluteX="20dp"
                 tools:layout_editor_absoluteY="102dp" />

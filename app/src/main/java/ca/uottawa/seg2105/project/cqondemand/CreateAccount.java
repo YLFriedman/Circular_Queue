@@ -24,5 +24,13 @@ public class CreateAccount extends AppCompatActivity {
             homeowner.setChecked(!service_provider.isChecked());
         }
     }
+    //TODO: Allow for the creation of an admin account, if one does not already exist. Will have to add new UI elements.
+
+    public void onCreateClick(View view){
+        /*TODO: implement a method that creates a new account, using databases
+        *If the account is created properly, navigate to the login activity with the chosen
+        * username already filled in
+        */
+    }
 
 }

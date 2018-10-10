@@ -20,6 +20,7 @@ public class UserAccount extends AppCompatActivity {
     }
 
     public void onDeleteAccountClick(View view){
+        //TODO: implement a method which deletes a users account from the db. Presumably the app then navigates to the login screen
 
     }
 
@@ -28,11 +29,11 @@ public class UserAccount extends AppCompatActivity {
     }
 
     public void onSaveUserClick(View view){
-
+        //TODO: implement a method that saves the users choice in a db
     }
 
     public void onSavePasswordClick(View view){
-
+        //TODO: implement a method that saves the users choice in a db. Should validate the passwords as well.
     }
 
     @Override
