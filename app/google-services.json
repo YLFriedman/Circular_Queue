@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "843308302492",
+    "firebase_url": "https://cq-on-demans.firebaseio.com",
+    "project_id": "cq-on-demans",
+    "storage_bucket": "cq-on-demans.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:843308302492:android:52eb89eac07e715d",
+        "android_client_info": {
+          "package_name": "ca.uottawa.seg2105.project.cqondemand"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "843308302492-cmvluqo9cj4m9ejn2v3ln1064ic1aeep.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCl71lUBZLeZQTFO7DtGSmzOuAZD2xqqU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
