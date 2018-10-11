@@ -17,6 +17,7 @@ public class CreateAccount extends AppCompatActivity {
         int id = view.getId();
         ToggleButton homeowner = findViewById(R.id.tgl_homeowner);
         ToggleButton service_provider = findViewById(R.id.tgl_service_provider);
+        //Newbuttondsfdsfdsfds
 
         if (id == R.id.tgl_homeowner) {
             service_provider.setChecked(!homeowner.isChecked());
