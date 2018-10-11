@@ -11,6 +11,11 @@ public class User implements Serializable {
      *
      */
 
+    /**
+     * test commit-mad
+     * Test 2
+     */
+
     private String fName, lName, uName, email;
 
     private final Types type;
