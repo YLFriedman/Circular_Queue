@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">CQ On Demand</string>
-    <string name="btn_sign_in">SIgn In</string>
+    <string name="btn_sign_in">Sign In</string>
     <string name="btn_sign_up">Sign Up</string>
     <string name="signature">Created by CircularQueue</string>
     <string name="username">Username</string>
