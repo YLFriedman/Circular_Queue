@@ -1,7 +1,10 @@
 package ca.uottawa.seg2105.project.cqondemand;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.app.AlertDialog;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -73,9 +76,23 @@ public class UserAccount extends AppCompatActivity {
         setView(Views.CHANGE_PASSWORD);
     }
 
-    public void onDeleteAccountClick(View view){
-        //TODO: implement a method which deletes a users account from the db. Presumably the app then navigates to the login screen
-
+    public void onDeleteAccountClick(View view) {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Account")
+                .setMessage("Are you sure you want to delete the '" + currentUser.getUserName() + "' account?  \r\nThis CANNOT be undone!")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        if (currentUser.delete()) {
+                            Intent intent = new Intent(UserAccount.this, SignIn.class);
+                            intent.putExtra("showToast", "The user account '" + currentUser.getUserName() + "' has been successfully deleted.");
+                            UserAccount.this.setResult(RESULT_OK, intent);
+                            UserAccount.this.startActivity(intent);
+                        } else {
+                            Toast.makeText(UserAccount.this, "Unable to delete your account at this time. Please try again later.", Toast.LENGTH_LONG).show();
+                        }
+                    }})
+                .setNegativeButton(R.string.cancel, null).show();
     }
 
     public void onEditUserClick(View view){

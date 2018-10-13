@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SignIn extends AppCompatActivity {
 
@@ -12,6 +13,13 @@ public class SignIn extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+
+        Intent intent = getIntent();
+        String toastText;
+        if (null != (toastText = intent.getStringExtra("showToast"))) {
+            Toast.makeText(this, toastText, Toast.LENGTH_LONG).show();
+        }
+
     }
 
     /**
@@ -52,5 +60,6 @@ public class SignIn extends AppCompatActivity {
         //TODO: Implement a real login validation method, using databases
         return true;
     }
+
 
 }

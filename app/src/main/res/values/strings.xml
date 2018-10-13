@@ -21,4 +21,6 @@
     <string name="change_password">Change Passsword</string>
     <string name="delete_account">Delete Account</string>
     <string name="account_type">Account Type</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
 </resources>

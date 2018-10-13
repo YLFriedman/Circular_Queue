@@ -56,6 +56,10 @@ public class User implements Serializable {
         db = FirebaseDatabase.getInstance().getReference("users");
     }
 
+    public boolean create() {
+        return false;
+    }
+
     public boolean update(String fName, String lName, String uName, String email) {
         String oldUsername = uName;
         this.fName = fName;
@@ -63,6 +67,10 @@ public class User implements Serializable {
         this.uName = uName;
         this.email = email;
         // TODO: Update database
+        return false;
+    }
+
+    public boolean delete() {
         return false;
     }
 
