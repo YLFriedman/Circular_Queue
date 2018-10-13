@@ -9,7 +9,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 public class CreateAccount extends AppCompatActivity {
 
@@ -17,11 +16,12 @@ public class CreateAccount extends AppCompatActivity {
     RadioButton radioButton;
     TextView textView;
 
+    boolean[] checks = new boolean[6];
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
-
 
         radioGroup = findViewById(R.id.radioGroup);
         textView = findViewById(R.id.text_view_selected);
@@ -33,7 +33,7 @@ public class CreateAccount extends AppCompatActivity {
             public void onClick(View v) {
                 int radioId = radioGroup.getCheckedRadioButtonId();
                 radioButton = findViewById(radioId);
-                textView.setText("Your choice: " + radioButton.getText());
+                textView.setText(radioButton.getText());
                 Toast.makeText(getBaseContext(), "Selected Radio Button: " + radioButton.getText() , Toast.LENGTH_SHORT ).show();
             }
         });
@@ -44,36 +44,91 @@ public class CreateAccount extends AppCompatActivity {
         radioButton = findViewById(radioId);
     }
 
-    public void onTypeTglClick(View view){
-        /**
-        int id = view.getId();
-        ToggleButton homeowner = findViewById(R.id.tgl_homeowner);
-        ToggleButton service_provider = findViewById(R.id.tgl_service_provider);
-        //Newbuttondsfdsfdsfds
-
-        if (id == R.id.tgl_homeowner) {
-            service_provider.setChecked(!homeowner.isChecked());
-        } else if (id == R.id.tgl_service_provider) {
-            homeowner.setChecked(!service_provider.isChecked());
-        }**/
-    }
     //TODO: Allow for the creation of an admin account, if one does not already exist. Will have to add new UI elements.
 
     public void onCreateClick(View view){
-        //Check Email Validity
-        EditText emailid = findViewById(R.id.field_email);
-        String getEmailId = emailid.getText().toString();
 
-        if (!isEmailValid(getEmailId)){
-            Toast.makeText(this, "Your E-mail is not Valid!",
-                    Toast.LENGTH_SHORT).show();
+        //init boolean array to all true;
+        for (int i = 0; i < checks.length; i++){
+            checks[i] = true;
         }
+
+        //Check username validity
+        EditText usernameId = findViewById(R.id.field_username);
+        String username = usernameId.getText().toString().trim();
+
+        if(username.isEmpty()){
+            usernameId.setError("Username is required!");
+            usernameId.requestFocus();
+            return;
+        }
+
+        //Check First Name validity
+        EditText firstNameId = findViewById(R.id.field_first_name);
+        String firstName = firstNameId.getText().toString().trim();
+
+        if(firstName.isEmpty()){
+            firstNameId.setError("First name is required!");
+            firstNameId.requestFocus();
+            return;
+        }
+
+        //Check Last Name validity
+        EditText lastNameId = findViewById(R.id.field_last_name);
+        String lastName = lastNameId.getText().toString().trim();
+
+        if(lastName.isEmpty()){
+            lastNameId.setError("Last name is required!");
+            lastNameId.requestFocus();
+            return;
+        }
+
+        //Check Email Validity
+        EditText emailId = findViewById(R.id.field_email);
+        String email = emailId.getText().toString();
+
+        if(email.isEmpty()){
+            emailId.setError("Email is required!");
+            emailId.requestFocus();
+            return;
+        } else if (!isEmailValid(email)){
+            emailId.setError("This is an invalid E-mail!");
+            return;
+        }
+
+        //check password matching
+        EditText passwordId = findViewById(R.id.field_password);
+        String password = passwordId.getText().toString().trim();
+
+        EditText passwordConfirmId = findViewById(R.id.field_password_confirm);
+        String passwordConfirm = passwordConfirmId.getText().toString().trim();
+
+        if(password.isEmpty()){
+            passwordId.setError("Password is required!");
+            passwordId.requestFocus();
+            return;
+        } else if(passwordConfirm.isEmpty()){
+            passwordConfirmId.setError("Password Confirm is required!");
+            passwordConfirmId.requestFocus();
+            return;
+        } else if(!password.equals(passwordConfirm)){
+            passwordId.setError("Passwords does not match!");
+            passwordConfirmId.setError("Passwords does not match!");
+            passwordId.requestFocus();
+            return;
+        }
+
+        //check if account type selected
+        TextView typeId = findViewById(R.id.text_view_selected);
+        String type = typeId.getText().toString().trim();
+        if(type.equals("Please Apply Choice!")){
+            typeId.setError("Select an account type!");//Set error
+        }
+
+        Toast.makeText(this, "Passed as " + type, Toast.LENGTH_SHORT).show();
     }
 
-    boolean isEmailValid(CharSequence email) {
+    private boolean isEmailValid(CharSequence email) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
-
-
-
 }
