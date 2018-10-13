@@ -69,31 +69,47 @@
             android:hint="@string/password_confirm"
             android:inputType="textPassword" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/radio_homeowner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="checkButton"
+                android:text="Homeowner" />
+
+            <RadioButton
+                android:id="@+id/radio_service"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="checkButton"
+                android:text="Service Provider" />
+
+            <RadioButton
+                android:id="@+id/radio_admin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="checkButton"
+                android:text="Admin" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/text_view_selected"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:text="Please Apply Choice!" />
 
-            <ToggleButton
-                android:id="@+id/tgl_homeowner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:checked="true"
-                android:onClick="onTypeTglClick"
-                android:textOff="@string/homeowner"
-                android:textOn="@string/homeowner" />
-
-            <ToggleButton
-                android:id="@+id/tgl_service_provider"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="onTypeTglClick"
-                android:textOff="@string/service_provider"
-                android:textOn="@string/service_provider" />
-
-        </LinearLayout>
+        <Button
+            android:id="@+id/button_apply"
+            android:layout_width="103dp"
+            android:layout_height="wrap_content"
+            android:text="Apply" />
 
         <Button
             android:id="@+id/btn_create_account"
