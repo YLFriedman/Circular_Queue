@@ -104,20 +104,19 @@ public class CreateAccount extends AppCompatActivity {
         EditText passwordConfirmId = findViewById(R.id.field_password_confirm);
         String passwordConfirm = passwordConfirmId.getText().toString().trim();
 
-        if(password.isEmpty()){
+        if (password.isEmpty()) {
             passwordId.setError("Password is required!");
             passwordId.requestFocus();
             return;
-        } else if(passwordConfirm.isEmpty()) {
+        } else if (passwordConfirm.isEmpty()) {
             passwordConfirmId.setError("Password Confirm is required!");
             passwordConfirmId.requestFocus();
             return;
-        } else if(password.length()<6){
+        } else if (password.length()<6) {
             passwordId.setError("Minimum length of password should be 6");
             passwordId.requestFocus();
             return;
-        } else if(!password.equals(passwordConfirm)){
-            passwordId.setError("Passwords does not match!");
+        } else if (!password.equals(passwordConfirm)) {
             passwordConfirmId.setError("Passwords does not match!");
             passwordId.requestFocus();
             return;
@@ -127,10 +126,10 @@ public class CreateAccount extends AppCompatActivity {
         TextView typeId = findViewById(R.id.text_view_selected);
         String type = typeId.getText().toString().trim();
         if(type.equals("Please Apply Choice!")){
-            typeId.setError("Select an account type!");//Set error
+            typeId.setError("Select an account type!"); //Set error
         }
 
-        Toast.makeText(this, "Passed as " + type, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Passed as " + type, Toast.LENGTH_LONG).show();
     }
 
     private boolean isEmailValid(CharSequence email) {
