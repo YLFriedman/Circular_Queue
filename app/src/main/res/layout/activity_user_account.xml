@@ -23,6 +23,20 @@
             android:visibility="visible">
 
             <TextView
+                android:id="@+id/txt_title_account_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/account_type" />
+
+            <TextView
+                android:id="@+id/txt_account_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="{Homeowner}"
+                android:textSize="18sp" />
+
+            <TextView
                 android:id="@+id/txt_title_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -115,14 +129,26 @@
             android:orientation="vertical"
             android:visibility="gone">
 
+            <TextView
+                android:id="@+id/txt_title_username3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/username" />
+
             <EditText
-                android:id="@+id/field_username_name"
+                android:id="@+id/field_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:ems="10"
                 android:hint="@string/username"
                 android:inputType="text" />
+
+            <TextView
+                android:id="@+id/txt_title_first_name2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/first_name" />
 
             <EditText
                 android:id="@+id/field_first_name"
@@ -133,6 +159,12 @@
                 android:hint="@string/first_name"
                 android:inputType="textPersonName" />
 
+            <TextView
+                android:id="@+id/txt_title_last_name2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/last_name" />
+
             <EditText
                 android:id="@+id/field_last_name"
                 android:layout_width="match_parent"
@@ -141,6 +173,12 @@
                 android:ems="10"
                 android:hint="@string/last_name"
                 android:inputType="textPersonName" />
+
+            <TextView
+                android:id="@+id/txt_title_email2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/email" />
 
             <EditText
                 android:id="@+id/field_email"

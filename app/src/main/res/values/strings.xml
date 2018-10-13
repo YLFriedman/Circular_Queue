@@ -20,4 +20,5 @@
     <string name="edit">Edit</string>
     <string name="change_password">Change Passsword</string>
     <string name="delete_account">Delete Account</string>
+    <string name="account_type">Account Type</string>
 </resources>

@@ -129,7 +129,7 @@ public class CreateAccount extends AppCompatActivity {
             typeId.setError("Select an account type!"); //Set error
         }
 
-        Toast.makeText(this, "Passed as " + type, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Passed as " + type, Toast.LENGTH_SHORT).show();
     }
 
     private boolean isEmailValid(CharSequence email) {

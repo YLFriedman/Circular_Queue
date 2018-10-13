@@ -1,41 +1,40 @@
 package ca.uottawa.seg2105.project.cqondemand;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.io.Serializable;
 
 public class User implements Serializable {
 
+    private static User currentUser = null;
+
+    private DatabaseReference db;
     /**
      *The class User allows for the creation of User objects, and stores the pertinent values for each User.
      *Users can be of type Homeowner, Service Provider or Admin. Getters or Setters for all mutable values
      *are also provided.
      *
      */
-
-    /**
-     * test commit-mad
-     * Test 2
-     */
-
     private String fName, lName, uName, email;
 
     private final Types type;
+
     /**
      *A simple enum for distinguishing different types of user accounts
      */
-    protected enum Types{
-        ADMIN, HOMEOWNER, SERVICEPROVIDER;
-
+    protected enum Types {
+        ADMIN, HOMEOWNER, SERVICE_PROVIDER;
         public String toString(){
             switch(this){
                 case ADMIN:
                     return "Admin";
                 case HOMEOWNER:
                     return "Homeowner";
-                case SERVICEPROVIDER:
+                case SERVICE_PROVIDER:
                     return "Service Provider";
                 default:
-                    return "Unknown Error";
-
+                    return this.name();
             }
         }
     }
@@ -49,18 +48,28 @@ public class User implements Serializable {
      *@param type The type of the account
      */
     public User(String fName, String lName, String uName, String email, Types type){
-
         this.fName = fName;
         this.lName = lName;
         this.uName = uName;
         this.email = email;
         this.type = type;
+        db = FirebaseDatabase.getInstance().getReference("users");
+    }
+
+    public boolean update(String fName, String lName, String uName, String email) {
+        String oldUsername = uName;
+        this.fName = fName;
+        this.lName = lName;
+        this.uName = uName;
+        this.email = email;
+        // TODO: Update database
+        return false;
     }
 
     /**
      *Simple getter for the user's first name
      *
-     *@return  The user's first name
+     *@return The user's first name
      */
     public String getFirstName(){
         return this.fName;
@@ -109,8 +118,6 @@ public class User implements Serializable {
         fName = input;
     }
 
-
-
     /**
      *Simple setter for the user's last name
      *
@@ -138,5 +145,8 @@ public class User implements Serializable {
         fName = input;
     }
 
+    public static User getCurrentUser() { return currentUser; }
+
+    public static void setCurrentUser(User user) { currentUser = user; }
 
 }
