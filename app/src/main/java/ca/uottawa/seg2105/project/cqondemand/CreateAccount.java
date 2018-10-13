@@ -23,6 +23,7 @@ public class CreateAccount extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
 
+
         radioGroup = findViewById(R.id.radioGroup);
         textView = findViewById(R.id.text_view_selected);
 
@@ -107,9 +108,13 @@ public class CreateAccount extends AppCompatActivity {
             passwordId.setError("Password is required!");
             passwordId.requestFocus();
             return;
-        } else if(passwordConfirm.isEmpty()){
+        } else if(passwordConfirm.isEmpty()) {
             passwordConfirmId.setError("Password Confirm is required!");
             passwordConfirmId.requestFocus();
+            return;
+        } else if(password.length()<6){
+            passwordId.setError("Minimum length of password should be 6");
+            passwordId.requestFocus();
             return;
         } else if(!password.equals(passwordConfirm)){
             passwordId.setError("Passwords does not match!");
