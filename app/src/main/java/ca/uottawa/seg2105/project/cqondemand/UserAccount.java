@@ -86,7 +86,6 @@ public class UserAccount extends AppCompatActivity {
                         if (currentUser.delete()) {
                             Intent intent = new Intent(UserAccount.this, SignIn.class);
                             intent.putExtra("showToast", "The user account '" + currentUser.getUserName() + "' has been successfully deleted.");
-                            UserAccount.this.setResult(RESULT_OK, intent);
                             UserAccount.this.startActivity(intent);
                         } else {
                             Toast.makeText(UserAccount.this, "Unable to delete your account at this time. Please try again later.", Toast.LENGTH_LONG).show();
