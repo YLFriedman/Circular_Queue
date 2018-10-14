@@ -14,11 +14,10 @@ public class UserHome extends AppCompatActivity {
         setContentView(R.layout.activity_user_home);
 
         Intent loginIntent = getIntent();
-        Bundle bundle = loginIntent.getExtras();
-        User user = (User) bundle.getSerializable("user");
+        User user = User.getCurrentUser();
 
         TextView txtWelcome = findViewById(R.id.txt_welcome);
-        txtWelcome.setText("Hello " + user.getFirstName() + user.getLastName());
+        txtWelcome.setText("Hello " + user.getFirstName() + " " + user.getLastName());
         TextView txtRole = findViewById(R.id.txt_role);
         txtRole.setText("You are logged in as " + user.getType().toString());
 
