@@ -1,5 +1,6 @@
 package ca.uottawa.seg2105.project.cqondemand;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -128,8 +129,23 @@ public class CreateAccount extends AppCompatActivity {
         if(type.equals("Please Apply Choice!")){
             typeId.setError("Select an account type!"); //Set error
         }
+        User.Types accountType;
+        switch (type) {
+            case "Service Provider": accountType = User.Types.SERVICE_PROVIDER; break;
+            case "Admin": accountType = User.Types.ADMIN; break;
+            default: accountType = User.Types.HOMEOWNER; break;
+        }
 
-        Toast.makeText(this, "Passed as " + type, Toast.LENGTH_SHORT).show();
+        User newUser = new User(firstName, lastName, username, email, accountType);
+        if (newUser.create(password)) {
+            User.setCurrentUser(newUser);
+            Intent intent = new Intent(this, SignIn.class);
+            intent.putExtra("showToast", "The user account '" + username + "' has been successfully created.  Please sign in to continue.");
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "Unable to create your account at this time. Please try again later.", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     private boolean isEmailValid(CharSequence email) {

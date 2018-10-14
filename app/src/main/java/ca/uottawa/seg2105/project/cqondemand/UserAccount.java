@@ -84,6 +84,7 @@ public class UserAccount extends AppCompatActivity {
                 .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         if (currentUser.delete()) {
+                            User.setCurrentUser(null);
                             Intent intent = new Intent(UserAccount.this, SignIn.class);
                             intent.putExtra("showToast", "The user account '" + currentUser.getUserName() + "' has been successfully deleted.");
                             UserAccount.this.startActivity(intent);

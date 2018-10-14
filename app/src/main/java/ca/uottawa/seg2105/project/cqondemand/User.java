@@ -56,18 +56,38 @@ public class User implements Serializable {
         db = FirebaseDatabase.getInstance().getReference("users");
     }
 
-    public boolean create() {
-        return false;
+    public boolean create(String password) {
+        try {
+            db.child(uName).child("type").setValue(type.toString());
+            db.child(uName).child("first_name").setValue(fName);
+            db.child(uName).child("last_name").setValue(lName);
+            db.child(uName).child("email").setValue(email);
+            db.child(uName).child("password").setValue(password);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 
     public boolean update(String fName, String lName, String uName, String email) {
-        String oldUsername = uName;
-        this.fName = fName;
-        this.lName = lName;
-        this.uName = uName;
-        this.email = email;
+        try {
+            db.child(uName).child("first_name").setValue(fName);
+            db.child(uName).child("last_name").setValue(lName);
+            db.child(email).child("email").setValue(email);
+            //db.child(uName).child("password").setValue(password);
+
+            String oldUsername = uName;
+            this.fName = fName;
+            this.lName = lName;
+            this.uName = uName;
+            this.email = email;
+
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+
         // TODO: Update database
-        return false;
     }
 
     public boolean delete() {

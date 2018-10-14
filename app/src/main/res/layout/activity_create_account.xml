@@ -81,7 +81,7 @@
                 android:layout_weight="1"
                 android:checked="true"
                 android:onClick="checkButton"
-                android:text="Homeowner" />
+                android:text="@string/homeowner" />
 
             <RadioButton
                 android:id="@+id/radio_service"
@@ -89,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="checkButton"
-                android:text="Service Provider" />
+                android:text="@string/service_provider" />
 
             <RadioButton
                 android:id="@+id/radio_admin"
@@ -97,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="checkButton"
-                android:text="Admin" />
+                android:text="@string/admin" />
         </RadioGroup>
 
         <TextView
