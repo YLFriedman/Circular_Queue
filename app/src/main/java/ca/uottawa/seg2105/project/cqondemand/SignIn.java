@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +39,10 @@ public class SignIn extends AppCompatActivity {
      * @param view the sign in button which was clicked.
      */
     public void onSignInClick(View view){
-        //TODO: get user info from database
+        final Button signInButton = findViewById(R.id.btn_sign_in);
+        final Button createAccountButton = findViewById(R.id.btn_create_account);
+        signInButton.setEnabled(false);
+        createAccountButton.setEnabled(false);
         EditText field_username = findViewById(R.id.field_username);
         EditText field_password = findViewById(R.id.field_password);
         final String inputUsername = field_username.getText().toString();
@@ -51,6 +55,8 @@ public class SignIn extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(!dataSnapshot.exists()){
                     Toast.makeText(getApplicationContext(), "That user does not exist!", Toast.LENGTH_LONG).show();
+                    signInButton.setEnabled(true);
+                    createAccountButton.setEnabled(true);
                     return;
                 }
                 else{
@@ -64,6 +70,8 @@ public class SignIn extends AppCompatActivity {
 
                         User.setCurrentUser(new User(firstName, lastName, inputUsername, email, type));
                         Intent loginIntent = new Intent(getApplicationContext(), UserHome.class);
+                        signInButton.setEnabled(true);
+                        createAccountButton.setEnabled(true);
 
 
                         startActivity(loginIntent);
@@ -71,6 +79,8 @@ public class SignIn extends AppCompatActivity {
 
                     }
                     else{
+                        signInButton.setEnabled(true);
+                        createAccountButton.setEnabled(true);
                         Toast.makeText(getApplicationContext(), "Incorrect username/password combination!", Toast.LENGTH_LONG).show();
 
                     }
