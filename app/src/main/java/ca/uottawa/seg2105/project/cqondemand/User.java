@@ -22,6 +22,8 @@ public class User implements Serializable {
 
     private String email;
 
+    private String password;
+
     private final Types type;
 
     /**
@@ -49,15 +51,17 @@ public class User implements Serializable {
      *@param fName The first name of the user
      *@param lName The last name of the user
      *@param uName The desired Username
-     *@param email The user's email
-     *@param type The type of the account
+     *@param emailAddr The user's email address
+     *@param userType The type of the account
+     *@param pass The user's password
      */
-    public User(String fName, String lName, String uName, String email, Types type){
-        this.firstName = fName;
-        this.lastName = lName;
-        this.userName = uName;
-        this.email = email;
-        this.type = type;
+    public User(String fName, String lName, String uName, String emailAddr, Types userType, String pass){
+        firstName = fName;
+        lastName = lName;
+        userName = uName;
+        email = emailAddr;
+        type = userType;
+        password = pass;
     }
 
     public static boolean userNameIsValid(String username) {
@@ -74,7 +78,7 @@ public class User implements Serializable {
      *@return The user's first name
      */
     public String getFirstName(){
-        return this.firstName;
+        return firstName;
     }
 
     /**
@@ -83,7 +87,7 @@ public class User implements Serializable {
      *@return The user's last name
      */
     public String getLastName(){
-        return this.lastName;
+        return lastName;
     }
 
     /**
@@ -92,7 +96,16 @@ public class User implements Serializable {
      *@return The user's username
      */
     public String getUserName(){
-        return this.userName;
+        return userName;
+    }
+
+    /**
+     *Simple getter for the user's password
+     *
+     *@return The user's password
+     */
+    public String getPassword(){
+        return password;
     }
 
     /**
@@ -101,14 +114,16 @@ public class User implements Serializable {
      *@return The user's email
      */
     public String getEmail(){
-        return this.email;
+        return email;
     }
 
     /**Simple getter for the user's type
      *
      * @return the user's type
      */
-    public Types getType(){ return this.type; }
+    public Types getType(){
+        return this.type;
+    }
 
     /**
      *Simple setter for the user's first name
@@ -144,6 +159,15 @@ public class User implements Serializable {
      */
     public void setUserName(String input){
         firstName = input;
+    }
+
+    /**
+     *Simple setter for the user's password
+     *
+     *@param input The user's new password
+     */
+    public void setPassword(String input){
+        password = input;
     }
 
     public static User.Types parseType(String input){

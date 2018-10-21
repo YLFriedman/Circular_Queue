@@ -62,8 +62,9 @@ public class SignIn extends AppCompatActivity {
 
             }
 
+
             @Override
-            public void onFailure(User.SignInFailure reason) {
+            public void onFailure(DatabaseUtil.CallbackFailure reason) {
 
                 signInButton.setEnabled(true);
                 createAccountButton.setEnabled(true);
@@ -77,9 +78,11 @@ public class SignIn extends AppCompatActivity {
                 }
 
             }
+
+           
         };
 
-        User.SignIn(inputUsername, inputPassword, userListener);
+        DatabaseUtil.authenticate(inputUsername, inputPassword, userListener);
 
 
 
