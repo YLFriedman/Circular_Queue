@@ -4,5 +4,5 @@ public interface UserEventListener {
 
     public void onSuccess();
 
-    public void onFailure(String cause);
+    public void onFailure(User.SignInFailure reason);
 }

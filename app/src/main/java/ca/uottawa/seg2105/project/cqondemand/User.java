@@ -1,7 +1,12 @@
 package ca.uottawa.seg2105.project.cqondemand;
 
+import android.support.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
 
@@ -38,6 +43,10 @@ public class User implements Serializable {
                     return this.name();
             }
         }
+    }
+
+    public enum SignInFailure {
+        DOES_NOT_EXIST, PASSWORD_DOES_NOT_MATCH, DATABASE_ERROR;
     }
     /**
      *Constructor for User objects. This constructor supports users of type Homeowner and of type Service Provider
@@ -93,6 +102,44 @@ public class User implements Serializable {
 
     public boolean delete() {
         return false;
+    }
+
+    public static void SignIn(String username, String password, UserEventListener listener){
+        final UserEventListener listenerFinal = listener;
+        final String finalPassword = password;
+        final String finalUsername = username;
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(username);
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()){
+                    listenerFinal.onFailure(SignInFailure.DOES_NOT_EXIST);
+                }
+                else{
+                    String realPassword = (String) dataSnapshot.child("password").getValue();
+                    if(finalPassword.equals(realPassword)){
+                        String firstName = (String) dataSnapshot.child("first_name").getValue();
+                        String lastName = (String) dataSnapshot.child("last_name").getValue();
+                        String email = (String) dataSnapshot.child("email").getValue();
+                        String typeStr = (String) dataSnapshot.child("type").getValue();
+                        User.Types type = parseType(typeStr);
+
+                        User.setCurrentUser(new User(firstName, lastName, finalUsername, email, type));
+                        listenerFinal.onSuccess();
+                    }
+                    else{
+                        listenerFinal.onFailure(SignInFailure.PASSWORD_DOES_NOT_MATCH);
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                listenerFinal.onFailure(SignInFailure.DATABASE_ERROR);
+
+            }
+        });
     }
 
     /**
@@ -172,6 +219,21 @@ public class User implements Serializable {
      */
     public void setUserName(String input){
         fName = input;
+    }
+
+    public static User.Types parseType(String input){
+
+        switch(input){
+            case "Homeowner":
+                return User.Types.HOMEOWNER;
+            case "Service Provider":
+                return User.Types.SERVICE_PROVIDER;
+            case "Admin":
+                return User.Types.ADMIN;
+            default:
+                throw new IllegalArgumentException();
+        }
+
     }
 
     public static User getCurrentUser() { return currentUser; }
