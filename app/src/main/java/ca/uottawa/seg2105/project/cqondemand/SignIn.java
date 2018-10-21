@@ -52,51 +52,37 @@ public class SignIn extends AppCompatActivity {
         EditText field_password = findViewById(R.id.field_password);
         final String inputUsername = field_username.getText().toString();
         final String inputPassword = field_password.getText().toString();
-
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("users").child(inputUsername);
-
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        UserEventListener userListener = new UserEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.exists()){
-                    Toast.makeText(getApplicationContext(), "That user does not exist!", Toast.LENGTH_LONG).show();
-                    signInButton.setEnabled(true);
-                    createAccountButton.setEnabled(true);
-                    return;
-                }
-                else{
-                    String realPassword = (String) dataSnapshot.child("password").getValue();
-                    if(inputPassword.equals(realPassword)){
-                        String firstName = (String) dataSnapshot.child("first_name").getValue();
-                        String lastName = (String) dataSnapshot.child("last_name").getValue();
-                        String email = (String) dataSnapshot.child("email").getValue();
-                        String typeStr = (String) dataSnapshot.child("type").getValue();
-                        User.Types type = parseType(typeStr);
+            public void onSuccess() {
+                Intent loginIntent = new Intent(getApplicationContext(), UserHome.class);
+                signInButton.setEnabled(true);
+                createAccountButton.setEnabled(true);
+                startActivity(loginIntent);
 
-                        User.setCurrentUser(new User(firstName, lastName, inputUsername, email, type));
-                        Intent loginIntent = new Intent(getApplicationContext(), UserHome.class);
-                        signInButton.setEnabled(true);
-                        createAccountButton.setEnabled(true);
-
-
-                        startActivity(loginIntent);
-
-
-                    }
-                    else{
-                        signInButton.setEnabled(true);
-                        createAccountButton.setEnabled(true);
-                        Toast.makeText(getApplicationContext(), "Incorrect username/password combination!", Toast.LENGTH_LONG).show();
-
-                    }
-                }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onFailure(User.SignInFailure reason) {
+
+                signInButton.setEnabled(true);
+                createAccountButton.setEnabled(true);
+
+                switch(reason){
+                    case DATABASE_ERROR:
+                        Toast.makeText(getApplicationContext(), "Database Error!", Toast.LENGTH_LONG).show();
+                        break;
+                    default:
+                        Toast.makeText(getApplicationContext(), "Invalid Credentials!", Toast.LENGTH_LONG).show();
+                }
 
             }
-        });
+        };
+
+        User.SignIn(inputUsername, inputPassword, userListener);
+
+
+
 
 
 
@@ -113,20 +99,7 @@ public class SignIn extends AppCompatActivity {
 
     }
 
-    public User.Types parseType(String input){
 
-        switch(input){
-            case "Homeowner":
-                return User.Types.HOMEOWNER;
-            case "Service Provider":
-                return User.Types.SERVICE_PROVIDER;
-            case "Admin":
-                return User.Types.ADMIN;
-            default:
-                throw new IllegalArgumentException();
-        }
-
-    }
 
 
 }
