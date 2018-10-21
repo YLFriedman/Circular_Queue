@@ -4,5 +4,6 @@ public interface UserEventListener {
 
     public void onSuccess();
 
-    public void onFailure(User.SignInFailure reason);
+    public void onFailure(DatabaseUtil.CallbackFailure reason);
+
 }
