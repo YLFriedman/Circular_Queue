@@ -1,28 +1,26 @@
 package ca.uottawa.seg2105.project.cqondemand;
 
-import android.support.annotation.NonNull;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import java.io.Serializable;
 
 public class User implements Serializable {
 
     private static User currentUser = null;
-    public static final String ALLOWED_USERNAME_CHARS_MSG = "Only the following characters are allowed: a-z A-z 0-9 _ -";
+    public static final String ILLEGAL_USERNAME_CHARS_REGEX = "[^a-zA-Z0-9_-]";
+    public static final String ILLEGAL_USERNAME_CHARS_MSG = "Only the following characters are allowed: a-z A-z 0-9 _ -";
 
-    private DatabaseReference db;
     /**
      *The class User allows for the creation of User objects, and stores the pertinent values for each User.
      *Users can be of type Homeowner, Service Provider or Admin. Getters or Setters for all mutable values
      *are also provided.
      *
      */
-    private String fName, lName, uName, email;
+    private String firstName;
+
+    private String lastName;
+
+    private String userName;
+
+    private String email;
 
     private final Types type;
 
@@ -45,9 +43,6 @@ public class User implements Serializable {
         }
     }
 
-    public enum SignInFailure {
-        DOES_NOT_EXIST, PASSWORD_DOES_NOT_MATCH, DATABASE_ERROR;
-    }
     /**
      *Constructor for User objects. This constructor supports users of type Homeowner and of type Service Provider
      *
@@ -58,88 +53,19 @@ public class User implements Serializable {
      *@param type The type of the account
      */
     public User(String fName, String lName, String uName, String email, Types type){
-        this.fName = fName;
-        this.lName = lName;
-        this.uName = uName;
+        this.firstName = fName;
+        this.lastName = lName;
+        this.userName = uName;
         this.email = email;
         this.type = type;
-        db = FirebaseDatabase.getInstance().getReference("users");
     }
 
-    public boolean create(String password) {
-        try {
-            db.child(uName).child("type").setValue(type.toString());
-            db.child(uName).child("first_name").setValue(fName);
-            db.child(uName).child("last_name").setValue(lName);
-            db.child(uName).child("email").setValue(email);
-            db.child(uName).child("password").setValue(password);
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
+    public static boolean userNameIsValid(String username) {
+        return !username.matches(ILLEGAL_USERNAME_CHARS_REGEX);
     }
 
-    public boolean update(String fName, String lName, String uName, String email) {
-        try {
-            db.child(uName).child("first_name").setValue(fName);
-            db.child(uName).child("last_name").setValue(lName);
-            db.child(email).child("email").setValue(email);
-            //db.child(uName).child("password").setValue(password);
-
-            String oldUsername = uName;
-            this.fName = fName;
-            this.lName = lName;
-            this.uName = uName;
-            this.email = email;
-
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-
-        // TODO: Update database
-    }
-
-    public boolean delete() {
-        return false;
-    }
-
-    public static void SignIn(String username, String password, UserEventListener listener){
-        final UserEventListener listenerFinal = listener;
-        final String finalPassword = password;
-        final String finalUsername = username;
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(username);
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.exists()){
-                    listenerFinal.onFailure(SignInFailure.DOES_NOT_EXIST);
-                }
-                else{
-                    String realPassword = (String) dataSnapshot.child("password").getValue();
-                    if(finalPassword.equals(realPassword)){
-                        String firstName = (String) dataSnapshot.child("first_name").getValue();
-                        String lastName = (String) dataSnapshot.child("last_name").getValue();
-                        String email = (String) dataSnapshot.child("email").getValue();
-                        String typeStr = (String) dataSnapshot.child("type").getValue();
-                        User.Types type = parseType(typeStr);
-
-                        User.setCurrentUser(new User(firstName, lastName, finalUsername, email, type));
-                        listenerFinal.onSuccess();
-                    }
-                    else{
-                        listenerFinal.onFailure(SignInFailure.PASSWORD_DOES_NOT_MATCH);
-
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                listenerFinal.onFailure(SignInFailure.DATABASE_ERROR);
-
-            }
-        });
+    public static boolean emailIsValid(CharSequence email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     /**
@@ -148,7 +74,7 @@ public class User implements Serializable {
      *@return The user's first name
      */
     public String getFirstName(){
-        return this.fName;
+        return this.firstName;
     }
 
     /**
@@ -157,15 +83,16 @@ public class User implements Serializable {
      *@return The user's last name
      */
     public String getLastName(){
-        return this.lName;
+        return this.lastName;
     }
+
     /**
      *Simple getter for the user's username
      *
      *@return The user's username
      */
     public String getUserName(){
-        return this.uName;
+        return this.userName;
     }
 
     /**
@@ -173,8 +100,6 @@ public class User implements Serializable {
      *
      *@return The user's email
      */
-
-
     public String getEmail(){
         return this.email;
     }
@@ -191,7 +116,7 @@ public class User implements Serializable {
      *@param input The user's new first name
      */
     public void setFirstName(String input){
-        fName = input;
+        firstName = input;
     }
 
     /**
@@ -200,7 +125,7 @@ public class User implements Serializable {
      *@param input The user's new last name
      */
     public void setLastName(String input){
-        lName = input;
+        lastName = input;
     }
 
     /**
@@ -218,7 +143,7 @@ public class User implements Serializable {
      *@param input The user's new username
      */
     public void setUserName(String input){
-        fName = input;
+        firstName = input;
     }
 
     public static User.Types parseType(String input){

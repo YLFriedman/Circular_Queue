@@ -24,14 +24,6 @@ public class CreateAccount extends AppCompatActivity {
 
     }
 
-    public static boolean userNameIsValid(String username) {
-        return username.matches("[^a-zA-Z0-9-_]");
-    }
-
-    private boolean emailIsValid(CharSequence email) {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
-    }
-
     //TODO: Allow for the creation of an admin account, if one does not already exist. Will have to add new UI elements.
 
     public void onCreateClick(View view){
@@ -49,8 +41,8 @@ public class CreateAccount extends AppCompatActivity {
             usernameId.setError("Username is required!");
             usernameId.requestFocus();
             return;
-        } else if (!userNameIsValid(username)) {
-            usernameId.setError("Username is invalid. " + User.ALLOWED_USERNAME_CHARS_MSG);
+        } else if (!User.userNameIsValid(username)) {
+            usernameId.setError("Username is invalid. " + User.ILLEGAL_USERNAME_CHARS_MSG);
             usernameId.requestFocus();
             return;
         }
@@ -83,7 +75,7 @@ public class CreateAccount extends AppCompatActivity {
             emailId.setError("Email is required!");
             emailId.requestFocus();
             return;
-        } else if (!emailIsValid(email)){
+        } else if (!User.emailIsValid(email)){
             emailId.setError("This is an invalid E-mail!");
             return;
         }
@@ -115,16 +107,19 @@ public class CreateAccount extends AppCompatActivity {
 
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
         RadioButton radioButton = findViewById(radioGroup.getCheckedRadioButtonId());
-        String type = radioButton.getText().toString();
-        User.Types accountType;
-        switch (type) {
-            case "Service Provider": accountType = User.Types.SERVICE_PROVIDER; break;
-            case "Admin": accountType = User.Types.ADMIN; break;
-            default: accountType = User.Types.HOMEOWNER; break;
-        }
+        final User newUser = new User(firstName, lastName, username, email, User.parseType(radioButton.getText().toString()));
+
+        
+        DatabaseUtil.createUser(newUser, password, new UserEventListener() {
+            public void onSuccess() {
+
+            }
+            public void onFailure(DatabaseUtil.CallbackFailure reason) {
+
+            }
+        });
 
 
-        User newUser = new User(firstName, lastName, username, email, accountType);
         if (newUser.create(password)) {
             User.setCurrentUser(newUser);
             Intent intent = new Intent(this, SignIn.class);
