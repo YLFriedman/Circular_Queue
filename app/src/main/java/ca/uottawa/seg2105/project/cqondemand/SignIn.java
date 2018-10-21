@@ -18,11 +18,16 @@ import com.google.firebase.database.ValueEventListener;
 
 public class SignIn extends AppCompatActivity {
 
+    private Button signInButton;
+    private Button createAccountButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+
+        signInButton = findViewById(R.id.btn_sign_in);
+        createAccountButton = findViewById(R.id.btn_sign_up);
 
         Intent intent = getIntent();
         String toastText;
@@ -38,9 +43,7 @@ public class SignIn extends AppCompatActivity {
      *
      * @param view the sign in button which was clicked.
      */
-    public void onSignInClick(View view){
-        final Button signInButton = findViewById(R.id.btn_sign_in);
-        final Button createAccountButton = findViewById(R.id.btn_create_account);
+    public void onSignInClick(View view) {
         signInButton.setEnabled(false);
         createAccountButton.setEnabled(false);
         EditText field_username = findViewById(R.id.field_username);
