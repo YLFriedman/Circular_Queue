@@ -13,10 +13,6 @@ import android.widget.Toast;
 
 public class CreateAccount extends AppCompatActivity {
 
-    RadioGroup radioGroup;
-    RadioButton radioButton;
-    TextView textView;
-
     boolean[] checks = new boolean[6];
 
     @Override
@@ -25,25 +21,15 @@ public class CreateAccount extends AppCompatActivity {
         setContentView(R.layout.activity_create_account);
 
 
-        radioGroup = findViewById(R.id.radioGroup);
-        textView = findViewById(R.id.text_view_selected);
 
-        //Make text field print selected choice based on radio button
-        Button buttonApply = findViewById(R.id.button_apply);
-        buttonApply.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int radioId = radioGroup.getCheckedRadioButtonId();
-                radioButton = findViewById(radioId);
-                textView.setText(radioButton.getText());
-                Toast.makeText(getBaseContext(), "Selected Radio Button: " + radioButton.getText() , Toast.LENGTH_SHORT ).show();
-            }
-        });
     }
 
-    public void checkButton(View v) {
-        int radioId = radioGroup.getCheckedRadioButtonId();
-        radioButton = findViewById(radioId);
+    public static boolean userNameIsValid(String username) {
+        return username.matches("[^a-zA-Z0-9-_]");
+    }
+
+    private boolean emailIsValid(CharSequence email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     //TODO: Allow for the creation of an admin account, if one does not already exist. Will have to add new UI elements.
@@ -59,8 +45,12 @@ public class CreateAccount extends AppCompatActivity {
         EditText usernameId = findViewById(R.id.field_username);
         String username = usernameId.getText().toString().trim();
 
-        if(username.isEmpty()){
+        if (username.isEmpty()) {
             usernameId.setError("Username is required!");
+            usernameId.requestFocus();
+            return;
+        } else if (!userNameIsValid(username)) {
+            usernameId.setError("Username is invalid. " + User.ALLOWED_USERNAME_CHARS_MSG);
             usernameId.requestFocus();
             return;
         }
@@ -69,7 +59,7 @@ public class CreateAccount extends AppCompatActivity {
         EditText firstNameId = findViewById(R.id.field_first_name);
         String firstName = firstNameId.getText().toString().trim();
 
-        if(firstName.isEmpty()){
+        if (firstName.isEmpty()){
             firstNameId.setError("First name is required!");
             firstNameId.requestFocus();
             return;
@@ -93,7 +83,7 @@ public class CreateAccount extends AppCompatActivity {
             emailId.setError("Email is required!");
             emailId.requestFocus();
             return;
-        } else if (!isEmailValid(email)){
+        } else if (!emailIsValid(email)){
             emailId.setError("This is an invalid E-mail!");
             return;
         }
@@ -123,18 +113,16 @@ public class CreateAccount extends AppCompatActivity {
             return;
         }
 
-        //check if account type selected
-        TextView typeId = findViewById(R.id.text_view_selected);
-        String type = typeId.getText().toString().trim();
-        if(type.equals("Please Apply Choice!")){
-            typeId.setError("Select an account type!"); //Set error
-        }
+        RadioGroup radioGroup = findViewById(R.id.radioGroup);
+        RadioButton radioButton = findViewById(radioGroup.getCheckedRadioButtonId());
+        String type = radioButton.getText().toString();
         User.Types accountType;
         switch (type) {
             case "Service Provider": accountType = User.Types.SERVICE_PROVIDER; break;
             case "Admin": accountType = User.Types.ADMIN; break;
             default: accountType = User.Types.HOMEOWNER; break;
         }
+
 
         User newUser = new User(firstName, lastName, username, email, accountType);
         if (newUser.create(password)) {
@@ -146,9 +134,5 @@ public class CreateAccount extends AppCompatActivity {
             Toast.makeText(this, "Unable to create your account at this time. Please try again later.", Toast.LENGTH_LONG).show();
         }
 
-    }
-
-    private boolean isEmailValid(CharSequence email) {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 }

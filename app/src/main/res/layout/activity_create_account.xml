@@ -80,7 +80,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:checked="true"
-                android:onClick="checkButton"
                 android:text="@string/homeowner" />
 
             <RadioButton
@@ -88,29 +87,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:onClick="checkButton"
                 android:text="@string/service_provider" />
 
-            <RadioButton
-                android:id="@+id/radio_admin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="checkButton"
-                android:text="@string/admin" />
         </RadioGroup>
-
-        <TextView
-            android:id="@+id/text_view_selected"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Please Apply Choice!" />
-
-        <Button
-            android:id="@+id/button_apply"
-            android:layout_width="103dp"
-            android:layout_height="wrap_content"
-            android:text="Apply" />
 
         <Button
             android:id="@+id/btn_create_account"

@@ -8,6 +8,7 @@ import java.io.Serializable;
 public class User implements Serializable {
 
     private static User currentUser = null;
+    public static final String ALLOWED_USERNAME_CHARS_MSG = "Only the following characters are allowed: a-z A-z 0-9 _ -";
 
     private DatabaseReference db;
     /**
