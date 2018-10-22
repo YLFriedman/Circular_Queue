@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class UserHome extends AppCompatActivity {
@@ -24,8 +25,10 @@ public class UserHome extends AppCompatActivity {
          */
         LinearLayout main_view = (LinearLayout) findViewById(R.id.layout_main);
         main_view.setVisibility(View.VISIBLE);
-        LinearLayout details_view = (LinearLayout) findViewById(R.id.layout_details);
-        details_view.setVisibility(View.GONE);
+        ScrollView Scroll_view = (ScrollView) findViewById(R.id.scroll_users);
+        Scroll_view.setVisibility(View.GONE);
+        TextView scroll_title= (TextView) findViewById(R.id.txt_Scroll);
+        scroll_title.setVisibility(View.GONE);
 
         currentUser = DatabaseUtil.getCurrentUser();
         if (null == currentUser) {
@@ -38,6 +41,13 @@ public class UserHome extends AppCompatActivity {
             TextView txtRole = findViewById(R.id.txt_role);
             if (currentUser.getType() == User.Types.ADMIN) {
                 txtRole.setText("You are logged in as an " + currentUser.getType().toString());
+                /*
+                *Makes list visible and constructs
+                 */
+                scroll_title.setVisibility(View.VISIBLE);
+                Scroll_view.setVisibility(View.VISIBLE);
+
+
             } else {
                 txtRole.setText("You are logged in as a " + currentUser.getType().toString());
             }
@@ -50,41 +60,9 @@ public class UserHome extends AppCompatActivity {
      * Displays Account Details
      */
     public void onAccountDetailsClick(View view) {
-        currentUser = DatabaseUtil.getCurrentUser();
-        if (null == currentUser) {
-            Intent intent = new Intent(this, UserAccount.class);
-            startActivity(intent);
-        } else {
-            /*
-            *Hides original layout, makes account details visible
-             */
-            LinearLayout main_view = (LinearLayout) findViewById(R.id.layout_main);
-            main_view.setVisibility(View.GONE);
-            LinearLayout details_view = (LinearLayout) findViewById(R.id.layout_details);
-            details_view.setVisibility(View.VISIBLE);
-
-            TextView txtFirstName = findViewById(R.id.textView_firstName);
-            txtFirstName.setText("First Name: " + currentUser.getFirstName());
-            TextView txtLastName = findViewById(R.id.textView_lastName);
-            txtLastName.setText("Last Name: " + currentUser.getLastName());
-            TextView txtUserName = findViewById(R.id.textView_userName);
-            txtUserName.setText("User Name: " + currentUser.getUserName());
-            TextView txtAccountType = findViewById(R.id.textView_account);
-            txtAccountType.setText("Account type: " + currentUser.getType().toString());
-            TextView txtEmail = findViewById(R.id.textView_email);
-            txtEmail.setText("Current Email: " + currentUser.getEmail());
-
-        }
+        Intent intent = new Intent(this, UserAccount.class);
+        startActivity(intent);
     }
 
-    /*
-     * Navigates back to UserHome when clicked
-     */
-    public void onReturnHomeClick(View view) {
-        LinearLayout main_view = (LinearLayout) findViewById(R.id.layout_main);
-        main_view.setVisibility(View.VISIBLE);
-        LinearLayout details_view = (LinearLayout) findViewById(R.id.layout_details);
-        details_view.setVisibility(View.GONE);
-    }
 }
 
