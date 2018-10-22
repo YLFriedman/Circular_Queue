@@ -22,8 +22,10 @@ public class UserHome extends AppCompatActivity {
         /*
         *hides details by default
          */
+        LinearLayout main_view = (LinearLayout) findViewById(R.id.layout_main);
+        main_view.setVisibility(View.VISIBLE);
         LinearLayout details_view = (LinearLayout) findViewById(R.id.layout_details);
-        details_view.setVisibility(View.INVISIBLE);
+        details_view.setVisibility(View.GONE);
 
         currentUser = DatabaseUtil.getCurrentUser();
         if (null == currentUser) {
@@ -57,7 +59,7 @@ public class UserHome extends AppCompatActivity {
             *Hides original layout, makes account details visible
              */
             LinearLayout main_view = (LinearLayout) findViewById(R.id.layout_main);
-            main_view.setVisibility(View.INVISIBLE);
+            main_view.setVisibility(View.GONE);
             LinearLayout details_view = (LinearLayout) findViewById(R.id.layout_details);
             details_view.setVisibility(View.VISIBLE);
 
@@ -73,6 +75,16 @@ public class UserHome extends AppCompatActivity {
             txtEmail.setText("Current Email: " + currentUser.getEmail());
 
         }
+    }
+
+    /*
+     * Navigates back to UserHome when clicked
+     */
+    public void onReturnHomeClick(View view) {
+        LinearLayout main_view = (LinearLayout) findViewById(R.id.layout_main);
+        main_view.setVisibility(View.VISIBLE);
+        LinearLayout details_view = (LinearLayout) findViewById(R.id.layout_details);
+        details_view.setVisibility(View.GONE);
     }
 }
 
