@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class UserHome extends AppCompatActivity {
@@ -18,6 +19,11 @@ public class UserHome extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home);
+        /*
+        *hides details by default
+         */
+        LinearLayout details_view = (LinearLayout) findViewById(R.id.layout_details);
+        details_view.setVisibility(View.INVISIBLE);
 
         currentUser = DatabaseUtil.getCurrentUser();
         if (null == currentUser) {
@@ -47,6 +53,14 @@ public class UserHome extends AppCompatActivity {
             Intent intent = new Intent(this, UserAccount.class);
             startActivity(intent);
         } else {
+            /*
+            *Hides original layout, makes account details visible
+             */
+            LinearLayout main_view = (LinearLayout) findViewById(R.id.layout_main);
+            main_view.setVisibility(View.INVISIBLE);
+            LinearLayout details_view = (LinearLayout) findViewById(R.id.layout_details);
+            details_view.setVisibility(View.VISIBLE);
+
             TextView txtFirstName = findViewById(R.id.textView_firstName);
             txtFirstName.setText("First Name: " + currentUser.getFirstName());
             TextView txtLastName = findViewById(R.id.textView_lastName);
@@ -54,7 +68,7 @@ public class UserHome extends AppCompatActivity {
             TextView txtUserName = findViewById(R.id.textView_userName);
             txtUserName.setText("User Name: " + currentUser.getUserName());
             TextView txtAccountType = findViewById(R.id.textView_account);
-            txtAccountType.setText("Account type Name: " + currentUser.getType().toString());
+            txtAccountType.setText("Account type: " + currentUser.getType().toString());
             TextView txtEmail = findViewById(R.id.textView_email);
             txtEmail.setText("Current Email: " + currentUser.getEmail());
 
