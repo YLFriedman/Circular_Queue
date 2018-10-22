@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -12,6 +13,8 @@ public class DatabaseUtil {
 
     private static DatabaseReference db = FirebaseDatabase.getInstance().getReference();
     private static DatabaseReference dbUsers = db.child("users");
+
+    private static User currentUser = null;
 
 
 
@@ -37,7 +40,7 @@ public class DatabaseUtil {
                         String typeStr = (String) dataSnapshot.child("type").getValue();
                         User.Types type = User.parseType(typeStr);
 
-                        User.setCurrentUser(new User(firstName, lastName, username, email, type));
+                        User.setCurrentUser(new User(firstName, lastName, username, email, type, password));
                         listener.onSuccess();
                     }
                     else{
@@ -81,7 +84,7 @@ public class DatabaseUtil {
 
     }
 
-    public static void create(final User user,final String password,final UserEventListener listener) {
+    public static void createUser(final User user,final String password,final UserEventListener listener) {
         UserEventListener existListener = new UserEventListener() {
             @Override
             public void onSuccess() {
@@ -95,20 +98,49 @@ public class DatabaseUtil {
                     String username = user.getUserName();
 
                     try {
-                        db.child(username).child("type").setValue(user.getType().toString());
-                        db.child(username).child("first_name").setValue(user.getFirstName());
-                        db.child(username).child("last_name").setValue(user.getLastName());
-                        db.child(username).child("email").setValue(user.getEmail());
-                        db.child(username).child("password").setValue(password);
+                        dbUsers.child(username).child("type").setValue(user.getType().toString());
+                        dbUsers.child(username).child("first_name").setValue(user.getFirstName());
+                        dbUsers.child(username).child("last_name").setValue(user.getLastName());
+                        dbUsers.child(username).child("email").setValue(user.getEmail());
+                        dbUsers.child(username).child("password").setValue(password);
                         listener.onSuccess();
-                    } catch (Exception e) {
+                    } catch (DatabaseException e) {
                         listener.onFailure(CallbackFailure.DATABASE_ERROR);
 
                     }
 
                 }
+                else{
+                    listener.onFailure(CallbackFailure.DATABASE_ERROR);
+                }
             }
         };
         exists(user.getUserName(), existListener);
     }
+
+    public static void update(User user, UserEventListener listener){
+        String username = user.getUserName();
+
+        dbUsers.child(username).child("type").setValue(user.getType().toString());
+        dbUsers.child(username).child("first_name").setValue(user.getFirstName());
+        dbUsers.child(username).child("last_name").setValue(user.getLastName());
+        dbUsers.child(username).child("email").setValue(user.getEmail());
+        dbUsers.child(username).child("password").setValue(user.getPassword());
+
+        if(!User.getCurrentUser().getUserName().equals(username)){
+            dbUsers.child(User.getCurrentUser().getUserName()).removeValue();
+
+        }
+        User.setCurrentUser(user);
+        listener.onSuccess();
+
+
+    }
+
+    public static void delete(String username, UserEventListener listener){
+        
+    }
+
+
+
 }
