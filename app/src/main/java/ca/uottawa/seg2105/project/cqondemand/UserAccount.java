@@ -178,8 +178,8 @@ public class UserAccount extends AppCompatActivity {
                 public void onSuccess() {
                     Toast.makeText(UserAccount.this, "Account updated successfully!", Toast.LENGTH_LONG).show();
                     UserAccount.this.currentUser = DatabaseUtil.getCurrentUser();
-                    setUserViewValues();
-                    setView(Views.USER_VIEW);
+                    UserAccount.this.setUserViewValues();
+                    UserAccount.this.setView(Views.USER_VIEW);
                     btn_save_user.setEnabled(true);
                 }
                 public void onFailure(DatabaseUtil.CallbackFailure reason) {
