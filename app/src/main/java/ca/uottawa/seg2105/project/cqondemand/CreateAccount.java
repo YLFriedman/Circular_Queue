@@ -34,100 +34,120 @@ public class CreateAccount extends AppCompatActivity {
         }
 
         //Check username validity
-        EditText usernameId = findViewById(R.id.field_username);
-        String username = usernameId.getText().toString().trim();
+        final EditText field_username = findViewById(R.id.field_username);
+        final String username = field_username.getText().toString().trim();
 
         if (username.isEmpty()) {
-            usernameId.setError("Username is required!");
-            usernameId.requestFocus();
+            field_username.setError("Username is required!");
+            field_username.requestFocus();
             return;
         } else if (!User.userNameIsValid(username)) {
-            usernameId.setError("Username is invalid. " + User.ILLEGAL_USERNAME_CHARS_MSG);
-            usernameId.requestFocus();
+            field_username.setError("Username is invalid. " + User.ILLEGAL_USERNAME_CHARS_MSG);
+            field_username.requestFocus();
             return;
         }
 
         //Check First Name validity
-        EditText firstNameId = findViewById(R.id.field_first_name);
-        String firstName = firstNameId.getText().toString().trim();
+        EditText field_first_name = findViewById(R.id.field_first_name);
+        String firstName = field_first_name.getText().toString().trim();
 
         if (firstName.isEmpty()){
-            firstNameId.setError("First name is required!");
-            firstNameId.requestFocus();
+            field_first_name.setError("First name is required!");
+            field_first_name.requestFocus();
             return;
         }
 
         //Check Last Name validity
-        EditText lastNameId = findViewById(R.id.field_last_name);
-        String lastName = lastNameId.getText().toString().trim();
+        EditText field_last_name = findViewById(R.id.field_last_name);
+        String lastName = field_last_name.getText().toString().trim();
 
         if(lastName.isEmpty()){
-            lastNameId.setError("Last name is required!");
-            lastNameId.requestFocus();
+            field_last_name.setError("Last name is required!");
+            field_last_name.requestFocus();
             return;
         }
 
         //Check Email Validity
-        EditText emailId = findViewById(R.id.field_email);
-        String email = emailId.getText().toString();
+        EditText field_email = findViewById(R.id.field_email);
+        String email = field_email.getText().toString();
 
         if(email.isEmpty()){
-            emailId.setError("Email is required!");
-            emailId.requestFocus();
+            field_email.setError("Email is required!");
+            field_email.requestFocus();
             return;
         } else if (!User.emailIsValid(email)){
-            emailId.setError("This is an invalid E-mail!");
+            field_email.setError("This is an invalid E-mail!");
             return;
         }
 
         //check password matching
-        EditText passwordId = findViewById(R.id.field_password);
-        String password = passwordId.getText().toString().trim();
+        EditText field_password = findViewById(R.id.field_password);
+        String password = field_password.getText().toString().trim();
 
-        EditText passwordConfirmId = findViewById(R.id.field_password_confirm);
-        String passwordConfirm = passwordConfirmId.getText().toString().trim();
+        EditText field_password_confirm = findViewById(R.id.field_password_confirm);
+        String passwordConfirm = field_password_confirm.getText().toString().trim();
 
         if (password.isEmpty()) {
-            passwordId.setError("Password is required!");
-            passwordId.requestFocus();
+            field_password.setError("Password is required!");
+            field_password.requestFocus();
             return;
         } else if (passwordConfirm.isEmpty()) {
-            passwordConfirmId.setError("Password Confirm is required!");
-            passwordConfirmId.requestFocus();
+            field_password_confirm.setError("Password Confirm is required!");
+            field_password_confirm.requestFocus();
             return;
         } else if (password.length()<6) {
-            passwordId.setError("Minimum length of password should be 6");
-            passwordId.requestFocus();
+            field_password.setError("Minimum length of password should be 6");
+            field_password.requestFocus();
             return;
         } else if (!password.equals(passwordConfirm)) {
-            passwordConfirmId.setError("Passwords does not match!");
-            passwordId.requestFocus();
+            field_password_confirm.setError("Passwords does not match!");
+            field_password.requestFocus();
             return;
         }
 
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
         RadioButton radioButton = findViewById(radioGroup.getCheckedRadioButtonId());
-        final User newUser = new User(firstName, lastName, username, email, User.parseType(radioButton.getText().toString()));
+        final User newUser = new User(firstName, lastName, username, email, User.parseType(radioButton.getText().toString()), password);
 
-        
-        DatabaseUtil.createUser(newUser, password, new UserEventListener() {
+        final Button btn_create_account = findViewById(R.id.btn_create_account);
+        btn_create_account.setEnabled(false);
+
+        DatabaseUtil.exists(username, new UserEventListener(){
             public void onSuccess() {
-
+                // Error condition, user exists
+                btn_create_account.setEnabled(true);
+                field_username.setError("Username is already in use!");
+                field_username.requestFocus();
             }
             public void onFailure(DatabaseUtil.CallbackFailure reason) {
+                switch (reason) {
+                    case DATABASE_ERROR:
+                        btn_create_account.setEnabled(true);
+                        Toast.makeText(CreateAccount.this, "Unable to create your account at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+                        break;
+                    case DOES_NOT_EXIST: // Success case, the username does not exist
+                        DatabaseUtil.createUser(newUser, new UserEventListener() {
+                            public void onSuccess() {
+                                Intent intent = new Intent(CreateAccount.this, SignIn.class);
+                                intent.putExtra("showToast", "The user account '" + username + "' has been successfully created.  Please sign in to continue.");
+                                startActivity(intent);
+                            }
+                            public void onFailure(DatabaseUtil.CallbackFailure reason) {
+                                btn_create_account.setEnabled(true);
+                                Toast.makeText(CreateAccount.this, "Unable to create your account at this time. Please try again later.", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        break;
+
+                    default:
+                        // Some other kind of error
+                        btn_create_account.setEnabled(true);
+                        Toast.makeText(CreateAccount.this, "Unable to create your account at this time. Please try again later.", Toast.LENGTH_LONG).show();
+                }
+
 
             }
         });
-
-
-        if (newUser.create(password)) {
-            User.setCurrentUser(newUser);
-            Intent intent = new Intent(this, SignIn.class);
-            intent.putExtra("showToast", "The user account '" + username + "' has been successfully created.  Please sign in to continue.");
-            startActivity(intent);
-        } else {
-            Toast.makeText(this, "Unable to create your account at this time. Please try again later.", Toast.LENGTH_LONG).show();
-        }
 
     }
 }
