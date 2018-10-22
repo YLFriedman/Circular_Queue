@@ -79,7 +79,7 @@ public class SignIn extends AppCompatActivity {
 
             }
 
-           
+
         };
 
         DatabaseUtil.authenticate(inputUsername, inputPassword, userListener);
