@@ -177,7 +177,7 @@ public class UserAccount extends AppCompatActivity {
             DatabaseUtil.updateUser(updatedUser, new UserEventListener() {
                 public void onSuccess() {
                     Toast.makeText(UserAccount.this, "Account updated successfully!", Toast.LENGTH_LONG).show();
-                    currentUser = DatabaseUtil.getCurrentUser();
+                    UserAccount.this.currentUser = DatabaseUtil.getCurrentUser();
                     setUserViewValues();
                     setView(Views.USER_VIEW);
                     btn_save_user.setEnabled(true);
