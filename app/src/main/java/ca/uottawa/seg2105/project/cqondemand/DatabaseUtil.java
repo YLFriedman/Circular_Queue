@@ -1,6 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -84,7 +85,7 @@ public class DatabaseUtil {
 
     }
 
-    public static void createUser(final User user,final String password,final UserEventListener listener) {
+    public static void createUser(final User user,final UserEventListener listener) {
         UserEventListener existListener = new UserEventListener() {
             @Override
             public void onSuccess() {
@@ -102,7 +103,7 @@ public class DatabaseUtil {
                         dbUsers.child(username).child("first_name").setValue(user.getFirstName());
                         dbUsers.child(username).child("last_name").setValue(user.getLastName());
                         dbUsers.child(username).child("email").setValue(user.getEmail());
-                        dbUsers.child(username).child("password").setValue(password);
+                        dbUsers.child(username).child("password").setValue(user.getPassword());
                         listener.onSuccess();
                     } catch (DatabaseException e) {
                         listener.onFailure(CallbackFailure.DATABASE_ERROR);
@@ -118,7 +119,7 @@ public class DatabaseUtil {
         exists(user.getUserName(), existListener);
     }
 
-    public static void update(User user, UserEventListener listener){
+    public static void update(User user, final UserEventListener listener){
         String username = user.getUserName();
 
         dbUsers.child(username).child("type").setValue(user.getType().toString());
@@ -127,8 +128,19 @@ public class DatabaseUtil {
         dbUsers.child(username).child("email").setValue(user.getEmail());
         dbUsers.child(username).child("password").setValue(user.getPassword());
 
+        DatabaseReference.CompletionListener complete = new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                if(databaseError == null){
+                    listener.onSuccess();
+                }
+                else{
+                    listener.onFailure(CallbackFailure.DATABASE_ERROR);
+                }
+            }
+        };
         if(!User.getCurrentUser().getUserName().equals(username)){
-            dbUsers.child(User.getCurrentUser().getUserName()).removeValue();
+            dbUsers.child(User.getCurrentUser().getUserName()).removeValue(complete);
 
         }
         User.setCurrentUser(user);
@@ -137,8 +149,19 @@ public class DatabaseUtil {
 
     }
 
-    public static void delete(String username, UserEventListener listener){
-        
+    public static void delete(String username,final UserEventListener listener){
+        DatabaseReference.CompletionListener complete = new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                if(databaseError == null){
+                    listener.onSuccess();
+                }
+                else{
+                    listener.onFailure(CallbackFailure.DATABASE_ERROR);
+                }
+            }
+        };
+        dbUsers.child(username).removeValue(complete);
     }
 
 
