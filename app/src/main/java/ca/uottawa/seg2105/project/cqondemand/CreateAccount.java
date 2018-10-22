@@ -8,7 +8,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class CreateAccount extends AppCompatActivity {
@@ -24,7 +23,7 @@ public class CreateAccount extends AppCompatActivity {
     public void onCreateClick(View view){
 
         //init boolean array to all true;
-        for (int i = 0; i < checks.length; i++){
+        for (int i = 0; i < checks.length; i++) {
             checks[i] = true;
         }
 
@@ -46,7 +45,7 @@ public class CreateAccount extends AppCompatActivity {
         EditText field_first_name = findViewById(R.id.field_first_name);
         String firstName = field_first_name.getText().toString().trim();
 
-        if (firstName.isEmpty()){
+        if (firstName.isEmpty()) {
             field_first_name.setError("First name is required!");
             field_first_name.requestFocus();
             return;
@@ -56,7 +55,7 @@ public class CreateAccount extends AppCompatActivity {
         EditText field_last_name = findViewById(R.id.field_last_name);
         String lastName = field_last_name.getText().toString().trim();
 
-        if(lastName.isEmpty()){
+        if (lastName.isEmpty()) {
             field_last_name.setError("Last name is required!");
             field_last_name.requestFocus();
             return;
@@ -66,11 +65,11 @@ public class CreateAccount extends AppCompatActivity {
         EditText field_email = findViewById(R.id.field_email);
         String email = field_email.getText().toString();
 
-        if(email.isEmpty()){
+        if (email.isEmpty()) {
             field_email.setError("Email is required!");
             field_email.requestFocus();
             return;
-        } else if (!User.emailIsValid(email)){
+        } else if (!User.emailIsValid(email)) {
             field_email.setError("This is an invalid E-mail!");
             return;
         }
@@ -101,7 +100,7 @@ public class CreateAccount extends AppCompatActivity {
                 field_password.requestFocus();
                 return;
             case CONTAINS_USERNAME:
-                field_password.setError("Your password cannot contain your username.");
+                field_password.setError("The password cannot contain the username.");
                 field_password.requestFocus();
                 return;
             default:
@@ -110,7 +109,6 @@ public class CreateAccount extends AppCompatActivity {
                 return;
         }
 
-
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
         RadioButton radioButton = findViewById(radioGroup.getCheckedRadioButtonId());
         final User newUser = new User(firstName, lastName, username, email, User.parseType(radioButton.getText().toString()), password);
@@ -118,41 +116,27 @@ public class CreateAccount extends AppCompatActivity {
         final Button btn_create_account = findViewById(R.id.btn_create_account);
         btn_create_account.setEnabled(false);
 
-        DatabaseUtil.userExists(username, new UserEventListener(){
+        DatabaseUtil.createUser(newUser, new UserEventListener() {
             public void onSuccess() {
-                // Error condition, user exists
-                btn_create_account.setEnabled(true);
-                field_username.setError("Username is already in use!");
-                field_username.requestFocus();
+                Intent intent = new Intent(CreateAccount.this, SignIn.class);
+                intent.putExtra("showToast", "The user account '" + username + "' has been successfully created.  Please sign in to continue.");
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
             public void onFailure(DatabaseUtil.CallbackFailure reason) {
                 switch (reason) {
                     case DATABASE_ERROR:
-                        btn_create_account.setEnabled(true);
                         Toast.makeText(CreateAccount.this, "Unable to create your account at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
                         break;
-                    case DOES_NOT_EXIST: // Success case, the username does not exist
-                        DatabaseUtil.createUser(newUser, new UserEventListener() {
-                            public void onSuccess() {
-                                Intent intent = new Intent(CreateAccount.this, SignIn.class);
-                                intent.putExtra("showToast", "The user account '" + username + "' has been successfully created.  Please sign in to continue.");
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(intent);
-                            }
-                            public void onFailure(DatabaseUtil.CallbackFailure reason) {
-                                btn_create_account.setEnabled(true);
-                                Toast.makeText(CreateAccount.this, "Unable to create your account at this time. Please try again later.", Toast.LENGTH_LONG).show();
-                            }
-                        });
+                    case ALREADY_EXISTS:
+                        field_username.setError("Username is already in use!");
+                        field_username.requestFocus();
                         break;
-
                     default:
                         // Some other kind of error
-                        btn_create_account.setEnabled(true);
                         Toast.makeText(CreateAccount.this, "Unable to create your account at this time. Please try again later.", Toast.LENGTH_LONG).show();
                 }
-
-
+                btn_create_account.setEnabled(true);
             }
         });
 

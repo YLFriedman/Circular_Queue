@@ -12,9 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 public class UserAccount extends AppCompatActivity {
 
     private static enum Views { USER_VIEW, USER_EDIT, CHANGE_PASSWORD }
@@ -36,6 +33,7 @@ public class UserAccount extends AppCompatActivity {
 
     private Button btn_save_user;
     private Button btn_save_password;
+    private Button btn_delete_user;
 
     private User currentUser;
 
@@ -68,6 +66,13 @@ public class UserAccount extends AppCompatActivity {
             // Set references to the Cutton User UI objects
             btn_save_user = findViewById(R.id.btn_save_user);
             btn_save_password = findViewById(R.id.btn_save_password);
+            btn_delete_user = findViewById(R.id.btn_delete_user);
+
+            if (currentUser.getType() == User.Types.ADMIN) {
+                btn_save_user.setVisibility(View.GONE);
+                btn_save_password.setVisibility(View.GONE);
+                btn_delete_user.setVisibility(View.GONE);
+            }
 
             // Set values for the initial landing layout
             setUserViewValues();
@@ -131,29 +136,22 @@ public class UserAccount extends AppCompatActivity {
             setView(Views.USER_VIEW);
         } else {
             btn_save_user.setEnabled(false);
-            DatabaseUtil.userExists(username, new UserEventListener() {
+            DatabaseUtil.updateUser(updatedUser, new UserEventListener() {
                 public void onSuccess() {
-                    // Error condition, user exists
+                    Toast.makeText(UserAccount.this, "Account updated successfully!", Toast.LENGTH_LONG).show();
+                    setUserViewValues();
+                    setView(Views.USER_VIEW);
                     btn_save_user.setEnabled(true);
-                    field_username.setError("'" + username + "' is already in use!");
-                    field_username.requestFocus();
                 }
                 public void onFailure(DatabaseUtil.CallbackFailure reason) {
                     switch (reason) {
+                        case ALREADY_EXISTS:
+                            btn_save_user.setEnabled(true);
+                            field_username.setError("Username is already in use!");
+                            field_username.requestFocus();
+                            break;
                         case DATABASE_ERROR:
                             Toast.makeText(UserAccount.this, "Unable to update your account at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
-                            break;
-                        case DOES_NOT_EXIST: // Success case, the username does not exist
-                            DatabaseUtil.updateUser(updatedUser, new UserEventListener() {
-                                public void onSuccess() {
-                                    Toast.makeText(UserAccount.this, "Account updated successfully!", Toast.LENGTH_LONG).show();
-                                    setUserViewValues();
-                                    setView(Views.USER_VIEW);
-                                }
-                                public void onFailure(DatabaseUtil.CallbackFailure reason) {
-                                    Toast.makeText(UserAccount.this, "Unable to update your account at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
-                                }
-                            });
                             break;
                         default:
                             // Some other kind of error
