@@ -138,6 +138,25 @@ public class DatabaseUtil {
         }
     }
 
+    public static void updateUserPassword(final User user, final UserEventListener listener) {
+        DatabaseReference.CompletionListener complete = new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                if (databaseError == null) {
+                    listener.onSuccess();
+                } else {
+                    listener.onFailure(CallbackFailure.DATABASE_ERROR);
+                }
+            }
+        };
+        try {
+            dbUsers.child(user.getUserName()).child("password").setValue(user.getPassword(), complete);
+        } catch (DatabaseException e) {
+            listener.onFailure(CallbackFailure.DATABASE_ERROR);
+        }
+
+    }
+
     public static void deleteUser(String username, final UserEventListener listener) {
         DatabaseReference.CompletionListener complete = new DatabaseReference.CompletionListener() {
             @Override

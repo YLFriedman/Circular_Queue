@@ -31,9 +31,11 @@ public class UserAccount extends AppCompatActivity {
     private EditText field_password;
     private EditText field_password_confirm;
 
+    private Button btn_edit_user;
+    private Button btn_change_password;
+    private Button btn_delete_user;
     private Button btn_save_user;
     private Button btn_save_password;
-    private Button btn_delete_user;
 
     private User currentUser;
 
@@ -64,13 +66,15 @@ public class UserAccount extends AppCompatActivity {
             field_password_confirm = findViewById(R.id.field_password_confirm);
 
             // Set references to the Cutton User UI objects
+            btn_edit_user = findViewById(R.id.btn_edit_user);
+            btn_change_password = findViewById(R.id.btn_change_password);
+            btn_delete_user = findViewById(R.id.btn_delete_user);
             btn_save_user = findViewById(R.id.btn_save_user);
             btn_save_password = findViewById(R.id.btn_save_password);
-            btn_delete_user = findViewById(R.id.btn_delete_user);
 
             if (currentUser.getType() == User.Types.ADMIN) {
-                btn_save_user.setVisibility(View.GONE);
-                btn_save_password.setVisibility(View.GONE);
+                btn_edit_user.setVisibility(View.GONE);
+                btn_change_password.setVisibility(View.GONE);
                 btn_delete_user.setVisibility(View.GONE);
             }
 
@@ -81,11 +85,19 @@ public class UserAccount extends AppCompatActivity {
     }
 
     private void setUserViewValues() {
-        txt_account_type.setText(currentUser.getType().toString());
-        txt_username.setText(currentUser.getUserName());
-        txt_first_name.setText(currentUser.getFirstName());
-        txt_last_name.setText(currentUser.getLastName());
-        txt_email.setText(currentUser.getEmail());
+        if (null == currentUser) {
+            txt_account_type.setText("");
+            txt_username.setText("");
+            txt_first_name.setText("");
+            txt_last_name.setText("");
+            txt_email.setText("");
+        } else {
+            txt_account_type.setText(currentUser.getType().toString());
+            txt_username.setText(currentUser.getUserName());
+            txt_first_name.setText(currentUser.getFirstName());
+            txt_last_name.setText(currentUser.getLastName());
+            txt_email.setText(currentUser.getEmail());
+        }
     }
 
     public void onChangePasswordClick(View view){
@@ -105,6 +117,7 @@ public class UserAccount extends AppCompatActivity {
                                 intent.putExtra("showToast", "The user account '" + currentUser.getUserName() + "' has been successfully deleted.");
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 DatabaseUtil.setCurrentUser(null);
+                                currentUser = null;
                                 UserAccount.this.startActivity(intent);
                             }
                             public void onFailure(DatabaseUtil.CallbackFailure reason) {
@@ -115,11 +128,18 @@ public class UserAccount extends AppCompatActivity {
                 .setNegativeButton(R.string.cancel, null).show();
     }
 
-    public void onEditUserClick(View view){
-        field_username.setText(currentUser.getUserName(), TextView.BufferType.EDITABLE);
-        field_first_name.setText(currentUser.getFirstName(), TextView.BufferType.EDITABLE);
-        field_last_name.setText(currentUser.getLastName(), TextView.BufferType.EDITABLE);
-        field_email.setText(currentUser.getEmail(), TextView.BufferType.EDITABLE);
+    public void onEditUserClick(View view) {
+        if (null == currentUser) {
+            field_username.setText("", TextView.BufferType.EDITABLE);
+            field_first_name.setText("", TextView.BufferType.EDITABLE);
+            field_last_name.setText("", TextView.BufferType.EDITABLE);
+            field_email.setText("", TextView.BufferType.EDITABLE);
+        } else {
+            field_username.setText(currentUser.getUserName(), TextView.BufferType.EDITABLE);
+            field_first_name.setText(currentUser.getFirstName(), TextView.BufferType.EDITABLE);
+            field_last_name.setText(currentUser.getLastName(), TextView.BufferType.EDITABLE);
+            field_email.setText(currentUser.getEmail(), TextView.BufferType.EDITABLE);
+        }
         setView(Views.USER_EDIT);
     }
 
@@ -135,10 +155,29 @@ public class UserAccount extends AppCompatActivity {
             Toast.makeText(this, "No changes were made to the account details.", Toast.LENGTH_SHORT).show();
             setView(Views.USER_VIEW);
         } else {
+            if (username.isEmpty()) {
+                field_username.setError("Username is required!");
+                field_username.requestFocus();
+                return;
+            } else if (!User.userNameIsValid(username)) {
+                field_username.setError("Username is invalid. " + User.ILLEGAL_USERNAME_CHARS_MSG);
+                field_username.requestFocus();
+                return;
+            }
+            if (email.isEmpty()) {
+                field_email.setError("Email is required!");
+                field_email.requestFocus();
+                return;
+            } else if (!User.emailIsValid(email)) {
+                field_email.setError("This is an invalid E-mail!");
+                field_email.requestFocus();
+                return;
+            }
             btn_save_user.setEnabled(false);
             DatabaseUtil.updateUser(updatedUser, new UserEventListener() {
                 public void onSuccess() {
                     Toast.makeText(UserAccount.this, "Account updated successfully!", Toast.LENGTH_LONG).show();
+                    currentUser = DatabaseUtil.getCurrentUser();
                     setUserViewValues();
                     setView(Views.USER_VIEW);
                     btn_save_user.setEnabled(true);
@@ -201,7 +240,7 @@ public class UserAccount extends AppCompatActivity {
             }
             final User updatedUser = new User(currentUser.getFirstName(), currentUser.getLastName(), currentUser.getUserName(), currentUser.getEmail(), currentUser.getType(), password);
             btn_save_password.setEnabled(false);
-            DatabaseUtil.updateUser(updatedUser, new UserEventListener() {
+            DatabaseUtil.updateUserPassword(updatedUser, new UserEventListener() {
                 public void onSuccess() {
                     Toast.makeText(UserAccount.this, "Password updated successfully!", Toast.LENGTH_LONG).show();
                     setUserViewValues();
