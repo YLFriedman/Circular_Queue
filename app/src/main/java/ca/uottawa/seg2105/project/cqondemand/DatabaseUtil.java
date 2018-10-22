@@ -39,7 +39,7 @@ public class DatabaseUtil {
                     listener.onFailure(CallbackFailure.DOES_NOT_EXIST);
                 } else {
                     String realPassword = (String) dataSnapshot.child("password").getValue();
-                    if(password.equals(realPassword)){
+                    if (password.equals(realPassword)) {
                         String firstName = (String) dataSnapshot.child("first_name").getValue();
                         String lastName = (String) dataSnapshot.child("last_name").getValue();
                         String email = (String) dataSnapshot.child("email").getValue();
@@ -73,7 +73,6 @@ public class DatabaseUtil {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 listener.onFailure(CallbackFailure.DATABASE_ERROR);
-
             }
         });
     }
@@ -97,9 +96,7 @@ public class DatabaseUtil {
                         listener.onSuccess();
                     } catch (DatabaseException e) {
                         listener.onFailure(CallbackFailure.DATABASE_ERROR);
-
                     }
-
                 } else {
                     listener.onFailure(CallbackFailure.DATABASE_ERROR);
                 }
@@ -108,13 +105,40 @@ public class DatabaseUtil {
         userExists(user.getUserName(), existListener);
     }
 
-    public static void updateUser(User user, final UserEventListener listener) {
-        String username = user.getUserName();
-        dbUsers.child(username).child("type").setValue(user.getType().toString());
-        dbUsers.child(username).child("first_name").setValue(user.getFirstName());
-        dbUsers.child(username).child("last_name").setValue(user.getLastName());
-        dbUsers.child(username).child("email").setValue(user.getEmail());
-        dbUsers.child(username).child("password").setValue(user.getPassword());
+    public static void updateUser(final User user, final UserEventListener listener) {
+        final String username = user.getUserName();
+        if (getCurrentUser().getUserName().equals(username)) {
+            // If the username is not changing, update the existing node
+            try {
+                dbUsers.child(username).child("type").setValue(user.getType().toString());
+                dbUsers.child(username).child("first_name").setValue(user.getFirstName());
+                dbUsers.child(username).child("last_name").setValue(user.getLastName());
+                dbUsers.child(username).child("email").setValue(user.getEmail());
+                dbUsers.child(username).child("password").setValue(user.getPassword());
+                listener.onSuccess();
+            } catch (DatabaseException e) {
+                listener.onFailure(CallbackFailure.DATABASE_ERROR);
+            }
+        } else {
+            // If the username is changing, use the createUser method, which checks if the new uesrname exists
+            createUser(user, new UserEventListener() {
+                @Override
+                public void onSuccess() {
+                    // Remove the old user from the DB
+                    dbUsers.child(getCurrentUser().getUserName()).removeValue();
+                    // Update the app's current user
+                    setCurrentUser(user);
+                    listener.onSuccess();
+                }
+                @Override
+                public void onFailure(CallbackFailure reason) {
+                    listener.onFailure(reason);
+                }
+            });
+        }
+    }
+
+    public static void updateUserPassword(final User user, final UserEventListener listener) {
         DatabaseReference.CompletionListener complete = new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
@@ -125,11 +149,12 @@ public class DatabaseUtil {
                 }
             }
         };
-        if (!getCurrentUser().getUserName().equals(username)) {
-            dbUsers.child(getCurrentUser().getUserName()).removeValue(complete);
+        try {
+            dbUsers.child(user.getUserName()).child("password").setValue(user.getPassword(), complete);
+        } catch (DatabaseException e) {
+            listener.onFailure(CallbackFailure.DATABASE_ERROR);
         }
-        setCurrentUser(user);
-        listener.onSuccess();
+
     }
 
     public static void deleteUser(String username, final UserEventListener listener) {
@@ -138,7 +163,7 @@ public class DatabaseUtil {
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                 if (databaseError == null) {
                     listener.onSuccess();
-                } else{
+                } else {
                     listener.onFailure(CallbackFailure.DATABASE_ERROR);
                 }
             }

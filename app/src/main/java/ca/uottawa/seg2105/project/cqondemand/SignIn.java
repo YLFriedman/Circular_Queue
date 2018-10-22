@@ -18,6 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class SignIn extends AppCompatActivity {
 
+    private User currentUser;
     private Button signInButton;
     private Button createAccountButton;
 
@@ -29,10 +30,17 @@ public class SignIn extends AppCompatActivity {
         signInButton = findViewById(R.id.btn_sign_in);
         createAccountButton = findViewById(R.id.btn_sign_up);
 
-        Intent intent = getIntent();
-        String toastText;
-        if (null != (toastText = intent.getStringExtra("showToast"))) {
-            Toast.makeText(this, toastText, Toast.LENGTH_LONG).show();
+        currentUser = DatabaseUtil.getCurrentUser();
+        if (null == currentUser) {
+            Intent intent = getIntent();
+            String toastText;
+            if (null != (toastText = intent.getStringExtra("showToast"))) {
+                Toast.makeText(this, toastText, Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Intent loginIntent = new Intent(getApplicationContext(), UserHome.class);
+            loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(loginIntent);
         }
 
     }
@@ -54,38 +62,23 @@ public class SignIn extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 Intent loginIntent = new Intent(getApplicationContext(), UserHome.class);
+                loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 signInButton.setEnabled(true);
                 createAccountButton.setEnabled(true);
                 startActivity(loginIntent);
-
             }
-
-
             @Override
             public void onFailure(DatabaseUtil.CallbackFailure reason) {
-
                 signInButton.setEnabled(true);
                 createAccountButton.setEnabled(true);
-
-                switch(reason){
-                    case DATABASE_ERROR:
-                        Toast.makeText(getApplicationContext(), "Database Error!", Toast.LENGTH_LONG).show();
-                        break;
-                    default:
-                        Toast.makeText(getApplicationContext(), "Invalid Credentials!", Toast.LENGTH_LONG).show();
+                switch (reason) {
+                    case DATABASE_ERROR: Toast.makeText(getApplicationContext(), "Database Error!", Toast.LENGTH_LONG).show(); break;
+                    default: Toast.makeText(getApplicationContext(), "Invalid Credentials!", Toast.LENGTH_LONG).show();
                 }
-
             }
-
-
         };
 
         DatabaseUtil.authenticate(inputUsername, inputPassword, userListener);
-
-
-
-
-
 
     }
 
@@ -97,10 +90,6 @@ public class SignIn extends AppCompatActivity {
     public void onCreateAccountClick(View view){
         Intent intent = new Intent(this, CreateAccount.class);
         startActivity(intent);
-
     }
-
-
-
 
 }
