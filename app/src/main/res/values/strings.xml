@@ -24,4 +24,7 @@
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="admin">Admin</string>
+    <string name="current_password">Current Password</string>
+    <string name="new_password">New Password</string>
+    <string name="new_password_confirm">Confirm New Password</string>
 </resources>

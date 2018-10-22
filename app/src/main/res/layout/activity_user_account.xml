@@ -208,12 +208,21 @@
             android:visibility="gone">
 
             <EditText
+                android:id="@+id/field_password_old"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:ems="10"
+                android:hint="@string/current_password"
+                android:inputType="textPassword" />
+
+            <EditText
                 android:id="@+id/field_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:ems="10"
-                android:hint="@string/password"
+                android:hint="@string/new_password"
                 android:inputType="textPassword" />
 
             <EditText
@@ -222,7 +231,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:ems="10"
-                android:hint="@string/password_confirm"
+                android:hint="@string/new_password_confirm"
                 android:inputType="textPassword" />
 
             <Button

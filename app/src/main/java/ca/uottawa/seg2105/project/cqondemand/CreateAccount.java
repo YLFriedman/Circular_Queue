@@ -19,12 +19,7 @@ public class CreateAccount extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
-
-
-
     }
-
-    //TODO: Allow for the creation of an admin account, if one does not already exist. Will have to add new UI elements.
 
     public void onCreateClick(View view){
 
@@ -87,23 +82,34 @@ public class CreateAccount extends AppCompatActivity {
         EditText field_password_confirm = findViewById(R.id.field_password_confirm);
         String passwordConfirm = field_password_confirm.getText().toString().trim();
 
-        if (password.isEmpty()) {
-            field_password.setError("Password is required!");
-            field_password.requestFocus();
-            return;
-        } else if (passwordConfirm.isEmpty()) {
-            field_password_confirm.setError("Password Confirm is required!");
-            field_password_confirm.requestFocus();
-            return;
-        } else if (password.length()<6) {
-            field_password.setError("Minimum length of password should be 6");
-            field_password.requestFocus();
-            return;
-        } else if (!password.equals(passwordConfirm)) {
-            field_password_confirm.setError("Passwords does not match!");
-            field_password.requestFocus();
-            return;
+        switch (User.validatePassword(username, password, passwordConfirm)) {
+            case VALID: break;
+            case EMPTY:
+                field_password.setError("Password is required!");
+                field_password.requestFocus();
+                return;
+            case TOO_SHORT:
+                field_password.setError("Minimum length of password is " + User.PASSWORD_MIN_LENGTH + " characters.");
+                field_password.requestFocus();
+                return;
+            case CONFIRM_MISMATCH:
+                field_password_confirm.setError("Both passwords must match.");
+                field_password_confirm.requestFocus();
+                return;
+            case ILLEGAL_PASSWORD:
+                field_password.setError("The selected password is banned. Please select a new password.");
+                field_password.requestFocus();
+                return;
+            case CONTAINS_USERNAME:
+                field_password.setError("Your password cannot contain your username.");
+                field_password.requestFocus();
+                return;
+            default:
+                field_password.setError("Invalid password.");
+                field_password.requestFocus();
+                return;
         }
+
 
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
         RadioButton radioButton = findViewById(radioGroup.getCheckedRadioButtonId());
@@ -112,7 +118,7 @@ public class CreateAccount extends AppCompatActivity {
         final Button btn_create_account = findViewById(R.id.btn_create_account);
         btn_create_account.setEnabled(false);
 
-        DatabaseUtil.exists(username, new UserEventListener(){
+        DatabaseUtil.userExists(username, new UserEventListener(){
             public void onSuccess() {
                 // Error condition, user exists
                 btn_create_account.setEnabled(true);
@@ -130,6 +136,7 @@ public class CreateAccount extends AppCompatActivity {
                             public void onSuccess() {
                                 Intent intent = new Intent(CreateAccount.this, SignIn.class);
                                 intent.putExtra("showToast", "The user account '" + username + "' has been successfully created.  Please sign in to continue.");
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
                             }
                             public void onFailure(DatabaseUtil.CallbackFailure reason) {

@@ -29,8 +29,6 @@ public class SignIn extends AppCompatActivity {
         signInButton = findViewById(R.id.btn_sign_in);
         createAccountButton = findViewById(R.id.btn_sign_up);
 
-
-
         Intent intent = getIntent();
         String toastText;
         if (null != (toastText = intent.getStringExtra("showToast"))) {

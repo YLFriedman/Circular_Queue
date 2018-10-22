@@ -17,22 +17,27 @@ public class DatabaseUtil {
 
     private static User currentUser = null;
 
+    public static User getCurrentUser() {
+        return currentUser;
+    }
 
+    public static void setCurrentUser(User user) {
+        currentUser = user;
+    }
 
-    public enum CallbackFailure{
+    public enum CallbackFailure {
         ALREADY_EXISTS, DATABASE_ERROR, DOES_NOT_EXIST, PASSWORD_MISMATCH;
     }
 
-    public static void authenticate(final String username,final String password,final UserEventListener listener){
+    public static void authenticate(final String username, final String password, final UserEventListener listener) {
 
         DatabaseReference userRef = dbUsers.child(username);
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.exists()){
+                if (!dataSnapshot.exists()) {
                     listener.onFailure(CallbackFailure.DOES_NOT_EXIST);
-                }
-                else{
+                } else {
                     String realPassword = (String) dataSnapshot.child("password").getValue();
                     if(password.equals(realPassword)){
                         String firstName = (String) dataSnapshot.child("first_name").getValue();
@@ -40,27 +45,21 @@ public class DatabaseUtil {
                         String email = (String) dataSnapshot.child("email").getValue();
                         String typeStr = (String) dataSnapshot.child("type").getValue();
                         User.Types type = User.parseType(typeStr);
-
-                        User.setCurrentUser(new User(firstName, lastName, username, email, type, password));
+                        setCurrentUser(new User(firstName, lastName, username, email, type, password));
                         listener.onSuccess();
-                    }
-                    else{
+                    } else {
                         listener.onFailure(CallbackFailure.PASSWORD_MISMATCH);
-
                     }
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 listener.onFailure(CallbackFailure.DATABASE_ERROR);
-
             }
         });
     }
 
-    public static void exists(final String username, final UserEventListener listener){
-
+    public static void userExists(final String username, final UserEventListener listener) {
         DatabaseReference userRef = dbUsers.child("username");
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -68,21 +67,15 @@ public class DatabaseUtil {
                 if (!dataSnapshot.exists()) {
                     listener.onFailure(CallbackFailure.DOES_NOT_EXIST);
                 } else {
-
                     listener.onSuccess();
                 }
             }
-
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 listener.onFailure(CallbackFailure.DATABASE_ERROR);
 
             }
         });
-
-
-
     }
 
     public static void createUser(final User user,final UserEventListener listener) {
@@ -91,13 +84,10 @@ public class DatabaseUtil {
             public void onSuccess() {
                 listener.onFailure(CallbackFailure.ALREADY_EXISTS);
             }
-
             @Override
             public void onFailure(CallbackFailure reason) {
                 if (reason == CallbackFailure.DOES_NOT_EXIST) {
-
                     String username = user.getUserName();
-
                     try {
                         dbUsers.child(username).child("type").setValue(user.getType().toString());
                         dbUsers.child(username).child("first_name").setValue(user.getFirstName());
@@ -110,60 +100,50 @@ public class DatabaseUtil {
 
                     }
 
-                }
-                else{
+                } else {
                     listener.onFailure(CallbackFailure.DATABASE_ERROR);
                 }
             }
         };
-        exists(user.getUserName(), existListener);
+        userExists(user.getUserName(), existListener);
     }
 
-    public static void update(User user, final UserEventListener listener){
+    public static void updateUser(User user, final UserEventListener listener) {
         String username = user.getUserName();
-
         dbUsers.child(username).child("type").setValue(user.getType().toString());
         dbUsers.child(username).child("first_name").setValue(user.getFirstName());
         dbUsers.child(username).child("last_name").setValue(user.getLastName());
         dbUsers.child(username).child("email").setValue(user.getEmail());
         dbUsers.child(username).child("password").setValue(user.getPassword());
-
         DatabaseReference.CompletionListener complete = new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                if(databaseError == null){
+                if (databaseError == null) {
                     listener.onSuccess();
-                }
-                else{
+                } else {
                     listener.onFailure(CallbackFailure.DATABASE_ERROR);
                 }
             }
         };
-        if(!User.getCurrentUser().getUserName().equals(username)){
-            dbUsers.child(User.getCurrentUser().getUserName()).removeValue(complete);
-
+        if (!getCurrentUser().getUserName().equals(username)) {
+            dbUsers.child(getCurrentUser().getUserName()).removeValue(complete);
         }
-        User.setCurrentUser(user);
+        setCurrentUser(user);
         listener.onSuccess();
-
-
     }
 
-    public static void delete(String username,final UserEventListener listener){
+    public static void deleteUser(String username, final UserEventListener listener) {
         DatabaseReference.CompletionListener complete = new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                if(databaseError == null){
+                if (databaseError == null) {
                     listener.onSuccess();
-                }
-                else{
+                } else{
                     listener.onFailure(CallbackFailure.DATABASE_ERROR);
                 }
             }
         };
         dbUsers.child(username).removeValue(complete);
     }
-
-
 
 }

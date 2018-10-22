@@ -4,10 +4,22 @@ import java.io.Serializable;
 
 public class User implements Serializable {
 
-    private static User currentUser = null;
     public static final String ILLEGAL_USERNAME_CHARS_REGEX = "[^a-zA-Z0-9_-]";
     public static final String ILLEGAL_USERNAME_CHARS_MSG = "Only the following characters are allowed: a-z A-z 0-9 _ -";
+    public static final int PASSWORD_MIN_LENGTH = 6;
+    public static final String[] ILLEGAL_PASSWORDS = { "password" };
+    public enum PasswordValidationResult { VALID, EMPTY, TOO_SHORT, CONFIRM_MISMATCH, ILLEGAL_PASSWORD, CONTAINS_USERNAME }
 
+    public static PasswordValidationResult validatePassword(String username, String password, String confirmPassword) {
+        if (password.isEmpty()) { return PasswordValidationResult.EMPTY; }
+        if (password.length() < PASSWORD_MIN_LENGTH) { return PasswordValidationResult.TOO_SHORT; }
+        if (password.toLowerCase().indexOf(username.toLowerCase()) >= 0) { return PasswordValidationResult.CONTAINS_USERNAME; }
+        for (int i = 0; i < ILLEGAL_PASSWORDS.length; i++) {
+            if (password.toLowerCase().equals(username.toLowerCase())) { return PasswordValidationResult.ILLEGAL_PASSWORD; }
+        }
+        if (!password.equals(confirmPassword)) { return PasswordValidationResult.CONFIRM_MISMATCH; }
+        return PasswordValidationResult.VALID;
+    }
     /**
      *The class User allows for the creation of User objects, and stores the pertinent values for each User.
      *Users can be of type Homeowner, Service Provider or Admin. Getters or Setters for all mutable values
@@ -184,9 +196,5 @@ public class User implements Serializable {
         }
 
     }
-
-    public static User getCurrentUser() { return currentUser; }
-
-    public static void setCurrentUser(User user) { currentUser = user; }
 
 }
