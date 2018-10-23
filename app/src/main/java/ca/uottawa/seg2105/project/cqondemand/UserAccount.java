@@ -100,7 +100,10 @@ public class UserAccount extends AppCompatActivity {
         }
     }
 
-    public void onChangePasswordClick(View view){
+    public void onChangePasswordClick(View view) {
+        field_password_old.getText().clear();
+        field_password.getText().clear();
+       field_password_confirm.getText().clear();
         setView(Views.CHANGE_PASSWORD);
     }
 
