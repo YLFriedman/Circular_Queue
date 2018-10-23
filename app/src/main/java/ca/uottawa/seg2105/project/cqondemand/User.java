@@ -160,14 +160,40 @@ public class User implements Serializable {
         password = input;
     }
 
+    /**
+     * Method for checking validity of a username (i.e that it is not empty or null, and that it
+     * does not contain illegal characters)
+     *
+     * @param username the username you want to check
+     * @return true if username is valid, false otherwise
+     */
+
     public static boolean userNameIsValid(String username) {
         if (null == username || username.isEmpty()) { return false; }
         return !username.matches(ILLEGAL_USERNAME_CHARS_REGEX);
     }
 
+    /**
+     * Method for checking if a given email is valid
+     *
+     * @param email the email address you want to check
+     * @return true if email is valid, false otherwise
+     */
+
     public static boolean emailIsValid(CharSequence email) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
+
+    /**
+     * Method for checking if a given password is valid. Checks for empty or null inputs, as well as
+     * illegal characters. Also ensures that the password does not contain the User's username and
+     * that both password fields match.
+     *
+     * @param username the username associated with the password you are checking
+     * @param password the input of the primary password field
+     * @param confirmPassword the input of the secondary password field
+     * @return true if the password is valid, false otherwise
+     */
 
     public static PasswordValidationResult validatePassword(String username, String password, String confirmPassword) {
         if (null == password || password.isEmpty()) { return PasswordValidationResult.EMPTY; }
@@ -179,6 +205,14 @@ public class User implements Serializable {
         if (!password.equals(confirmPassword)) { return PasswordValidationResult.CONFIRM_MISMATCH; }
         return PasswordValidationResult.VALID;
     }
+
+    /**
+     * A method for converting a string representation of a Type into a Type.
+     *
+     * @throws IllegalArgumentException if the input String is not a valid Type
+     * @param input the String representation of a Type you wish to convert
+     * @return
+     */
 
     public static User.Types parseType(String input) {
         switch (input) {
