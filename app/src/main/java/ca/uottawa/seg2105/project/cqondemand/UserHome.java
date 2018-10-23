@@ -25,6 +25,7 @@ public class UserHome extends AppCompatActivity {
     private UserAdapter adapter;
     private ArrayList<User> userList;
     private User currentUser;
+    private TextView userListTitle;
 
     /*
      * Fills in layout for UserHome activity
@@ -46,6 +47,8 @@ public class UserHome extends AppCompatActivity {
             setWelcomeText();
             if (currentUser.getType() == User.Types.ADMIN) {
                 recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+                userListTitle = (TextView) findViewById(R.id.userListTitle);
+                userListTitle.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.VISIBLE);
                 recyclerView.setHasFixedSize(true);
                 recyclerView.setLayoutManager(new LinearLayoutManager(this));
