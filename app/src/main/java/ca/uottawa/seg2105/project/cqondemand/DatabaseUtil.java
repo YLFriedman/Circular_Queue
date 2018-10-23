@@ -87,11 +87,13 @@ public class DatabaseUtil {
     /**
      * Callback method for ensuring that a given account exists. Fails if account does not exist.
      *
+     * @throws IllegalArgumentException if the username or listener are null
      * @param username the username you wish to check
      * @param listener the listener that will respond to the success/failure of the existence check
      */
-
     public static void userExists(final String username, final UserEventListener listener) {
+        if (null == username) { throw new IllegalArgumentException("The username cannot be null."); }
+        if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
         DatabaseReference userRef = dbUsers.child("username");
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -112,19 +114,22 @@ public class DatabaseUtil {
     /**
      * Callback method to attempt to create a user in the database. Fails if username is already taken
      *
+     * @throws IllegalArgumentException if the user is null
      * @param user the User object you wish to save to the database
      * @param listener the listener that will respond to the creation success or failure
      */
-
-    public static void createUser(final User user,final UserEventListener listener) {
-        UserEventListener existListener = new UserEventListener() {
+    public static void createUser(final User user, @Nullable final UserEventListener listener) {
+        if (null == user) { throw new IllegalArgumentException("The user cannot be null."); }
+        userExists(user.getUserName(), new UserEventListener() {
             @Override
             public void onSuccess() {
-                listener.onFailure(CallbackFailure.ALREADY_EXISTS);
+                // Failure condition: User already exists
+                if (null != listener) { listener.onFailure(CallbackFailure.ALREADY_EXISTS); }
             }
             @Override
             public void onFailure(CallbackFailure reason) {
                 if (reason == CallbackFailure.DOES_NOT_EXIST) {
+                    // Success condition: User does not exist, can be created
                     String username = user.getUserName();
                     try {
                         dbUsers.child(username).child("type").setValue(user.getType().toString());
@@ -132,27 +137,29 @@ public class DatabaseUtil {
                         dbUsers.child(username).child("last_name").setValue(user.getLastName());
                         dbUsers.child(username).child("email").setValue(user.getEmail());
                         dbUsers.child(username).child("password").setValue(user.getPassword());
-                        listener.onSuccess();
+                        if (null != listener) { listener.onSuccess(); }
                     } catch (DatabaseException e) {
-                        listener.onFailure(CallbackFailure.DATABASE_ERROR);
+                        if (null != listener) { listener.onFailure(CallbackFailure.DATABASE_ERROR); }
                     }
                 } else {
-                    listener.onFailure(CallbackFailure.DATABASE_ERROR);
+                    if (null != listener) { listener.onFailure(CallbackFailure.DATABASE_ERROR); }
                 }
             }
-        };
-        userExists(user.getUserName(), existListener);
+        });
     }
 
     /**
      * Callback method for updating a user's information.
      *
-     * @param user the user to be updated.
+     * @throws IllegalArgumentException if the username or user are null
+     * @param username the user to be updated.
+     * @param user the new details to be applied to the user.
      * @param listener the listener to be notified of the success/failure of the user update.
      */
-    public static void updateUser(final User user, final UserEventListener listener) {
-        final String username = user.getUserName();
-        if (getCurrentUser().getUserName().equals(username)) {
+    public static void updateUser(final String username, final User user, @Nullable final UserEventListener listener) {
+        if (null == username) { throw new IllegalArgumentException("The username cannot be null."); }
+        if (null == user) { throw new IllegalArgumentException("The user cannot be null."); }
+        if (user.getUserName().equals(username)) {
             // If the username is not changing, update the existing node
             try {
                 dbUsers.child(username).child("type").setValue(user.getType().toString());
@@ -161,9 +168,9 @@ public class DatabaseUtil {
                 dbUsers.child(username).child("email").setValue(user.getEmail());
                 dbUsers.child(username).child("password").setValue(user.getPassword());
                 setCurrentUser(user);
-                listener.onSuccess();
+                if (null != listener) { listener.onSuccess(); }
             } catch (DatabaseException e) {
-                listener.onFailure(CallbackFailure.DATABASE_ERROR);
+                if (null != listener) { listener.onFailure(CallbackFailure.DATABASE_ERROR); }
             }
         } else {
             // If the username is changing, use the createUser method, which checks if the new username exists
@@ -174,11 +181,11 @@ public class DatabaseUtil {
                     dbUsers.child(getCurrentUser().getUserName()).removeValue();
                     // Update the app's current user
                     setCurrentUser(user);
-                    listener.onSuccess();
+                    if (null != listener) { listener.onSuccess(); }
                 }
                 @Override
                 public void onFailure(CallbackFailure reason) {
-                    listener.onFailure(reason);
+                    if (null != listener) { listener.onFailure(reason); }
                 }
             });
         }
@@ -189,7 +196,6 @@ public class DatabaseUtil {
      *
      * @param listener the listener to handle the user list.
      */
-
     public static void getUserList(ValueEventListener listener){
         dbUsers.addListenerForSingleValueEvent(listener);
     }
@@ -200,7 +206,6 @@ public class DatabaseUtil {
      * @param user the user who's password will be changed
      * @param listener the listener to handle the outcome of the password change
      */
-
     public static void updateUserPassword(final User user, final UserEventListener listener) {
         DatabaseReference.CompletionListener complete = new DatabaseReference.CompletionListener() {
             @Override
@@ -227,7 +232,6 @@ public class DatabaseUtil {
      * @param username the username attached to the account to be deleted.
      * @param listener the listener that will handle the outcome of the deletion.
      */
-
     public static void deleteUser(String username, final UserEventListener listener) {
         DatabaseReference.CompletionListener complete = new DatabaseReference.CompletionListener() {
             @Override

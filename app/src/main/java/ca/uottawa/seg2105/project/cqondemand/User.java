@@ -45,6 +45,7 @@ public class User implements Serializable {
     /**
      * Constructor for User objects. This constructor supports users of type Homeowner and of type Service Provider
      *
+     * @throws IllegalArgumentException if any of the parameters are null
      * @param fName The first name of the user
      * @param lName The last name of the user
      * @param uName The desired Username
@@ -53,6 +54,14 @@ public class User implements Serializable {
      * @param pass The user's password
      */
     public User(String fName, String lName, String uName, String emailAddr, Types userType, String pass) {
+
+        if (null == fName) { throw new IllegalArgumentException("The fName parameter cannot be null."); }
+        if (null == lName) { throw new IllegalArgumentException("The lName parameter cannot be null."); }
+        if (null == uName) { throw new IllegalArgumentException("The uName parameter cannot be null."); }
+        if (null == emailAddr) { throw new IllegalArgumentException("The emailAddr parameter cannot be null."); }
+        if (null == userType) { throw new IllegalArgumentException("The userType parameter cannot be null."); }
+        if (null == pass) { throw new IllegalArgumentException("The pass parameter cannot be null."); }
+
         firstName = fName;
         lastName = lName;
         userName = uName;

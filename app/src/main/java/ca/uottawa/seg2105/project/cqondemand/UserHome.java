@@ -24,11 +24,9 @@ public class UserHome extends AppCompatActivity {
     private User currentUser;
     private LinearLayout userListContainer;
 
-
     /*
      * Fills in layout for UserHome activity
      */
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -18,16 +18,6 @@ public class CreateAccount extends AppCompatActivity {
         setContentView(R.layout.activity_create_account);
     }
 
-
-    @Override
-    public void onBackPressed() {
-        //super.onBackPressed();
-        DatabaseUtil.setCurrentUser(null);
-        Intent intent = new Intent(this, SignIn.class);
-        startActivity(intent);
-        finish();
-    }
-
     public void onCreateClick(View view){
 
         //Check username validity
@@ -121,9 +111,7 @@ public class CreateAccount extends AppCompatActivity {
 
         DatabaseUtil.createUser(newUser, new UserEventListener() {
             public void onSuccess() {
-                Intent intent = new Intent(CreateAccount.this, SignIn.class);
-                intent.putExtra("showToast", "The user account '" + username + "' has been successfully created.  Please sign in to continue.");
-                startActivity(intent);
+                Toast.makeText(CreateAccount.this, "The user account '" + username + "' has been successfully created.  Please sign in to continue.", Toast.LENGTH_LONG).show();
                 finish();
             }
             public void onFailure(DatabaseUtil.CallbackFailure reason) {

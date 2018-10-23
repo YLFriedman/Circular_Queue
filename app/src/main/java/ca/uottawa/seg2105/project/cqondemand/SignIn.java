@@ -1,20 +1,12 @@
 package ca.uottawa.seg2105.project.cqondemand;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 public class SignIn extends AppCompatActivity {
 
@@ -31,13 +23,7 @@ public class SignIn extends AppCompatActivity {
         createAccountButton = findViewById(R.id.btn_sign_up);
 
         currentUser = DatabaseUtil.getCurrentUser();
-        if (null == currentUser) {
-            Intent intent = getIntent();
-            String toastText;
-            if (null != (toastText = intent.getStringExtra("showToast"))) {
-                Toast.makeText(this, toastText, Toast.LENGTH_LONG).show();
-            }
-        } else {
+        if (null != currentUser) {
             Intent loginIntent = new Intent(getApplicationContext(), UserHome.class);
             startActivity(loginIntent);
             finish();
@@ -98,6 +84,17 @@ public class SignIn extends AppCompatActivity {
             public void onSuccess() { }
             @Override
             public void onFailure(DatabaseUtil.CallbackFailure reason) { }
+        });
+    }
+
+    public void onTestExistsClick(View view) {
+        EditText field_username = findViewById(R.id.field_username);
+        final String username = field_username.getText().toString();
+        DatabaseUtil.userExists(username, new UserEventListener() {
+            @Override
+            public void onSuccess() { Toast.makeText(getApplicationContext(), "'" + username + "' Exists", Toast.LENGTH_LONG).show(); }
+            @Override
+            public void onFailure(DatabaseUtil.CallbackFailure reason) { Toast.makeText(getApplicationContext(), "'" + username + "' Does Not Exist", Toast.LENGTH_LONG).show(); }
         });
     }
 

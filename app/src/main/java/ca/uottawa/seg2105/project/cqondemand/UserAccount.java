@@ -1,7 +1,6 @@
 package ca.uottawa.seg2105.project.cqondemand;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.app.AlertDialog;
@@ -46,8 +45,6 @@ public class UserAccount extends AppCompatActivity {
 
         currentUser = DatabaseUtil.getCurrentUser();
         if (null == currentUser) {
-            Intent intent = new Intent(this, SignIn.class);
-            startActivity(intent);
             finish();
         } else {
             // Set references to the View User UI objects
@@ -78,7 +75,6 @@ public class UserAccount extends AppCompatActivity {
                 btn_change_password.setVisibility(View.GONE);
                 btn_delete_user.setVisibility(View.GONE);
             }
-
             // Set values for the initial landing layout
             setUserViewValues();
         }
@@ -117,12 +113,9 @@ public class UserAccount extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         DatabaseUtil.deleteUser(currentUser.getUserName(), new UserEventListener(){
                             public void onSuccess() {
-                                Intent intent = new Intent(UserAccount.this, SignIn.class);
-                                intent.putExtra("showToast", "The user account '" + currentUser.getUserName() + "' has been successfully deleted.");
+                                Toast.makeText(UserAccount.this, "The user account '" + UserAccount.this.currentUser.getUserName() + "' has been successfully deleted.", Toast.LENGTH_LONG).show();
                                 DatabaseUtil.setCurrentUser(null);
                                 currentUser = null;
-                                //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(intent);
                                 finish();
                             }
                             public void onFailure(DatabaseUtil.CallbackFailure reason) {
@@ -193,7 +186,7 @@ public class UserAccount extends AppCompatActivity {
                 return;
             }
             btn_save_user.setEnabled(false);
-            DatabaseUtil.updateUser(updatedUser, new UserEventListener() {
+            DatabaseUtil.updateUser(currentUser.getUserName(), updatedUser, new UserEventListener() {
                 public void onSuccess() {
                     Toast.makeText(UserAccount.this, "Account updated successfully!", Toast.LENGTH_LONG).show();
                     currentUser = DatabaseUtil.getCurrentUser();
@@ -282,7 +275,6 @@ public class UserAccount extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         LinearLayout layout_user_view = findViewById(R.id.layout_user_view);
-
         if (layout_user_view.getVisibility() == View.VISIBLE) {
             super.onBackPressed();
         } else {
