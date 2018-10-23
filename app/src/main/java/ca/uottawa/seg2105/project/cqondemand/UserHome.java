@@ -44,8 +44,8 @@ public class UserHome extends AppCompatActivity {
             recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-            DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("users");
-            usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            DatabaseUtil.getUserList(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for(DataSnapshot postSnapshot : dataSnapshot.getChildren()){

@@ -139,6 +139,10 @@ public class DatabaseUtil {
         }
     }
 
+    public static void getUserList(ValueEventListener listener){
+        dbUsers.addListenerForSingleValueEvent(listener);
+    }
+
     public static void updateUserPassword(final User user, final UserEventListener listener) {
         DatabaseReference.CompletionListener complete = new DatabaseReference.CompletionListener() {
             @Override
