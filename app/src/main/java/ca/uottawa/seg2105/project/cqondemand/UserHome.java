@@ -1,15 +1,29 @@
 package ca.uottawa.seg2105.project.cqondemand;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+
 public class UserHome extends AppCompatActivity {
 
+    private RecyclerView recyclerView;
+    private UserAdapter adapter;
+    private ArrayList<User> userList;
     private User currentUser;
 
     /*
@@ -20,6 +34,49 @@ public class UserHome extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home);
+
+        currentUser = DatabaseUtil.getCurrentUser();
+        userList = new ArrayList<User>();
+
+        if (currentUser.getType()== User.Types.ADMIN) {
+            recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+            recyclerView.setVisibility(View.VISIBLE);
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+            DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("users");
+            usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for(DataSnapshot postSnapshot : dataSnapshot.getChildren()){
+                        String firstName = (String) postSnapshot.child("first_name").getValue();
+                        String lastName = (String) postSnapshot.child("last_name").getValue();
+                        String email = (String) postSnapshot.child("email").getValue();
+                        String password = (String) postSnapshot.child("password").getValue();
+                        String username =  postSnapshot.getKey();
+                        String typeStr = (String) postSnapshot.child("type").getValue();
+                        User.Types type = User.parseType(typeStr);
+
+                        User current = new User(firstName, lastName, username, email, type, password);
+                        userList.add(current);
+
+                        adapter = new UserAdapter(getApplicationContext(), userList);
+                        recyclerView.setAdapter(adapter);
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+
+
+
+
+        }
 
         LinearLayout main_view = (LinearLayout) findViewById(R.id.layout_main);
         main_view.setVisibility(View.VISIBLE);
