@@ -39,7 +39,6 @@ public class SignIn extends AppCompatActivity {
             }
         } else {
             Intent loginIntent = new Intent(getApplicationContext(), UserHome.class);
-            loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(loginIntent);
         }
 
@@ -61,10 +60,9 @@ public class SignIn extends AppCompatActivity {
         UserEventListener userListener = new UserEventListener() {
             @Override
             public void onSuccess() {
-                Intent loginIntent = new Intent(getApplicationContext(), UserHome.class);
-                loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 signInButton.setEnabled(true);
                 createAccountButton.setEnabled(true);
+                Intent loginIntent = new Intent(getApplicationContext(), UserHome.class);
                 startActivity(loginIntent);
             }
             @Override

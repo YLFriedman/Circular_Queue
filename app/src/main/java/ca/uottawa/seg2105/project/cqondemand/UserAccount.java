@@ -48,6 +48,7 @@ public class UserAccount extends AppCompatActivity {
         if (null == currentUser) {
             Intent intent = new Intent(this, SignIn.class);
             startActivity(intent);
+            finish();
         } else {
             // Set references to the View User UI objects
             txt_account_type = findViewById(R.id.txt_account_type);
@@ -118,10 +119,11 @@ public class UserAccount extends AppCompatActivity {
                             public void onSuccess() {
                                 Intent intent = new Intent(UserAccount.this, SignIn.class);
                                 intent.putExtra("showToast", "The user account '" + currentUser.getUserName() + "' has been successfully deleted.");
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 DatabaseUtil.setCurrentUser(null);
                                 currentUser = null;
-                                UserAccount.this.startActivity(intent);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                finish();
                             }
                             public void onFailure(DatabaseUtil.CallbackFailure reason) {
                                 Toast.makeText(UserAccount.this, "Unable to delete your account at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
@@ -240,6 +242,11 @@ public class UserAccount extends AppCompatActivity {
                     field_password.setError("Invalid password.");
                     field_password.requestFocus();
                     return;
+            }
+            if (currentUser.getPassword().equals(password)) {
+                field_password.setError("The new password must be different from the existing password!");
+                field_password.requestFocus();
+                return;
             }
             final User updatedUser = new User(currentUser.getFirstName(), currentUser.getLastName(), currentUser.getUserName(), currentUser.getEmail(), currentUser.getType(), password);
             btn_save_password.setEnabled(false);

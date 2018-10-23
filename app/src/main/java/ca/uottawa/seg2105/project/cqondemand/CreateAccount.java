@@ -120,8 +120,8 @@ public class CreateAccount extends AppCompatActivity {
             public void onSuccess() {
                 Intent intent = new Intent(CreateAccount.this, SignIn.class);
                 intent.putExtra("showToast", "The user account '" + username + "' has been successfully created.  Please sign in to continue.");
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                finish();
             }
             public void onFailure(DatabaseUtil.CallbackFailure reason) {
                 switch (reason) {
