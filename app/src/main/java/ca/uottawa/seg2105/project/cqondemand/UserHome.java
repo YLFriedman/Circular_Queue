@@ -3,13 +3,20 @@ package ca.uottawa.seg2105.project.cqondemand;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class UserHome extends AppCompatActivity {
 
+    private RecyclerView recyclerView;
+    private UserAdapter adapter;
+    private ArrayList<User> userList;
     private User currentUser;
 
     /*
@@ -20,6 +27,23 @@ public class UserHome extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home);
+
+        if(currentUser.getType()== User.Types.ADMIN){
+            recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+            recyclerView.setVisibility(View.VISIBLE);
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+            userList.add(new User("a", "b", "c", "d", User.Types.HOMEOWNER, "f"));
+            userList.add(new User("a", "b", "c", "d", User.Types.HOMEOWNER, "f"));
+            userList.add(new User("a", "b", "c", "d", User.Types.HOMEOWNER, "f"));
+            userList.add(new User("a", "b", "c", "d", User.Types.HOMEOWNER, "f"));
+            userList.add(new User("a", "b", "c", "d", User.Types.HOMEOWNER, "f"));
+
+            adapter = new UserAdapter(this, userList);
+            recyclerView.setAdapter(adapter);
+
+        }
 
         LinearLayout main_view = (LinearLayout) findViewById(R.id.layout_main);
         main_view.setVisibility(View.VISIBLE);
