@@ -26,29 +26,42 @@ public class UserHome extends AppCompatActivity {
         ScrollView Scroll_view = (ScrollView) findViewById(R.id.scroll_users);
         Scroll_view.setVisibility(View.GONE);
 
-
         currentUser = DatabaseUtil.getCurrentUser();
         if (null == currentUser) {
-            Intent intent = new Intent(this, SignIn.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            signOut();
         } else {
-            TextView txtWelcome = findViewById(R.id.txt_welcome);
-            txtWelcome.setText("Hello " + currentUser.getFirstName() + " " + currentUser.getLastName());
-            TextView txtRole = findViewById(R.id.txt_role);
+            setWelcomeText();
             if (currentUser.getType() == User.Types.ADMIN) {
-                txtRole.setText("You are logged in as an " + currentUser.getType().toString());
                 /*
                  * Makes list visible and constructs
                  */
                 Scroll_view.setVisibility(View.VISIBLE);
 
-
-            } else {
-                txtRole.setText("You are logged in as a " + currentUser.getType().toString());
             }
         }
 
+    }
+
+    private void setWelcomeText() {
+        TextView txtWelcome = findViewById(R.id.txt_welcome);
+        txtWelcome.setText("Hello " + currentUser.getFirstName() + " " + currentUser.getLastName());
+        TextView txtRole = findViewById(R.id.txt_role);
+        if (currentUser.getType() == User.Types.ADMIN) {
+            txtRole.setText("You are logged in as an " + currentUser.getType().toString());
+        } else {
+            txtRole.setText("You are logged in as a " + currentUser.getType().toString());
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        currentUser = DatabaseUtil.getCurrentUser();
+        if (null == currentUser) {
+            signOut();
+        } else {
+            setWelcomeText();
+        }
     }
 
     /*
@@ -57,12 +70,22 @@ public class UserHome extends AppCompatActivity {
      */
     public void onAccountDetailsClick(View view) {
         if (null == DatabaseUtil.getCurrentUser()) {
-            Intent intent = new Intent(this, SignIn.class);
-            startActivity(intent);
+            signOut();
         } else {
             Intent intent = new Intent(this, UserAccount.class);
             startActivity(intent);
         }
+    }
+
+    public void onSignOutClick(View view) {
+        signOut();
+    }
+
+    public void signOut() {
+        DatabaseUtil.setCurrentUser(null);
+        Intent intent = new Intent(this, SignIn.class);
+        startActivity(intent);
+        finish();
     }
 
 }
