@@ -34,22 +34,11 @@
             android:text="You are logged in as Home Owner"
             android:textSize="18sp" />
 
-        <ScrollView
-            android:id="@+id/scroll_users"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
-        </ScrollView>
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
             android:scrollbarAlwaysDrawVerticalTrack="false"
             android:scrollbars="vertical"
             android:visibility="visible" />
