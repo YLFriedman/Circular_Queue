@@ -28,5 +28,9 @@
     <string name="new_password">New Password</string>
     <string name="new_password_confirm">Confirm New Password</string>
     <string name="sign_out">Sign Out</string>
-    <string name="userListTitle">Current User List</string>
+    <string name="user_list_title">Current User List</string>
+    <string name="welcome_template">Hello %s %s</string>
+    <string name="logged_in_as_admin_template">You are logged in as an %s</string>
+    <string name="logged_in_as_template">You are logged in as a %s</string>
+    <string name="create_test">Create Test Account</string>
 </resources>

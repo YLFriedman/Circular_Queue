@@ -81,10 +81,14 @@
                 android:textSize="22sp" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/test"
+        <Button
+            android:id="@+id/btn_sign_up2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:onClick="onCreateTestAccountClick"
+            android:text="@string/create_test"
+            android:visibility="gone" />
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

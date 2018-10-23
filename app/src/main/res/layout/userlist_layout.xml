@@ -9,7 +9,8 @@
         android:id="@+id/fullname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        android:layout_marginTop="2dp"
+        android:text="@string/first_name"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -17,5 +18,6 @@
         android:id="@+id/usernameAndType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:layout_marginBottom="5dp"
+        android:text="@string/username" />
 </LinearLayout>

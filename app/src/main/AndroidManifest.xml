@@ -9,15 +9,23 @@
         android:roundIcon="@drawable/ic_q1c"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SignIn" android:noHistory="true">
+        <activity android:name=".SignIn"
+            android:noHistory="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CreateAccount" android:exported="true" />
-        <activity android:name=".UserHome" android:exported="true" />
-        <activity android:name=".UserAccount" android:exported="true" />
+        <activity android:name=".CreateAccount"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity android:name=".UserHome"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity android:name=".UserAccount"
+            android:exported="true"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

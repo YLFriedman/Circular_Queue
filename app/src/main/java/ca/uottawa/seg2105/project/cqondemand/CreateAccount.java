@@ -12,20 +12,23 @@ import android.widget.Toast;
 
 public class CreateAccount extends AppCompatActivity {
 
-    boolean[] checks = new boolean[6];
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
     }
 
-    public void onCreateClick(View view){
 
-        //init boolean array to all true;
-        for (int i = 0; i < checks.length; i++) {
-            checks[i] = true;
-        }
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        DatabaseUtil.setCurrentUser(null);
+        Intent intent = new Intent(this, SignIn.class);
+        startActivity(intent);
+        finish();
+    }
+
+    public void onCreateClick(View view){
 
         //Check username validity
         final EditText field_username = findViewById(R.id.field_username);

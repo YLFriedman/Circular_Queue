@@ -121,7 +121,7 @@ public class UserAccount extends AppCompatActivity {
                                 intent.putExtra("showToast", "The user account '" + currentUser.getUserName() + "' has been successfully deleted.");
                                 DatabaseUtil.setCurrentUser(null);
                                 currentUser = null;
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
                                 finish();
                             }
@@ -134,6 +134,10 @@ public class UserAccount extends AppCompatActivity {
     }
 
     public void onEditUserClick(View view) {
+        field_username.setError(null);
+        field_first_name.setError(null);
+        field_last_name.setError(null);
+        field_email.setError(null);
         if (null == currentUser) {
             field_username.setText("", TextView.BufferType.EDITABLE);
             field_first_name.setText("", TextView.BufferType.EDITABLE);
@@ -167,6 +171,16 @@ public class UserAccount extends AppCompatActivity {
             } else if (!User.userNameIsValid(username)) {
                 field_username.setError("Username is invalid. " + User.ILLEGAL_USERNAME_CHARS_MSG);
                 field_username.requestFocus();
+                return;
+            }
+            if (first_name.isEmpty()) {
+                field_first_name.setError("First name is required!");
+                field_first_name.requestFocus();
+                return;
+            }
+            if (last_name.isEmpty()) {
+                field_last_name.setError("Last name is required!");
+                field_last_name.requestFocus();
                 return;
             }
             if (email.isEmpty()) {

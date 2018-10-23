@@ -33,7 +33,7 @@ public class User implements Serializable {
     protected enum Types {
         ADMIN, HOMEOWNER, SERVICE_PROVIDER;
         public String toString() {
-            switch(this){
+            switch (this) {
                 case ADMIN: return "Admin";
                 case HOMEOWNER: return "Homeowner";
                 case SERVICE_PROVIDER: return "Service Provider";
@@ -161,9 +161,8 @@ public class User implements Serializable {
     }
 
     public static boolean userNameIsValid(String username) {
-        if (null == username || username.equals("")) { return false; }
+        if (null == username || username.isEmpty()) { return false; }
         return !username.matches(ILLEGAL_USERNAME_CHARS_REGEX);
-        //return username.matches(".*[-].*");
     }
 
     public static boolean emailIsValid(CharSequence email) {
@@ -171,7 +170,7 @@ public class User implements Serializable {
     }
 
     public static PasswordValidationResult validatePassword(String username, String password, String confirmPassword) {
-        if (null == password || password.equals("")) { return PasswordValidationResult.EMPTY; }
+        if (null == password || password.isEmpty()) { return PasswordValidationResult.EMPTY; }
         if (password.length() < PASSWORD_MIN_LENGTH) { return PasswordValidationResult.TOO_SHORT; }
         if (null != username && password.toLowerCase().indexOf(username.toLowerCase()) >= 0) { return PasswordValidationResult.CONTAINS_USERNAME; }
         for (int i = 0; i < ILLEGAL_PASSWORDS.length; i++) {
@@ -181,7 +180,7 @@ public class User implements Serializable {
         return PasswordValidationResult.VALID;
     }
 
-    public static User.Types parseType(String input){
+    public static User.Types parseType(String input) {
         switch (input) {
             case "Homeowner": return User.Types.HOMEOWNER;
             case "Service Provider": return User.Types.SERVICE_PROVIDER;

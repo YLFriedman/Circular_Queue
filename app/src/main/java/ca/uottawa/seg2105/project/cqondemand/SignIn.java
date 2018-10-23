@@ -40,6 +40,7 @@ public class SignIn extends AppCompatActivity {
         } else {
             Intent loginIntent = new Intent(getApplicationContext(), UserHome.class);
             startActivity(loginIntent);
+            finish();
         }
 
     }
@@ -64,6 +65,7 @@ public class SignIn extends AppCompatActivity {
                 createAccountButton.setEnabled(true);
                 Intent loginIntent = new Intent(getApplicationContext(), UserHome.class);
                 startActivity(loginIntent);
+                finish();
             }
             @Override
             public void onFailure(DatabaseUtil.CallbackFailure reason) {
@@ -85,9 +87,18 @@ public class SignIn extends AppCompatActivity {
      *
      * @param view the create account button which was clicked
      */
-    public void onCreateAccountClick(View view){
+    public void onCreateAccountClick(View view)  {
         Intent intent = new Intent(this, CreateAccount.class);
         startActivity(intent);
+    }
+
+    public void onCreateTestAccountClick(View view) {
+        DatabaseUtil.createUser(new User("Test", "User", "test", "test@test.test", User.Types.SERVICE_PROVIDER, "cqpass"), new UserEventListener() {
+            @Override
+            public void onSuccess() { }
+            @Override
+            public void onFailure(DatabaseUtil.CallbackFailure reason) { }
+        });
     }
 
 }
