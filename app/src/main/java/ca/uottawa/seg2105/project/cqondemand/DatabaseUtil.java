@@ -115,6 +115,7 @@ public class DatabaseUtil {
                 dbUsers.child(username).child("last_name").setValue(user.getLastName());
                 dbUsers.child(username).child("email").setValue(user.getEmail());
                 dbUsers.child(username).child("password").setValue(user.getPassword());
+                setCurrentUser(user);
                 listener.onSuccess();
             } catch (DatabaseException e) {
                 listener.onFailure(CallbackFailure.DATABASE_ERROR);
@@ -143,6 +144,7 @@ public class DatabaseUtil {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                 if (databaseError == null) {
+                    currentUser.setPassword(user.getPassword());
                     listener.onSuccess();
                 } else {
                     listener.onFailure(CallbackFailure.DATABASE_ERROR);
