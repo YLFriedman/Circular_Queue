@@ -11,6 +11,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+/**
+ * An adapter class for the RecyclerView contained in the user home activity. Defines the layouts that
+ * will be contained in the RecyclerView.
+ */
+
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
     private Context myContext;
@@ -33,8 +38,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder userViewHolder, int i) {
         User user = userList.get(i);
-        userViewHolder.fullname.setText(user.getFirstName() + " " +user.getLastName());
-        userViewHolder.usernameAndType.setText(user.getUserName() + ", " + user.getType().toString());
+        String firstLine = String.format("%s %s", user.getFirstName(), user.getLastName());
+        String secondLine = String.format("%s, %s", user.getUserName(), user.getType().toString());
+        userViewHolder.fullname.setText(firstLine);
+        userViewHolder.usernameAndType.setText(secondLine);
 
 
     }
