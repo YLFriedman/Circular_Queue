@@ -28,7 +28,10 @@ public class UserHome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home);
 
-        if(currentUser.getType()== User.Types.ADMIN){
+        currentUser = DatabaseUtil.getCurrentUser();
+        userList = new ArrayList<User>();
+
+        if (currentUser.getType()== User.Types.ADMIN) {
             recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
             recyclerView.setVisibility(View.VISIBLE);
             recyclerView.setHasFixedSize(true);
