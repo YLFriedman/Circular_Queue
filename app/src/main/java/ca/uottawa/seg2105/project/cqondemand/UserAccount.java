@@ -73,7 +73,7 @@ public class UserAccount extends AppCompatActivity {
             if (currentUser.getType() == User.Types.ADMIN) {
                 btn_edit_user.setVisibility(View.GONE);
                 btn_change_password.setVisibility(View.GONE);
-                btn_delete_user.setVisibility(View.GONE);
+                //btn_delete_user.setVisibility(View.GONE);
             }
             // Set values for the initial landing layout
             setUserViewValues();

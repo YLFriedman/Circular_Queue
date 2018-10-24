@@ -43,7 +43,7 @@ public class DatabaseUtil {
      * Enum for providing context to callback failures
      */
     public enum CallbackFailure {
-        ALREADY_EXISTS, DATABASE_ERROR, DOES_NOT_EXIST, PASSWORD_MISMATCH;
+        ALREADY_EXISTS, DATABASE_ERROR, DOES_NOT_EXIST, PASSWORD_MISMATCH, BAD_USER;
     }
 
     /**
@@ -70,8 +70,13 @@ public class DatabaseUtil {
                         String email = (String) dataSnapshot.child("email").getValue();
                         String typeStr = (String) dataSnapshot.child("type").getValue();
                         User.Types type = User.parseType(typeStr);
-                        setCurrentUser(new User(firstName, lastName, username, email, type, password));
-                        listener.onSuccess();
+                        try {
+                            setCurrentUser(new User(firstName, lastName, username, email, type, password));
+                            listener.onSuccess();
+                        } catch (IllegalArgumentException e) {
+                            listener.onFailure(CallbackFailure.BAD_USER);
+                        }
+
                     } else {
                         listener.onFailure(CallbackFailure.PASSWORD_MISMATCH);
                     }
@@ -94,7 +99,7 @@ public class DatabaseUtil {
     public static void userExists(final String username, final UserEventListener listener) {
         if (null == username) { throw new IllegalArgumentException("The username cannot be null."); }
         if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
-        DatabaseReference userRef = dbUsers.child("username");
+        DatabaseReference userRef = dbUsers.child(username);
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

@@ -39,4 +39,5 @@
     <string name="sample_last_name">LName</string>
     <string name="sample_email">address@sub.domain</string>
     <string name="test_exists">Test if User Exists</string>
+    <string name="create_admin_account">Create Admin Account</string>
 </resources>

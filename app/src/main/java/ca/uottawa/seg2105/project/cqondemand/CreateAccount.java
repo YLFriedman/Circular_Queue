@@ -16,6 +16,16 @@ public class CreateAccount extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
+        EditText field_username = findViewById(R.id.field_username);
+        Intent intent = getIntent();
+        field_username.setText(intent.getStringExtra("username"));
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        setResult(RESULT_CANCELED, intent);
+        finish();
     }
 
     public void onCreateClick(View view){
@@ -112,6 +122,9 @@ public class CreateAccount extends AppCompatActivity {
         DatabaseUtil.createUser(newUser, new UserEventListener() {
             public void onSuccess() {
                 Toast.makeText(CreateAccount.this, "The user account '" + username + "' has been successfully created.  Please sign in to continue.", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent();
+                intent.putExtra("username", username);
+                setResult(RESULT_OK, intent);
                 finish();
             }
             public void onFailure(DatabaseUtil.CallbackFailure reason) {
