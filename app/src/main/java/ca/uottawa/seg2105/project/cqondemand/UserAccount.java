@@ -113,13 +113,13 @@ public class UserAccount extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         DatabaseUtil.deleteUser(currentUser.getUserName(), new UserEventListener(){
                             public void onSuccess() {
-                                Toast.makeText(UserAccount.this, "The user account '" + UserAccount.this.currentUser.getUserName() + "' has been successfully deleted.", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "The user account '" + UserAccount.this.currentUser.getUserName() + "' has been successfully deleted.", Toast.LENGTH_LONG).show();
                                 DatabaseUtil.setCurrentUser(null);
                                 currentUser = null;
                                 finish();
                             }
                             public void onFailure(DatabaseUtil.CallbackFailure reason) {
-                                Toast.makeText(UserAccount.this, "Unable to delete your account at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "Unable to delete your account at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
                             }
                         });
                     }})
@@ -154,7 +154,7 @@ public class UserAccount extends AppCompatActivity {
 
         if (first_name.equals(currentUser.getFirstName()) && last_name.equals(currentUser.getLastName())
                 && username.equals(currentUser.getUserName()) && email.equals(currentUser.getEmail())) {
-            Toast.makeText(this, "No changes were made to the account details.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "No changes were made to the account details.", Toast.LENGTH_SHORT).show();
             setView(Views.USER_VIEW);
         } else {
             if (username.isEmpty()) {
@@ -188,7 +188,7 @@ public class UserAccount extends AppCompatActivity {
             btn_save_user.setEnabled(false);
             DatabaseUtil.updateUser(currentUser.getUserName(), updatedUser, new UserEventListener() {
                 public void onSuccess() {
-                    Toast.makeText(UserAccount.this, "Account updated successfully!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Account updated successfully!", Toast.LENGTH_LONG).show();
                     currentUser = DatabaseUtil.getCurrentUser();
                     setUserViewValues();
                     setView(Views.USER_VIEW);
@@ -202,12 +202,12 @@ public class UserAccount extends AppCompatActivity {
                             field_username.requestFocus();
                             break;
                         case DATABASE_ERROR:
-                            Toast.makeText(UserAccount.this, "Unable to update your account at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Unable to update your account at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
                             break;
                         default:
                             // Some other kind of error
                             btn_save_user.setEnabled(true);
-                            Toast.makeText(UserAccount.this, "Unable to update your account at this time. Please try again later.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Unable to update your account at this time. Please try again later.", Toast.LENGTH_LONG).show();
                     }
                     btn_save_user.setEnabled(true);
                 }
@@ -259,14 +259,14 @@ public class UserAccount extends AppCompatActivity {
             btn_save_password.setEnabled(false);
             DatabaseUtil.updateUserPassword(updatedUser, new UserEventListener() {
                 public void onSuccess() {
-                    Toast.makeText(UserAccount.this, "Password updated successfully!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Password updated successfully!", Toast.LENGTH_LONG).show();
                     setUserViewValues();
                     setView(Views.USER_VIEW);
                     btn_save_password.setEnabled(true);
                 }
                 public void onFailure(DatabaseUtil.CallbackFailure reason) {
                     btn_save_password.setEnabled(true);
-                    Toast.makeText(UserAccount.this, "Unable to update your password at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Unable to update your password at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
                 }
             });
         }

@@ -44,7 +44,7 @@ public class UserHome extends AppCompatActivity {
             if (currentUser.getType() == User.Types.ADMIN) {
                 recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
                 recyclerView.setHasFixedSize(true);
-                recyclerView.setLayoutManager(new LinearLayoutManager(this));
+                recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
                 DatabaseUtil.getUserList(new ValueEventListener() {
                     @Override
@@ -108,7 +108,7 @@ public class UserHome extends AppCompatActivity {
         if (null == DatabaseUtil.getCurrentUser()) {
             signOut();
         } else {
-            Intent intent = new Intent(this, UserAccount.class);
+            Intent intent = new Intent(getApplicationContext(), UserAccount.class);
             startActivity(intent);
         }
     }
@@ -119,7 +119,7 @@ public class UserHome extends AppCompatActivity {
 
     public void signOut() {
         DatabaseUtil.setCurrentUser(null);
-        Intent intent = new Intent(this, SignIn.class);
+        Intent intent = new Intent(getApplicationContext(), SignIn.class);
         startActivity(intent);
         finish();
     }

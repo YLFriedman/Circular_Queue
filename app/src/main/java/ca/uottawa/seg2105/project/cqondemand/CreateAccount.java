@@ -121,7 +121,7 @@ public class CreateAccount extends AppCompatActivity {
 
         DatabaseUtil.createUser(newUser, new UserEventListener() {
             public void onSuccess() {
-                Toast.makeText(CreateAccount.this, "The user account '" + username + "' has been successfully created.  Please sign in to continue.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "The user account '" + username + "' has been successfully created.  Please sign in to continue.", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent();
                 intent.putExtra("username", username);
                 setResult(RESULT_OK, intent);
@@ -130,7 +130,7 @@ public class CreateAccount extends AppCompatActivity {
             public void onFailure(DatabaseUtil.CallbackFailure reason) {
                 switch (reason) {
                     case DATABASE_ERROR:
-                        Toast.makeText(CreateAccount.this, "Unable to create your account at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Unable to create your account at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
                         break;
                     case ALREADY_EXISTS:
                         field_username.setError("Username is already in use!");
@@ -138,7 +138,7 @@ public class CreateAccount extends AppCompatActivity {
                         break;
                     default:
                         // Some other kind of error
-                        Toast.makeText(CreateAccount.this, "Unable to create your account at this time. Please try again later.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Unable to create your account at this time. Please try again later.", Toast.LENGTH_LONG).show();
                 }
                 btn_create_account.setEnabled(true);
             }
