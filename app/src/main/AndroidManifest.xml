@@ -15,6 +15,7 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -24,7 +25,7 @@
             android:label="@string/title_activity_create_account"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".UserHome"
+            android:name=".Home"
             android:label="@string/title_activity_home"
             android:screenOrientation="portrait" />
         <activity

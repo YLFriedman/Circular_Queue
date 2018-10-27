@@ -22,7 +22,7 @@ public class UserAccountChangePassword extends AppCompatActivity {
         setContentView(R.layout.activity_user_account_change_password);
         currentUser = DatabaseUtil.getCurrentUser();
         if (null == currentUser) {
-            Intent intent = new Intent(getApplicationContext(), UserHome.class);
+            Intent intent = new Intent(getApplicationContext(), Home.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         } else {

@@ -21,26 +21,18 @@ public class SignIn extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-
         currentUser = DatabaseUtil.getCurrentUser();
-
-        if (null != currentUser) {
-            Intent loginIntent = new Intent(getApplicationContext(), UserHome.class);
-            startActivity(loginIntent);
-            finish();
-        } else {
+        if (null == currentUser) {
             field_username = findViewById(R.id.field_username);
             field_password = findViewById(R.id.field_password);
             btn_sign_in = findViewById(R.id.btn_sign_in);
             btn_sign_up = findViewById(R.id.btn_sign_up);
             btn_create_admin_account = findViewById(R.id.btn_create_admin_account);
-
             DatabaseUtil.userExists("admin", new UserEventListener() {
                 @Override
                 public void onSuccess() {
                     btn_create_admin_account.setVisibility(View.GONE);
                 }
-
                 @Override
                 public void onFailure(DatabaseUtil.CallbackFailure reason) {
                     if (DatabaseUtil.CallbackFailure.DOES_NOT_EXIST == reason) {
@@ -58,7 +50,7 @@ public class SignIn extends AppCompatActivity {
         super.onResume();
         currentUser = DatabaseUtil.getCurrentUser();
         if (null != currentUser) {
-            Intent loginIntent = new Intent(getApplicationContext(), UserHome.class);
+            Intent loginIntent = new Intent(getApplicationContext(), Home.class);
             startActivity(loginIntent);
             finish();
         }
@@ -95,7 +87,7 @@ public class SignIn extends AppCompatActivity {
             public void onSuccess() {
                 btn_sign_in.setEnabled(true);
                 btn_sign_up.setEnabled(true);
-                Intent loginIntent = new Intent(getApplicationContext(), UserHome.class);
+                Intent loginIntent = new Intent(getApplicationContext(), Home.class);
                 startActivity(loginIntent);
                 finish();
             }
