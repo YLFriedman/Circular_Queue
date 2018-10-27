@@ -9,21 +9,35 @@
         android:roundIcon="@drawable/ic_q1c"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SignIn"
+        <activity
+            android:name=".SignIn"
+            android:label="@string/title_activity_sign_in"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CreateAccount"
+        <activity
+            android:name=".CreateAccount"
             android:exported="true"
+            android:label="@string/title_activity_create_account"
             android:screenOrientation="portrait" />
-        <activity android:name=".UserHome"
-            android:exported="true"
+        <activity
+            android:name=".UserHome"
+            android:label="@string/title_activity_home"
             android:screenOrientation="portrait" />
-        <activity android:name=".UserAccount"
-            android:exported="true"
+        <activity
+            android:name=".UserAccountView"
+            android:label="@string/title_activity_user_account_view"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UserAccountEdit"
+            android:label="@string/title_activity_user_account_edit"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UserAccountChangePassword"
+            android:label="@string/title_activity_user_account_change_password"
             android:screenOrientation="portrait" />
     </application>
 

@@ -39,7 +39,6 @@ public class UserHome extends AppCompatActivity {
         if (null == currentUser) {
             signOut();
         } else {
-            setWelcomeText();
             userListContainer.setVisibility(View.GONE);
             if (currentUser.getType() == User.Types.ADMIN) {
                 recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -108,8 +107,7 @@ public class UserHome extends AppCompatActivity {
         if (null == DatabaseUtil.getCurrentUser()) {
             signOut();
         } else {
-            Intent intent = new Intent(getApplicationContext(), UserAccount.class);
-            startActivity(intent);
+            startActivity(new Intent(getApplicationContext(), UserAccountView.class));
         }
     }
 
@@ -119,8 +117,7 @@ public class UserHome extends AppCompatActivity {
 
     public void signOut() {
         DatabaseUtil.setCurrentUser(null);
-        Intent intent = new Intent(getApplicationContext(), SignIn.class);
-        startActivity(intent);
+        startActivity(new Intent(getApplicationContext(), SignIn.class));
         finish();
     }
 

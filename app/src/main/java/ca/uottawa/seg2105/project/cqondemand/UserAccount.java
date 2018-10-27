@@ -53,7 +53,6 @@ public class UserAccount extends AppCompatActivity {
             txt_first_name = findViewById(R.id.txt_first_name);
             txt_last_name = findViewById(R.id.txt_last_name);
             txt_email = findViewById(R.id.txt_email);
-
             // Set references to the Edit User UI objects
             field_username = findViewById(R.id.field_username);
             field_first_name = findViewById(R.id.field_first_name);
@@ -62,14 +61,12 @@ public class UserAccount extends AppCompatActivity {
             field_password_old = findViewById(R.id.field_password_old);
             field_password = findViewById(R.id.field_password);
             field_password_confirm = findViewById(R.id.field_password_confirm);
-
-            // Set references to the Cutton User UI objects
+            // Set references to the Button User UI objects
             btn_edit_user = findViewById(R.id.btn_edit_user);
             btn_change_password = findViewById(R.id.btn_change_password);
             btn_delete_user = findViewById(R.id.btn_delete_user);
             btn_save_user = findViewById(R.id.btn_save_user);
             btn_save_password = findViewById(R.id.btn_save_password);
-
             if (currentUser.getType() == User.Types.ADMIN) {
                 btn_edit_user.setVisibility(View.GONE);
                 btn_change_password.setVisibility(View.GONE);
@@ -100,7 +97,7 @@ public class UserAccount extends AppCompatActivity {
     public void onChangePasswordClick(View view) {
         field_password_old.getText().clear();
         field_password.getText().clear();
-       field_password_confirm.getText().clear();
+        field_password_confirm.getText().clear();
         setView(Views.CHANGE_PASSWORD);
     }
 

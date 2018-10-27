@@ -6,94 +6,106 @@
     android:layout_height="match_parent"
     tools:context=".UserHome">
 
-    <LinearLayout
-        android:id="@+id/layout_main"
+    <TextView
+        android:id="@+id/txt_welcome"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
         android:gravity="center_horizontal"
+        android:text="@string/welcome_template"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txt_role"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:gravity="center_horizontal"
+        android:text="@string/logged_in_as_template"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_welcome" />
+
+    <Button
+        android:id="@+id/btn_view_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="12dp"
+        android:onClick="onAccountDetailsClick"
+        android:text="@string/view_acount"
+        app:layout_constraintBottom_toTopOf="@+id/btn_sign_out"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_sign_out"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="24dp"
+        android:onClick="onSignOutClick"
+        android:text="@string/sign_out"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/userListContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="16dp"
         android:orientation="vertical"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:visibility="visible">
+        app:layout_constraintBottom_toTopOf="@+id/btn_view_account"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_role">
 
         <TextView
-            android:id="@+id/txt_welcome"
+            android:id="@+id/userListTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="15dp"
-            android:gravity="center_horizontal"
-            android:text="@string/welcome_template"
-            android:textSize="24sp" />
+            android:text="@string/user_list_title"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="visible" />
 
-        <TextView
-            android:id="@+id/txt_role"
+        <View
+            android:id="@+id/divider"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="@string/logged_in_as_template"
-            android:textSize="18sp" />
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
 
-        <LinearLayout
-            android:id="@+id/userListContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/userListTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="2dp"
-                android:text="@string/user_list_title"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:visibility="visible" />
-
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="?android:attr/listDivider" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="190dp"
-                android:scrollbarAlwaysDrawVerticalTrack="false"
-                android:scrollbars="vertical"
-                android:visibility="visible" />
-        </LinearLayout>
-
-        <LinearLayout
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="15dp"
-            android:gravity="bottom"
-            android:orientation="vertical">
-
-            <Button
-                android:id="@+id/btn_view_account"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:onClick="onAccountDetailsClick"
-                android:text="@string/view_acount"
-                tools:layout_editor_absoluteX="20dp"
-                tools:layout_editor_absoluteY="102dp" />
-
-            <Button
-                android:id="@+id/btn_sign_out"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:onClick="onSignOutClick"
-                android:text="@string/sign_out"
-                tools:layout_editor_absoluteX="20dp"
-                tools:layout_editor_absoluteY="102dp" />
-        </LinearLayout>
-
+            android:scrollbarAlwaysDrawVerticalTrack="false"
+            android:scrollbars="vertical"
+            android:visibility="visible" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

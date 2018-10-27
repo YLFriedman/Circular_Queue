@@ -1,5 +1,12 @@
 <resources>
-    <string name="app_name">CQ On Demand - v0.1</string>
+    <string name="version">v0.1.1</string>
+    <string name="app_name">CQ On Demand - v0.1.1</string>
+    <string name="title_activity_create_account">Sign Up</string>
+    <string name="title_activity_home">CQ On Demand - v0.1.1</string>
+    <string name="title_activity_sign_in">CQ On Demand - v0.1.1</string>
+    <string name="title_activity_user_account_change_password">Change Password</string>
+    <string name="title_activity_user_account_edit">Edit User Details</string>
+    <string name="title_activity_user_account_view">User Details</string>
     <string name="btn_sign_in">Sign In</string>
     <string name="btn_sign_up">Sign Up</string>
     <string name="signature">Created by CircularQueue</string>
@@ -14,7 +21,6 @@
     <string name="password_confirm">Confirm Password</string>
     <string name="company_name">Company Name</string>
     <string name="view_acount">View Account Details</string>
-    <string name="title_activity_user_account">UserAccount</string>
     <string name="cq_logo">Circular Queue Logo</string>
     <string name="save">Save</string>
     <string name="edit">Edit</string>
