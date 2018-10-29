@@ -23,15 +23,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class Home extends AppCompatActivity {
+public class Home extends MainDrawerActivity {
 
     private RecyclerView recyclerView;
     private UserAdapter adapter;
     private ArrayList<User> userList;
     private User currentUser;
     private LinearLayout userListContainer;
-
-    private DrawerLayout drawer_layout;
 
     /*
      * Fills in layout for UserHome activity
@@ -46,9 +44,6 @@ public class Home extends AppCompatActivity {
         if (null == currentUser) {
             onSignOutClick(null);
         } else {
-
-            setupDrawer();
-
             userListContainer = findViewById(R.id.userListContainer);
             userListContainer.setVisibility(View.GONE);
             userList = new ArrayList<User>();
@@ -84,45 +79,6 @@ public class Home extends AppCompatActivity {
                 });
             }
         }
-    }
-
-    private void setupDrawer() {
-
-        drawer_layout = findViewById(R.id.drawer_layout);
-        NavigationView nav_view = findViewById(R.id.nav_view);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
-
-        nav_view.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        // set item as selected to persist highlight
-                        menuItem.setChecked(true);
-                        // close drawer when item is tapped
-                        drawer_layout.closeDrawers();
-
-                        // Add code here to update the UI based on the item selected
-                        // For example, swap UI fragments here
-
-                        return true;
-                    }
-                }
-        );
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                drawer_layout.openDrawer(GravityCompat.START);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

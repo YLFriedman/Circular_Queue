@@ -28,7 +28,7 @@
             android:name=".Home"
             android:label="@string/title_activity_home"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoActionBar" />
+            android:theme="@style/AppThemeMainMenu" />
         <activity
             android:name=".UserAccountView"
             android:label="@string/title_activity_user_account_view"

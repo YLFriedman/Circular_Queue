@@ -8,28 +8,14 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppThemeNoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppThemeMainMenu" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here.-->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="btn_danger"></style>
+    <style name="AppThemeMainMenu.Toolbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
 
-    <style name="AppTheme2" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="drawerArrowStyle">@style/MaterialDrawer.DrawerArrowStyle</item>
-    </style>
-
-    <style name="MaterialDrawer.DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
-        <item name="spinBars">false</item>
-        <item name="color">@android:color/white</item>
     </style>
 
 </resources>

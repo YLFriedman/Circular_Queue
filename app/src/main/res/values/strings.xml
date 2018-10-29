@@ -49,4 +49,7 @@
     <string name="my_account">My Account</string>
     <string name="navigation_drawer_open">Open Navigation</string>
     <string name="navigation_drawer_close">Close Navigation</string>
+    <string name="home">Home</string>
+    <string name="user_full_name_template">%s %s</string>
+    <string name="nav_header_title">CQ On Demand</string>
 </resources>

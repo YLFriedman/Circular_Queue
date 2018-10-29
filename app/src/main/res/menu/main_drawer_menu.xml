@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <group android:id="@+id/group_main"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_item_home"
+            android:icon="@drawable/ic_home"
+            android:title="@string/home" />
+    </group>
     <group
-        android:id="@+id/group_menu"
+        android:id="@+id/group_user"
         android:checkableBehavior="single">
         <item
             android:id="@+id/nav_item_my_account"
-            android:title="@string/my_account"
-            android:icon="@drawable/ic_q1c" />
+            android:icon="@drawable/ic_account_circle"
+            android:title="@string/my_account" />
         <item
             android:id="@+id/nav_item_sign_out"
+            android:icon="@drawable/ic_clear"
             android:title="@string/sign_out" />
     </group>
-
 </menu>
