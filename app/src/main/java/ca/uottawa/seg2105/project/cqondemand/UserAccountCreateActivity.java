@@ -119,7 +119,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         final Button btn_create_account = findViewById(R.id.btn_create_account);
         btn_create_account.setEnabled(false);
 
-        DatabaseUtil.createUser(newUser, new DbActionEventListener() {
+        DbUtil.createUser(newUser, new DbActionEventListener() {
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), "The user account '" + username + "' has been successfully created.  Please sign in to continue.", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent();

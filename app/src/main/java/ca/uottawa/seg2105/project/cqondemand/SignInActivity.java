@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class SignInActivity extends AppCompatActivity {
 
     private User currentUser;
@@ -21,16 +23,16 @@ public class SignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-        currentUser = DatabaseUtil.getCurrentUser();
+        currentUser = DbUtil.getCurrentUser();
         if (null == currentUser) {
             field_username = findViewById(R.id.field_username);
             field_password = findViewById(R.id.field_password);
             btn_sign_in = findViewById(R.id.btn_sign_in);
             btn_sign_up = findViewById(R.id.btn_sign_up);
             btn_create_admin_account = findViewById(R.id.btn_create_admin_account);
-            DatabaseUtil.userExists("admin", new DbActionEventListener() {
+            DbUtil.getUser("admin", new DbValueEventListener<User>() {
                 @Override
-                public void onSuccess() {
+                public void onSuccess(ArrayList<User> data) {
                     btn_create_admin_account.setVisibility(View.GONE);
                 }
                 @Override
@@ -48,7 +50,7 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        currentUser = DatabaseUtil.getCurrentUser();
+        currentUser = DbUtil.getCurrentUser();
         if (null != currentUser) {
             Intent loginIntent = new Intent(getApplicationContext(), HomeActivity.class);
             startActivity(loginIntent);
@@ -82,7 +84,7 @@ public class SignInActivity extends AppCompatActivity {
     public void onSignInClick(View view) {
         btn_sign_in.setEnabled(false);
         btn_sign_up.setEnabled(false);
-        DatabaseUtil.authenticate(field_username.getText().toString(), field_password.getText().toString(), new DbActionEventListener() {
+        DbUtil.authenticate(field_username.getText().toString(), field_password.getText().toString(), new DbActionEventListener() {
             @Override
             public void onSuccess() {
                 btn_sign_in.setEnabled(true);
@@ -116,7 +118,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     public void onCreateAdminAccountClick(View view) {
-        DatabaseUtil.createUser(new User("Admin", "User", "admin", "yfrie071@uottawa.ca", User.Types.ADMIN, "admin"), new DbActionEventListener() {
+        DbUtil.createUser(new User("Admin", "User", "admin", "yfrie071@uottawa.ca", User.Types.ADMIN, "admin"), new DbActionEventListener() {
             @Override
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), "The admin user has been created successfully. Login with the username and password 'admin'.", Toast.LENGTH_LONG).show();
@@ -135,7 +137,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     public void onCreateTestAccountClick(View view) {
-        DatabaseUtil.createUser(new User("Test", "User", "test", "test@test.test", User.Types.SERVICE_PROVIDER, "cqpass"), new DbActionEventListener() {
+        DbUtil.createUser(new User("Test", "User", "test", "test@test.test", User.Types.SERVICE_PROVIDER, "cqpass"), new DbActionEventListener() {
             @Override
             public void onSuccess() { }
             @Override

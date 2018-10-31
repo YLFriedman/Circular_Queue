@@ -20,7 +20,7 @@ public class UserAccountChangePasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_account_change_password);
-        currentUser = DatabaseUtil.getCurrentUser();
+        currentUser = DbUtil.getCurrentUser();
         if (null == currentUser) {
             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -77,7 +77,7 @@ public class UserAccountChangePasswordActivity extends AppCompatActivity {
             }
             final User updatedUser = new User(currentUser.getFirstName(), currentUser.getLastName(), currentUser.getUserName(), currentUser.getEmail(), currentUser.getType(), password);
             btn_save_password.setEnabled(false);
-            DatabaseUtil.updateUserPassword(updatedUser, new DbActionEventListener() {
+            DbUtil.updateUserPassword(updatedUser, new DbActionEventListener() {
                 public void onSuccess() {
                     Toast.makeText(getApplicationContext(), "Password updated successfully!", Toast.LENGTH_LONG).show();
                     btn_save_password.setEnabled(true);

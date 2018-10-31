@@ -224,6 +224,7 @@ public class User implements Serializable {
      */
 
     public static User.Types parseType(String input) {
+        if (null == input) { throw new IllegalArgumentException("'null' is not a valid user type. "); }
         switch (input) {
             case "Homeowner": return User.Types.HOMEOWNER;
             case "Service Provider": return User.Types.SERVICE_PROVIDER;

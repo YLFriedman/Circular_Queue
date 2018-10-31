@@ -26,7 +26,7 @@ public class UserAccountViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_account_view);
-        currentUser = DatabaseUtil.getCurrentUser();
+        currentUser = DbUtil.getCurrentUser();
         if (null == currentUser) {
             finish();
         } else {
@@ -51,7 +51,7 @@ public class UserAccountViewActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        currentUser = DatabaseUtil.getCurrentUser();
+        currentUser = DbUtil.getCurrentUser();
         if (null == currentUser) {
             finish();
         } else {
@@ -90,10 +90,10 @@ public class UserAccountViewActivity extends AppCompatActivity {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        DatabaseUtil.deleteUser(currentUser.getUserName(), new DbActionEventListener(){
+                        DbUtil.deleteUser(currentUser.getUserName(), new DbActionEventListener(){
                             public void onSuccess() {
                                 Toast.makeText(getApplicationContext(), "The user account '" + currentUser.getUserName() + "' has been successfully deleted.", Toast.LENGTH_LONG).show();
-                                DatabaseUtil.setCurrentUser(null);
+                                DbUtil.setCurrentUser(null);
                                 currentUser = null;
                                 finish();
                             }

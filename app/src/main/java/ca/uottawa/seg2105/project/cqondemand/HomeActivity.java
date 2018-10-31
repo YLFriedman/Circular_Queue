@@ -15,7 +15,6 @@ public class HomeActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private UserAdapter adapter;
-    private ArrayList<User> userList;
     private User currentUser;
     private LinearLayout userListContainer;
 
@@ -28,7 +27,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         userListContainer = findViewById(R.id.userListContainer);
-        currentUser = DatabaseUtil.getCurrentUser();
+        currentUser = DbUtil.getCurrentUser();
 
         if (null == currentUser) {
             onSignOutClick(null);
@@ -38,7 +37,7 @@ public class HomeActivity extends AppCompatActivity {
                 recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
                 recyclerView.setHasFixedSize(true);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                DatabaseUtil.getUsers(new DbValueEventListener<User>() {
+                DbUtil.getUsers(new DbValueEventListener<User>() {
                     @Override
                     public void onSuccess(ArrayList<User> data) {
                         if (null != data && data.size() > 0) {
@@ -59,7 +58,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        currentUser = DatabaseUtil.getCurrentUser();
+        currentUser = DbUtil.getCurrentUser();
         if (null == currentUser) {
             onSignOutClick(null);
         } else {
@@ -86,7 +85,7 @@ public class HomeActivity extends AppCompatActivity {
      * Displays Account Details
      */
     public void onAccountDetailsClick(View view) {
-        if (null == DatabaseUtil.getCurrentUser()) {
+        if (null == DbUtil.getCurrentUser()) {
             onSignOutClick(null);
         } else {
             startActivity(new Intent(getApplicationContext(), UserAccountViewActivity.class));
@@ -94,7 +93,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void onSignOutClick(View view) {
-        DatabaseUtil.setCurrentUser(null);
+        DbUtil.setCurrentUser(null);
         startActivity(new Intent(getApplicationContext(), SignInActivity.class));
         finish();
     }

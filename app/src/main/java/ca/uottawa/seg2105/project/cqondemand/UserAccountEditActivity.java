@@ -22,7 +22,7 @@ public class UserAccountEditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_account_edit);
-        currentUser = DatabaseUtil.getCurrentUser();
+        currentUser = DbUtil.getCurrentUser();
         if (null == currentUser) {
             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -83,10 +83,10 @@ public class UserAccountEditActivity extends AppCompatActivity {
                 return;
             }
             btn_save_user.setEnabled(false);
-            DatabaseUtil.updateUser(currentUser.getUserName(), updatedUser, new DbActionEventListener() {
+            DbUtil.updateUser(currentUser.getUserName(), updatedUser, new DbActionEventListener() {
                 public void onSuccess() {
                     Toast.makeText(getApplicationContext(), "Account updated successfully!", Toast.LENGTH_LONG).show();
-                    currentUser = DatabaseUtil.getCurrentUser();
+                    currentUser = DbUtil.getCurrentUser();
                     btn_save_user.setEnabled(true);
                     finish();
                 }

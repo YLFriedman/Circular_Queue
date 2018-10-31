@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * User. As many methods in this class involve callbacks, and enum CallbackFailure is included as well.
  */
 
-public class DatabaseUtil {
+public class DbUtil {
 
     private static DatabaseReference dbUsers = FirebaseDatabase.getInstance().getReference().child("users");
 
@@ -91,7 +91,7 @@ public class DatabaseUtil {
      * @param username the username you wish to check
      * @param listener the listener that will respond to the success/failure of the existence check
      */
-    public static void userExists(final String username, final DbActionEventListener listener) {
+    public static void getUser(final String username, final DbValueEventListener listener) {
         if (null == username) { throw new IllegalArgumentException("The username cannot be null."); }
         if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
         DatabaseReference userRef = dbUsers.child(username);
@@ -101,8 +101,51 @@ public class DatabaseUtil {
                 if (!dataSnapshot.exists()) {
                     listener.onFailure(DbEventFailureReason.DOES_NOT_EXIST);
                 } else {
-                    listener.onSuccess();
+                    String firstName = (String) dataSnapshot.child("first_name").getValue();
+                    String lastName = (String) dataSnapshot.child("last_name").getValue();
+                    String email = (String) dataSnapshot.child("email").getValue();
+                    String password = (String) dataSnapshot.child("password").getValue();
+                    try {
+                        User.Types type = User.parseType((String) dataSnapshot.child("type").getValue());
+                        ArrayList<User> userList = new ArrayList<User>(1);
+                        userList.add(new User(firstName, lastName, username, email, type, password));
+                        listener.onSuccess(userList);
+                    } catch (IllegalArgumentException e) {
+                        listener.onFailure(DbEventFailureReason.BAD_USER);
+                    }
                 }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                listener.onFailure(DbEventFailureReason.DATABASE_ERROR);
+            }
+        });
+    }
+
+    /**
+     * Simple callback method for getting a list of all the system users
+     *
+     * @param listener the listener to handle the user list.
+     */
+    public static void getUsers(final DbValueEventListener<User> listener){
+        if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
+        dbUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long size = dataSnapshot.getChildrenCount();
+                ArrayList<User> userList = new ArrayList<User>(size > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) size);
+                for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
+                    String firstName = (String) userSnapshot.child("first_name").getValue();
+                    String lastName = (String) userSnapshot.child("last_name").getValue();
+                    String email = (String) userSnapshot.child("email").getValue();
+                    String password = (String) userSnapshot.child("password").getValue();
+                    String username = userSnapshot.getKey();
+                    try {
+                        User.Types type = User.parseType((String) userSnapshot.child("type").getValue());
+                        userList.add(new User(firstName, lastName, username, email, type, password));
+                    } catch (IllegalArgumentException e) { }
+                }
+                listener.onSuccess(userList);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -120,9 +163,9 @@ public class DatabaseUtil {
      */
     public static void createUser(final User user, @Nullable final DbActionEventListener listener) {
         if (null == user) { throw new IllegalArgumentException("The user cannot be null."); }
-        userExists(user.getUserName(), new DbActionEventListener() {
+        getUser(user.getUserName(), new DbValueEventListener<User>() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(ArrayList<User> data) {
                 // Failure condition: User already exists
                 if (null != listener) { listener.onFailure(DbEventFailureReason.ALREADY_EXISTS); }
             }
@@ -189,36 +232,6 @@ public class DatabaseUtil {
                 }
             });
         }
-    }
-
-    /**
-     * Simple callback method for getting a list of all the system users
-     *
-     * @param listener the listener to handle the user list.
-     */
-    public static void getUsers(final DbValueEventListener<User> listener){
-        dbUsers.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<User> userList = new ArrayList<User>();
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    String firstName = (String) postSnapshot.child("first_name").getValue();
-                    String lastName = (String) postSnapshot.child("last_name").getValue();
-                    String email = (String) postSnapshot.child("email").getValue();
-                    String password = (String) postSnapshot.child("password").getValue();
-                    String username = postSnapshot.getKey();
-                    String typeStr = (String) postSnapshot.child("type").getValue();
-                    User.Types type = User.parseType(typeStr);
-                    User current = new User(firstName, lastName, username, email, type, password);
-                    userList.add(current);
-                }
-                listener.onSuccess(userList);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                listener.onFailure(DbEventFailureReason.DATABASE_ERROR);
-            }
-        });
     }
 
     /**
