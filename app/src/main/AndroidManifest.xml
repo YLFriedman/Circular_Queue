@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".SignIn"
+            android:name=".SignInActivity"
             android:label="@string/title_activity_sign_in"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -20,24 +20,24 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CreateAccount"
+            android:name=".UserAccountCreateActivity"
             android:exported="true"
             android:label="@string/title_activity_create_account"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Home"
+            android:name=".HomeActivity"
             android:label="@string/title_activity_home"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".UserAccountView"
+            android:name=".UserAccountViewActivity"
             android:label="@string/title_activity_user_account_view"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".UserAccountEdit"
+            android:name=".UserAccountEditActivity"
             android:label="@string/title_activity_user_account_edit"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".UserAccountChangePassword"
+            android:name=".UserAccountChangePasswordActivity"
             android:label="@string/title_activity_user_account_change_password"
             android:screenOrientation="portrait" />
     </application>

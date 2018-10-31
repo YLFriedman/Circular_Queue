@@ -9,7 +9,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class UserAccountEdit extends AppCompatActivity {
+public class UserAccountEditActivity extends AppCompatActivity {
 
     private EditText field_username;
     private EditText field_first_name;
@@ -24,7 +24,7 @@ public class UserAccountEdit extends AppCompatActivity {
         setContentView(R.layout.activity_user_account_edit);
         currentUser = DatabaseUtil.getCurrentUser();
         if (null == currentUser) {
-            Intent intent = new Intent(getApplicationContext(), Home.class);
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         } else {
@@ -83,14 +83,14 @@ public class UserAccountEdit extends AppCompatActivity {
                 return;
             }
             btn_save_user.setEnabled(false);
-            DatabaseUtil.updateUser(currentUser.getUserName(), updatedUser, new UserEventListener() {
+            DatabaseUtil.updateUser(currentUser.getUserName(), updatedUser, new DbActionEventListener() {
                 public void onSuccess() {
                     Toast.makeText(getApplicationContext(), "Account updated successfully!", Toast.LENGTH_LONG).show();
                     currentUser = DatabaseUtil.getCurrentUser();
                     btn_save_user.setEnabled(true);
                     finish();
                 }
-                public void onFailure(DatabaseUtil.CallbackFailure reason) {
+                public void onFailure(DbEventFailureReason reason) {
                     switch (reason) {
                         case ALREADY_EXISTS:
                             btn_save_user.setEnabled(true);

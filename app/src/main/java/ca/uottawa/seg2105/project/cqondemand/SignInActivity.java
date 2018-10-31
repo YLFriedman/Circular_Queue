@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class SignIn extends AppCompatActivity {
+public class SignInActivity extends AppCompatActivity {
 
     private User currentUser;
     private Button btn_sign_in;
@@ -28,14 +28,14 @@ public class SignIn extends AppCompatActivity {
             btn_sign_in = findViewById(R.id.btn_sign_in);
             btn_sign_up = findViewById(R.id.btn_sign_up);
             btn_create_admin_account = findViewById(R.id.btn_create_admin_account);
-            DatabaseUtil.userExists("admin", new UserEventListener() {
+            DatabaseUtil.userExists("admin", new DbActionEventListener() {
                 @Override
                 public void onSuccess() {
                     btn_create_admin_account.setVisibility(View.GONE);
                 }
                 @Override
-                public void onFailure(DatabaseUtil.CallbackFailure reason) {
-                    if (DatabaseUtil.CallbackFailure.DOES_NOT_EXIST == reason) {
+                public void onFailure(DbEventFailureReason reason) {
+                    if (DbEventFailureReason.DOES_NOT_EXIST == reason) {
                         btn_create_admin_account.setVisibility(View.VISIBLE);
                     } else {
                         btn_create_admin_account.setVisibility(View.GONE);
@@ -50,7 +50,7 @@ public class SignIn extends AppCompatActivity {
         super.onResume();
         currentUser = DatabaseUtil.getCurrentUser();
         if (null != currentUser) {
-            Intent loginIntent = new Intent(getApplicationContext(), Home.class);
+            Intent loginIntent = new Intent(getApplicationContext(), HomeActivity.class);
             startActivity(loginIntent);
             finish();
         }
@@ -82,17 +82,17 @@ public class SignIn extends AppCompatActivity {
     public void onSignInClick(View view) {
         btn_sign_in.setEnabled(false);
         btn_sign_up.setEnabled(false);
-        DatabaseUtil.authenticate(field_username.getText().toString(), field_password.getText().toString(), new UserEventListener() {
+        DatabaseUtil.authenticate(field_username.getText().toString(), field_password.getText().toString(), new DbActionEventListener() {
             @Override
             public void onSuccess() {
                 btn_sign_in.setEnabled(true);
                 btn_sign_up.setEnabled(true);
-                Intent loginIntent = new Intent(getApplicationContext(), Home.class);
+                Intent loginIntent = new Intent(getApplicationContext(), HomeActivity.class);
                 startActivity(loginIntent);
                 finish();
             }
             @Override
-            public void onFailure(DatabaseUtil.CallbackFailure reason) {
+            public void onFailure(DbEventFailureReason reason) {
                 btn_sign_in.setEnabled(true);
                 btn_sign_up.setEnabled(true);
                 switch (reason) {
@@ -110,21 +110,21 @@ public class SignIn extends AppCompatActivity {
      * @param view the create account button which was clicked
      */
     public void onCreateAccountClick(View view)  {
-        Intent intent = new Intent(getApplicationContext(), CreateAccount.class);
+        Intent intent = new Intent(getApplicationContext(), UserAccountCreateActivity.class);
         intent.putExtra("username", field_username.getText().toString());
         startActivityForResult(intent,0);
     }
 
     public void onCreateAdminAccountClick(View view) {
-        DatabaseUtil.createUser(new User("Admin", "User", "admin", "yfrie071@uottawa.ca", User.Types.ADMIN, "admin"), new UserEventListener() {
+        DatabaseUtil.createUser(new User("Admin", "User", "admin", "yfrie071@uottawa.ca", User.Types.ADMIN, "admin"), new DbActionEventListener() {
             @Override
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), "The admin user has been created successfully. Login with the username and password 'admin'.", Toast.LENGTH_LONG).show();
                 btn_create_admin_account.setVisibility(View.GONE);
             }
             @Override
-            public void onFailure(DatabaseUtil.CallbackFailure reason) {
-                if (DatabaseUtil.CallbackFailure.ALREADY_EXISTS == reason) {
+            public void onFailure(DbEventFailureReason reason) {
+                if (DbEventFailureReason.ALREADY_EXISTS == reason) {
                     Toast.makeText(getApplicationContext(), "The admin account already exists.", Toast.LENGTH_LONG).show();
                     btn_create_admin_account.setVisibility(View.GONE);
                 } else {
@@ -135,11 +135,11 @@ public class SignIn extends AppCompatActivity {
     }
 
     public void onCreateTestAccountClick(View view) {
-        DatabaseUtil.createUser(new User("Test", "User", "test", "test@test.test", User.Types.SERVICE_PROVIDER, "cqpass"), new UserEventListener() {
+        DatabaseUtil.createUser(new User("Test", "User", "test", "test@test.test", User.Types.SERVICE_PROVIDER, "cqpass"), new DbActionEventListener() {
             @Override
             public void onSuccess() { }
             @Override
-            public void onFailure(DatabaseUtil.CallbackFailure reason) { }
+            public void onFailure(DbEventFailureReason reason) { }
         });
     }
 

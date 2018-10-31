@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class UserAccountView extends AppCompatActivity {
+public class UserAccountViewActivity extends AppCompatActivity {
 
     private TextView txt_account_type;
     private TextView txt_username;
@@ -76,11 +76,11 @@ public class UserAccountView extends AppCompatActivity {
     }
 
     public void onEditUserClick(View view) {
-        startActivity(new Intent(getApplicationContext(), UserAccountEdit.class));
+        startActivity(new Intent(getApplicationContext(), UserAccountEditActivity.class));
     }
 
     public void onChangePasswordClick(View view) {
-        startActivity(new Intent(getApplicationContext(), UserAccountChangePassword.class));
+        startActivity(new Intent(getApplicationContext(), UserAccountChangePasswordActivity.class));
     }
 
     public void onDeleteAccountClick(View view) {
@@ -90,14 +90,14 @@ public class UserAccountView extends AppCompatActivity {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        DatabaseUtil.deleteUser(currentUser.getUserName(), new UserEventListener(){
+                        DatabaseUtil.deleteUser(currentUser.getUserName(), new DbActionEventListener(){
                             public void onSuccess() {
                                 Toast.makeText(getApplicationContext(), "The user account '" + currentUser.getUserName() + "' has been successfully deleted.", Toast.LENGTH_LONG).show();
                                 DatabaseUtil.setCurrentUser(null);
                                 currentUser = null;
                                 finish();
                             }
-                            public void onFailure(DatabaseUtil.CallbackFailure reason) {
+                            public void onFailure(DbEventFailureReason reason) {
                                 Toast.makeText(getApplicationContext(), "Unable to delete your account at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
                             }
                         });

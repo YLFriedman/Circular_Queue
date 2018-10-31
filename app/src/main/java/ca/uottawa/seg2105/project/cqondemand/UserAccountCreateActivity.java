@@ -10,7 +10,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-public class CreateAccount extends AppCompatActivity {
+public class UserAccountCreateActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +119,7 @@ public class CreateAccount extends AppCompatActivity {
         final Button btn_create_account = findViewById(R.id.btn_create_account);
         btn_create_account.setEnabled(false);
 
-        DatabaseUtil.createUser(newUser, new UserEventListener() {
+        DatabaseUtil.createUser(newUser, new DbActionEventListener() {
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), "The user account '" + username + "' has been successfully created.  Please sign in to continue.", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent();
@@ -127,7 +127,7 @@ public class CreateAccount extends AppCompatActivity {
                 setResult(RESULT_OK, intent);
                 finish();
             }
-            public void onFailure(DatabaseUtil.CallbackFailure reason) {
+            public void onFailure(DbEventFailureReason reason) {
                 switch (reason) {
                     case DATABASE_ERROR:
                         Toast.makeText(getApplicationContext(), "Unable to create your account at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();

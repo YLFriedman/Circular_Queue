@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class UserAccountChangePassword extends AppCompatActivity {
+public class UserAccountChangePasswordActivity extends AppCompatActivity {
 
     private EditText field_password_old;
     private EditText field_password;
@@ -22,7 +22,7 @@ public class UserAccountChangePassword extends AppCompatActivity {
         setContentView(R.layout.activity_user_account_change_password);
         currentUser = DatabaseUtil.getCurrentUser();
         if (null == currentUser) {
-            Intent intent = new Intent(getApplicationContext(), Home.class);
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         } else {
@@ -77,13 +77,13 @@ public class UserAccountChangePassword extends AppCompatActivity {
             }
             final User updatedUser = new User(currentUser.getFirstName(), currentUser.getLastName(), currentUser.getUserName(), currentUser.getEmail(), currentUser.getType(), password);
             btn_save_password.setEnabled(false);
-            DatabaseUtil.updateUserPassword(updatedUser, new UserEventListener() {
+            DatabaseUtil.updateUserPassword(updatedUser, new DbActionEventListener() {
                 public void onSuccess() {
                     Toast.makeText(getApplicationContext(), "Password updated successfully!", Toast.LENGTH_LONG).show();
                     btn_save_password.setEnabled(true);
                     finish();
                 }
-                public void onFailure(DatabaseUtil.CallbackFailure reason) {
+                public void onFailure(DbEventFailureReason reason) {
                     btn_save_password.setEnabled(true);
                     Toast.makeText(getApplicationContext(), "Unable to update your password at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
                 }
