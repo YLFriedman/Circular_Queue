@@ -5,8 +5,9 @@
     <string name="title_activity_create_account">Sign Up</string>
     <string name="title_activity_home">Home</string>
     <string name="title_activity_user_account_change_password">Change Password</string>
-    <string name="title_activity_user_account_edit">Edit User Details</string>
-    <string name="title_activity_user_account_view">User Details</string>
+    <string name="title_activity_user_account_edit">Edit Account Details</string>
+    <string name="title_activity_user_account_view">Account Details</string>
+    <string name="title_activity_user_account_list">Users</string>
     <string name="btn_sign_in">Sign In</string>
     <string name="btn_sign_up">Sign Up</string>
     <string name="signature">Created by CircularQueue</string>
@@ -46,4 +47,9 @@
     <string name="sample_email">address@sub.domain</string>
     <string name="test_exists">Test if User Exists</string>
     <string name="create_admin_account">Create Admin Account</string>
+    <string name="my_account">My Account</string>
+    <string name="services">Services</string>
+    <string name="user_list">Users</string>
+    <string name="manage_services">Manage Services</string>
+
 </resources>

@@ -6,106 +6,72 @@
     android:layout_height="match_parent"
     tools:context=".HomeActivity">
 
-<TextView
-    android:id="@+id/txt_welcome"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="24dp"
-    android:layout_marginLeft="24dp"
-    android:layout_marginTop="24dp"
-    android:layout_marginEnd="24dp"
-    android:layout_marginRight="24dp"
-    android:gravity="center_horizontal"
-    android:text="@string/welcome_template"
-    android:textSize="24sp"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent" />
+    <Button
+        android:id="@+id/btn_services"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/btn_bg_round_corners"
+        android:drawableTop="@drawable/ic_bell_white_75"
+        android:onClick="onServicesClick"
+        android:paddingTop="15dp"
+        android:paddingBottom="5dp"
+        android:text="@string/manage_services"
+        android:textColor="@color/White"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-<TextView
-    android:id="@+id/txt_role"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="24dp"
-    android:layout_marginLeft="24dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginEnd="24dp"
-    android:layout_marginRight="24dp"
-    android:gravity="center_horizontal"
-    android:text="@string/logged_in_as_template"
-    android:textSize="18sp"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/txt_welcome" />
+    <Button
+        android:id="@+id/btn_user_list"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/btn_bg_round_corners"
+        android:drawableTop="@drawable/ic_users_white_75"
+        android:onClick="onUserListClick"
+        android:paddingTop="15dp"
+        android:paddingBottom="5dp"
+        android:text="@string/user_list"
+        android:textColor="@color/White"
+        app:layout_constraintStart_toEndOf="@+id/btn_services"
+        app:layout_constraintTop_toTopOf="parent" />
 
-<Button
-    android:id="@+id/btn_view_account"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="24dp"
-    android:layout_marginLeft="24dp"
-    android:layout_marginEnd="24dp"
-    android:layout_marginRight="24dp"
-    android:layout_marginBottom="12dp"
-    android:onClick="onAccountDetailsClick"
-    android:text="@string/view_acount"
-    app:layout_constraintBottom_toTopOf="@+id/btn_sign_out"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent" />
+    <Button
+        android:id="@+id/btn_sign_out"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/btn_bg_round_corners"
+        android:drawableTop="@drawable/ic_sign_out_white_75"
+        android:onClick="onSignOutClick"
+        android:paddingTop="15dp"
+        android:paddingBottom="5dp"
+        android:text="@string/sign_out"
+        android:textColor="@color/White"
+        app:layout_constraintStart_toEndOf="@+id/btn_my_account"
+        app:layout_constraintTop_toBottomOf="@+id/btn_user_list" />
 
-<Button
-    android:id="@+id/btn_sign_out"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="24dp"
-    android:layout_marginLeft="24dp"
-    android:layout_marginEnd="24dp"
-    android:layout_marginRight="24dp"
-    android:layout_marginBottom="24dp"
-    android:onClick="onSignOutClick"
-    android:text="@string/sign_out"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent" />
-
-<LinearLayout
-    android:id="@+id/userListContainer"
-    android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_marginStart="24dp"
-    android:layout_marginLeft="24dp"
-    android:layout_marginTop="24dp"
-    android:layout_marginEnd="24dp"
-    android:layout_marginRight="24dp"
-    android:layout_marginBottom="16dp"
-    android:orientation="vertical"
-    app:layout_constraintBottom_toTopOf="@+id/btn_view_account"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/txt_role">
-
-    <TextView
-        android:id="@+id/userListTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/user_list_title"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:visibility="visible" />
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?android:attr/listDivider" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbarAlwaysDrawVerticalTrack="false"
-        android:scrollbars="vertical"
-        android:visibility="visible" />
-</LinearLayout>
+    <Button
+        android:id="@+id/btn_my_account"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/btn_bg_round_corners"
+        android:drawableTop="@drawable/ic_account_circle_white_75"
+        android:onClick="onMyAccountClick"
+        android:paddingTop="15dp"
+        android:paddingBottom="5dp"
+        android:text="@string/my_account"
+        android:textColor="@color/White"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_services" />
 
 </android.support.constraint.ConstraintLayout>
