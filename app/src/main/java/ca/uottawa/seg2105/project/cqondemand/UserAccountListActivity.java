@@ -1,9 +1,12 @@
 package ca.uottawa.seg2105.project.cqondemand;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -34,9 +37,15 @@ public class UserAccountListActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(ArrayList<User> data) {
                         if (null != data && data.size() > 0) {
-                            adapter = new UserAdapter(getApplicationContext(), data);
+                            adapter = new UserAdapter(getApplicationContext(), data, new View.OnClickListener() {
+                                public void onClick(final View view) {
+                                    TextView field = view.findViewById(R.id.txt_username_and_type);
+                                    Intent intent = new Intent(getApplicationContext(), UserAccountViewActivity.class);
+                                    intent.putExtra("username", field.getContentDescription());
+                                    startActivity(intent);
+                                }
+                            });
                             recyclerView.setAdapter(adapter);
-
                         }
                     }
                     @Override
@@ -47,4 +56,5 @@ public class UserAccountListActivity extends AppCompatActivity {
             }
         }
     }
+
 }

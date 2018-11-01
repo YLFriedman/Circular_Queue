@@ -71,18 +71,18 @@ public class User implements Serializable {
     }
 
     /**
-     *Simple getter for the user's first name
+     * Simple getter for the user's first name
      *
-     *@return The user's first name
+     * @return The user's first name
      */
     public String getFirstName() {
         return firstName;
     }
 
     /**
-     *Simple getter for the user's last name
+     * Simple getter for the user's last name
      *
-     *@return The user's last name
+     * @return The user's last name
      */
     public String getLastName() {
         return lastName;
@@ -176,7 +176,6 @@ public class User implements Serializable {
      * @param username the username you want to check
      * @return true if username is valid, false otherwise
      */
-
     public static boolean userNameIsValid(String username) {
         if (null == username || username.isEmpty()) { return false; }
         return !username.matches(ILLEGAL_USERNAME_CHARS_REGEX);
@@ -188,7 +187,6 @@ public class User implements Serializable {
      * @param email the email address you want to check
      * @return true if email is valid, false otherwise
      */
-
     public static boolean emailIsValid(CharSequence email) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
@@ -203,7 +201,6 @@ public class User implements Serializable {
      * @param confirmPassword the input of the secondary password field
      * @return true if the password is valid, false otherwise
      */
-
     public static PasswordValidationResult validatePassword(String username, String password, String confirmPassword) {
         if (null == password || password.isEmpty()) { return PasswordValidationResult.EMPTY; }
         if (password.length() < PASSWORD_MIN_LENGTH) { return PasswordValidationResult.TOO_SHORT; }
@@ -222,7 +219,6 @@ public class User implements Serializable {
      * @param input the String representation of a Type you wish to convert
      * @return
      */
-
     public static User.Types parseType(String input) {
         if (null == input) { throw new IllegalArgumentException("'null' is not a valid user type. "); }
         switch (input) {
@@ -231,6 +227,10 @@ public class User implements Serializable {
             case "Admin": return User.Types.ADMIN;
             default: throw new IllegalArgumentException("'" + input + "' is not a valid user type. ");
         }
+    }
+
+    public boolean equals(User other) {
+        return null != other && userName.equals(other.userName);
     }
 
 }

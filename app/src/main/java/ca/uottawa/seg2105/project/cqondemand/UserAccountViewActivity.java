@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class UserAccountViewActivity extends AppCompatActivity {
 
     private TextView txt_account_type;
@@ -51,11 +53,30 @@ public class UserAccountViewActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        currentUser = DbUtil.getCurrentUser();
-        if (null == currentUser) {
-            finish();
-        } else {
+        Intent intent = getIntent();
+        final String username = intent.getStringExtra("username");
+        if (null != username) {
+            currentUser = null;
             setUserViewValues();
+            DbUtil.getUser(username, new DbValueEventListener<User>() {
+                @Override
+                public void onSuccess(ArrayList<User> data) {
+                    currentUser = data.get(0);
+                    setUserViewValues();
+                }
+                @Override
+                public void onFailure(DbEventFailureReason reason) {
+                    Toast.makeText(getApplicationContext(), "Unable to retrieve the user '" + username + "' from the database.", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+            });
+        } else {
+            currentUser = DbUtil.getCurrentUser();
+            if (null == currentUser) {
+                finish();
+            } else {
+                setUserViewValues();
+            }
         }
     }
 
@@ -93,7 +114,7 @@ public class UserAccountViewActivity extends AppCompatActivity {
                         DbUtil.deleteUser(currentUser.getUserName(), new DbActionEventListener(){
                             public void onSuccess() {
                                 Toast.makeText(getApplicationContext(), "The user account '" + currentUser.getUserName() + "' has been successfully deleted.", Toast.LENGTH_LONG).show();
-                                DbUtil.setCurrentUser(null);
+                                if (DbUtil.getCurrentUser().equals(currentUser)) { DbUtil.setCurrentUser(null); }
                                 currentUser = null;
                                 finish();
                             }

@@ -52,7 +52,7 @@
                 android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:orientation="horizontal"
                 tools:layout_editor_absoluteX="16dp"
                 tools:layout_editor_absoluteY="178dp">
@@ -61,7 +61,7 @@
                     android:id="@+id/btn_sign_in"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="2dp"
+                    android:layout_marginRight="8dp"
                     android:layout_weight="1"
                     android:onClick="onSignInClick"
                     android:text="@string/btn_sign_in" />
@@ -70,7 +70,7 @@
                     android:id="@+id/btn_sign_up"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="2dp"
+                    android:layout_marginLeft="8dp"
                     android:layout_weight="1"
                     android:background="@android:drawable/editbox_background"
                     android:onClick="onCreateAccountClick"
@@ -107,8 +107,8 @@
                     android:layout_height="50dp"
                     android:contentDescription="@string/cq_logo"
                     android:padding="0dp"
-                    android:src="@drawable/ic_q1c"
-                    android:visibility="visible" />
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/ic_q1c" />
 
                 <TextView
                     android:id="@+id/textView"
@@ -121,8 +121,9 @@
 
             <Button
                 android:id="@+id/btn_create_test_account"
-                android:layout_width="250dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
                 android:onClick="onCreateTestAccountClick"
                 android:text="@string/create_test"
                 android:visibility="gone" />
