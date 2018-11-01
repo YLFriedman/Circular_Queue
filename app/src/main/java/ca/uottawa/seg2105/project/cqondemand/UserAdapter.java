@@ -7,6 +7,7 @@ import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         String secondLine = String.format("%s, %s", user.getUserName(), user.getType().toString());
         userViewHolder.fullname.setText(firstLine);
         userViewHolder.usernameAndType.setText(secondLine);
+        userViewHolder.avatar_image.setImageResource(R.drawable.ic_account_circle_gray_40);
 
 
     }
@@ -51,15 +53,17 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         return userList.size();
     }
 
-    class UserViewHolder extends RecyclerView.ViewHolder{
+    class UserViewHolder extends RecyclerView.ViewHolder {
 
         TextView fullname;
         TextView usernameAndType;
+        ImageView avatar_image;
 
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);
             fullname = itemView.findViewById(R.id.fullname);
             usernameAndType = itemView.findViewById(R.id.usernameAndType);
+            avatar_image = itemView.findViewById(R.id.avatar_image);
         }
     }
 
