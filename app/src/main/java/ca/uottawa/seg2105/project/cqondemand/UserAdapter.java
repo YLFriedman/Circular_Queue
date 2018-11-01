@@ -29,10 +29,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     @NonNull
     @Override
-    public UserViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(myContext);
-        View view = inflater.inflate(R.layout.userlist_layout, null);
-        UserViewHolder holder =  new UserViewHolder(view);
+    public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(myContext).inflate(R.layout.userlist_layout, parent, false);
+        UserViewHolder holder = new UserViewHolder(view);
         return holder;
     }
 
@@ -44,8 +43,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         userViewHolder.fullname.setText(firstLine);
         userViewHolder.usernameAndType.setText(secondLine);
         userViewHolder.avatar_image.setImageResource(R.drawable.ic_account_circle_gray_40);
-
-
+        userViewHolder.menu_image.setImageResource(R.drawable.ic_more_vert_gray_40);
     }
 
     @Override
@@ -58,13 +56,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         TextView fullname;
         TextView usernameAndType;
         ImageView avatar_image;
+        ImageView menu_image;
 
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);
             fullname = itemView.findViewById(R.id.fullname);
             usernameAndType = itemView.findViewById(R.id.usernameAndType);
             avatar_image = itemView.findViewById(R.id.avatar_image);
+            menu_image = itemView.findViewById(R.id.menu_image);
         }
+        
     }
 
 
