@@ -25,7 +25,7 @@ public class UserAccountListActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        currentUser = DbUtil.getCurrentUser();
+        currentUser = State.getState().getCurrentUser();
         if (null == currentUser) {
             finish();
         } else {

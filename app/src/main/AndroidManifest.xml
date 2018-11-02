@@ -10,9 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:screenOrientation="portrait"
             android:name=".SignInActivity"
-            android:label="@string/title_activity_sign_in">
+            android:label="@string/title_activity_sign_in"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,30 +20,36 @@
             </intent-filter>
         </activity>
         <activity
-            android:screenOrientation="portrait"
             android:name=".UserAccountCreateActivity"
             android:exported="true"
-            android:label="@string/title_activity_create_account" />
+            android:label="@string/title_activity_create_account"
+            android:screenOrientation="portrait" />
         <activity
-            android:screenOrientation="portrait"
             android:name=".HomeActivity"
-            android:label="@string/title_activity_home" />
+            android:label="@string/title_activity_home"
+            android:screenOrientation="portrait" />
         <activity
-            android:screenOrientation="portrait"
             android:name=".UserAccountViewActivity"
-            android:label="@string/title_activity_user_account_view" />
+            android:label="@string/title_activity_user_account_view"
+            android:screenOrientation="portrait" />
         <activity
-            android:screenOrientation="portrait"
             android:name=".UserAccountEditActivity"
-            android:label="@string/title_activity_user_account_edit" />
+            android:label="@string/title_activity_user_account_edit"
+            android:screenOrientation="portrait" />
         <activity
-            android:screenOrientation="portrait"
             android:name=".UserAccountChangePasswordActivity"
-            android:label="@string/title_activity_user_account_change_password" />
+            android:label="@string/title_activity_user_account_change_password"
+            android:screenOrientation="portrait" />
         <activity
-            android:screenOrientation="portrait"
             android:name=".UserAccountListActivity"
-            android:label="@string/title_activity_user_account_list" />
+            android:label="@string/title_activity_user_account_list"
+            android:screenOrientation="portrait" />
+        <activity android:name=".CategoryListActivity"
+            android:label="@string/title_activity_category_list"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ServiceListActivity"
+            android:label="@string/title_activity_service_list"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

@@ -22,7 +22,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        currentUser = DbUtil.getCurrentUser();
+        currentUser = State.getState().getCurrentUser();
         if (null == currentUser) {
             onSignOutClick(null);
         } else {
@@ -61,7 +61,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void onSignOutClick(View view) {
-        DbUtil.setCurrentUser(null);
+        State.getState().setCurrentUser(null);
         startActivity(new Intent(getApplicationContext(), SignInActivity.class));
         finish();
     }

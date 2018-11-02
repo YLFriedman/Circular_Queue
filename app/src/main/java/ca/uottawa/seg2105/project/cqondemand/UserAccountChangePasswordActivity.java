@@ -20,7 +20,7 @@ public class UserAccountChangePasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_account_change_password);
-        currentUser = DbUtil.getCurrentUser();
+        currentUser = State.getState().getCurrentUser();
         if (null == currentUser) {
             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

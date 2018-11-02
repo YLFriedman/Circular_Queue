@@ -28,7 +28,7 @@ public class UserAccountViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_account_view);
-        currentUser = DbUtil.getCurrentUser();
+        currentUser = State.getState().getCurrentUser();
         if (null == currentUser) {
             finish();
         } else {
@@ -71,7 +71,7 @@ public class UserAccountViewActivity extends AppCompatActivity {
                 }
             });
         } else {
-            currentUser = DbUtil.getCurrentUser();
+            currentUser = State.getState().getCurrentUser();
             if (null == currentUser) {
                 finish();
             } else {
@@ -114,7 +114,7 @@ public class UserAccountViewActivity extends AppCompatActivity {
                         DbUtil.deleteUser(currentUser.getUserName(), new DbActionEventListener(){
                             public void onSuccess() {
                                 Toast.makeText(getApplicationContext(), "The user account '" + currentUser.getUserName() + "' has been successfully deleted.", Toast.LENGTH_LONG).show();
-                                if (DbUtil.getCurrentUser().equals(currentUser)) { DbUtil.setCurrentUser(null); }
+                                if (null != State.getState().getCurrentUser() && State.getState().getCurrentUser().equals(currentUser)) { State.getState().setCurrentUser(null); }
                                 currentUser = null;
                                 finish();
                             }

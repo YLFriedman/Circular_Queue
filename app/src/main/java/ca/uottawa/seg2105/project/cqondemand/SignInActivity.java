@@ -23,7 +23,7 @@ public class SignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-        currentUser = DbUtil.getCurrentUser();
+        currentUser = State.getState().getCurrentUser();
         if (null == currentUser) {
             field_username = findViewById(R.id.field_username);
             field_password = findViewById(R.id.field_password);
@@ -50,7 +50,7 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        currentUser = DbUtil.getCurrentUser();
+        currentUser = State.getState().getCurrentUser();
         if (null != currentUser) {
             Intent loginIntent = new Intent(getApplicationContext(), HomeActivity.class);
             startActivity(loginIntent);

@@ -8,6 +8,8 @@
     <string name="title_activity_user_account_edit">Edit Account Details</string>
     <string name="title_activity_user_account_view">Account Details</string>
     <string name="title_activity_user_account_list">Users</string>
+    <string name="title_activity_service_list">Services</string>
+    <string name="title_activity_category_list">Service Categories</string>
     <string name="btn_sign_in">Sign In</string>
     <string name="btn_sign_up">Sign Up</string>
     <string name="signature">Created by CircularQueue</string>

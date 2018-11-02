@@ -26,23 +26,6 @@ public class DbUtil {
     private static User currentUser = null;
 
     /**
-     * Getter for the currentUser varaiable
-     * @return the currently signed in user
-     */
-    public static User getCurrentUser() {
-        return currentUser;
-    }
-
-    /**
-     * Sets the currently signed in user. Null inputs are valid.
-     * @param user the currently signed in user
-     */
-
-    public static void setCurrentUser(User user) {
-        currentUser = user;
-    }
-
-    /**
      * Callback method for authenticating a given set of user credentials through the database. Fails
      * if username does not exist or does not match store password value.
      *
@@ -67,7 +50,7 @@ public class DbUtil {
                         String typeStr = (String) dataSnapshot.child("type").getValue();
                         User.Types type = User.parseType(typeStr);
                         try {
-                            setCurrentUser(new User(firstName, lastName, username, email, type, password));
+                            State.getState().setCurrentUser(new User(firstName, lastName, username, email, type, password));
                             listener.onSuccess();
                         } catch (IllegalArgumentException e) {
                             listener.onFailure(DbEventFailureReason.BAD_USER);
@@ -211,7 +194,7 @@ public class DbUtil {
                 dbUsers.child(username).child("last_name").setValue(user.getLastName());
                 dbUsers.child(username).child("email").setValue(user.getEmail());
                 dbUsers.child(username).child("password").setValue(user.getPassword());
-                setCurrentUser(user);
+                State.getState().setCurrentUser(user);
                 if (null != listener) { listener.onSuccess(); }
             } catch (DatabaseException e) {
                 if (null != listener) { listener.onFailure(DbEventFailureReason.DATABASE_ERROR); }
@@ -222,9 +205,9 @@ public class DbUtil {
                 @Override
                 public void onSuccess() {
                     // Remove the old user from the DB
-                    dbUsers.child(getCurrentUser().getUserName()).removeValue();
+                    dbUsers.child(State.getState().getCurrentUser().getUserName()).removeValue();
                     // Update the app's current user
-                    setCurrentUser(user);
+                    State.getState().setCurrentUser(user);
                     if (null != listener) { listener.onSuccess(); }
                 }
                 @Override
