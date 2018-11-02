@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TableRow;
 
 public class HomeActivity extends AppCompatActivity {
 
     private User currentUser;
+
+    private TableRow btns_admin_1;
 
     /*
      * Fills in layout for UserHome activity
@@ -17,6 +20,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        btns_admin_1 = findViewById(R.id.btns_admin_1);
     }
 
     @Override
@@ -26,26 +30,25 @@ public class HomeActivity extends AppCompatActivity {
         if (null == currentUser) {
             onSignOutClick(null);
         } else {
-            //setWelcomeText();
+            // Hide all non-shared button rows
+            btns_admin_1.setVisibility(View.GONE);
+            // Enable the relevant button rows
+            switch (currentUser.getType()) {
+                case ADMIN:
+                    btns_admin_1.setVisibility(View.VISIBLE);
+                    break;
+                case HOMEOWNER:
+                    //btns_admin_1.setVisibility(View.VISIBLE);
+                    break;
+                case SERVICE_PROVIDER:
+                    //btns_admin_1.setVisibility(View.VISIBLE);
+                    break;
+            }
         }
     }
 
-    /*private void setWelcomeText() {
-        TextView txtWelcome = findViewById(R.id.txt_welcome);
-        String welcome = String.format(getString(R.string.welcome_template), currentUser.getFirstName(), currentUser.getLastName());
-        txtWelcome.setText(welcome);
-        TextView txtRole = findViewById(R.id.txt_role);
-        String loggedInAs = "";
-        if (currentUser.getType() == User.Types.ADMIN) {
-            loggedInAs = String.format(getString(R.string.logged_in_as_admin_template), currentUser.getType().toString());
-        } else {
-            loggedInAs = String.format(getString(R.string.logged_in_as_template), currentUser.getType().toString());
-        }
-        txtRole.setText(loggedInAs);
-    }*/
-
     public void onServicesClick(View view) {
-        //startActivity(new Intent(getApplicationContext(), UserAccountListActivity.class));
+        startActivity(new Intent(getApplicationContext(), CategoryListActivity.class));
     }
 
     public void onUserListClick(View view) {

@@ -53,5 +53,7 @@
     <string name="services">Services</string>
     <string name="user_list">Users</string>
     <string name="manage_services">Manage Services</string>
+    <string name="title">Title</string>
+    <string name="subtitle">Subtitle</string>
 
 </resources>

@@ -12,14 +12,15 @@ import java.util.ArrayList;
 
 public class UserAccountListActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
-    private UserAdapter adapter;
+    private RecyclerView user_list;
+    private UserListAdapter user_list_adapter;
     private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_account_list);
+        user_list = findViewById(R.id.user_list);
     }
 
     @Override
@@ -30,14 +31,13 @@ public class UserAccountListActivity extends AppCompatActivity {
             finish();
         } else {
             if (currentUser.getType() == User.Types.ADMIN) {
-                recyclerView = (RecyclerView) findViewById(R.id.user_list);
-                recyclerView.setHasFixedSize(true);
-                recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                user_list.setHasFixedSize(true);
+                user_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 DbUtil.getUsers(new DbValueEventListener<User>() {
                     @Override
                     public void onSuccess(ArrayList<User> data) {
                         if (null != data && data.size() > 0) {
-                            adapter = new UserAdapter(getApplicationContext(), data, new View.OnClickListener() {
+                            user_list_adapter = new UserListAdapter(getApplicationContext(), data, new View.OnClickListener() {
                                 public void onClick(final View view) {
                                     TextView field = view.findViewById(R.id.txt_username_and_type);
                                     Intent intent = new Intent(getApplicationContext(), UserAccountViewActivity.class);
@@ -45,7 +45,7 @@ public class UserAccountListActivity extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             });
-                            recyclerView.setAdapter(adapter);
+                            user_list.setAdapter(user_list_adapter);
                         }
                     }
                     @Override

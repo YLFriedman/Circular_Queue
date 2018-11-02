@@ -1,77 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HomeActivity">
 
-    <Button
-        android:id="@+id/btn_services"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/btn_bg_round_corners"
-        android:drawableTop="@drawable/ic_bell_white_75"
-        android:onClick="onServicesClick"
-        android:paddingTop="15dp"
-        android:paddingBottom="5dp"
-        android:text="@string/manage_services"
-        android:textColor="@color/White"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
 
-    <Button
-        android:id="@+id/btn_user_list"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/btn_bg_round_corners"
-        android:drawableTop="@drawable/ic_users_white_75"
-        android:onClick="onUserListClick"
-        android:paddingTop="15dp"
-        android:paddingBottom="5dp"
-        android:text="@string/user_list"
-        android:textColor="@color/White"
-        app:layout_constraintStart_toEndOf="@+id/btn_services"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TableLayout
+            android:id="@+id/buttons"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout_editor_absoluteX="8dp">
 
-    <Button
-        android:id="@+id/btn_sign_out"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/btn_bg_round_corners"
-        android:drawableTop="@drawable/ic_sign_out_white_75"
-        android:onClick="onSignOutClick"
-        android:paddingTop="15dp"
-        android:paddingBottom="5dp"
-        android:text="@string/sign_out"
-        android:textColor="@color/White"
-        app:layout_constraintStart_toEndOf="@+id/btn_my_account"
-        app:layout_constraintTop_toBottomOf="@+id/btn_user_list" />
+            <TableRow
+                android:id="@+id/btns_admin_1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/btn_my_account"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/btn_bg_round_corners"
-        android:drawableTop="@drawable/ic_account_circle_white_75"
-        android:onClick="onMyAccountClick"
-        android:paddingTop="15dp"
-        android:paddingBottom="5dp"
-        android:text="@string/my_account"
-        android:textColor="@color/White"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_services" />
+                <Button
+                    android:id="@+id/btn_services"
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_bg_round_corners"
+                    android:drawableTop="@drawable/ic_bell_white_75"
+                    android:onClick="onServicesClick"
+                    android:padding="16dp"
+                    android:text="@string/manage_services"
+                    android:textColor="@color/White" />
 
-</android.support.constraint.ConstraintLayout>
+                <Button
+                    android:id="@+id/btn_user_list"
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_bg_round_corners"
+                    android:drawableTop="@drawable/ic_users_white_75"
+                    android:onClick="onUserListClick"
+                    android:padding="16dp"
+                    android:text="@string/user_list"
+                    android:textColor="@color/White" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/btns_account"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/btn_my_account"
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_bg_round_corners"
+                    android:drawableTop="@drawable/ic_account_circle_white_75"
+                    android:onClick="onMyAccountClick"
+                    android:padding="16dp"
+                    android:text="@string/my_account"
+                    android:textColor="@color/White" />
+
+                <Button
+                    android:id="@+id/btn_sign_out"
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_bg_round_corners"
+                    android:drawableTop="@drawable/ic_sign_out_white_75"
+                    android:onClick="onSignOutClick"
+                    android:padding="16dp"
+                    android:text="@string/sign_out"
+                    android:textColor="@color/White" />
+
+            </TableRow>
+
+        </TableLayout>
+    </LinearLayout>
+</ScrollView>
