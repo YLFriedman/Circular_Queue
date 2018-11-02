@@ -18,7 +18,7 @@
         android:layout_height="40dp"
         android:layout_gravity="center_vertical"
         android:layout_marginRight="4dp"
-        app:srcCompat="@drawable/ic_account_circle_gray_40" />
+        app:srcCompat="@drawable/ic_account_circle_med_40" />
 
     <LinearLayout
         android:id="@+id/text_layout"
@@ -48,6 +48,6 @@
         android:id="@+id/img_nav"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        app:srcCompat="@drawable/ic_chevron_right_gray_30" />
+        app:srcCompat="@drawable/ic_chevron_right_med_30" />
 
 </LinearLayout>

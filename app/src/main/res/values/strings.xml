@@ -55,5 +55,6 @@
     <string name="manage_services">Manage Services</string>
     <string name="title">Title</string>
     <string name="subtitle">Subtitle</string>
+    <string name="button">Button</string>
 
 </resources>

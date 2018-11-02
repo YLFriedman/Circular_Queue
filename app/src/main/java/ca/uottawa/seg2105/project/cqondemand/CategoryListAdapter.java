@@ -47,8 +47,8 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
         userViewHolder.txt_name.setText(firstLine);
         userViewHolder.txt_username_and_type.setText(secondLine);
         userViewHolder.txt_username_and_type.setContentDescription(user.getUserName());
-        userViewHolder.img_avatar.setImageResource(R.drawable.ic_account_circle_gray_40);
-        userViewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_gray_30);*/
+        userViewHolder.img_avatar.setImageResource(R.drawable.ic_account_circle_med_40);
+        userViewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_med_30);*/
     }
 
     @Override

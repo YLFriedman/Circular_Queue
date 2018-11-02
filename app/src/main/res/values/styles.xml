@@ -10,4 +10,16 @@
 
     <style name="btn_danger"></style>
 
+    <style name="panel_button">
+        <item name="android:layout_width">150dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_margin">8dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/btn_bg_round_corners</item>
+        <item name="android:drawableTop">@drawable/ic_users_light_75</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:text">@string/button</item>
+        <item name="android:textColor">@color/White</item>
+    </style>
+
 </resources>

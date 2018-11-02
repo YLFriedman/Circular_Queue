@@ -25,29 +25,17 @@
 
                 <Button
                     android:id="@+id/btn_services"
-                    android:layout_width="150dp"
-                    android:layout_height="match_parent"
-                    android:layout_margin="8dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_bg_round_corners"
-                    android:drawableTop="@drawable/ic_bell_white_75"
+                    style="@style/panel_button"
+                    android:drawableTop="@drawable/ic_bell_light_75"
                     android:onClick="onServicesClick"
-                    android:padding="16dp"
-                    android:text="@string/manage_services"
-                    android:textColor="@color/White" />
+                    android:text="@string/manage_services" />
 
                 <Button
                     android:id="@+id/btn_user_list"
-                    android:layout_width="150dp"
-                    android:layout_height="match_parent"
-                    android:layout_margin="8dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_bg_round_corners"
-                    android:drawableTop="@drawable/ic_users_white_75"
+                    style="@style/panel_button"
+                    android:drawableTop="@drawable/ic_users_light_75"
                     android:onClick="onUserListClick"
-                    android:padding="16dp"
-                    android:text="@string/user_list"
-                    android:textColor="@color/White" />
+                    android:text="@string/user_list" />
             </TableRow>
 
             <TableRow
@@ -57,29 +45,17 @@
 
                 <Button
                     android:id="@+id/btn_my_account"
-                    android:layout_width="150dp"
-                    android:layout_height="match_parent"
-                    android:layout_margin="8dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_bg_round_corners"
-                    android:drawableTop="@drawable/ic_account_circle_white_75"
+                    style="@style/panel_button"
+                    android:drawableTop="@drawable/ic_account_circle_light_75"
                     android:onClick="onMyAccountClick"
-                    android:padding="16dp"
-                    android:text="@string/my_account"
-                    android:textColor="@color/White" />
+                    android:text="@string/my_account" />
 
                 <Button
                     android:id="@+id/btn_sign_out"
-                    android:layout_width="150dp"
-                    android:layout_height="match_parent"
-                    android:layout_margin="8dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/btn_bg_round_corners"
-                    android:drawableTop="@drawable/ic_sign_out_white_75"
+                    style="@style/panel_button"
+                    android:drawableTop="@drawable/ic_sign_out_light_75"
                     android:onClick="onSignOutClick"
-                    android:padding="16dp"
-                    android:text="@string/sign_out"
-                    android:textColor="@color/White" />
+                    android:text="@string/sign_out" />
 
             </TableRow>
 

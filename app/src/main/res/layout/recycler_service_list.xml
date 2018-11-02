@@ -40,6 +40,6 @@
         android:id="@+id/img_nav"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        app:srcCompat="@drawable/ic_chevron_right_gray_30" />
+        app:srcCompat="@drawable/ic_chevron_right_med_30" />
 
 </LinearLayout>

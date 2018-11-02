@@ -50,8 +50,8 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
         viewHolder.txt_name.setText(firstLine);
         viewHolder.txt_username_and_type.setText(secondLine);
         viewHolder.txt_username_and_type.setContentDescription(user.getUserName());
-        viewHolder.img_avatar.setImageResource(R.drawable.ic_account_circle_gray_40);
-        viewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_gray_30);
+        viewHolder.img_avatar.setImageResource(R.drawable.ic_account_circle_med_40);
+        viewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_med_30);
     }
 
     @Override
