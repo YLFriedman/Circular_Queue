@@ -4,75 +4,60 @@ import java.util.ArrayList;
 
 public class Category{
 
-    public static String CategoryTypeName;
-    public ArrayList<Service> services;
+    private String name;
+    private ArrayList<Service> services;
 
-    /*
-     *Constructor, checks that categorytype is a string and service is a service
-     *
-     * @param, takes String CategoryType and Service service
+    /**
+     * Empty constructor for Firebase uses
      */
-    public void Category(String CategoryType, Service service){
-        if(CategoryType instanceof String){
-            System.out.print("Invalid input for Category name");
-        }else {
-            this.CategoryTypeName = CategoryType;
-            this.services = new ArrayList<Service>();
-            this.services.add(service);
-        }
+    public Category() {
     }
 
-    /*
-     *sets name of category
+    /**
+     *Constructor for the Category object
+     *
+     * @param name the string that corresponds to this category
+     * @paran services the services that will be associated with this category
+     */
+    public Category(String name, ArrayList<Service> services){
+            this.name = name;
+            this.services = services;
+    }
+
+    /**
+     *Sets name of category
      *
      * @param, takes String newName
      */
-    public void setCategoryTypeName(String newName){
-        this.CategoryTypeName = newName;
+    public void setName(String newName){
+        this.name = newName;
     }
 
-    /*
-     *add service to category
+    /**
+     * Setter for the services associated with this category
      *
-     * @param; Service service
+     * @param services an ArrayList of Services to be associated with this category
      */
-    public void addService(Service service){
-        this.services.add(service);
+
+    public void setServices(ArrayList<Service> services) {
+        this.services = services;
     }
 
-    /*
-     *removes service from service arraylist
+
+    /**
+     *Getter for the name of this category
      *
-     * @param, takes service as input
+     * @return String name of this category
      */
-    public void removeUser(Service service){
-        this.services.remove(service);
+    public String getName(){
+        return this.name;
     }
 
-    /*
-     *gets name of category
-     */
-    public String getCategoryTypeName(){
-        return this.CategoryTypeName;
-    }
 
-    /*
-     *returns service of category, else returns null if no user found
+    /**
+     *returns the list of services associated with this Category
      *
-     * @param; Service service to return
-     */
-    public Service getService(Service service){
-        if(this.services.contains(service)) {
-            int i;
-            i = this.services.indexOf(service);
-            return this.services.get(i);
-        }else{
-            return null;
-        }
-    }
-
-    /*
-     *returns Services
+     * @return an ArrayList of Services associated with this Category
      */
     public ArrayList<Service> getServices(){
         return this.services;
