@@ -4,8 +4,9 @@ import java.util.ArrayList;
 
 public class Service {
 
-    private Category category;
-    private ArrayList<User> serviceProviders;
+    private String category;
+    private ArrayList<String> serviceProviderIDs;
+    private String name;
     private double rate;
 
 
@@ -18,19 +19,23 @@ public class Service {
     }
     /**
      * Constructor for a new service Object
+     * @param name the name of this Service
      * @param category The category that this service falls under
      * @param rate The rate per hour that this service costs
      * @param serviceProviders an ArrayList of Users that provide this service, must be of type Service Provider
      */
-    public Service(Category category, double rate, ArrayList<User> serviceProviders){
+    public Service(String category, double rate, ArrayList<User> serviceProviders, String name){
+            this.serviceProviderIDs = new ArrayList<>();
             for(User user : serviceProviders){
                 if(!(user.getType() == User.Types.SERVICE_PROVIDER)){
                     throw new IllegalArgumentException("Only Service Providers can provide a service");
                 }
+                serviceProviderIDs.add(user.getUserName());
             }
-            this.serviceProviders = serviceProviders;
+
             this.category = category;
-            this.rate =rate;
+            this.rate = rate;
+            this.name = name;
     }
 
     /**
@@ -39,8 +44,8 @@ public class Service {
      * @return an ArrayList of the service providers that provide this service
      */
 
-    public ArrayList<User> getServiceProviders(){
-        return this.serviceProviders;
+    public ArrayList<String> getServiceProviderIDs(){
+        return this.serviceProviderIDs;
 
     }
 
@@ -50,7 +55,7 @@ public class Service {
      *
      * @return the associated category
      */
-    public Category getCategory(){
+    public String getCategory(){
         return this.category;
     }
 
@@ -64,17 +69,15 @@ public class Service {
     }
 
     /**
-     *adds user to the list of ServiceProviders
+     * Getter for the name of this Service
      *
-     *@param, takes single User user as input
+     * @return the name of this service
      */
-    public void addProvider(User user){
-        if(user.getType() != User.Types.SERVICE_PROVIDER){
-            throw new IllegalArgumentException("Only a Service Provider can provide a service!");
-        }
 
-        serviceProviders.add(user);
+    public String getName(){
+        return this.name;
     }
+
 
 
     /**
@@ -92,7 +95,7 @@ public class Service {
      * @param newCategory the category to be associated with this service
      */
 
-    public void setCategory(Category newCategory){
+    public void setCategory(String newCategory){
         this.category = newCategory;
     }
 
@@ -104,12 +107,18 @@ public class Service {
      */
 
     public void setServiceProviders(ArrayList<User> serviceProviders){
+        ArrayList<String> newIDs = new ArrayList<>();
         for(User user : serviceProviders){
             if(user.getType() != User.Types.SERVICE_PROVIDER) {
                 throw new IllegalArgumentException("Only a service provider can provide a service!");
             }
+            newIDs.add(user.getUserName());
         }
-        this.serviceProviders = serviceProviders;
+        this.serviceProviderIDs = newIDs;
 
+    }
+
+    public void setName(String newName){
+        this.name = newName;
     }
 }

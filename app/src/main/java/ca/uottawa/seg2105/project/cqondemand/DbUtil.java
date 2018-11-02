@@ -21,6 +21,7 @@ import java.util.ArrayList;
 public class DbUtil {
 
     private static DatabaseReference dbUsers = FirebaseDatabase.getInstance().getReference().child("users");
+    private static DatabaseReference dbServices = FirebaseDatabase.getInstance().getReference().child("services");
 
     private static User currentUser = null;
 
@@ -279,5 +280,63 @@ public class DbUtil {
         };
         dbUsers.child(username).removeValue(complete);
     }
+
+    public static void createService(final Service service, final DbActionEventListener listener){
+        if(null == service) throw new IllegalArgumentException("The service cannot be null");
+        if(null == listener) throw new IllegalArgumentException("Listener must not be null");
+        getService(service.getName(), new DbValueEventListener<Service>() {
+            @Override
+            public void onSuccess(ArrayList<Service> data) {
+                //Failure condition, service already exists
+                listener.onFailure(DbEventFailureReason.ALREADY_EXISTS);
+
+            }
+
+            @Override
+            public void onFailure(DbEventFailureReason reason) {
+                //Success Condition, service can be created
+                String serviceId = service.getName().toLowerCase();
+                try{
+                    dbServices.child(serviceId).setValue(service);
+                    listener.onSuccess();
+                }
+                catch(DatabaseException e){
+                    listener.onFailure(DbEventFailureReason.DATABASE_ERROR);
+
+                }
+
+            }
+        });
+
+    }
+
+    public static void getService(String name, final DbValueEventListener<Service> listener){
+        if(null == name) throw new IllegalArgumentException("The name cannot be null");
+        if(null == listener) throw new IllegalArgumentException("Listener must not be null");
+        dbServices.child(name).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()){
+                    listener.onFailure(DbEventFailureReason.DOES_NOT_EXIST);
+                }
+                else{
+                    Service retrievedService = dataSnapshot.getValue(Service.class);
+                    ArrayList<Service> returnValue = new ArrayList<>();
+                    returnValue.add(retrievedService);
+                    listener.onSuccess(returnValue);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                listener.onFailure(DbEventFailureReason.DATABASE_ERROR);
+
+            }
+        });
+
+    }
+
 
 }

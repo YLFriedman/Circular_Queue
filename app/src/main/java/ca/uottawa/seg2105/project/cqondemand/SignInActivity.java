@@ -145,4 +145,47 @@ public class SignInActivity extends AppCompatActivity {
         });
     }
 
+    public void onCreateTestServiceClick(View view){
+        ArrayList<User> providers = new ArrayList<>();
+        providers.add(new User("joe", "blow", "joeblow", "joeblow@mail.com", User.Types.SERVICE_PROVIDER, "CQPASS"));
+        providers.add(new User("buddy", "guy", "buddyguy", "buddyguy@mail.com", User.Types.SERVICE_PROVIDER, "CQPASS"));
+
+
+        Service testService = new Service("security", 140, providers, "locksmith");
+        DbUtil.createService(testService, new DbActionEventListener() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(getApplicationContext(), "It worked, apparently!", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(DbEventFailureReason reason) {
+
+                Toast.makeText(getApplicationContext(), "It failed, apparently because of " + reason.toString(), Toast.LENGTH_LONG).show();
+
+            }
+        });
+    }
+
+    public void onGetServiceTestClick(View view){
+        DbUtil.getService("locksmith", new DbValueEventListener<Service>() {
+            @Override
+            public void onSuccess(ArrayList<Service> data) {
+                String category = data.get(0).getCategory();
+                Toast.makeText(getApplicationContext(), "Wow it worked, the category is " + category, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(DbEventFailureReason reason) {
+                switch(reason){
+                    case DOES_NOT_EXIST: Toast.makeText(getApplicationContext(), "Doesn't seem to exist", Toast.LENGTH_LONG).show();
+                    break;
+
+                    case DATABASE_ERROR: Toast.makeText(getApplicationContext(), "DB error of some kind", Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
+    }
+
 }
