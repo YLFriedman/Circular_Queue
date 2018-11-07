@@ -44,12 +44,30 @@
             android:name=".UserAccountListActivity"
             android:label="@string/title_activity_user_account_list"
             android:screenOrientation="portrait" />
-        <activity android:name=".CategoryListActivity"
+        <activity
+            android:name=".CategoryListActivity"
             android:label="@string/title_activity_category_list"
             android:screenOrientation="portrait" />
-        <activity android:name=".ServiceListActivity"
+        <activity
+            android:name=".ServiceListActivity"
             android:label="@string/title_activity_service_list"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ServiceViewActivity"
+            android:label="@string/title_activity_service_view"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ServiceEditActivity"
+            android:label="@string/title_activity_service_edit"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CategoryCreateActivity"
+            android:label="@string/title_activity_category_create"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ServiceCreateActivity"
+            android:label="@string/title_activity_service_create"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

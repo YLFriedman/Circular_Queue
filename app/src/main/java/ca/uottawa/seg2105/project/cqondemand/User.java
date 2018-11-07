@@ -1,6 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class User implements Serializable {
 
@@ -231,6 +232,37 @@ public class User implements Serializable {
 
     public boolean equals(User other) {
         return null != other && userName.equals(other.userName);
+    }
+
+    public static void getUser(final String username, final DbValueEventListener<User> listener) {
+        DbUtil.getItem(DbUtil.DataType.USER, username, listener);
+    }
+
+    /**
+     * Callback method for authenticating a given set of user credentials through the database. Fails
+     * if username does not exist or does not match store password value.
+     *
+     * @param username the username to be authenticated
+     * @param password the password to be authenticated
+     * @param listener the listener that will be informed if authentication was successful or not
+     */
+    public static void authenticate(final String username, final String password, final DbActionEventListener listener) {
+        getUser(username, new DbValueEventListener<User>() {
+            @Override
+            public void onSuccess(ArrayList<User> data) {
+                User user = data.get(0);
+                if (user.getPassword().equals(password)) {
+                    State.getState().setCurrentUser(user);
+                    listener.onSuccess();
+                } else {
+                    listener.onFailure(DbEventFailureReason.PASSWORD_MISMATCH);
+                }
+            }
+            @Override
+            public void onFailure(DbEventFailureReason reason) {
+                listener.onFailure(reason);
+            }
+        });
     }
 
 }

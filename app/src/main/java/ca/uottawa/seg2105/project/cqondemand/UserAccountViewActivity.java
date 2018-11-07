@@ -58,7 +58,7 @@ public class UserAccountViewActivity extends AppCompatActivity {
         if (null != username) {
             currentUser = null;
             setUserViewValues();
-            DbUtil.getUser(username, new DbValueEventListener<User>() {
+            User.getUser(username, new DbValueEventListener<User>() {
                 @Override
                 public void onSuccess(ArrayList<User> data) {
                     currentUser = data.get(0);

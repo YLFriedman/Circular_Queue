@@ -30,7 +30,7 @@ public class SignInActivity extends AppCompatActivity {
             btn_sign_in = findViewById(R.id.btn_sign_in);
             btn_sign_up = findViewById(R.id.btn_sign_up);
             btn_create_admin_account = findViewById(R.id.btn_create_admin_account);
-            DbUtil.getUser("admin", new DbValueEventListener<User>() {
+            User.getUser("admin", new DbValueEventListener<User>() {
                 @Override
                 public void onSuccess(ArrayList<User> data) {
                     btn_create_admin_account.setVisibility(View.GONE);
@@ -84,7 +84,7 @@ public class SignInActivity extends AppCompatActivity {
     public void onSignInClick(View view) {
         btn_sign_in.setEnabled(false);
         btn_sign_up.setEnabled(false);
-        DbUtil.authenticate(field_username.getText().toString(), field_password.getText().toString(), new DbActionEventListener() {
+        User.authenticate(field_username.getText().toString(), field_password.getText().toString(), new DbActionEventListener() {
             @Override
             public void onSuccess() {
                 btn_sign_in.setEnabled(true);
@@ -99,7 +99,7 @@ public class SignInActivity extends AppCompatActivity {
                 btn_sign_up.setEnabled(true);
                 switch (reason) {
                     case DATABASE_ERROR: Toast.makeText(getApplicationContext(), "Unable to sign in due to a Database Error! Please try again later.", Toast.LENGTH_LONG).show(); break;
-                    case BAD_USER: Toast.makeText(getApplicationContext(), "Unable to sign in, your account data is corrupt.", Toast.LENGTH_LONG).show(); break;
+                    case INVALID_DATA: Toast.makeText(getApplicationContext(), "Unable to sign in, your account data is corrupt.", Toast.LENGTH_LONG).show(); break;
                     default: Toast.makeText(getApplicationContext(), "Invalid Credentials!", Toast.LENGTH_LONG).show();
                 }
             }
