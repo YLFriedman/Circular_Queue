@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -42,13 +43,9 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         Category category = data.get(i);
-        /*String firstLine = String.format("%s %s", user.getFirstName(), user.getLastName());
-        String secondLine = String.format("%s, %s", user.getUserName(), user.getType().toString());
-        userViewHolder.txt_name.setText(firstLine);
-        userViewHolder.txt_username_and_type.setText(secondLine);
-        userViewHolder.txt_username_and_type.setContentDescription(user.getUserName());
-        userViewHolder.img_avatar.setImageResource(R.drawable.ic_account_circle_med_40);
-        userViewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_med_30);*/
+
+        String categoryName = String.format("%s", category.getName());
+        viewHolder.txt_title.setText(categoryName);
     }
 
     @Override
@@ -58,17 +55,11 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        /*TextView txt_name;
-        TextView txt_username_and_type;
-        ImageView img_avatar;
-        ImageView img_nav;*/
+        TextView txt_title;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            /*txt_name = itemView.findViewById(R.id.txt_name);
-            txt_username_and_type = itemView.findViewById(R.id.txt_username_and_type);
-            img_avatar = itemView.findViewById(R.id.img_avatar);
-            img_nav = itemView.findViewById(R.id.img_nav);*/
+            txt_title = itemView.findViewById(R.id.txt_title);
         }
 
     }
