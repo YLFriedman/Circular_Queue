@@ -8,9 +8,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.DatabaseReference.CompletionListener;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * This class is a utility class for interfacing with the FireBase real-time database. It also allows
@@ -264,6 +267,14 @@ public class DbUtil {
         dbUsers.child(username).removeValue(complete);
     }
 
+    /**
+     * Callback method for creating a new Service. Failure state occurs if a service with the same name
+     * already exists, or if there is a database error of some kind
+     *
+     * @param service the service object to be saved to the database
+     * @param listener the callback listener that will respond to the success of failure of this method
+     */
+
     public static void createService(final Service service, final DbActionEventListener listener){
         if(null == service) throw new IllegalArgumentException("The service cannot be null");
         if(null == listener) throw new IllegalArgumentException("Listener must not be null");
@@ -293,6 +304,14 @@ public class DbUtil {
 
     }
 
+    /**
+     * Callback method for retrieving a service from the database by name. Failure occurs if the
+     * service does not exist or if there is some DatabaseError
+     *
+     * @param name the name of the service to be retrieved
+     * @param listener the listener that will process the success or failure of this method
+     */
+
     public static void getService(String name, final DbValueEventListener<Service> listener){
         if(null == name) throw new IllegalArgumentException("The name cannot be null");
         if(null == listener) throw new IllegalArgumentException("Listener must not be null");
@@ -320,6 +339,55 @@ public class DbUtil {
         });
 
     }
+
+    /**
+     * Callback method for deleting a specific service from the database.
+     * @param name
+     * @param listener
+     */
+
+    public static void deleteService(String name, final DbActionEventListener listener){
+        CompletionListener complete = new CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                if(databaseError == null){
+                    listener.onSuccess();
+                }
+                else{
+                    listener.onFailure(DbEventFailureReason.DATABASE_ERROR);
+                }
+            }
+        };
+        try{
+            dbServices.child(name).setValue(null, complete);
+        }
+        catch(DatabaseException e){
+            listener.onFailure(DbEventFailureReason.DATABASE_ERROR);
+        }
+    }
+
+    public static void getServices(String categoryName, final DbValueEventListener<Service> listener){
+        Query query = dbServices.orderByChild("category").equalTo(categoryName);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<Service> requestedData = new ArrayList<>();
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    requestedData.add(child.getValue(Service.class));
+                }
+                listener.onSuccess(requestedData);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                listener.onFailure(DbEventFailureReason.DATABASE_ERROR);
+
+            }
+        });
+    }
+
 
 
 }
