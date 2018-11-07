@@ -8,15 +8,13 @@ import android.support.v7.widget.RecyclerView;
 public class CategoryListActivity extends AppCompatActivity {
 
     private User currentUser;
-
     private RecyclerView category_list;
-    private ServiceListAdapter category_list_adapter;
+    private CategoryListAdapter category_list_adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_categoy_list);
-
         category_list = findViewById(R.id.category_list);
     }
 
