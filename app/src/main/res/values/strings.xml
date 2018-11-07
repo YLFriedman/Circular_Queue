@@ -60,5 +60,10 @@
     <string name="title">Title</string>
     <string name="subtitle">Subtitle</string>
     <string name="button">Button</string>
+    <string name="create_category">Create Category</string>
+    <string name="category_title">Category Title</string>
+    <string name="service_name">Service Name</string>
+    <string name="service_rate">Service Rate</string>
+    <string name="create_service">Create Service</string>
 
 </resources>
