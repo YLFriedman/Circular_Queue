@@ -6,9 +6,9 @@ public enum DbEventFailureReason {
     DATABASE_ERROR,
     DOES_NOT_EXIST,
     ALREADY_EXISTS,
+    INVALID_DATA,
 
     // User Specific Errors
-    PASSWORD_MISMATCH,
-    BAD_USER;
+    PASSWORD_MISMATCH;
 
 }

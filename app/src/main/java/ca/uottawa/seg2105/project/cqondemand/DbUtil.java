@@ -10,6 +10,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 
 /**
@@ -22,80 +23,68 @@ public class DbUtil {
 
     private static DatabaseReference dbUsers = FirebaseDatabase.getInstance().getReference().child("users");
     private static DatabaseReference dbServices = FirebaseDatabase.getInstance().getReference().child("services");
-
-    private static User currentUser = null;
-
-    /**
-     * Callback method for authenticating a given set of user credentials through the database. Fails
-     * if username does not exist or does not match store password value.
-     *
-     * @param username the username to be authenticated
-     * @param password the password to be authenticated
-     * @param listener the listener that will be informed if authentication was successful or not
-     */
-    public static void authenticate(final String username, final String password, final DbActionEventListener listener) {
-
-        DatabaseReference userRef = dbUsers.child(username);
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists()) {
-                    listener.onFailure(DbEventFailureReason.DOES_NOT_EXIST);
-                } else {
-                    String realPassword = (String) dataSnapshot.child("password").getValue();
-                    if (password.equals(realPassword)) {
-                        String firstName = (String) dataSnapshot.child("first_name").getValue();
-                        String lastName = (String) dataSnapshot.child("last_name").getValue();
-                        String email = (String) dataSnapshot.child("email").getValue();
-                        String typeStr = (String) dataSnapshot.child("type").getValue();
-                        User.Types type = User.parseType(typeStr);
-                        try {
-                            State.getState().setCurrentUser(new User(firstName, lastName, username, email, type, password));
-                            listener.onSuccess();
-                        } catch (IllegalArgumentException e) {
-                            listener.onFailure(DbEventFailureReason.BAD_USER);
-                        }
-
-                    } else {
-                        listener.onFailure(DbEventFailureReason.PASSWORD_MISMATCH);
-                    }
-                }
+    protected enum DataType {
+        USER, SERVICE, CATEGORY;
+        public String toString() {
+            switch (this) {
+                case USER: return "users";
+                case SERVICE: return "services";
+                case CATEGORY: return "categories";
+                default: return this.name();
             }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                listener.onFailure(DbEventFailureReason.DATABASE_ERROR);
-            }
-        });
+        }
     }
 
-    /**
-     * Callback method for ensuring that a given account exists. Fails if account does not exist.
-     *
-     * @throws IllegalArgumentException if the username or listener are null
-     * @param username the username you wish to check
-     * @param listener the listener that will respond to the success/failure of the existence check
-     */
-    public static void getUser(final String username, final DbValueEventListener listener) {
-        if (null == username) { throw new IllegalArgumentException("The username cannot be null."); }
+    private static Class getClassObj(DataType type) {
+        if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
+        switch (type) {
+            case USER: return DbUser.class;
+            case SERVICE: return Service.class;
+            case CATEGORY: return Category.class;
+            default: return null;
+        }
+    }
+
+    private static DatabaseReference getRef(DataType type) {
+        if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
+        return FirebaseDatabase.getInstance().getReference().child(type.toString());
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> void getItem(final DataType type, final String key, final DbValueEventListener<T> listener) {
+        if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
+        if (null == key) { throw new IllegalArgumentException("The key cannot be null."); }
         if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
-        DatabaseReference userRef = dbUsers.child(username);
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        getRef(type).child(key).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists()) {
                     listener.onFailure(DbEventFailureReason.DOES_NOT_EXIST);
                 } else {
-                    String firstName = (String) dataSnapshot.child("first_name").getValue();
-                    String lastName = (String) dataSnapshot.child("last_name").getValue();
-                    String email = (String) dataSnapshot.child("email").getValue();
-                    String password = (String) dataSnapshot.child("password").getValue();
                     try {
-                        User.Types type = User.parseType((String) dataSnapshot.child("type").getValue());
-                        ArrayList<User> userList = new ArrayList<User>(1);
-                        userList.add(new User(firstName, lastName, username, email, type, password));
-                        listener.onSuccess(userList);
+
+                        /*T item;
+                        switch (type) {
+                            case USER:
+                                DbUser dbItem = (DbUser) dataSnapshot.getValue(DbUser.class);
+                                item = (T) dbItem.toUser();
+                                break;
+                            default: item = (T) dataSnapshot.getValue(getClassObj(type));
+                        }*/
+
+                        Object dbItem = dataSnapshot.getValue(getClassObj(type));
+                        T item;
+                        switch (type) {
+                            case USER: item = (T) ((DbUser) dbItem).toUser(); break;
+                            default: item = (T) dbItem;
+                        }
+
+                        ArrayList<T> returnValue = new ArrayList<T>(1);
+                        returnValue.add(item);
+                        listener.onSuccess(returnValue);
                     } catch (IllegalArgumentException e) {
-                        listener.onFailure(DbEventFailureReason.BAD_USER);
+                        listener.onFailure(DbEventFailureReason.INVALID_DATA);
                     }
                 }
             }
@@ -147,7 +136,7 @@ public class DbUtil {
      */
     public static void createUser(final User user, @Nullable final DbActionEventListener listener) {
         if (null == user) { throw new IllegalArgumentException("The user cannot be null."); }
-        getUser(user.getUserName(), new DbValueEventListener<User>() {
+        User.getUser(user.getUserName(), new DbValueEventListener<User>() {
             @Override
             public void onSuccess(ArrayList<User> data) {
                 // Failure condition: User already exists
@@ -229,7 +218,7 @@ public class DbUtil {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                 if (databaseError == null) {
-                    currentUser.setPassword(user.getPassword());
+                    State.getState().getCurrentUser().setPassword(user.getPassword());
                     listener.onSuccess();
                 } else {
                     listener.onFailure(DbEventFailureReason.DATABASE_ERROR);
@@ -264,17 +253,15 @@ public class DbUtil {
         dbUsers.child(username).removeValue(complete);
     }
 
-    public static void createService(final Service service, final DbActionEventListener listener){
-        if(null == service) throw new IllegalArgumentException("The service cannot be null");
-        if(null == listener) throw new IllegalArgumentException("Listener must not be null");
+    public static void createService(final Service service, final DbActionEventListener listener) {
+        if (null == service) { throw new IllegalArgumentException("The service cannot be null"); }
+        if (null == listener) { throw new IllegalArgumentException("Listener must not be null"); }
         getService(service.getName(), new DbValueEventListener<Service>() {
             @Override
             public void onSuccess(ArrayList<Service> data) {
                 //Failure condition, service already exists
                 listener.onFailure(DbEventFailureReason.ALREADY_EXISTS);
-
             }
-
             @Override
             public void onFailure(DbEventFailureReason reason) {
                 //Success Condition, service can be created
@@ -285,41 +272,51 @@ public class DbUtil {
                 }
                 catch(DatabaseException e){
                     listener.onFailure(DbEventFailureReason.DATABASE_ERROR);
-
                 }
-
             }
         });
-
     }
 
-    public static void getService(String name, final DbValueEventListener<Service> listener){
-        if(null == name) throw new IllegalArgumentException("The name cannot be null");
-        if(null == listener) throw new IllegalArgumentException("Listener must not be null");
+    public static void getService(String name, final DbValueEventListener<Service> listener) {
+        if(null == name) { throw new IllegalArgumentException("The name cannot be null"); }
+        if(null == listener) { throw new IllegalArgumentException("Listener must not be null"); }
         dbServices.child(name).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.exists()){
+                if (!dataSnapshot.exists()) {
                     listener.onFailure(DbEventFailureReason.DOES_NOT_EXIST);
                 }
-                else{
+                else {
                     Service retrievedService = dataSnapshot.getValue(Service.class);
                     ArrayList<Service> returnValue = new ArrayList<>();
                     returnValue.add(retrievedService);
                     listener.onSuccess(returnValue);
                 }
-
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
                 listener.onFailure(DbEventFailureReason.DATABASE_ERROR);
-
             }
         });
-
     }
 
+    public static class DbUser {
+        public String first_name;
+        public String last_name;
+        public String username;
+        public String email;
+        public String password;
+        public String type;
+        public DbUser() {}
+        public DbUser(User user) {
+            first_name = user.getFirstName();
+            last_name = user.getLastName();
+            username = user.getUserName();
+            email = user.getEmail();
+            password = user.getPassword();
+            type = user.getType().toString();
+        }
+        public User toUser() { return new User(first_name, last_name, username, email, User.parseType(type), password); }
+    }
 
 }
