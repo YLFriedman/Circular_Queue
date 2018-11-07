@@ -39,8 +39,8 @@ public class DbUtil {
         if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
         switch (type) {
             case USER: return DbUser.class;
-            case SERVICE: return Service.class;
-            case CATEGORY: return Category.class;
+            case SERVICE: return DbService.class;
+            case CATEGORY: return DbCategory.class;
             default: return null;
         }
     }
@@ -63,27 +63,14 @@ public class DbUtil {
                     listener.onFailure(DbEventFailureReason.DOES_NOT_EXIST);
                 } else {
                     try {
-
-                        /*T item;
-                        switch (type) {
-                            case USER:
-                                DbUser dbItem = (DbUser) dataSnapshot.getValue(DbUser.class);
-                                item = (T) dbItem.toUser();
-                                break;
-                            default: item = (T) dataSnapshot.getValue(getClassObj(type));
-                        }*/
-
-                        Object dbItem = dataSnapshot.getValue(getClassObj(type));
-                        T item;
-                        switch (type) {
-                            case USER: item = (T) ((DbUser) dbItem).toUser(); break;
-                            default: item = (T) dbItem;
-                        }
-
+                        DbItem<T> dbItem = (DbItem<T>) dataSnapshot.getValue(getClassObj(type));
+                        T item = dbItem.toItem();
                         ArrayList<T> returnValue = new ArrayList<T>(1);
                         returnValue.add(item);
                         listener.onSuccess(returnValue);
                     } catch (IllegalArgumentException e) {
+                        listener.onFailure(DbEventFailureReason.INVALID_DATA);
+                    } catch (ClassCastException e) {
                         listener.onFailure(DbEventFailureReason.INVALID_DATA);
                     }
                 }
@@ -300,7 +287,10 @@ public class DbUtil {
         });
     }
 
-    public static class DbUser {
+    public static abstract class DbItem<T> {
+        public T toItem() { return null; }
+    }
+    public static class DbUser extends DbItem<User> {
         public String first_name;
         public String last_name;
         public String username;
@@ -316,7 +306,26 @@ public class DbUtil {
             password = user.getPassword();
             type = user.getType().toString();
         }
-        public User toUser() { return new User(first_name, last_name, username, email, User.parseType(type), password); }
+        public User toItem() { return new User(first_name, last_name, username, email, User.parseType(type), password); }
+    }
+    public static class DbService extends DbItem<Service> {
+        public String name;
+        private double rate;
+        public DbService() {}
+        public DbService(Service service) {
+            name = service.getName();
+            rate = service.getRate();
+        }
+        //public User toItem() { return new User(first_name, last_name, username, email, User.parseType(type), password); }
+    }
+    public static class DbCategory extends DbItem<Service> {
+        public String name;
+
+        public DbCategory() {}
+        public DbCategory(Category category) {
+            name = category.getName();
+        }
+        //public User toItem() { return new User(first_name, last_name, username, email, User.parseType(type), password); }
     }
 
 }
