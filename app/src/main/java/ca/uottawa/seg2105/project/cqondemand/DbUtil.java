@@ -82,6 +82,46 @@ public class DbUtil {
         });
     }
 
+
+    public static <T> void getItems(final DataType type, final DbValueEventListener<T> listener){
+        if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
+        if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
+
+        getRef(type).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long size = dataSnapshot.getChildrenCount();
+                ArrayList<T> returnValue = new ArrayList<T>(size > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) size);
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    try {
+                        DbItem<T> item = (DbItem<T>) snapshot.getValue(getClassObj(type));
+                        T itemValue = item.toItem();
+                        returnValue.add(itemValue);
+                    }
+
+                    catch (IllegalArgumentException e) {
+
+                    }
+                    catch (ClassCastException e){
+
+                    }
+                }
+                listener.onSuccess(returnValue);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                listener.onFailure(DbEventFailureReason.DATABASE_ERROR);
+
+            }
+        });
+
+
+    }
+
+
+
     /**
      * Simple callback method for getting a list of all the system users
      *
@@ -310,7 +350,7 @@ public class DbUtil {
     }
     public static class DbService extends DbItem<Service> {
         public String name;
-        private double rate;
+        public double rate;
         public DbService() {}
         public DbService(Service service) {
             name = service.getName();

@@ -238,6 +238,10 @@ public class User implements Serializable {
         DbUtil.getItem(DbUtil.DataType.USER, username, listener);
     }
 
+    public static void getUsers(final DbValueEventListener<User> listener) {
+        DbUtil.getItems(DbUtil.DataType.USER, listener);
+    }
+
     /**
      * Callback method for authenticating a given set of user credentials through the database. Fails
      * if username does not exist or does not match store password value.

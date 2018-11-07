@@ -33,7 +33,7 @@ public class UserAccountListActivity extends AppCompatActivity {
             if (currentUser.getType() == User.Types.ADMIN) {
                 user_list.setHasFixedSize(true);
                 user_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                DbUtil.getUsers(new DbValueEventListener<User>() {
+                User.getUsers(new DbValueEventListener<User>() {
                     @Override
                     public void onSuccess(ArrayList<User> data) {
                         if (null != data && data.size() > 0) {
