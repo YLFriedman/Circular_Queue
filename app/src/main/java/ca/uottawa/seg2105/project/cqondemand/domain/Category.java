@@ -2,13 +2,18 @@ package ca.uottawa.seg2105.project.cqondemand.domain;
 
 import java.util.ArrayList;
 
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.DbUtil;
+import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
+import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class Category{
 
+    public static final String ILLEGAL_CATEGORY_NAME_CHARS_REGEX = ".*[^a-zA-Z-].*";
+    public static final String ILLEGAL_CATEGORY_NAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z -";
     private String name;
-    private ArrayList<Service> services;
 
     /**
      * Empty constructor for Firebase uses
@@ -22,28 +27,12 @@ public class Category{
      * @param name the string that corresponds to this category
      * @paran services the services that will be associated with this category
      */
-    public Category(String name, ArrayList<Service> services){
+    public Category(String name){
+            if(!nameIsValid(name)){
+                throw new InvalidDataException("Invalid Category Name " + ILLEGAL_CATEGORY_NAME_CHARS_MSG);
+            }
             this.name = name;
-            this.services = services;
-    }
 
-    /**
-     *Sets name of category
-     *
-     * @param, takes String newName
-     */
-    public void setName(String newName){
-        this.name = newName;
-    }
-
-    /**
-     * Setter for the services associated with this category
-     *
-     * @param services an ArrayList of Services to be associated with this category
-     */
-
-    public void setServices(ArrayList<Service> services) {
-        this.services = services;
     }
 
 
@@ -57,14 +46,7 @@ public class Category{
     }
 
 
-    /**
-     *returns the list of services associated with this Category
-     *
-     * @return an ArrayList of Services associated with this Category
-     */
-    public ArrayList<Service> getServices(){
-        return this.services;
-    }
+
 
     /**
      *
@@ -73,4 +55,31 @@ public class Category{
     public static void getCategories(final AsyncValueEventListener<Category> listener) {
         DbUtil.getItems(DbUtil.DataType.CATEGORY, listener);
     }
+
+    public void create(final AsyncActionEventListener listener) {
+        DbUtil.createItem(this, listener);
+    }
+
+    public void update(final Category newCategory, final AsyncActionEventListener listener) {
+
+        if (DbUtil.getKey(this).equals(DbUtil.getKey(newCategory))) {
+            DbUtil.updateItem(newCategory, listener);
+        } else {
+            DbUtil.updateItem(this, newCategory, listener);
+        }
+    }
+
+    public void delete(final AsyncActionEventListener listener) {
+        DbUtil.deleteItem(this, listener);
+    }
+
+    public static void getCategory(String name, final AsyncValueEventListener<Category> listener){
+        DbUtil.getItem(DbUtil.DataType.CATEGORY, name, listener);
+    }
+
+    public static boolean nameIsValid(String name){
+        if(name == null || name.isEmpty()) { return false;  }
+        return name.matches(ILLEGAL_CATEGORY_NAME_CHARS_REGEX);
+    }
+
 }

@@ -17,13 +17,16 @@ import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 /**
- * This class is a utility class for interfacing with the FireBase real-time database. It also allows
- * for the storage and retrieval of a static currentUser variable to represent the currently logged in
- * User. As many methods in this class involve callbacks, and enum CallbackFailure is included as well.
+ * This class is a utility class for interfacing with the FireBase real-time database. It defines
+ * database classes which are adapted from the classes in the domain package.
+ *
  */
 
 public class DbUtil {
 
+    /**
+     * Enum for differentiating between different object types
+     */
     public enum DataType {
         USER, SERVICE, CATEGORY;
         public String toString() {
@@ -36,6 +39,13 @@ public class DbUtil {
         }
     }
 
+    /**
+     * Method for creating a DbItem adapted from a domain object. The input object must be of type
+     * Service, User or Category. Throws an IllegalArgumentException if passed any other type of object
+     *
+     * @param object The object to be adapted
+     * @return A DbItem adaptation of the input object
+     */
     protected static DbItem<?> objectToDbItem(Object object) {
         if (null == object) { throw new IllegalArgumentException("The object cannot be null."); }
         if (object instanceof User) { return new DbUser((User) object); }
@@ -44,6 +54,12 @@ public class DbUtil {
         throw new IllegalArgumentException("Unsupported type.");
     }
 
+    /**
+     * Returns the datatype of a given domain object. Accepts objects of type Service, User, and Category.
+     * Throws an IllegalArgumentException if passed any other type of object.
+     * @param object
+     * @return
+     */
     protected static DataType getType(Object object) {
         if (null == object) { throw new IllegalArgumentException("The object cannot be null."); }
         if (object instanceof User) { return DataType.USER; }
@@ -52,6 +68,12 @@ public class DbUtil {
         throw new IllegalArgumentException("Unsupported type.");
     }
 
+    /**
+     * Method for obtaining the database key for a specific object. Accepts objects of type Service, User, and Category.
+     * Throws an IllegalArgumentException if passed any other type of object.
+     * @param object The object whose key you want
+     * @return A string representation of the database key
+     */
     public static String getKey(Object object) {
         if (null == object) { throw new IllegalArgumentException("The object cannot be null."); }
         if (object instanceof User) { return new DbUser((User) object).generateKey(); }
@@ -60,6 +82,12 @@ public class DbUtil {
         throw new IllegalArgumentException("Unsupported type.");
     }
 
+    /**
+     * Method for returning the class of a specific type of object
+     *
+     * @param type the type of object whose class you want
+     * @return the class of the specified datatype
+     */
     protected static Class getDbClassObj(DataType type) {
         if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
         switch (type) {
@@ -70,17 +98,30 @@ public class DbUtil {
         }
     }
 
+    /**
+     * Method for getting a specific DatabaseReference, based on the input type
+     *
+     * @param type the type of DbItem
+     * @return A DatabaseReference pointing to the node which corresponds to the input type
+     */
+
     protected static DatabaseReference getRef(DataType type) {
         if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
         return FirebaseDatabase.getInstance().getReference().child(type.toString());
     }
 
+    /**
+     * Method for returning a database-ready key from a specific String
+     * @param uniqueID the String representation of a uniqueID
+     * @return A sanitized, database-ready String version of the input key
+     */
     public static String getSanitizedKey(String uniqueID) {
         uniqueID = uniqueID.toLowerCase();
         uniqueID = uniqueID.replaceAll("[\\s]", "_");
         uniqueID = uniqueID.replaceAll("[^a-z0-9_]", "_");
         return uniqueID;
     }
+
 
     @SuppressWarnings("unchecked")
     public static <T> void getItem(final DataType type, String key, final AsyncValueEventListener<T> listener) {
@@ -324,11 +365,14 @@ public class DbUtil {
 
     public static class DbService extends DbItem<Service> {
         public String name;
-        public double rate;
+        public String category_id;
+        public int rate;
         public DbService() {}
         public DbService(Service service) {
             name = service.getName();
             rate = service.getRate();
+            category_id = service.getCategoryID();
+
         }
         public Service toItem() { return null; }
         public String generateKey() { return getSanitizedKey(name); }
