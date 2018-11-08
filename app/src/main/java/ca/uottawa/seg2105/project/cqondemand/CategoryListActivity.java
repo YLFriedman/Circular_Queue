@@ -23,6 +23,10 @@ public class CategoryListActivity extends AppCompatActivity {
         category_list = findViewById(R.id.category_list);
     }
 
+    public void onCreateClick(View view) {
+        startActivity(new Intent(getApplicationContext(), CategoryCreateActivity.class));
+    }
+
     @Override
     public void onResume() {
         super.onResume();
