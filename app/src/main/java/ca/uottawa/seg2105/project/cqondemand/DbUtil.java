@@ -219,7 +219,7 @@ public class DbUtil {
     }
 
     public static <T> void updateItem(T item, final AsyncActionEventListener listener) {
-        if (null == item) { throw new IllegalArgumentException("The object cannot be null."); }
+        if (null == item) { throw new IllegalArgumentException("The item cannot be null."); }
         if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
         final DataType type = getType(item);
         if (null == type) { throw new IllegalArgumentException("The item must be a supported type."); }
@@ -228,7 +228,7 @@ public class DbUtil {
         getItem(type, key, new AsyncValueEventListener<T>() {
             @Override
             public void onSuccess(ArrayList<T> data) {
-                //Success condition, Item exists in database and can be updated
+                // Success condition: Item exists in database and can be updated
                 DatabaseReference ref = getRef(type);
                 ref.child(key).setValue(dbItem, new DatabaseReference.CompletionListener() {
                     @Override
@@ -240,12 +240,49 @@ public class DbUtil {
             }
             @Override
             public void onFailure(AsyncEventFailureReason reason) {
-                //Failure condition, cannot update an item that doesn't currently exist in the db
+                // Failure condition: cannot update an item that doesn't currently exist in the db
                 listener.onFailure(reason);
             }
         });
     }
 
+
+
+    public static <T> void updateItem(final T oldItem, final T newItem, final AsyncActionEventListener listener) {
+        if (null == oldItem) { throw new IllegalArgumentException("The oldItem cannot be null."); }
+        if (null == newItem) { throw new IllegalArgumentException("The newItem cannot be null."); }
+        if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
+        final DataType type = getType(oldItem);
+        final DataType newType = getType(newItem);
+        if (null == type || null == newType) { throw new IllegalArgumentException("The item must be a supported type."); }
+        if (type != newType) { throw new IllegalArgumentException("The items must be of the same type."); }
+        final DbItem<?> dbItem = objectToDbItem(newItem);
+        final String key = dbItem.generateKey();
+        getItem(type, key, new AsyncValueEventListener<T>() {
+            @Override
+            public void onSuccess(ArrayList<T> data) {
+                // Error condition: The new item already exists
+                listener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS);
+            }
+            @Override
+            public void onFailure(AsyncEventFailureReason reason) {
+                if (AsyncEventFailureReason.DOES_NOT_EXIST == reason) {
+                    deleteItem(oldItem, new AsyncActionEventListener() {
+                        @Override
+                        public void onSuccess() {
+                            createItem(newItem, listener);
+                        }
+                        @Override
+                        public void onFailure(AsyncEventFailureReason reason) {
+                            listener.onFailure(reason);
+                        }
+                    });
+                } else {
+                    listener.onFailure(reason);
+                }
+            }
+        });
+    }
 
     public static abstract class DbItem<T> {
         public abstract T toItem();

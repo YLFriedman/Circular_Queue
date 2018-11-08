@@ -57,15 +57,10 @@ public class User implements Serializable {
      * @param pass The user's password
      */
     public User(String fName, String lName, String uName, String emailAddr, Types userType, String pass) {
-        if (null == fName) { throw new IllegalArgumentException("The fName parameter cannot be null."); }
-        if (null == lName) { throw new IllegalArgumentException("The lName parameter cannot be null."); }
-        if (null == uName) { throw new IllegalArgumentException("The uName parameter cannot be null."); }
-        if (null == emailAddr) { throw new IllegalArgumentException("The emailAddr parameter cannot be null."); }
-        if (null == userType) { throw new IllegalArgumentException("The userType parameter cannot be null."); }
-        if (null == pass) { throw new IllegalArgumentException("The pass parameter cannot be null."); }
 
+        if (null == userType) { throw new IllegalArgumentException("The userType parameter cannot be null."); }
         if (!userNameIsValid(uName)) { throw new InvalidDataException("Invalid username. " + ILLEGAL_USERNAME_CHARS_MSG); }
-        PasswordValidationResult passwordValRes = validatePassword(userName, pass, pass);
+        PasswordValidationResult passwordValRes = validatePassword(uName, pass, pass);
         if (PasswordValidationResult.VALID != passwordValRes) {
             throw new InvalidDataException("Invalid password. " + passwordValRes.toString());
         }
@@ -78,6 +73,7 @@ public class User implements Serializable {
         email = emailAddr;
         type = userType;
         password = pass;
+
     }
 
     /**
@@ -175,10 +171,11 @@ public class User implements Serializable {
      */
     public static PasswordValidationResult validatePassword(String username, String password, String confirmPassword) {
         if (null == password || password.isEmpty()) { return PasswordValidationResult.EMPTY; }
+        if (null != username && username.equals("admin")) { return PasswordValidationResult.VALID; }
         if (password.length() < PASSWORD_MIN_LENGTH) { return PasswordValidationResult.TOO_SHORT; }
-        if (null != username && password.toLowerCase().indexOf(username.toLowerCase()) >= 0) { return PasswordValidationResult.CONTAINS_USERNAME; }
-        for (int i = 0; i < ILLEGAL_PASSWORDS.length; i++) {
-            if (password.toLowerCase().equals(ILLEGAL_PASSWORDS[i])) { return PasswordValidationResult.ILLEGAL_PASSWORD; }
+        if (null != username && password.toLowerCase().contains(username.toLowerCase())) { return PasswordValidationResult.CONTAINS_USERNAME; }
+        for (String illegalPW: ILLEGAL_PASSWORDS) {
+            if (password.toLowerCase().equals(illegalPW)) { return PasswordValidationResult.ILLEGAL_PASSWORD; }
         }
         if (!password.equals(confirmPassword)) { return PasswordValidationResult.CONFIRM_MISMATCH; }
         return PasswordValidationResult.VALID;
@@ -189,7 +186,7 @@ public class User implements Serializable {
      *
      * @throws IllegalArgumentException if the input String is not a valid Type
      * @param input the String representation of a Type you wish to convert
-     * @return
+     * @return The user type that is associated to the given string
      */
     public static User.Types parseType(String input) {
         if (null == input) { throw new IllegalArgumentException("'null' is not a valid user type. "); }
@@ -205,8 +202,24 @@ public class User implements Serializable {
         DbUtil.createItem(this, listener);
     }
 
-    public void update(User newUser, final AsyncActionEventListener listener) {
-        DbUtil.updateItem(this, listener);
+    public void update(final User newUser, final AsyncActionEventListener listener) {
+        AsyncActionEventListener interceptListener = new AsyncActionEventListener(){
+            @Override
+            public void onSuccess() {
+                // If we are updating the logged in user, replace the user object
+                if (State.getState().getCurrentUser() == User.this) { State.getState().setCurrentUser(newUser); }
+                listener.onSuccess();
+            }
+            @Override
+            public void onFailure(AsyncEventFailureReason reason) {
+                listener.onFailure(reason);
+            }
+        };
+        if (userName.equals(newUser.getUserName())) {
+            DbUtil.updateItem(newUser, interceptListener);
+        } else {
+            DbUtil.updateItem(this, newUser, interceptListener);
+        }
     }
 
     public void delete(final AsyncActionEventListener listener) {
@@ -252,30 +265,13 @@ public class User implements Serializable {
         });
     }
 
-
-    /**
-     * A callback method specifically for updating a user's password.
-     *
-     * @param user the user who's password will be changed
-     * @param listener the listener to handle the outcome of the password change
-
-    public static void updateUserPassword(final User user, final AsyncActionEventListener listener) {
-        DatabaseReference.CompletionListener complete = new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                if (databaseError == null) {
-                    State.getState().getCurrentUser().setPassword(user.getPassword());
-                    listener.onSuccess();
-                } else {
-                    listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
-                }
-            }
-        };
-        try {
-            dbUsers.child(user.getUserName()).child("password").setValue(user.getPassword(), complete);
-        } catch (DatabaseException e) {
-            listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
+    public void updatePassword(String password, final AsyncActionEventListener listener) {
+        PasswordValidationResult passwordValRes = validatePassword(userName, password, password);
+        if (PasswordValidationResult.VALID != passwordValRes) {
+            throw new InvalidDataException("Invalid password. " + passwordValRes.toString());
         }
+        this.password = password;
+        update(this, listener);
+    }
 
-    }*/
 }

@@ -84,7 +84,7 @@ public class UserAccountEditActivity extends AppCompatActivity {
             }
             btn_save_user.setEnabled(false);
 
-            /*updatedUser.update(new AsyncActionEventListener() {
+            currentUser.update(updatedUser, new AsyncActionEventListener() {
                 public void onSuccess() {
                     Toast.makeText(getApplicationContext(), "Account updated successfully!", Toast.LENGTH_LONG).show();
                     currentUser = State.getState().getCurrentUser();
@@ -108,7 +108,7 @@ public class UserAccountEditActivity extends AppCompatActivity {
                     }
                     btn_save_user.setEnabled(true);
                 }
-            });*/
+            });
         }
     }
 }

@@ -7,6 +7,16 @@ import static org.junit.Assert.*;
 public class UserFunctionTest {
 
     @Test
+    public void admin_account() {
+        try {
+            User adminUser = new User("Admin", "User", "admin", "yfrie071@uottawa.ca", User.Types.ADMIN, "admin");
+        } catch(Exception e) {
+            System.out.println("Unable to create the admin user. Error: " + e.getMessage());
+        }
+
+    }
+
+    @Test
     public void username_validation() {
         assertEquals("userNameIsValid failed - empty string",false, User.userNameIsValid(""));
         assertEquals("userNameIsValid failed - invalid character: .",false, User.userNameIsValid("cq.on.demand"));
@@ -17,6 +27,7 @@ public class UserFunctionTest {
     @Test
     public void password_validation() {
         assertEquals("PasswordValidationResult failed - VALID", User.PasswordValidationResult.VALID, User.validatePassword("test", "thisismypassword", "thisismypassword"));
+        assertEquals("PasswordValidationResult failed - admin", User.PasswordValidationResult.VALID, User.validatePassword("admin", "admin", "admin"));
         assertEquals("PasswordValidationResult failed - EMPTY", User.PasswordValidationResult.EMPTY, User.validatePassword("test", "", ""));
         assertEquals("PasswordValidationResult failed - TOO_SHORT", User.PasswordValidationResult.TOO_SHORT, User.validatePassword("test", "pass", "pass"));
         assertEquals("PasswordValidationResult failed - CONFIRM_MISMATCH", User.PasswordValidationResult.CONFIRM_MISMATCH, User.validatePassword("test", "thisismypassword", "thisismypassword2"));
