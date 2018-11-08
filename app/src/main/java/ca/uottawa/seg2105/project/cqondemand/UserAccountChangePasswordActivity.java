@@ -77,17 +77,17 @@ public class UserAccountChangePasswordActivity extends AppCompatActivity {
             }
             final User updatedUser = new User(currentUser.getFirstName(), currentUser.getLastName(), currentUser.getUserName(), currentUser.getEmail(), currentUser.getType(), password);
             btn_save_password.setEnabled(false);
-            DbUtil.updateUserPassword(updatedUser, new DbActionEventListener() {
+            /*DbUtil.updateUserPassword(updatedUser, new AsyncActionEventListener() {
                 public void onSuccess() {
                     Toast.makeText(getApplicationContext(), "Password updated successfully!", Toast.LENGTH_LONG).show();
                     btn_save_password.setEnabled(true);
                     finish();
                 }
-                public void onFailure(DbEventFailureReason reason) {
+                public void onFailure(AsyncEventFailureReason reason) {
                     btn_save_password.setEnabled(true);
                     Toast.makeText(getApplicationContext(), "Unable to update your password at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
                 }
-            });
+            });*/
         }
     }
 }

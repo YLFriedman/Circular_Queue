@@ -1,14 +1,14 @@
 package ca.uottawa.seg2105.project.cqondemand;
 
-public enum DbEventFailureReason {
+public enum AsyncEventFailureReason {
 
-    // General Errors
+    // Database Reasons
     DATABASE_ERROR,
     DOES_NOT_EXIST,
     ALREADY_EXISTS,
     INVALID_DATA,
 
-    // User Specific Errors
+    // User Specific Reasons
     PASSWORD_MISMATCH;
 
 }

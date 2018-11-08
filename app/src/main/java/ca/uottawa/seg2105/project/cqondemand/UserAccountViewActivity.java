@@ -58,14 +58,14 @@ public class UserAccountViewActivity extends AppCompatActivity {
         if (null != username) {
             currentUser = null;
             setUserViewValues();
-            User.getUser(username, new DbValueEventListener<User>() {
+            User.getUser(username, new AsyncValueEventListener<User>() {
                 @Override
                 public void onSuccess(ArrayList<User> data) {
                     currentUser = data.get(0);
                     setUserViewValues();
                 }
                 @Override
-                public void onFailure(DbEventFailureReason reason) {
+                public void onFailure(AsyncEventFailureReason reason) {
                     Toast.makeText(getApplicationContext(), "Unable to retrieve the user '" + username + "' from the database.", Toast.LENGTH_LONG).show();
                     finish();
                 }
@@ -111,14 +111,14 @@ public class UserAccountViewActivity extends AppCompatActivity {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        DbUtil.deleteUser(currentUser.getUserName(), new DbActionEventListener(){
+                        currentUser.delete(new AsyncActionEventListener(){
                             public void onSuccess() {
                                 Toast.makeText(getApplicationContext(), "The user account '" + currentUser.getUserName() + "' has been successfully deleted.", Toast.LENGTH_LONG).show();
                                 if (null != State.getState().getCurrentUser() && State.getState().getCurrentUser().equals(currentUser)) { State.getState().setCurrentUser(null); }
                                 currentUser = null;
                                 finish();
                             }
-                            public void onFailure(DbEventFailureReason reason) {
+                            public void onFailure(AsyncEventFailureReason reason) {
                                 Toast.makeText(getApplicationContext(), "Unable to delete your account at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
                             }
                         });
