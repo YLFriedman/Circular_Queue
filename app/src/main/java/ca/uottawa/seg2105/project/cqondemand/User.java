@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 public class User implements Serializable {
 
-    public static final String ILLEGAL_USERNAME_CHARS_REGEX = ".*[^a-zA-Z0-9_-].*";
-    public static final String ILLEGAL_USERNAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z 0-9 _ -";
+    public static final String ILLEGAL_USERNAME_CHARS_REGEX = ".*[^a-zA-Z0-9_].*";
+    public static final String ILLEGAL_USERNAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z 0-9 _";
     public static final int PASSWORD_MIN_LENGTH = 6;
     public static final String[] ILLEGAL_PASSWORDS = { "password" };
     public enum PasswordValidationResult { VALID, EMPTY, TOO_SHORT, CONFIRM_MISMATCH, ILLEGAL_PASSWORD, CONTAINS_USERNAME }
@@ -230,15 +230,27 @@ public class User implements Serializable {
         }
     }
 
+    public void create(final AsyncActionEventListener listener) {
+        DbUtil.createItem(this, listener);
+    }
+
+    public void update(final AsyncActionEventListener listener) {
+        DbUtil.updateItem(this, listener);
+    }
+
+    public void delete(final AsyncActionEventListener listener) {
+        DbUtil.deleteItem(this, listener);
+    }
+
     public boolean equals(User other) {
         return null != other && userName.equals(other.userName);
     }
 
-    public static void getUser(final String username, final DbValueEventListener<User> listener) {
+    public static void getUser(final String username, final AsyncValueEventListener<User> listener) {
         DbUtil.getItem(DbUtil.DataType.USER, username, listener);
     }
 
-    public static void getUsers(final DbValueEventListener<User> listener) {
+    public static void getUsers(final AsyncValueEventListener<User> listener) {
         DbUtil.getItems(DbUtil.DataType.USER, listener);
     }
 
@@ -250,8 +262,8 @@ public class User implements Serializable {
      * @param password the password to be authenticated
      * @param listener the listener that will be informed if authentication was successful or not
      */
-    public static void authenticate(final String username, final String password, final DbActionEventListener listener) {
-        getUser(username, new DbValueEventListener<User>() {
+    public static void authenticate(final String username, final String password, final AsyncActionEventListener listener) {
+        getUser(username, new AsyncValueEventListener<User>() {
             @Override
             public void onSuccess(ArrayList<User> data) {
                 User user = data.get(0);
@@ -259,14 +271,40 @@ public class User implements Serializable {
                     State.getState().setCurrentUser(user);
                     listener.onSuccess();
                 } else {
-                    listener.onFailure(DbEventFailureReason.PASSWORD_MISMATCH);
+                    listener.onFailure(AsyncEventFailureReason.PASSWORD_MISMATCH);
                 }
             }
             @Override
-            public void onFailure(DbEventFailureReason reason) {
+            public void onFailure(AsyncEventFailureReason reason) {
                 listener.onFailure(reason);
             }
         });
     }
 
+
+    /**
+     * A callback method specifically for updating a user's password.
+     *
+     * @param user the user who's password will be changed
+     * @param listener the listener to handle the outcome of the password change
+
+    public static void updateUserPassword(final User user, final AsyncActionEventListener listener) {
+        DatabaseReference.CompletionListener complete = new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                if (databaseError == null) {
+                    State.getState().getCurrentUser().setPassword(user.getPassword());
+                    listener.onSuccess();
+                } else {
+                    listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
+                }
+            }
+        };
+        try {
+            dbUsers.child(user.getUserName()).child("password").setValue(user.getPassword(), complete);
+        } catch (DatabaseException e) {
+            listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
+        }
+
+    }*/
 }

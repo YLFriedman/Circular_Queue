@@ -119,7 +119,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         final Button btn_create_account = findViewById(R.id.btn_create_account);
         btn_create_account.setEnabled(false);
 
-        DbUtil.createUser(newUser, new DbActionEventListener() {
+        newUser.create(new AsyncActionEventListener() {
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), "The user account '" + username + "' has been successfully created.  Please sign in to continue.", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent();
@@ -127,7 +127,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
                 setResult(RESULT_OK, intent);
                 finish();
             }
-            public void onFailure(DbEventFailureReason reason) {
+            public void onFailure(AsyncEventFailureReason reason) {
                 switch (reason) {
                     case DATABASE_ERROR:
                         Toast.makeText(getApplicationContext(), "Unable to create your account at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();

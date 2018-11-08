@@ -83,14 +83,15 @@ public class UserAccountEditActivity extends AppCompatActivity {
                 return;
             }
             btn_save_user.setEnabled(false);
-            DbUtil.updateUser(currentUser.getUserName(), updatedUser, new DbActionEventListener() {
+
+            updatedUser.update(new AsyncActionEventListener() {
                 public void onSuccess() {
                     Toast.makeText(getApplicationContext(), "Account updated successfully!", Toast.LENGTH_LONG).show();
                     currentUser = State.getState().getCurrentUser();
                     btn_save_user.setEnabled(true);
                     finish();
                 }
-                public void onFailure(DbEventFailureReason reason) {
+                public void onFailure(AsyncEventFailureReason reason) {
                     switch (reason) {
                         case ALREADY_EXISTS:
                             btn_save_user.setEnabled(true);

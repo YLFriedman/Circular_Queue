@@ -30,14 +30,14 @@ public class SignInActivity extends AppCompatActivity {
             btn_sign_in = findViewById(R.id.btn_sign_in);
             btn_sign_up = findViewById(R.id.btn_sign_up);
             btn_create_admin_account = findViewById(R.id.btn_create_admin_account);
-            User.getUser("admin", new DbValueEventListener<User>() {
+            User.getUser("admin", new AsyncValueEventListener<User>() {
                 @Override
                 public void onSuccess(ArrayList<User> data) {
                     btn_create_admin_account.setVisibility(View.GONE);
                 }
                 @Override
-                public void onFailure(DbEventFailureReason reason) {
-                    if (DbEventFailureReason.DOES_NOT_EXIST == reason) {
+                public void onFailure(AsyncEventFailureReason reason) {
+                    if (AsyncEventFailureReason.DOES_NOT_EXIST == reason) {
                         btn_create_admin_account.setVisibility(View.VISIBLE);
                     } else {
                         btn_create_admin_account.setVisibility(View.GONE);
@@ -84,7 +84,7 @@ public class SignInActivity extends AppCompatActivity {
     public void onSignInClick(View view) {
         btn_sign_in.setEnabled(false);
         btn_sign_up.setEnabled(false);
-        User.authenticate(field_username.getText().toString(), field_password.getText().toString(), new DbActionEventListener() {
+        User.authenticate(field_username.getText().toString(), field_password.getText().toString(), new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 btn_sign_in.setEnabled(true);
@@ -94,7 +94,7 @@ public class SignInActivity extends AppCompatActivity {
                 finish();
             }
             @Override
-            public void onFailure(DbEventFailureReason reason) {
+            public void onFailure(AsyncEventFailureReason reason) {
                 btn_sign_in.setEnabled(true);
                 btn_sign_up.setEnabled(true);
                 switch (reason) {
@@ -118,15 +118,16 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     public void onCreateAdminAccountClick(View view) {
-        DbUtil.createUser(new User("Admin", "User", "admin", "yfrie071@uottawa.ca", User.Types.ADMIN, "admin"), new DbActionEventListener() {
+        User user = new User("Admin", "User", "admin", "yfrie071@uottawa.ca", User.Types.ADMIN, "admin");
+        user.create(new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), "The admin user has been created successfully. Login with the username and password 'admin'.", Toast.LENGTH_LONG).show();
                 btn_create_admin_account.setVisibility(View.GONE);
             }
             @Override
-            public void onFailure(DbEventFailureReason reason) {
-                if (DbEventFailureReason.ALREADY_EXISTS == reason) {
+            public void onFailure(AsyncEventFailureReason reason) {
+                if (AsyncEventFailureReason.ALREADY_EXISTS == reason) {
                     Toast.makeText(getApplicationContext(), "The admin account already exists.", Toast.LENGTH_LONG).show();
                     btn_create_admin_account.setVisibility(View.GONE);
                 } else {
@@ -137,11 +138,12 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     public void onCreateTestAccountClick(View view) {
-        DbUtil.createUser(new User("Test", "User", "test", "test@test.test", User.Types.SERVICE_PROVIDER, "cqpass"), new DbActionEventListener() {
+        User user = new User("Test", "User", "test", "test@test.test", User.Types.SERVICE_PROVIDER, "cqpass");
+        user.create(new AsyncActionEventListener() {
             @Override
             public void onSuccess() { }
             @Override
-            public void onFailure(DbEventFailureReason reason) { }
+            public void onFailure(AsyncEventFailureReason reason) { }
         });
     }
 
@@ -151,24 +153,24 @@ public class SignInActivity extends AppCompatActivity {
         providers.add(new User("buddy", "guy", "buddyguy", "buddyguy@mail.com", User.Types.SERVICE_PROVIDER, "CQPASS"));
 
 
-        Service testService = new Service("security", 140, providers, "locksmith");
-        DbUtil.createService(testService, new DbActionEventListener() {
+        /*Service testService = new Service("security", 140, providers, "locksmith");
+        DbUtil.createService(testService, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), "It worked, apparently!", Toast.LENGTH_LONG).show();
             }
 
             @Override
-            public void onFailure(DbEventFailureReason reason) {
+            public void onFailure(AsyncEventFailureReason reason) {
 
                 Toast.makeText(getApplicationContext(), "It failed, apparently because of " + reason.toString(), Toast.LENGTH_LONG).show();
 
             }
-        });
+        });*/
     }
 
     public void onGetServiceTestClick(View view){
-        DbUtil.getService("locksmith", new DbValueEventListener<Service>() {
+        /*DbUtil.getService("locksmith", new AsyncValueEventListener<Service>() {
             @Override
             public void onSuccess(ArrayList<Service> data) {
                 String category = data.get(0).getCategory();
@@ -176,7 +178,7 @@ public class SignInActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(DbEventFailureReason reason) {
+            public void onFailure(AsyncEventFailureReason reason) {
                 switch(reason){
                     case DOES_NOT_EXIST: Toast.makeText(getApplicationContext(), "Doesn't seem to exist", Toast.LENGTH_LONG).show();
                     break;
@@ -185,7 +187,7 @@ public class SignInActivity extends AppCompatActivity {
                 }
 
             }
-        });
+        });*/
     }
 
 }
