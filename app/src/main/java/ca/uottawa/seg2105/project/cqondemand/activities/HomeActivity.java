@@ -34,7 +34,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        currentUser = State.getState().getCurrentUser();
+        currentUser = State.getState().getSignedInUser();
         if (null == currentUser) {
             onSignOutClick(null);
         } else {
@@ -72,7 +72,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void onSignOutClick(View view) {
-        State.getState().setCurrentUser(null);
+        State.getState().setSignedInUser(null);
         startActivity(new Intent(getApplicationContext(), SignInActivity.class));
         finish();
     }

@@ -33,7 +33,7 @@ public class UserAccountListActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        currentUser = State.getState().getCurrentUser();
+        currentUser = State.getState().getSignedInUser();
         if (null == currentUser) {
             finish();
         } else {

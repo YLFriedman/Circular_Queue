@@ -214,7 +214,7 @@ public class User implements Serializable {
             @Override
             public void onSuccess() {
                 // If we are updating the logged in user, replace the user object
-                if (State.getState().getCurrentUser() == User.this) { State.getState().setCurrentUser(newUser); }
+                if (State.getState().getSignedInUser() == User.this) { State.getState().setSignedInUser(newUser); }
                 listener.onSuccess();
             }
             @Override
@@ -259,7 +259,7 @@ public class User implements Serializable {
             public void onSuccess(ArrayList<User> data) {
                 User user = data.get(0);
                 if (user.getPassword().equals(password)) {
-                    State.getState().setCurrentUser(user);
+                    State.getState().setSignedInUser(user);
                     listener.onSuccess();
                 } else {
                     listener.onFailure(AsyncEventFailureReason.PASSWORD_MISMATCH);

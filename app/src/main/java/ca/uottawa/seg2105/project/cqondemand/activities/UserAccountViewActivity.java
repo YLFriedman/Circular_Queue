@@ -8,8 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,7 +34,7 @@ public class UserAccountViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_account_view);
-        currentUser = State.getState().getCurrentUser();
+        currentUser = State.getState().getSignedInUser();
         if (null == currentUser) {
             finish();
         } else {
@@ -70,7 +68,7 @@ public class UserAccountViewActivity extends AppCompatActivity {
                 }
             });
         } else {
-            currentUser = State.getState().getCurrentUser();
+            currentUser = State.getState().getSignedInUser();
             if (null == currentUser) {
                 finish();
             } else {
@@ -82,7 +80,7 @@ public class UserAccountViewActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.user_options, menu);
-        if (currentUser.getType() == User.Types.ADMIN) {
+        if (State.getState().getSignedInUser().getType() == User.Types.ADMIN) {
             menu.setGroupVisible(R.id.grp_user_edit_controls, false);
         }
         return true;
@@ -132,7 +130,7 @@ public class UserAccountViewActivity extends AppCompatActivity {
                         currentUser.delete(new AsyncActionEventListener(){
                             public void onSuccess() {
                                 Toast.makeText(getApplicationContext(), "The user account '" + currentUser.getUserName() + "' has been successfully deleted.", Toast.LENGTH_LONG).show();
-                                if (null != State.getState().getCurrentUser() && State.getState().getCurrentUser().equals(currentUser)) { State.getState().setCurrentUser(null); }
+                                if (null != State.getState().getSignedInUser() && State.getState().getSignedInUser().equals(currentUser)) { State.getState().setSignedInUser(null); }
                                 currentUser = null;
                                 finish();
                             }

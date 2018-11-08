@@ -30,18 +30,18 @@ public class CategoryListActivity extends AppCompatActivity {
         category_list = findViewById(R.id.recycler_list);
     }
 
-    public void onCreateClick(View view) {
+    public void onCreateCategoryClick() {
         startActivity(new Intent(getApplicationContext(), CategoryCreateActivity.class));
     }
 
-    public void onCreateServiceClick(View view) {
+    public void onCreateServiceClick() {
         startActivity(new Intent(getApplicationContext(), ServiceCreateActivity.class));
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        currentUser = State.getState().getCurrentUser();
+        currentUser = State.getState().getSignedInUser();
         if (null == currentUser) {
             finish();
         } else {
@@ -91,8 +91,8 @@ public class CategoryListActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_item_category_create: onCreateClick(null); return true;
-            case R.id.menu_item_service_create: onCreateServiceClick(null); return true;
+            case R.id.menu_item_category_create: onCreateCategoryClick(); return true;
+            case R.id.menu_item_service_create: onCreateServiceClick(); return true;
         }
         return super.onOptionsItemSelected(item);
     }

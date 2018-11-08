@@ -28,7 +28,7 @@ public class UserAccountEditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_account_edit);
-        currentUser = State.getState().getCurrentUser();
+        currentUser = State.getState().getSignedInUser();
         if (null == currentUser) {
             Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -93,7 +93,7 @@ public class UserAccountEditActivity extends AppCompatActivity {
             currentUser.update(updatedUser, new AsyncActionEventListener() {
                 public void onSuccess() {
                     Toast.makeText(getApplicationContext(), "Account updated successfully!", Toast.LENGTH_LONG).show();
-                    currentUser = State.getState().getCurrentUser();
+                    currentUser = State.getState().getSignedInUser();
                     btn_save_user.setEnabled(true);
                     finish();
                 }

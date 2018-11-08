@@ -1,9 +1,12 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.adapters.ServiceListAdapter;
@@ -28,7 +31,7 @@ public class ServiceListActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        currentUser = State.getState().getCurrentUser();
+        currentUser = State.getState().getSignedInUser();
         if (null == currentUser) {
             finish();
         } else {
@@ -37,5 +40,33 @@ public class ServiceListActivity extends AppCompatActivity {
 
         }
     }
+
+    public void onCreateCategoryClick() {
+        startActivity(new Intent(getApplicationContext(), CategoryCreateActivity.class));
+    }
+
+    public void onCreateServiceClick() {
+        startActivity(new Intent(getApplicationContext(), ServiceCreateActivity.class));
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.service_list_options, menu);
+        if (currentUser.getType() != User.Types.ADMIN) {
+            menu.setGroupVisible(R.id.grp_category_create_controls, false);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_category_create: onCreateCategoryClick(); return true;
+            case R.id.menu_item_service_create: onCreateServiceClick(); return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
 }

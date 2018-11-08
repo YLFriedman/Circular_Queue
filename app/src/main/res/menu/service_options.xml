@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:id="@+id/grp_service_edit_controls"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_item_service_edit"
+            android:checkable="false"
+            android:checked="false"
+            android:icon="@drawable/ic_edit_light_20"
+            android:title="@string/edit_service"
+            android:titleCondensed="@string/edit"
+            app:showAsAction="ifRoom" />
+    </group>
+    <group
+        android:id="@+id/grp_service_delete_controls"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_item_service_delete"
+            android:checkable="false"
+            android:checked="false"
+            android:icon="@drawable/ic_delete_forever_light_24"
+            android:title="@string/delete_service"
+            android:titleCondensed="@string/delete"
+            app:showAsAction="ifRoom" />
+    </group>
+
+</menu>

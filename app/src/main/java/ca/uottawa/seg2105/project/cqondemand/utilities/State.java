@@ -6,7 +6,7 @@ public class State {
 
     private static State state;
 
-    private User currentUser;
+    private User signedInUser;
 
     private State() {
 
@@ -17,12 +17,12 @@ public class State {
         return state;
     }
 
-    public User getCurrentUser() {
-        return currentUser;
+    public User getSignedInUser() {
+        return signedInUser;
     }
 
-    public void setCurrentUser(User currentUser) {
-        this.currentUser = currentUser;
+    public void setSignedInUser(User user) {
+        signedInUser = user;
     }
 
 
