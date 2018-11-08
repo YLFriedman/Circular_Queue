@@ -37,17 +37,27 @@ public class DbUtil {
     }
 
     protected static DbItem<?> objectToDbItem(Object object) {
+        if (null == object) { throw new IllegalArgumentException("The object cannot be null."); }
         if (object instanceof User) { return new DbUser((User) object); }
         if (object instanceof Service) { return new DbService((Service) object); }
         if (object instanceof Category) { return new DbCategory((Category) object); }
-        return null;
+        throw new IllegalArgumentException("Unsupported type.");
     }
 
     protected static DataType getType(Object object) {
+        if (null == object) { throw new IllegalArgumentException("The object cannot be null."); }
         if (object instanceof User) { return DataType.USER; }
         if (object instanceof Service) { return DataType.SERVICE; }
         if (object instanceof Category) { return DataType.CATEGORY; }
-        return null;
+        throw new IllegalArgumentException("Unsupported type.");
+    }
+
+    public static String getKey(Object object) {
+        if (null == object) { throw new IllegalArgumentException("The object cannot be null."); }
+        if (object instanceof User) { return getSanitizedKey(((User) object).getUserName()); }
+        if (object instanceof Service) { return getSanitizedKey(((Service) object).getName()); }
+        if (object instanceof Category) { return getSanitizedKey(((Category) object).getName()); }
+        throw new IllegalArgumentException("Unsupported type.");
     }
 
     protected static Class getDbClassObj(DataType type) {
@@ -73,11 +83,11 @@ public class DbUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> void getItem(final DataType type, final String key, final AsyncValueEventListener<T> listener) {
+    public static <T> void getItem(final DataType type, String key, final AsyncValueEventListener<T> listener) {
         if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
         if (null == key) { throw new IllegalArgumentException("The key cannot be null."); }
         if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
-        getRef(type).child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+        getRef(type).child(getSanitizedKey(key)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists()) {

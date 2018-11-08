@@ -210,7 +210,7 @@ public class User implements Serializable {
     }
 
     public void update(final User newUser, final AsyncActionEventListener listener) {
-        AsyncActionEventListener interceptListener = new AsyncActionEventListener(){
+        AsyncActionEventListener interceptListener = new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 // If we are updating the logged in user, replace the user object
@@ -222,7 +222,7 @@ public class User implements Serializable {
                 listener.onFailure(reason);
             }
         };
-        if (userName.equals(newUser.getUserName())) {
+        if (DbUtil.getKey(this).equals(DbUtil.getKey(newUser))) {
             DbUtil.updateItem(newUser, interceptListener);
         } else {
             DbUtil.updateItem(this, newUser, interceptListener);
