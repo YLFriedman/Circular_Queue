@@ -21,20 +21,6 @@ android:fillViewport="true">
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <Button
-        android:id="@+id/btn_to_create_category"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="onCreateClick"
-        android:text="@string/create_category" />
-
-    <Button
-        android:id="@+id/btn_to_create_service"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="onCreateServiceClick"
-        android:text="@string/create_service" />
-
 </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>

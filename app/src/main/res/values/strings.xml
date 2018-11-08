@@ -67,6 +67,8 @@
     <string name="create_service">Create Service</string>
     <string name="category_name">Category Name</string>
     <string name="edit_account">Edit Account</string>
+    <string name="new_category">New Category</string>
+    <string name="new_service">New Service</string>
     <string-array name = "categories">
         <item>Electric</item>
         <item>Piping</item>

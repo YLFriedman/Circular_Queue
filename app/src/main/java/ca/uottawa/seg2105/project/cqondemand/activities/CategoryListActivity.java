@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -75,6 +77,24 @@ public class CategoryListActivity extends AppCompatActivity {
                 });
             }*/
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.category_list_options, menu);
+        if (currentUser.getType() != User.Types.ADMIN) {
+            menu.setGroupVisible(R.id.grp_category_create_controls, false);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_category_create: onCreateClick(null); return true;
+            case R.id.menu_item_service_create: onCreateServiceClick(null); return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }
