@@ -7,6 +7,8 @@ public class User implements Serializable {
 
     public static final String ILLEGAL_USERNAME_CHARS_REGEX = ".*[^a-zA-Z0-9_].*";
     public static final String ILLEGAL_USERNAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z 0-9 _";
+    // Illegal Name Characters: 0-9 < > ] [ } { \ / ! @ # $ % ^ & * _ + = ) (
+    public static final String ILLEGAL_NAME_CHARS_REGEX = ".*[0-9<>\\]\\[}{\\\\/!@#$%^&*_+=)(:;].*";
     public static final int PASSWORD_MIN_LENGTH = 6;
     public static final String[] ILLEGAL_PASSWORDS = { "password" };
     public enum PasswordValidationResult { VALID, EMPTY, TOO_SHORT, CONFIRM_MISMATCH, ILLEGAL_PASSWORD, CONTAINS_USERNAME }
@@ -49,19 +51,26 @@ public class User implements Serializable {
      * @throws IllegalArgumentException if any of the parameters are null
      * @param fName The first name of the user
      * @param lName The last name of the user
-     * @param uName The desired Username
+     * @param uName The Username (Used as a unique identifier)
      * @param emailAddr The user's email address
      * @param userType The type of the account
      * @param pass The user's password
      */
     public User(String fName, String lName, String uName, String emailAddr, Types userType, String pass) {
-
         if (null == fName) { throw new IllegalArgumentException("The fName parameter cannot be null."); }
         if (null == lName) { throw new IllegalArgumentException("The lName parameter cannot be null."); }
         if (null == uName) { throw new IllegalArgumentException("The uName parameter cannot be null."); }
         if (null == emailAddr) { throw new IllegalArgumentException("The emailAddr parameter cannot be null."); }
         if (null == userType) { throw new IllegalArgumentException("The userType parameter cannot be null."); }
         if (null == pass) { throw new IllegalArgumentException("The pass parameter cannot be null."); }
+
+        if (!userNameIsValid(uName)) { throw new InvalidDataException("Invalid username. " + ILLEGAL_USERNAME_CHARS_MSG); }
+        PasswordValidationResult passwordValRes = validatePassword(userName, pass, pass);
+        if (PasswordValidationResult.VALID != passwordValRes) {
+            throw new InvalidDataException("Invalid password. " + passwordValRes.toString());
+        }
+        if (!userNameIsValid(fName)) { throw new InvalidDataException("Invalid First Name. ");  }
+        if (!userNameIsValid(lName)) { throw new InvalidDataException("Invalid Last Name. ");  }
 
         firstName = fName;
         lastName = lName;
@@ -72,8 +81,7 @@ public class User implements Serializable {
     }
 
     /**
-     * Simple getter for the user's first name
-     *
+     * Getter for the user's first name
      * @return The user's first name
      */
     public String getFirstName() {
@@ -81,8 +89,7 @@ public class User implements Serializable {
     }
 
     /**
-     * Simple getter for the user's last name
-     *
+     * Getter for the user's last name
      * @return The user's last name
      */
     public String getLastName() {
@@ -90,8 +97,7 @@ public class User implements Serializable {
     }
 
     /**
-     * Simple getter for the user's username
-     *
+     * Getter for the user's username
      * @return The user's username
      */
     public String getUserName() {
@@ -99,8 +105,7 @@ public class User implements Serializable {
     }
 
     /**
-     * Simple getter for the user's password
-     *
+     * Getter for the user's password
      * @return The user's password
      */
     public String getPassword() {
@@ -108,8 +113,7 @@ public class User implements Serializable {
     }
 
     /**
-     * Simple getter for the user's email
-     *
+     * Getter for the user's email
      * @return The user's email
      */
     public String getEmail() {
@@ -117,57 +121,11 @@ public class User implements Serializable {
     }
 
     /**
-     * Simple getter for the user's type
-     *
+     * Getter for the user's type
      * @return the user's type
      */
     public Types getType() {
         return this.type;
-    }
-
-    /**
-     * Simple setter for the user's first name
-     *
-     * @param input The user's new first name
-     */
-    public void setFirstName(String input) {
-        firstName = input;
-    }
-
-    /**
-     * Simple setter for the user's last name
-     *
-     * @param input The user's new last name
-     */
-    public void setLastName(String input) {
-        lastName = input;
-    }
-
-    /**
-     * Simple setter for the user's email
-     *
-     * @param input The user's new email
-     */
-    public void setEmail(String input) {
-        email = input;
-    }
-
-    /**
-     * Simple setter for the user's username
-     *
-     * @param input The user's new username
-     */
-    public void setUserName(String input) {
-        firstName = input;
-    }
-
-    /**
-     * Simple setter for the user's password
-     *
-     * @param input The user's new password
-     */
-    public void setPassword(String input) {
-        password = input;
     }
 
     /**
@@ -183,12 +141,25 @@ public class User implements Serializable {
     }
 
     /**
+     * Method for checking validity of a first or last name (i.e that it is not empty or null, and that it
+     * does not contain illegal characters)
+     *
+     * @param name the username you want to check
+     * @return true if name is valid, false otherwise
+     */
+    public static boolean nameIsValid(String name) {
+        if (null == name || name.isEmpty()) { return false; }
+        return !name.matches(ILLEGAL_NAME_CHARS_REGEX);
+    }
+
+    /**
      * Method for checking if a given email is valid
      *
      * @param email the email address you want to check
      * @return true if email is valid, false otherwise
      */
     public static boolean emailIsValid(CharSequence email) {
+        if (null == email || email.toString().isEmpty()) { return false; }
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
@@ -234,7 +205,7 @@ public class User implements Serializable {
         DbUtil.createItem(this, listener);
     }
 
-    public void update(final AsyncActionEventListener listener) {
+    public void update(User newUser, final AsyncActionEventListener listener) {
         DbUtil.updateItem(this, listener);
     }
 

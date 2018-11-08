@@ -47,7 +47,7 @@ public class DbUtil {
         return null;
     }
 
-    protected static Class getClassObj(DataType type) {
+    protected static Class getDbClassObj(DataType type) {
         if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
         switch (type) {
             case USER: return DbUser.class;
@@ -81,12 +81,14 @@ public class DbUtil {
                     listener.onFailure(AsyncEventFailureReason.DOES_NOT_EXIST);
                 } else {
                     try {
-                        DbItem<T> dbItem = (DbItem<T>) dataSnapshot.getValue(getClassObj(type));
+                        DbItem<T> dbItem = (DbItem<T>) dataSnapshot.getValue(getDbClassObj(type));
                         T item = dbItem.toItem();
                         ArrayList<T> returnValue = new ArrayList<T>(1);
                         returnValue.add(item);
                         listener.onSuccess(returnValue);
                     } catch (IllegalArgumentException e) {
+                        listener.onFailure(AsyncEventFailureReason.INVALID_DATA);
+                    } catch (InvalidDataException e) {
                         listener.onFailure(AsyncEventFailureReason.INVALID_DATA);
                     } catch (ClassCastException e) {
                         listener.onFailure(AsyncEventFailureReason.INVALID_DATA);
@@ -111,11 +113,12 @@ public class DbUtil {
                 ArrayList<T> returnValue = new ArrayList<T>(size > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) size);
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()){
                     try {
-                        DbItem<T> item = (DbItem<T>) snapshot.getValue(getClassObj(type));
+                        DbItem<T> item = (DbItem<T>) snapshot.getValue(getDbClassObj(type));
                         T itemValue = item.toItem();
                         returnValue.add(itemValue);
                     }
                     catch (IllegalArgumentException e) { }
+                    catch (InvalidDataException e) { }
                     catch (ClassCastException e) { }
                 }
                 listener.onSuccess(returnValue);
@@ -146,13 +149,14 @@ public class DbUtil {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 long size = dataSnapshot.getChildrenCount();
                 ArrayList<T> returnValue = new ArrayList<T>(size > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) size);
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()){
                     try {
-                        DbItem<T> item = (DbItem<T>) snapshot.getValue(getClassObj(type));
+                        DbItem<T> item = (DbItem<T>) snapshot.getValue(getDbClassObj(type));
                         T itemValue = item.toItem();
                         returnValue.add(itemValue);
                     }
                     catch (IllegalArgumentException e) { }
+                    catch (InvalidDataException e) { }
                     catch (ClassCastException e) { }
                 }
                 listener.onSuccess(returnValue);
@@ -200,13 +204,13 @@ public class DbUtil {
             public void onFailure(AsyncEventFailureReason reason) {
                 //Success condition, item can be safely created;
                 if (reason == AsyncEventFailureReason.DOES_NOT_EXIST) {
-                    DatabaseReference ref = getRef(type);
-                    try {
-                        ref.child(key).setValue(dbItem);
-                        listener.onSuccess();
-                    } catch (DatabaseException e) {
-                        listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
-                    }
+                    getRef(type).child(key).setValue(dbItem, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                            if (null == databaseError) { listener.onSuccess(); }
+                            else { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
+                        }
+                    });
                 } else {
                     listener.onFailure(reason);
                 }
@@ -226,12 +230,13 @@ public class DbUtil {
             public void onSuccess(ArrayList<T> data) {
                 //Success condition, Item exists in database and can be updated
                 DatabaseReference ref = getRef(type);
-                try {
-                    ref.child(key).setValue(dbItem);
-                    listener.onSuccess();
-                } catch (DatabaseException e) {
-                    listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
-                }
+                ref.child(key).setValue(dbItem, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                        if (null == databaseError) { listener.onSuccess(); }
+                        else { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
+                    }
+                });
             }
             @Override
             public void onFailure(AsyncEventFailureReason reason) {
