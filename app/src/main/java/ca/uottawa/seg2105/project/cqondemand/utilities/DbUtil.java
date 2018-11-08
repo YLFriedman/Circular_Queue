@@ -122,6 +122,7 @@ public class DbUtil {
         return uniqueID;
     }
 
+
     @SuppressWarnings("unchecked")
     public static <T> void getItem(final DataType type, String key, final AsyncValueEventListener<T> listener) {
         if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
