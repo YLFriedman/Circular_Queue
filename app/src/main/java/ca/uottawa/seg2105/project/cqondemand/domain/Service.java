@@ -2,6 +2,12 @@ package ca.uottawa.seg2105.project.cqondemand.domain;
 
 import java.util.ArrayList;
 
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.DbUtil;
+import ca.uottawa.seg2105.project.cqondemand.utilities.State;
+
 public class Service {
 
     private String category;
@@ -78,47 +84,30 @@ public class Service {
         return this.name;
     }
 
-
-
-    /**
-     *Sets the rate per hour of this service
-     *
-     * @param newRate the new rate for this service
-     */
-    public void setRate(double newRate){
-        this.rate = newRate;
+    public void create(final AsyncActionEventListener listener) {
+        DbUtil.createItem(this, listener);
     }
 
-    /**
-     *Set the category associated with this service
-     *
-     * @param newCategory the category to be associated with this service
-     */
+    public void update(final Service newService, final AsyncActionEventListener listener) {
 
-    public void setCategory(String newCategory){
-        this.category = newCategory;
-    }
-
-    /**
-     * Setter for the serviceProvider field
-     *
-     * @param serviceProviders an ArrayList of users to represent the providers of this service,
-     *                         throws an exception if any User in the list is not of type SERVICE_PROVIDER
-     */
-
-    public void setServiceProviders(ArrayList<User> serviceProviders){
-        ArrayList<String> newIDs = new ArrayList<>();
-        for(User user : serviceProviders){
-            if(user.getType() != User.Types.SERVICE_PROVIDER) {
-                throw new IllegalArgumentException("Only a service provider can provide a service!");
-            }
-            newIDs.add(user.getUserName());
+        if (DbUtil.getKey(this).equals(DbUtil.getKey(newService))) {
+            DbUtil.updateItem(newService, listener);
+        } else {
+            DbUtil.updateItem(this, newService, listener);
         }
-        this.serviceProviderIDs = newIDs;
-
     }
 
-    public void setName(String newName){
-        this.name = newName;
+    public void delete(final AsyncActionEventListener listener) {
+        DbUtil.deleteItem(this, listener);
     }
+
+    public static void getServices(final AsyncValueEventListener<Service> listener){
+        DbUtil.getItems(DbUtil.DataType.SERVICE, listener);
+    }
+
+    public static void getService(String name, final AsyncValueEventListener<Service> listener){
+        DbUtil.getItem(DbUtil.DataType.SERVICE, name, listener);
+    }
+
+
 }
