@@ -54,9 +54,9 @@ public class DbUtil {
 
     public static String getKey(Object object) {
         if (null == object) { throw new IllegalArgumentException("The object cannot be null."); }
-        if (object instanceof User) { return getSanitizedKey(((User) object).getUserName()); }
-        if (object instanceof Service) { return getSanitizedKey(((Service) object).getName()); }
-        if (object instanceof Category) { return getSanitizedKey(((Category) object).getName()); }
+        if (object instanceof User) { return new DbUser((User) object).generateKey(); }
+        if (object instanceof Service) { return new DbService((Service) object).generateKey(); }
+        if (object instanceof Category) { return new DbCategory((Category) object).generateKey(); }
         throw new IllegalArgumentException("Unsupported type.");
     }
 
