@@ -32,6 +32,10 @@ public class CategoryListActivity extends AppCompatActivity {
         startActivity(new Intent(getApplicationContext(), CategoryCreateActivity.class));
     }
 
+    public void onCreateServiceClick(View view) {
+        startActivity(new Intent(getApplicationContext(), ServiceCreateActivity.class));
+    }
+
     @Override
     public void onResume() {
         super.onResume();
