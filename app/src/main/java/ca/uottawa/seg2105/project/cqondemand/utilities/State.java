@@ -1,4 +1,6 @@
-package ca.uottawa.seg2105.project.cqondemand;
+package ca.uottawa.seg2105.project.cqondemand.utilities;
+
+import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class State {
 

@@ -1,9 +1,14 @@
-package ca.uottawa.seg2105.project.cqondemand;
+package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+
+import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.adapters.CategoryListAdapter;
+import ca.uottawa.seg2105.project.cqondemand.utilities.State;
+import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class CategoryListActivity extends AppCompatActivity {
 

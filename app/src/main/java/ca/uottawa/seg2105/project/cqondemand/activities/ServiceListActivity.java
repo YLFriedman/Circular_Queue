@@ -1,11 +1,14 @@
-package ca.uottawa.seg2105.project.cqondemand;
+package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import java.util.ArrayList;
+import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.adapters.ServiceListAdapter;
+import ca.uottawa.seg2105.project.cqondemand.utilities.State;
+import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class ServiceListActivity extends AppCompatActivity {
 

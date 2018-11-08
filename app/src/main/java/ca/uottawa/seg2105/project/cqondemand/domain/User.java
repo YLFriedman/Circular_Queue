@@ -1,7 +1,14 @@
-package ca.uottawa.seg2105.project.cqondemand;
+package ca.uottawa.seg2105.project.cqondemand.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.DbUtil;
+import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
+import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class User implements Serializable {
 
@@ -33,7 +40,7 @@ public class User implements Serializable {
     /**
      * A simple enum for distinguishing different types of user accounts
      */
-    protected enum Types {
+    public enum Types {
         ADMIN, HOMEOWNER, SERVICE_PROVIDER;
         public String toString() {
             switch (this) {

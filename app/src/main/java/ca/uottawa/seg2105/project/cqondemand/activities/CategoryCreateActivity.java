@@ -1,10 +1,12 @@
-package ca.uottawa.seg2105.project.cqondemand;
+package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+
+import ca.uottawa.seg2105.project.cqondemand.R;
 
 public class CategoryCreateActivity extends AppCompatActivity {
 

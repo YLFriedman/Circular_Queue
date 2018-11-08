@@ -1,4 +1,4 @@
-package ca.uottawa.seg2105.project.cqondemand;
+package ca.uottawa.seg2105.project.cqondemand.utilities;
 
 public interface AsyncActionEventListener {
 
