@@ -62,4 +62,12 @@ public class Category{
     public ArrayList<Service> getServices(){
         return this.services;
     }
+
+    /**
+     *
+     * @param listener
+     */
+    public static void getCategories(final AsyncValueEventListener<Category> listener) {
+        DbUtil.getItems(DbUtil.DataType.CATEGORY, listener);
+    }
 }
