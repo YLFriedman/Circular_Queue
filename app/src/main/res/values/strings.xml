@@ -65,6 +65,7 @@
     <string name="service_name">Service Name</string>
     <string name="service_rate">Service Rate</string>
     <string name="create_service">Create Service</string>
+    <string name="category_name">Category Name</string>
     <string-array name = "categories">
         <item>Electric</item>
         <item>Piping</item>

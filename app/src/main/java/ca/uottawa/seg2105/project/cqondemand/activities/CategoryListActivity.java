@@ -25,7 +25,7 @@ public class CategoryListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_categoy_list);
-        category_list = findViewById(R.id.category_list);
+        category_list = findViewById(R.id.recycler_list);
     }
 
     public void onCreateClick(View view) {

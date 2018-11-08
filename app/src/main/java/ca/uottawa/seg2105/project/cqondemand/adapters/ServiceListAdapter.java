@@ -36,7 +36,7 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.recycler_service_list, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.recycler_list_title_subtitle, parent, false);
         if (null != clickListener) { view.setOnClickListener(clickListener); }
         ViewHolder holder = new ViewHolder(view);
         return holder;

@@ -39,7 +39,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.recycler_user_list, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.recycler_list_title_subtitle_icon, parent, false);
         if (null != clickListener) { view.setOnClickListener(clickListener); }
         ViewHolder holder = new ViewHolder(view);
         return holder;
@@ -50,10 +50,10 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
         User user = data.get(i);
         String firstLine = String.format("%s %s", user.getFirstName(), user.getLastName());
         String secondLine = String.format("%s, %s", user.getUserName(), user.getType().toString());
-        viewHolder.txt_name.setText(firstLine);
-        viewHolder.txt_username_and_type.setText(secondLine);
-        viewHolder.txt_username_and_type.setContentDescription(user.getUserName());
-        viewHolder.img_avatar.setImageResource(R.drawable.ic_account_circle_med_40);
+        viewHolder.txt_title.setText(firstLine);
+        viewHolder.txt_subtitle.setText(secondLine);
+        viewHolder.txt_subtitle.setContentDescription(user.getUserName());
+        viewHolder.img_item_image.setImageResource(R.drawable.ic_account_circle_med_40);
         viewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_med_30);
     }
 
@@ -64,16 +64,16 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView txt_name;
-        TextView txt_username_and_type;
-        ImageView img_avatar;
+        TextView txt_title;
+        TextView txt_subtitle;
+        ImageView img_item_image;
         ImageView img_nav;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            txt_name = itemView.findViewById(R.id.txt_name);
-            txt_username_and_type = itemView.findViewById(R.id.txt_username_and_type);
-            img_avatar = itemView.findViewById(R.id.img_avatar);
+            txt_title = itemView.findViewById(R.id.txt_title);
+            txt_subtitle = itemView.findViewById(R.id.txt_subtitle);
+            img_item_image = itemView.findViewById(R.id.img_item_image);
             img_nav = itemView.findViewById(R.id.img_nav);
         }
 

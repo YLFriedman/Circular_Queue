@@ -7,18 +7,8 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingLeft="16dp"
     android:paddingTop="8dp"
-    android:paddingRight="16dp"
     android:paddingBottom="8dp">
-
-    <ImageView
-        android:id="@+id/img_avatar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center_vertical"
-        android:layout_marginRight="4dp"
-        app:srcCompat="@drawable/ic_account_circle_med_40" />
 
     <LinearLayout
         android:id="@+id/text_layout"
@@ -29,18 +19,18 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/txt_name"
+            android:id="@+id/txt_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/first_name"
+            android:text="@string/title"
             android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/txt_username_and_type"
+            android:id="@+id/txt_subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/username" />
+            android:text="@string/subtitle" />
 
     </LinearLayout>
 

@@ -19,7 +19,7 @@ import ca.uottawa.seg2105.project.cqondemand.adapters.UserListAdapter;
 
 public class UserAccountListActivity extends AppCompatActivity {
 
-    private RecyclerView user_list;
+    private RecyclerView recycler_list;
     private UserListAdapter user_list_adapter;
     private User currentUser;
 
@@ -27,7 +27,7 @@ public class UserAccountListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_account_list);
-        user_list = findViewById(R.id.user_list);
+        recycler_list = findViewById(R.id.recycler_list);
     }
 
     @Override
@@ -38,21 +38,21 @@ public class UserAccountListActivity extends AppCompatActivity {
             finish();
         } else {
             if (currentUser.getType() == User.Types.ADMIN) {
-                user_list.setHasFixedSize(true);
-                user_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                recycler_list.setHasFixedSize(true);
+                recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 User.getUsers(new AsyncValueEventListener<User>() {
                     @Override
                     public void onSuccess(ArrayList<User> data) {
                         if (null != data && data.size() > 0) {
                             user_list_adapter = new UserListAdapter(getApplicationContext(), data, new View.OnClickListener() {
                                 public void onClick(final View view) {
-                                    TextView field = view.findViewById(R.id.txt_username_and_type);
+                                    TextView field = view.findViewById(R.id.txt_subtitle);
                                     Intent intent = new Intent(getApplicationContext(), UserAccountViewActivity.class);
                                     intent.putExtra("username", field.getContentDescription());
                                     startActivity(intent);
                                 }
                             });
-                            user_list.setAdapter(user_list_adapter);
+                            recycler_list.setAdapter(user_list_adapter);
                         }
                     }
                     @Override

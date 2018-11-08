@@ -22,7 +22,7 @@ public class ServiceListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_list);
 
-        service_list = findViewById(R.id.service_list);
+        service_list = findViewById(R.id.recycler_list);
     }
 
     @Override
