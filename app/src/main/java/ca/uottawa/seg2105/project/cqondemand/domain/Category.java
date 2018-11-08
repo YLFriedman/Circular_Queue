@@ -6,10 +6,13 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.DbUtil;
+import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class Category{
 
+    public static final String ILLEGAL_CATEGORY_NAME_CHARS_REGEX = ".*[^a-zA-Z-].*";
+    public static final String ILLEGAL_CATEGORY_NAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z -";
     private String name;
 
     /**
@@ -25,6 +28,9 @@ public class Category{
      * @paran services the services that will be associated with this category
      */
     public Category(String name){
+            if(!nameIsValid(name)){
+                throw new InvalidDataException("Invalid Category Name " + ILLEGAL_CATEGORY_NAME_CHARS_MSG);
+            }
             this.name = name;
 
     }
@@ -70,4 +76,10 @@ public class Category{
     public static void getCategory(String name, final AsyncValueEventListener<Category> listener){
         DbUtil.getItem(DbUtil.DataType.CATEGORY, name, listener);
     }
+
+    public static boolean nameIsValid(String name){
+        if(name == null || name.isEmpty()) { return false;  }
+        return name.matches(ILLEGAL_CATEGORY_NAME_CHARS_REGEX);
+    }
+
 }

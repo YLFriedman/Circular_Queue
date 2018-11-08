@@ -365,11 +365,14 @@ public class DbUtil {
 
     public static class DbService extends DbItem<Service> {
         public String name;
-        public double rate;
+        public String category_id;
+        public int rate;
         public DbService() {}
         public DbService(Service service) {
             name = service.getName();
             rate = service.getRate();
+            category_id = service.getCategoryID();
+
         }
         public Service toItem() { return null; }
         public String generateKey() { return getSanitizedKey(name); }

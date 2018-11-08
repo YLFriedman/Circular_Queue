@@ -6,14 +6,21 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.DbUtil;
+import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
+
+import static android.text.TextUtils.isEmpty;
 
 public class Service {
 
-    private String category;
+    public static final String ILLEGAL_SERVICENAME_CHARS_REGEX = ".*[^a-zA-Z-].*";
+    public static final String ILLEGAL_SERVICENAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z -";
+
+    private Category category;
+    private String categoryID;
     private ArrayList<String> serviceProviderIDs;
     private String name;
-    private double rate;
+    private int rate;
 
 
     /**
@@ -30,7 +37,7 @@ public class Service {
      * @param rate The rate per hour that this service costs
      * @param serviceProviders an ArrayList of Users that provide this service, must be of type Service Provider
      */
-    public Service(String category, double rate, ArrayList<User> serviceProviders, String name){
+    public Service(String category, int rate, ArrayList<User> serviceProviders, String name){
             this.serviceProviderIDs = new ArrayList<>();
             for(User user : serviceProviders){
                 if(!(user.getType() == User.Types.SERVICE_PROVIDER)){
@@ -39,7 +46,19 @@ public class Service {
                 serviceProviderIDs.add(user.getUserName());
             }
 
-            this.category = category;
+            if(!nameIsValid(name)){
+                throw new InvalidDataException("Invalid service name " + ILLEGAL_SERVICENAME_CHARS_MSG);
+            }
+            if(!nameIsValid(category)){
+                throw new InvalidDataException("Invalid category name " + ILLEGAL_SERVICENAME_CHARS_MSG);
+            }
+
+            if(rate < 0){
+                throw new InvalidDataException("Rate must be non-negative");
+            }
+
+
+            this.categoryID = category;
             this.rate = rate;
             this.name = name;
     }
@@ -61,8 +80,8 @@ public class Service {
      *
      * @return the associated category
      */
-    public String getCategory(){
-        return this.category;
+    public String getCategoryID(){
+        return this.categoryID;
     }
 
     /**
@@ -70,7 +89,7 @@ public class Service {
      *
      * @return the rate associated with this Service
      */
-    public double getRate(){
+    public int getRate(){
         return this.rate;
     }
 
@@ -109,5 +128,9 @@ public class Service {
         DbUtil.getItem(DbUtil.DataType.SERVICE, name, listener);
     }
 
+    public static boolean nameIsValid(String name){
+        if(name == null || name.isEmpty()) { return false;  }
+        return name.matches(ILLEGAL_SERVICENAME_CHARS_REGEX);
+    }
 
 }
