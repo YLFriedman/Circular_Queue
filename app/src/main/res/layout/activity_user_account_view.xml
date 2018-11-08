@@ -94,33 +94,6 @@
                 android:text="@string/sample_email"
                 android:textSize="18sp" />
 
-            <Button
-                android:id="@+id/btn_edit_user"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_weight="1"
-                android:onClick="onEditUserClick"
-                android:text="@string/edit" />
-
-            <Button
-                android:id="@+id/btn_change_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:layout_weight="1"
-                android:onClick="onChangePasswordClick"
-                android:text="@string/change_password" />
-
-            <Button
-                android:id="@+id/btn_delete_user"
-                style="@style/btn_danger"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_weight="1"
-                android:onClick="onDeleteAccountClick"
-                android:text="@string/delete_account" />
         </LinearLayout>
     </ScrollView>
 </android.support.constraint.ConstraintLayout>

@@ -2,9 +2,12 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -26,10 +29,8 @@ public class UserAccountViewActivity extends AppCompatActivity {
     private TextView txt_first_name;
     private TextView txt_last_name;
     private TextView txt_email;
-    private Button btn_edit_user;
-    private Button btn_change_password;
-    private Button btn_delete_user;
     private User currentUser;
+    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,15 +46,6 @@ public class UserAccountViewActivity extends AppCompatActivity {
             txt_first_name = findViewById(R.id.txt_first_name);
             txt_last_name = findViewById(R.id.txt_last_name);
             txt_email = findViewById(R.id.txt_email);
-            // Set references to the Button User UI objects
-            btn_edit_user = findViewById(R.id.btn_edit_user);
-            btn_change_password = findViewById(R.id.btn_change_password);
-            btn_delete_user = findViewById(R.id.btn_delete_user);
-            if (currentUser.getType() == User.Types.ADMIN) {
-                btn_edit_user.setVisibility(View.GONE);
-                btn_change_password.setVisibility(View.GONE);
-                //btn_delete_user.setVisibility(View.GONE);
-            }
         }
     }
 
@@ -87,6 +79,25 @@ public class UserAccountViewActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.user_options, menu);
+        if (currentUser.getType() == User.Types.ADMIN) {
+            menu.setGroupVisible(R.id.grp_user_edit_controls, false);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_user_edit: onEditAccountClick(); return true;
+            case R.id.menu_item_user_change_password: onChangePasswordClick(); return true;
+            case R.id.menu_item_user_delete: onDeleteAccountClick(); return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void setUserViewValues() {
         if (null == currentUser) {
             txt_account_type.setText("");
@@ -103,15 +114,15 @@ public class UserAccountViewActivity extends AppCompatActivity {
         }
     }
 
-    public void onEditUserClick(View view) {
+    public void onEditAccountClick() {
         startActivity(new Intent(getApplicationContext(), UserAccountEditActivity.class));
     }
 
-    public void onChangePasswordClick(View view) {
+    public void onChangePasswordClick() {
         startActivity(new Intent(getApplicationContext(), UserAccountChangePasswordActivity.class));
     }
 
-    public void onDeleteAccountClick(View view) {
+    public void onDeleteAccountClick() {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Account")
                 .setMessage("Are you sure you want to delete the '" + currentUser.getUserName() + "' account?  \r\nThis CANNOT be undone!")
