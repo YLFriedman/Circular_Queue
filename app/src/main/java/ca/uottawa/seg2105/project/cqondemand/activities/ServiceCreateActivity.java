@@ -1,4 +1,4 @@
-package ca.uottawa.seg2105.project.cqondemand;
+package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import ca.uottawa.seg2105.project.cqondemand.R;
 
 public class ServiceCreateActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 

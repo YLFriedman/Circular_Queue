@@ -1,4 +1,4 @@
-package ca.uottawa.seg2105.project.cqondemand;
+package ca.uottawa.seg2105.project.cqondemand.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+
+import ca.uottawa.seg2105.project.cqondemand.domain.Category;
+import ca.uottawa.seg2105.project.cqondemand.R;
 
 /**
  * An adapter class for the RecyclerView that contains a list of categories

@@ -1,17 +1,20 @@
-package ca.uottawa.seg2105.project.cqondemand;
+package ca.uottawa.seg2105.project.cqondemand.utilities;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+
+import ca.uottawa.seg2105.project.cqondemand.domain.Category;
+import ca.uottawa.seg2105.project.cqondemand.domain.Service;
+import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 /**
  * This class is a utility class for interfacing with the FireBase real-time database. It also allows
@@ -21,7 +24,7 @@ import java.util.ArrayList;
 
 public class DbUtil {
 
-    protected enum DataType {
+    public enum DataType {
         USER, SERVICE, CATEGORY;
         public String toString() {
             switch (this) {
@@ -34,17 +37,27 @@ public class DbUtil {
     }
 
     protected static DbItem<?> objectToDbItem(Object object) {
+        if (null == object) { throw new IllegalArgumentException("The object cannot be null."); }
         if (object instanceof User) { return new DbUser((User) object); }
         if (object instanceof Service) { return new DbService((Service) object); }
         if (object instanceof Category) { return new DbCategory((Category) object); }
-        return null;
+        throw new IllegalArgumentException("Unsupported type.");
     }
 
     protected static DataType getType(Object object) {
+        if (null == object) { throw new IllegalArgumentException("The object cannot be null."); }
         if (object instanceof User) { return DataType.USER; }
         if (object instanceof Service) { return DataType.SERVICE; }
         if (object instanceof Category) { return DataType.CATEGORY; }
-        return null;
+        throw new IllegalArgumentException("Unsupported type.");
+    }
+
+    public static String getKey(Object object) {
+        if (null == object) { throw new IllegalArgumentException("The object cannot be null."); }
+        if (object instanceof User) { return getSanitizedKey(((User) object).getUserName()); }
+        if (object instanceof Service) { return getSanitizedKey(((Service) object).getName()); }
+        if (object instanceof Category) { return getSanitizedKey(((Category) object).getName()); }
+        throw new IllegalArgumentException("Unsupported type.");
     }
 
     protected static Class getDbClassObj(DataType type) {
@@ -70,11 +83,11 @@ public class DbUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> void getItem(final DataType type, final String key, final AsyncValueEventListener<T> listener) {
+    public static <T> void getItem(final DataType type, String key, final AsyncValueEventListener<T> listener) {
         if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
         if (null == key) { throw new IllegalArgumentException("The key cannot be null."); }
         if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
-        getRef(type).child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+        getRef(type).child(getSanitizedKey(key)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists()) {

@@ -1,10 +1,18 @@
-package ca.uottawa.seg2105.project.cqondemand;
+package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TableRow;
+
+import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.activities.CategoryListActivity;
+import ca.uottawa.seg2105.project.cqondemand.activities.SignInActivity;
+import ca.uottawa.seg2105.project.cqondemand.activities.UserAccountListActivity;
+import ca.uottawa.seg2105.project.cqondemand.activities.UserAccountViewActivity;
+import ca.uottawa.seg2105.project.cqondemand.domain.User;
+import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class HomeActivity extends AppCompatActivity {
 

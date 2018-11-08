@@ -1,6 +1,9 @@
-package ca.uottawa.seg2105.project.cqondemand;
+package ca.uottawa.seg2105.project.cqondemand.domain;
 
 import java.util.ArrayList;
+
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.DbUtil;
 
 public class Category{
 
