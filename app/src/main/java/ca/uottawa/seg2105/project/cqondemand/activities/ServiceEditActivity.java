@@ -79,7 +79,7 @@ public class ServiceEditActivity extends AppCompatActivity implements AdapterVie
     }
 
     public void onSaveService(View view){
-        
+
     }
 
     @Override
