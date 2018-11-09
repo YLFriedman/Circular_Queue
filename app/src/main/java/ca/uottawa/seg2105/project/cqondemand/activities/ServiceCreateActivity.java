@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.security.Provider;
@@ -61,6 +62,7 @@ public class ServiceCreateActivity extends AppCompatActivity implements AdapterV
         for (Category cat: data){
             names.add(cat.getName());
         }
+        names.add(0, "<Select Category>");
 
         // Creating adapter for spinner
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, names);
@@ -94,7 +96,7 @@ public class ServiceCreateActivity extends AppCompatActivity implements AdapterV
             field_service_name.requestFocus();
             return;
         } else if (!Service.nameIsValid(name)) {
-            field_service_name.setError("Service name is invalid. " + Service.ILLEGAL_SERVICENAME_CHARS_REGEX);
+            field_service_name.setError("Service name is invalid. " + Service.ILLEGAL_SERVICENAME_CHARS_MSG);
             field_service_name.requestFocus();
             return;
         }
@@ -115,6 +117,13 @@ public class ServiceCreateActivity extends AppCompatActivity implements AdapterV
         if (rateNum < 0){
             field_rate.setError("Service rate must be positive!");
             field_rate.requestFocus();
+            return;
+        }
+
+        //Check valid spinner selection
+        if (categoryName.equals("<Select Category>")){
+            Toast.makeText(getApplicationContext(), "Please select a category!", Toast.LENGTH_SHORT).show();
+            ((TextView)spinner.getSelectedView()).setError("Please select a category!");
             return;
         }
 
@@ -150,6 +159,7 @@ public class ServiceCreateActivity extends AppCompatActivity implements AdapterV
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         categoryName = parent.getItemAtPosition(position).toString();
+
         Toast.makeText(parent.getContext(), categoryName, Toast.LENGTH_SHORT).show();
     }
 
