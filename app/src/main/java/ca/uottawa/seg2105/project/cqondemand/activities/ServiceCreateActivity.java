@@ -16,8 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.database.DbUtil;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 
@@ -26,6 +28,7 @@ import static java.lang.Integer.parseInt;
 public class ServiceCreateActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
     Spinner spinner;
+    String categoryName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,13 +118,39 @@ public class ServiceCreateActivity extends AppCompatActivity implements AdapterV
             return;
         }
 
-        //Service newService = new Service(name, rate);
+        Service newService = new Service(name, rateNum, DbUtil.getKey(new Category(categoryName)));
+        final Button btn_create_service = findViewById(R.id.btn_create_service);
+        btn_create_service.setEnabled(false);
+        newService.create(new AsyncActionEventListener() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(getApplicationContext(), "The category '" + categoryName + "' has been successfully created.", Toast.LENGTH_LONG).show();
+                finish();
+            }
+
+            @Override
+            public void onFailure(AsyncEventFailureReason reason) {
+                switch (reason) {
+                    case DATABASE_ERROR:
+                        Toast.makeText(getApplicationContext(), "Unable to create your service at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+                        break;
+                    case ALREADY_EXISTS:
+                        field_service_name.setError("Service name already exist!");
+                        field_service_name.requestFocus();
+                        break;
+                    default:
+                        // Some other kind of error
+                        Toast.makeText(getApplicationContext(), "Unable to create your service at this time. Please try again later.", Toast.LENGTH_LONG).show();
+                }
+                btn_create_service.setEnabled(true);
+            }
+        });
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String text = parent.getItemAtPosition(position).toString();
-        Toast.makeText(parent.getContext(), text, Toast.LENGTH_SHORT).show();
+        categoryName = parent.getItemAtPosition(position).toString();
+        Toast.makeText(parent.getContext(), categoryName, Toast.LENGTH_SHORT).show();
     }
 
     @Override
