@@ -106,7 +106,7 @@ public class ServiceViewActivity extends AppCompatActivity {
     public void onDeleteServiceClick() {
         if (null != service) {
             new AlertDialog.Builder(this)
-                    .setTitle("Delete Account")
+                    .setTitle("Delete Service")
                     .setMessage("Are you sure you want to delete the '" + service_name + "' service?  \r\nThis CANNOT be undone!")
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
