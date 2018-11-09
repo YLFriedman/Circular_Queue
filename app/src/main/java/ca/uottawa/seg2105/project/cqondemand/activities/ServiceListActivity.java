@@ -1,6 +1,8 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +17,9 @@ import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.adapters.ServiceListAdapter;
+import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
@@ -107,7 +111,44 @@ public class ServiceListActivity extends AppCompatActivity {
     }
 
     public void onDeleteCategoryClick() {
-
+        if (categoryName != null) {
+            final Category category = new Category(categoryName);
+            new AlertDialog.Builder(this)
+                    .setTitle("Delete Category")
+                    .setMessage("Are you sure you want to delete the '" + categoryName + "' category?  \r\nThis CANNOT be undone!")
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            Service.getServices(categoryName, new AsyncValueEventListener<Service>() {
+                                @Override
+                                public void onSuccess(ArrayList<Service> data) {
+                                    if (null == data) {
+                                        Toast.makeText(getApplicationContext(), "Unable to delete the '" + categoryName + "' category at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+                                    } else if (data.size() > 0) {
+                                        Toast.makeText(getApplicationContext(), "Unable to delete the '" + categoryName + "' category because it has services assigned to it. Please re-assign the services, then delete.", Toast.LENGTH_LONG).show();
+                                    } else {
+                                        category.delete(new AsyncActionEventListener() {
+                                            @Override
+                                            public void onSuccess() {
+                                                Toast.makeText(getApplicationContext(), "The the '" + categoryName + "' category has been successfully deleted.", Toast.LENGTH_LONG).show();
+                                                finish();
+                                            }
+                                            @Override
+                                            public void onFailure(AsyncEventFailureReason reason) {
+                                                Toast.makeText(getApplicationContext(), "Unable to delete the '" + categoryName + "' category at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+                                    }
+                                }
+                                @Override
+                                public void onFailure(AsyncEventFailureReason reason) {
+                                    Toast.makeText(getApplicationContext(), "Unable to delete the '" + categoryName + "' category at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, null).show();
+        }
     }
 
     public void onCreateCategoryClick() {
