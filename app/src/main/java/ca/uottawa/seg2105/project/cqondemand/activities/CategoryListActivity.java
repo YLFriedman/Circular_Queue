@@ -23,7 +23,6 @@ import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class CategoryListActivity extends AppCompatActivity {
 
-    private User currentUser;
     private RecyclerView recycler_list;
     private CategoryListAdapter category_list_adapter;
 
@@ -34,19 +33,13 @@ public class CategoryListActivity extends AppCompatActivity {
         recycler_list = findViewById(R.id.recycler_list);
     }
 
-    public void onCreateCategoryClick() {
-        startActivity(new Intent(getApplicationContext(), CategoryCreateActivity.class));
-    }
-
-    public void onCreateServiceClick() {
-        startActivity(new Intent(getApplicationContext(), ServiceCreateActivity.class));
-    }
-
     @Override
     public void onResume() {
         super.onResume();
-        currentUser = State.getState().getSignedInUser();
-        if (null == currentUser) {
+        if (null == State.getState().getSignedInUser()) {
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
             finish();
         } else {
             recycler_list.setHasFixedSize(true);
@@ -76,11 +69,19 @@ public class CategoryListActivity extends AppCompatActivity {
         }
     }
 
+    public void onCreateCategoryClick() {
+        startActivity(new Intent(getApplicationContext(), CategoryCreateActivity.class));
+    }
+
+    public void onCreateServiceClick() {
+        startActivity(new Intent(getApplicationContext(), ServiceCreateActivity.class));
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (currentUser.getType() != User.Types.ADMIN) {
-            getMenuInflater().inflate(R.menu.category_list_options, menu);
-            menu.setGroupVisible(R.id.grp_category_create_controls, false);
+        User user = State.getState().getSignedInUser();
+        if (null != user && user.getType() == User.Types.ADMIN) {
+            getMenuInflater().inflate(R.menu.service_list_options, menu);
             return true;
         }
         return super.onCreateOptionsMenu(menu);

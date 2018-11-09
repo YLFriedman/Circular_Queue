@@ -29,6 +29,7 @@
 
             <EditText
                 android:id="@+id/field_username"
+                style="@style/input_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -39,9 +40,10 @@
 
             <EditText
                 android:id="@+id/field_password"
+                style="@style/input_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="5dp"
                 android:ems="10"
                 android:hint="@string/password"
                 android:inputType="textPassword"

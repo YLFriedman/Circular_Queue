@@ -48,6 +48,9 @@ public class ServiceListActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         if (null == State.getState().getSignedInUser()) {
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
             finish();
         } else {
             recycler_list.setHasFixedSize(true);
@@ -92,11 +95,12 @@ public class ServiceListActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.service_list_options, menu);
-        if (State.getState().getSignedInUser().getType() != User.Types.ADMIN) {
-            menu.setGroupVisible(R.id.grp_category_create_controls, false);
+        User user = State.getState().getSignedInUser();
+        if (null != user && user.getType() == User.Types.ADMIN) {
+            getMenuInflater().inflate(R.menu.service_list_options, menu);
+            return true;
         }
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

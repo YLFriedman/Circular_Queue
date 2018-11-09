@@ -17,9 +17,11 @@
 
         <TextView
             android:id="@+id/txt_title_category"
+            style="@style/input_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/category" />
+            android:text="@string/category"
+            android:textColor="@color/text_secondary_dark" />
 
         <Spinner
             android:id="@+id/spinner_services"
@@ -29,6 +31,7 @@
 
         <EditText
             android:id="@+id/field_service_name"
+            style="@style/input_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
@@ -38,6 +41,7 @@
 
         <EditText
             android:id="@+id/field_rate"
+            style="@style/input_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"

@@ -17,6 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/service_name"
+            android:textColor="@color/text_primary_dark"
             android:textSize="18sp" />
 
         <TextView
@@ -24,13 +25,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="24dp"
-            android:text="@string/service_rate_template" />
+            android:text="@string/service_rate_template"
+            android:textColor="@color/text_secondary_dark" />
 
         <TextView
             android:id="@+id/txt_category"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="24dp"
-            android:text="@string/category_template" />
+            android:text="@string/category_template"
+            android:textColor="@color/text_secondary_dark" />
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

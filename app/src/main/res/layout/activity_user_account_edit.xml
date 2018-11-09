@@ -17,12 +17,14 @@
 
         <TextView
             android:id="@+id/txt_title_username"
+            style="@style/input_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/username" />
 
         <EditText
             android:id="@+id/field_username"
+            style="@style/input_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
@@ -32,12 +34,14 @@
 
         <TextView
             android:id="@+id/txt_title_first_name"
+            style="@style/input_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/first_name" />
 
         <EditText
             android:id="@+id/field_first_name"
+            style="@style/input_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
@@ -47,12 +51,14 @@
 
         <TextView
             android:id="@+id/txt_title_last_name"
+            style="@style/input_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/last_name" />
 
         <EditText
             android:id="@+id/field_last_name"
+            style="@style/input_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
@@ -62,12 +68,14 @@
 
         <TextView
             android:id="@+id/txt_title_email"
+            style="@style/input_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/email" />
 
         <EditText
             android:id="@+id/field_email"
+            style="@style/input_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"

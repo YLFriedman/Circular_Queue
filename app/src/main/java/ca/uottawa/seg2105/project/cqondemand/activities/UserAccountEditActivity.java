@@ -29,11 +29,7 @@ public class UserAccountEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_account_edit);
         currentUser = State.getState().getSignedInUser();
-        if (null == currentUser) {
-            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-        } else {
+        if (null != currentUser) {
             // Set references to the Edit User UI objects
             field_username = findViewById(R.id.field_username);
             field_first_name = findViewById(R.id.field_first_name);
@@ -46,6 +42,17 @@ public class UserAccountEditActivity extends AppCompatActivity {
             field_email.setText(currentUser.getEmail(), TextView.BufferType.EDITABLE);
             // Set references to the Button User UI objects
             btn_save_user = findViewById(R.id.btn_save_user);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (null == State.getState().getSignedInUser()) {
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
         }
     }
 
