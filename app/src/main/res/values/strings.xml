@@ -74,6 +74,8 @@
     <string name="category">Category</string>
     <string name="service_rate_template">$%d.00 / hour</string>
     <string name="category_template">Category: %s</string>
+    <string name="category_title_template">%s Services</string>
+    <string name="delete_category">Delete Category</string>
     <string-array name = "categories">
         <item>Electric</item>
         <item>Piping</item>

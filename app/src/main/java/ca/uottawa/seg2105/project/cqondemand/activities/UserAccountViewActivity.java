@@ -83,8 +83,9 @@ public class UserAccountViewActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        User user = State.getState().getSignedInUser();
         getMenuInflater().inflate(R.menu.user_options, menu);
-        if (State.getState().getSignedInUser().getType() == User.Types.ADMIN) {
+        if (null != user && user.getType() == User.Types.ADMIN) {
             menu.setGroupVisible(R.id.grp_user_edit_controls, false);
         }
         return true;

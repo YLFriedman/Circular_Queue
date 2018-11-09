@@ -2,7 +2,19 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <group
-        android:id="@+id/grp_category_create_controls"
+        android:id="@+id/grp_service_controls"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_item_service_create"
+            android:checkable="false"
+            android:checked="false"
+            android:icon="@drawable/ic_add_light_24"
+            android:title="@string/create_service"
+            android:titleCondensed="@string/new_service"
+            app:showAsAction="ifRoom" />
+    </group>
+    <group
+        android:id="@+id/grp_category_controls"
         android:checkableBehavior="single">
         <item
             android:id="@+id/menu_item_category_create"
@@ -11,14 +23,6 @@
             android:icon="@drawable/ic_add_light_24"
             android:title="@string/create_category"
             android:titleCondensed="@string/new_category"
-            app:showAsAction="ifRoom" />
-        <item
-            android:id="@+id/menu_item_service_create"
-            android:checkable="false"
-            android:checked="false"
-            android:icon="@drawable/ic_add_light_24"
-            android:title="@string/create_service"
-            android:titleCondensed="@string/new_service"
             app:showAsAction="never" />
     </group>
 

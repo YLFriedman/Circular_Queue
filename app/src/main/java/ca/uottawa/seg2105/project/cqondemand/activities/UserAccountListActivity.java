@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -46,7 +47,7 @@ public class UserAccountListActivity extends AppCompatActivity {
                 User.getUsers(new AsyncValueEventListener<User>() {
                     @Override
                     public void onSuccess(ArrayList<User> data) {
-                        if (null != data && data.size() > 0) {
+                        if (null != data) {
                             user_list_adapter = new UserListAdapter(getApplicationContext(), data, new View.OnClickListener() {
                                 public void onClick(final View view) {
                                     TextView field = view.findViewById(R.id.txt_subtitle);
@@ -60,7 +61,7 @@ public class UserAccountListActivity extends AppCompatActivity {
                     }
                     @Override
                     public void onFailure(AsyncEventFailureReason reason) {
-
+                        Toast.makeText(getApplicationContext(), "There was an error getting the users from the database. Please try again later.", Toast.LENGTH_LONG).show();
                     }
                 });
             }

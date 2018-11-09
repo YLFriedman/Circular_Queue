@@ -40,8 +40,6 @@ public class CategoryCreateActivity extends AppCompatActivity {
         final String title = field_category_name.getText().toString().trim();
         final Button btn_create_category = findViewById(R.id.btn_create_category);
 
-        btn_create_category.setEnabled(false);
-
         if (title.isEmpty()) {
             field_category_name.setError("Category name is required!");
             field_category_name.requestFocus();
@@ -51,6 +49,8 @@ public class CategoryCreateActivity extends AppCompatActivity {
             field_category_name.requestFocus();
             return;
         }
+
+        btn_create_category.setEnabled(false);
 
         final Category newCategory = new Category(title);
         newCategory.create(new AsyncActionEventListener() {

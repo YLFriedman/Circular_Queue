@@ -25,6 +25,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"
             android:text="@string/category_template"
+            android:textColor="@color/text_primary_dark"
             android:textSize="18sp"
             android:textStyle="bold"
             android:visibility="visible" />

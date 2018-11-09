@@ -37,7 +37,7 @@ public class ServiceListActivity extends AppCompatActivity {
         Intent intent = getIntent();
         categoryName = intent.getStringExtra("category_name");
         if (null != categoryName) {
-            txt_category_name.setText(String.format(getString(R.string.category_template), categoryName));
+            txt_category_name.setText(String.format(getString(R.string.category_title_template), categoryName));
         } else {
             txt_category_name.setVisibility(View.GONE);
             findViewById(R.id.divider_category_name).setVisibility(View.GONE);
@@ -58,7 +58,7 @@ public class ServiceListActivity extends AppCompatActivity {
             AsyncValueEventListener<Service> listener = new AsyncValueEventListener<Service>() {
                 @Override
                 public void onSuccess(ArrayList<Service> data) {
-                    if (null != data && data.size() > 0) {
+                    if (null != data) {
                         service_list_adapter = new ServiceListAdapter(getApplicationContext(), data, new View.OnClickListener() {
                             public void onClick(final View view) {
                                 TextView field = view.findViewById(R.id.txt_title);
@@ -68,8 +68,6 @@ public class ServiceListActivity extends AppCompatActivity {
                             }
                         });
                         recycler_list.setAdapter(service_list_adapter);
-                    } else {
-                        Toast.makeText(getApplicationContext(), "No services found.", Toast.LENGTH_LONG).show();
                     }
                 }
                 @Override
@@ -85,19 +83,14 @@ public class ServiceListActivity extends AppCompatActivity {
         }
     }
 
-    public void onCreateCategoryClick() {
-        startActivity(new Intent(getApplicationContext(), CategoryCreateActivity.class));
-    }
-
-    public void onCreateServiceClick() {
-        startActivity(new Intent(getApplicationContext(), ServiceCreateActivity.class));
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         User user = State.getState().getSignedInUser();
         if (null != user && user.getType() == User.Types.ADMIN) {
             getMenuInflater().inflate(R.menu.service_list_options, menu);
+            if (categoryName == null) {
+                menu.setGroupVisible(R.id.grp_category_controls, false);
+            }
             return true;
         }
         return super.onCreateOptionsMenu(menu);
@@ -108,9 +101,20 @@ public class ServiceListActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menu_item_category_create: onCreateCategoryClick(); return true;
             case R.id.menu_item_service_create: onCreateServiceClick(); return true;
+            case R.id.menu_item_category_delete: onDeleteCategoryClick(); return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    public void onDeleteCategoryClick() {
 
+    }
+
+    public void onCreateCategoryClick() {
+        startActivity(new Intent(getApplicationContext(), CategoryCreateActivity.class));
+    }
+
+    public void onCreateServiceClick() {
+        startActivity(new Intent(getApplicationContext(), ServiceCreateActivity.class));
+    }
 }

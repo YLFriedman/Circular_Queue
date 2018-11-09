@@ -47,7 +47,7 @@ public class CategoryListActivity extends AppCompatActivity {
             Category.getCategories(new AsyncValueEventListener<Category>() {
                 @Override
                 public void onSuccess(ArrayList<Category> data) {
-                    if (null != data && data.size() > 0) {
+                    if (null != data) {
                         category_list_adapter = new CategoryListAdapter(getApplicationContext(), data, new View.OnClickListener() {
                             public void onClick(final View view) {
                                 TextView field = view.findViewById(R.id.txt_title);
@@ -57,8 +57,6 @@ public class CategoryListActivity extends AppCompatActivity {
                             }
                         });
                         recycler_list.setAdapter(category_list_adapter);
-                    } else {
-                        Toast.makeText(getApplicationContext(), "No categories found.", Toast.LENGTH_LONG).show();
                     }
                 }
                 @Override
@@ -81,7 +79,7 @@ public class CategoryListActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         User user = State.getState().getSignedInUser();
         if (null != user && user.getType() == User.Types.ADMIN) {
-            getMenuInflater().inflate(R.menu.service_list_options, menu);
+            getMenuInflater().inflate(R.menu.category_list_options, menu);
             return true;
         }
         return super.onCreateOptionsMenu(menu);
