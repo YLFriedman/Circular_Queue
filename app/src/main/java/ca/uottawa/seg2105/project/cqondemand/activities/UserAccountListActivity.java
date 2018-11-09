@@ -35,6 +35,9 @@ public class UserAccountListActivity extends AppCompatActivity {
         super.onResume();
         currentUser = State.getState().getSignedInUser();
         if (null == currentUser) {
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
             finish();
         } else {
             if (currentUser.getType() == User.Types.ADMIN) {

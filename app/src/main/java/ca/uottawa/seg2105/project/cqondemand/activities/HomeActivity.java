@@ -16,8 +16,6 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private User currentUser;
-
     private TableRow btns_admin_1;
 
     /*
@@ -34,14 +32,14 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        currentUser = State.getState().getSignedInUser();
-        if (null == currentUser) {
+        User user = State.getState().getSignedInUser();
+        if (null == user) {
             onSignOutClick(null);
         } else {
             // Hide all non-shared button rows
             btns_admin_1.setVisibility(View.GONE);
             // Enable the relevant button rows
-            switch (currentUser.getType()) {
+            switch (user.getType()) {
                 case ADMIN:
                     btns_admin_1.setVisibility(View.VISIBLE);
                     break;

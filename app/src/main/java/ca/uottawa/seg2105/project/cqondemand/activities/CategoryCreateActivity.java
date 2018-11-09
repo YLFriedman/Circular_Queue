@@ -12,6 +12,7 @@ import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
+import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class CategoryCreateActivity extends AppCompatActivity {
 
@@ -24,11 +25,14 @@ public class CategoryCreateActivity extends AppCompatActivity {
         field_category_name.setText(intent.getStringExtra("title"));
     }
 
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent();
-        setResult(RESULT_CANCELED, intent);
-        finish();
+    public void onResume() {
+        super.onResume();
+        if (null == State.getState().getSignedInUser()) {
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }
     }
 
     public void onCreateCategory(View view){

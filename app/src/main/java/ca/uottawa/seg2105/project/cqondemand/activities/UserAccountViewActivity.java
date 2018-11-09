@@ -71,6 +71,9 @@ public class UserAccountViewActivity extends AppCompatActivity {
         } else {
             currentUser = State.getState().getSignedInUser();
             if (null == currentUser) {
+                intent = new Intent(getApplicationContext(), HomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
                 finish();
             } else {
                 setUserViewValues();

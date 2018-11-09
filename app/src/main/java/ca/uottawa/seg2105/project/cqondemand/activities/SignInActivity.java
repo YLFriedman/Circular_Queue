@@ -20,7 +20,6 @@ import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class SignInActivity extends AppCompatActivity {
 
-    private User currentUser;
     private Button btn_sign_in;
     private Button btn_sign_up;
     private Button btn_create_admin_account;
@@ -31,8 +30,7 @@ public class SignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-        currentUser = State.getState().getSignedInUser();
-        if (null == currentUser) {
+        if (null == State.getState().getSignedInUser()) {
             field_username = findViewById(R.id.field_username);
             field_password = findViewById(R.id.field_password);
             btn_sign_in = findViewById(R.id.btn_sign_in);
@@ -58,8 +56,7 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        currentUser = State.getState().getSignedInUser();
-        if (null != currentUser) {
+        if (null != State.getState().getSignedInUser()) {
             Intent loginIntent = new Intent(getApplicationContext(), HomeActivity.class);
             startActivity(loginIntent);
             finish();

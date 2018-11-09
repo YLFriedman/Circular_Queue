@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <color name="text_primary_dark">#5f5f5f</color>
+    <color name="text_secondary_dark">#8c8c8c</color>
+    <color name="text_primary_light">#F2F2F2</color>
+    <color name="text_secondary_light">#EEEEEE</color>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303f9f</color>
     <color name="colorAccent">#ff4081</color>
@@ -11,5 +15,6 @@
     <color name="icon_light">#F2F2F2</color>
     <color name="icon_medium">#8C8C8C</color>
     <color name="icon_dark">#000000</color>
+
 
 </resources>

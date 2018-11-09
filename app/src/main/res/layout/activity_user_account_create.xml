@@ -17,6 +17,7 @@
 
         <EditText
             android:id="@+id/field_username"
+            style="@style/input_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
@@ -26,6 +27,7 @@
 
         <EditText
             android:id="@+id/field_first_name"
+            style="@style/input_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
@@ -35,6 +37,7 @@
 
         <EditText
             android:id="@+id/field_last_name"
+            style="@style/input_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
@@ -44,6 +47,7 @@
 
         <EditText
             android:id="@+id/field_email"
+            style="@style/input_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
@@ -53,6 +57,7 @@
 
         <EditText
             android:id="@+id/field_password"
+            style="@style/input_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
@@ -62,6 +67,7 @@
 
         <EditText
             android:id="@+id/field_password_confirm"
+            style="@style/input_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"

@@ -14,6 +14,7 @@ import java.security.Provider;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
+import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class ServiceCreateActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
@@ -35,11 +36,14 @@ public class ServiceCreateActivity extends AppCompatActivity implements AdapterV
         spinner.setOnItemSelectedListener(this);
     }
 
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent();
-        setResult(RESULT_CANCELED, intent);
-        finish();
+    public void onResume() {
+        super.onResume();
+        if (null == State.getState().getSignedInUser()) {
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }
     }
 
     public void onCreateCategory(View view){

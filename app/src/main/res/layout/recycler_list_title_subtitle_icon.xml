@@ -31,6 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/title"
+            android:textColor="@color/text_primary_dark"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -38,7 +39,8 @@
             android:id="@+id/txt_subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/subtitle" />
+            android:text="@string/subtitle"
+            android:textColor="@color/text_primary_dark" />
 
     </LinearLayout>
 

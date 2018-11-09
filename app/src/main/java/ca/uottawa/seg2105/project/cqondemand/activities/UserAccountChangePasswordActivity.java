@@ -41,6 +41,18 @@ public class UserAccountChangePasswordActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        currentUser = State.getState().getSignedInUser();
+        if (null != currentUser) {
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }
+    }
+
     public void onSavePasswordClick(View view){
         final String oldPassword = field_password_old.getText().toString();
         final String password = field_password.getText().toString();

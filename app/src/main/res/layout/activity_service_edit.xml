@@ -17,9 +17,11 @@
 
         <TextView
             android:id="@+id/txt_title_category"
+            style="@style/input_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/category" />
+            android:text="@string/category"
+            android:textColor="@color/text_secondary_dark" />
 
         <Spinner
             android:id="@+id/spinner_services"
@@ -29,12 +31,15 @@
 
         <TextView
             android:id="@+id/txt_title_service_name"
+            style="@style/input_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/service_name" />
+            android:text="@string/service_name"
+            android:textColor="@color/text_secondary_dark" />
 
         <EditText
             android:id="@+id/field_service_name"
+            style="@style/input_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
@@ -44,12 +49,15 @@
 
         <TextView
             android:id="@+id/txt_title_service_rate"
+            style="@style/input_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/service_rate" />
+            android:text="@string/service_rate"
+            android:textColor="@color/text_secondary_dark" />
 
         <EditText
             android:id="@+id/field_rate"
+            style="@style/input_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
