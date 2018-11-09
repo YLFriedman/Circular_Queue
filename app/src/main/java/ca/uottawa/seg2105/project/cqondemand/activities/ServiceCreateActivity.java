@@ -21,6 +21,8 @@ import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 
+import static java.lang.Integer.parseInt;
+
 public class ServiceCreateActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
     Spinner spinner;
@@ -81,6 +83,7 @@ public class ServiceCreateActivity extends AppCompatActivity implements AdapterV
 
         final EditText field_rate = findViewById(R.id.field_rate);
         final String rate = field_rate.getText().toString().trim();
+        int rateNum = 0;
 
         //Check valid service name
         if (name.isEmpty()) {
@@ -88,13 +91,29 @@ public class ServiceCreateActivity extends AppCompatActivity implements AdapterV
             field_service_name.requestFocus();
             return;
         } else if (!Service.nameIsValid(name)) {
-            field_service_name.setError("Username is invalid. " + Service.ILLEGAL_SERVICENAME_CHARS_REGEX);
+            field_service_name.setError("Service name is invalid. " + Service.ILLEGAL_SERVICENAME_CHARS_REGEX);
             field_service_name.requestFocus();
             return;
         }
 
         //Check valid service rate
-
+        if (rate.isEmpty()) {
+            field_rate.setError("Service rate is required!");
+            field_rate.requestFocus();
+            return;
+        }
+        try{
+            rateNum = Integer.parseInt(rate);
+        } catch(NumberFormatException e) {
+            field_rate.setError("Service rate is too large! Max value is " + Integer.MAX_VALUE);
+            field_rate.requestFocus();
+            return;
+        }
+        if (rateNum < 0){
+            field_rate.setError("Service rate must be positive!");
+            field_rate.requestFocus();
+            return;
+        }
 
         //Service newService = new Service(name, rate);
     }
