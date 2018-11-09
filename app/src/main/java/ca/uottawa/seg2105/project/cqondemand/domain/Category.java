@@ -8,7 +8,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 public class Category{
 
-    public static final String ILLEGAL_CATEGORY_NAME_CHARS_REGEX = ".*[^a-zA-Z -'].*";
+    public static final String ILLEGAL_CATEGORY_NAME_CHARS_REGEX = ".*[^'a-zA-Z -].*";
     public static final String ILLEGAL_CATEGORY_NAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z - space '";
     private String name;
 

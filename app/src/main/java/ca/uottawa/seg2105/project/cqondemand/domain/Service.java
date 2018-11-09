@@ -10,7 +10,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 public class Service {
 
-    public static final String ILLEGAL_SERVICENAME_CHARS_REGEX = ".*[^a-zA-Z -'].*";
+    public static final String ILLEGAL_SERVICENAME_CHARS_REGEX = ".*[^'a-zA-Z -].*";
     public static final String ILLEGAL_SERVICENAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z - space '";
 
     private String name;
