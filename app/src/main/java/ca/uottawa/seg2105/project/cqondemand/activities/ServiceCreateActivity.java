@@ -6,16 +6,24 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.security.Provider;
+import java.util.ArrayList;
+import java.util.List;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 
 public class ServiceCreateActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
+
+    Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,13 +34,38 @@ public class ServiceCreateActivity extends AppCompatActivity implements AdapterV
         Intent intent = getIntent();
         field_service_name.setText(intent.getStringExtra("name"));
 
-        Spinner spinner = findViewById(R.id.spinner_services);
-
-        //For Testing purpose, data stored in layout/values/strings as a string array of size 5 named R.array.categories
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+        spinner = findViewById(R.id.spinner_services);
         spinner.setOnItemSelectedListener(this);
+
+        Category.getCategories(new AsyncValueEventListener<Category>() {
+            @Override
+            public void onSuccess(ArrayList<Category> data) {
+                loadSpinnerData(data);
+            }
+
+            @Override
+            public void onFailure(AsyncEventFailureReason reason) {
+
+            }
+        });
+    }
+
+    private void loadSpinnerData(ArrayList<Category> data){
+
+        List<String> names = new ArrayList<String>();
+        for (Category cat: data){
+            names.add(cat.getName());
+        }
+
+        // Creating adapter for spinner
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, names);
+
+        // Drop down layout style - list view with radio button
+        dataAdapter
+                .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        spinner.setAdapter(dataAdapter);
     }
 
     @Override
