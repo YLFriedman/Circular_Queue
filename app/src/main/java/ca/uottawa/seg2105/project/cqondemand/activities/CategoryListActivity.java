@@ -7,9 +7,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.adapters.CategoryListAdapter;
+import ca.uottawa.seg2105.project.cqondemand.domain.Category;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
@@ -44,6 +50,29 @@ public class CategoryListActivity extends AppCompatActivity {
 
             category_list.setHasFixedSize(true);
             category_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
+            Category.getCategories(new AsyncValueEventListener<Category>() {
+
+                @Override
+                public void onSuccess(ArrayList<Category> data) {
+                    if (null != data && data.size() > 0) {
+                        category_list_adapter = new CategoryListAdapter(getApplicationContext(), data, new View.OnClickListener() {
+                            public void onClick(final View view) {
+                                //TextView field = view.findViewById(R.id.txt_title);
+                                Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
+                                //intent.putExtra("title", field.getContentDescription());
+                                startActivity(intent);
+                            }
+                        });
+                        category_list.setAdapter(category_list_adapter);
+                    }
+                }
+
+                @Override
+                public void onFailure(AsyncEventFailureReason reason) {
+
+                }
+            });
 
             /**
             if (currentUser.getType() == User.Types.ADMIN) {

@@ -384,7 +384,7 @@ public class DbUtil {
         public DbCategory(Category category) {
             name = category.getName();
         }
-        public Category toItem() { return null; }
+        public Category toItem() { return new Category(name); }
         public String generateKey() { return getSanitizedKey(name); }
     }
 
