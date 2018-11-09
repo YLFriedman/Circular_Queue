@@ -18,4 +18,16 @@ public class ServiceFunctionTest {
       assertEquals("getter Failed - rate", 250, testService.getRate());
 
   }
+
+  @Test
+    public void service_Name_Validation(){
+      assertEquals("name validation failed - apostrophe returns invalid", true, Service.nameIsValid("'"));
+      assertEquals("name validation failed - space returns invalid", true, Service.nameIsValid(" ") );
+      assertEquals("name validation failed - alphabet return invalid", true,
+              Service.nameIsValid("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+      assertEquals("name validation failed - numbers return valid", false, Service.nameIsValid("1234567890"));
+      assertEquals("name validation failed - tab return valid", false, Service.nameIsValid("\t"));
+      assertEquals("name validation failed - symbols return valid", false,
+              Service.nameIsValid("<>,./?;:/\"|[]{}`~=_+@#$%^&*()\\"));
+  }
 }
