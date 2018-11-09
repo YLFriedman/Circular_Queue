@@ -133,7 +133,7 @@ public class ServiceCreateActivity extends AppCompatActivity implements AdapterV
         newService.create(new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
-                Toast.makeText(getApplicationContext(), "The category '" + categoryName + "' has been successfully created.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "The service '" + name + "' has been successfully created.", Toast.LENGTH_LONG).show();
                 finish();
             }
 
