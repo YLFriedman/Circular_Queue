@@ -20,7 +20,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_account);
+        setContentView(R.layout.activity_user_account_create);
         EditText field_username = findViewById(R.id.field_username);
         Intent intent = getIntent();
         field_username.setText(intent.getStringExtra("username"));

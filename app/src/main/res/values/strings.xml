@@ -71,6 +71,7 @@
     <string name="new_service">New Service</string>
     <string name="edit_service">Edit Service</string>
     <string name="delete_service">Delete Service</string>
+    <string name="category">Category</string>
     <string-array name = "categories">
         <item>Electric</item>
         <item>Piping</item>

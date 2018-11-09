@@ -126,7 +126,7 @@
                 android:layout_marginTop="32dp"
                 android:onClick="onCreateTestAccountClick"
                 android:text="@string/create_test"
-                android:visibility="visible" />
+                android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
 

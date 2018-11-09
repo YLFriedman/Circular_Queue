@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.UserAccountEditActivity">
+    tools:context=".activities.UserAccountCreateActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,12 +15,6 @@
         android:paddingRight="24dp"
         android:paddingBottom="16dp">
 
-        <TextView
-            android:id="@+id/txt_title_username"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/username" />
-
         <EditText
             android:id="@+id/field_username"
             android:layout_width="match_parent"
@@ -28,13 +22,7 @@
             android:layout_marginBottom="5dp"
             android:ems="10"
             android:hint="@string/username"
-            android:inputType="text" />
-
-        <TextView
-            android:id="@+id/txt_title_first_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/first_name" />
+            android:inputType="text|textNoSuggestions" />
 
         <EditText
             android:id="@+id/field_first_name"
@@ -45,12 +33,6 @@
             android:hint="@string/first_name"
             android:inputType="textPersonName" />
 
-        <TextView
-            android:id="@+id/txt_title_last_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/last_name" />
-
         <EditText
             android:id="@+id/field_last_name"
             android:layout_width="match_parent"
@@ -60,28 +42,64 @@
             android:hint="@string/last_name"
             android:inputType="textPersonName" />
 
-        <TextView
-            android:id="@+id/txt_title_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/email" />
-
         <EditText
             android:id="@+id/field_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
             android:ems="10"
             android:hint="@string/email"
             android:inputType="textEmailAddress" />
 
+        <EditText
+            android:id="@+id/field_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:ems="10"
+            android:hint="@string/password"
+            android:inputType="textPassword" />
+
+        <EditText
+            android:id="@+id/field_password_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:ems="10"
+            android:hint="@string/password_confirm"
+            android:inputType="textPassword" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+
+            <RadioButton
+                android:id="@+id/radio_homeowner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="@string/homeowner" />
+
+            <RadioButton
+                android:id="@+id/radio_service"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/service_provider" />
+
+        </RadioGroup>
+
         <Button
-            android:id="@+id/btn_save_user"
+            android:id="@+id/btn_create_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:layout_weight="1"
-            android:onClick="onSaveUserClick"
-            android:text="@string/save" />
+            android:onClick="onCreateClick"
+            android:text="@string/create_account" />
+
     </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>
