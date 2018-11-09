@@ -89,7 +89,7 @@ public class SignInActivity extends AppCompatActivity {
     public void onSignInClick(View view) {
         btn_sign_in.setEnabled(false);
         btn_sign_up.setEnabled(false);
-        User.authenticate(field_username.getText().toString(), field_password.getText().toString(), new AsyncActionEventListener() {
+        User.authenticate(field_username.getText().toString().trim(), field_password.getText().toString(), new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 btn_sign_in.setEnabled(true);
