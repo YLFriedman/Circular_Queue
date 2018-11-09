@@ -3,13 +3,9 @@ package ca.uottawa.seg2105.project.cqondemand.domain;
 import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
-import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.DbUtil;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
-import ca.uottawa.seg2105.project.cqondemand.utilities.State;
-
-import static android.text.TextUtils.isEmpty;
 
 public class Service {
 
@@ -22,45 +18,27 @@ public class Service {
     private String name;
     private int rate;
 
-
-    /**
-     * Empty constructor for Firebase Use
-     */
-
-    public Service(){
-
-    }
     /**
      * Constructor for a new service Object
      * @param name the name of this Service
-     * @param category The category that this service falls under
+     * @param categoryID The category that this service falls under
      * @param rate The rate per hour that this service costs
-     * @param serviceProviders an ArrayList of Users that provide this service, must be of type Service Provider
      */
-    public Service(String category, int rate, ArrayList<User> serviceProviders, String name){
-            this.serviceProviderIDs = new ArrayList<>();
-            for(User user : serviceProviders){
-                if(!(user.getType() == User.Types.SERVICE_PROVIDER)){
-                    throw new IllegalArgumentException("Only Service Providers can provide a service");
-                }
-                serviceProviderIDs.add(user.getUserName());
+    public Service(String name, int rate, String categoryID){
+        /*this.serviceProviderIDs = new ArrayList<>();
+        for (User user: serviceProviders) {
+            if (!(user.getType() == User.Types.SERVICE_PROVIDER)) {
+                throw new IllegalArgumentException("Only Service Providers can provide a service");
             }
+            serviceProviderIDs.add(user.getUserName());
+        }*/
+        if (!nameIsValid(name)) { throw new InvalidDataException("Invalid service name. " + ILLEGAL_SERVICENAME_CHARS_MSG); }
+        if (null == categoryID) { throw new IllegalArgumentException("The categoryID cannot be null."); }
+        if (rate < 0) { throw new InvalidDataException("Rate cannot be negative. "); }
 
-            if(!nameIsValid(name)){
-                throw new InvalidDataException("Invalid service name " + ILLEGAL_SERVICENAME_CHARS_MSG);
-            }
-            if(!nameIsValid(category)){
-                throw new InvalidDataException("Invalid category name " + ILLEGAL_SERVICENAME_CHARS_MSG);
-            }
-
-            if(rate < 0){
-                throw new InvalidDataException("Rate must be non-negative");
-            }
-
-
-            this.categoryID = category;
-            this.rate = rate;
-            this.name = name;
+        this.rate = rate;
+        this.name = name;
+        this.categoryID = categoryID;
     }
 
     /**
@@ -69,11 +47,9 @@ public class Service {
      * @return an ArrayList of the service providers that provide this service
      */
 
-    public ArrayList<String> getServiceProviderIDs(){
+    public ArrayList<String> getServiceProviderIDs() {
         return this.serviceProviderIDs;
-
     }
-
 
     /**
      *Returns the category associated with this service
@@ -82,6 +58,16 @@ public class Service {
      */
     public String getCategoryID(){
         return this.categoryID;
+    }
+
+    public void getCategory(AsyncValueEventListener<Category> listener) {
+        if (null != category) {
+            ArrayList<Category> result = new ArrayList<Category>(1);
+            result.add(category);
+            listener.onSuccess(result);
+        } else {
+            Category.getCategory(categoryID, listener);
+        }
     }
 
     /**
@@ -103,6 +89,11 @@ public class Service {
         return this.name;
     }
 
+    public static boolean nameIsValid(String name) {
+        if (name == null || name.isEmpty()) { return false;  }
+        return !name.matches(ILLEGAL_SERVICENAME_CHARS_REGEX);
+    }
+
     public void create(final AsyncActionEventListener listener) {
         DbUtil.createItem(this, listener);
     }
@@ -120,17 +111,12 @@ public class Service {
         DbUtil.deleteItem(this, listener);
     }
 
-    public static void getServices(final AsyncValueEventListener<Service> listener){
-        DbUtil.getItems(DbUtil.DataType.SERVICE, listener);
-    }
-
-    public static void getService(String name, final AsyncValueEventListener<Service> listener){
+    public static void getService(String name, final AsyncValueEventListener<Service> listener) {
         DbUtil.getItem(DbUtil.DataType.SERVICE, name, listener);
     }
 
-    public static boolean nameIsValid(String name){
-        if(name == null || name.isEmpty()) { return false;  }
-        return name.matches(ILLEGAL_SERVICENAME_CHARS_REGEX);
+    public static void getServices(final AsyncValueEventListener<Service> listener) {
+        DbUtil.getItems(DbUtil.DataType.SERVICE, listener);
     }
 
 }

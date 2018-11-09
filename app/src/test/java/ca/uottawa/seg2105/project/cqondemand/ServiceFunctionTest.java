@@ -13,9 +13,9 @@ public class ServiceFunctionTest {
 
   @Test
     public void validate_Constructor(){
-      Service testService = new Service("Home Security", 250, new ArrayList<User>(), "Camera Installation");
+      Service testService = new Service("Camera Installation", 250, "category_test");
       assertEquals("getter Failed - category", "Camera Installation", testService.getName());
-      assertEquals("getter Failed - rate", 250.0, testService.getRate(), 0.00001);
+      assertEquals("getter Failed - rate", 250, testService.getRate());
 
   }
 }
