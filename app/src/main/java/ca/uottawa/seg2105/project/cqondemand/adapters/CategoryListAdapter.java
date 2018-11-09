@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -46,9 +47,8 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         Category category = data.get(i);
-
-        String categoryName = String.format("%s", category.getName());
-        viewHolder.txt_title.setText(categoryName);
+        viewHolder.txt_title.setText(category.getName());
+        viewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_med_30);
     }
 
     @Override
@@ -59,10 +59,12 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
     class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView txt_title;
+        ImageView img_nav;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txt_title = itemView.findViewById(R.id.txt_title);
+            img_nav = itemView.findViewById(R.id.img_nav);
         }
 
     }

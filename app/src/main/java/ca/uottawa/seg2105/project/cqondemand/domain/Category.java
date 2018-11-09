@@ -9,8 +9,8 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 public class Category{
 
-    public static final String ILLEGAL_CATEGORY_NAME_CHARS_REGEX = ".*[^a-zA-Z-].*";
-    public static final String ILLEGAL_CATEGORY_NAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z -";
+    public static final String ILLEGAL_CATEGORY_NAME_CHARS_REGEX = ".*[^a-zA-Z -].*";
+    public static final String ILLEGAL_CATEGORY_NAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z - space";
     private String name;
 
     /**
@@ -35,8 +35,9 @@ public class Category{
         return name;
     }
 
-    public static void getCategories(final AsyncValueEventListener<Category> listener) {
-        DbUtil.getItems(DbUtil.DataType.CATEGORY, listener);
+    public static boolean nameIsValid(String name){
+        if(name == null || name.isEmpty()) { return false; }
+        return !name.matches(ILLEGAL_CATEGORY_NAME_CHARS_REGEX);
     }
 
     public void create(final AsyncActionEventListener listener) {
@@ -59,9 +60,8 @@ public class Category{
         DbUtil.getItem(DbUtil.DataType.CATEGORY, name, listener);
     }
 
-    public static boolean nameIsValid(String name){
-        if(name == null || name.isEmpty()) { return false; }
-        return !name.matches(ILLEGAL_CATEGORY_NAME_CHARS_REGEX);
+    public static void getCategories(final AsyncValueEventListener<Category> listener) {
+        DbUtil.getItems(DbUtil.DataType.CATEGORY, listener);
     }
 
 }

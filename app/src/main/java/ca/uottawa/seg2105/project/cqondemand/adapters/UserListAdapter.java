@@ -48,10 +48,8 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         User user = data.get(i);
-        String firstLine = String.format("%s %s", user.getFirstName(), user.getLastName());
-        String secondLine = String.format("%s, %s", user.getUserName(), user.getType().toString());
-        viewHolder.txt_title.setText(firstLine);
-        viewHolder.txt_subtitle.setText(secondLine);
+        viewHolder.txt_title.setText(String.format("%s %s", user.getFirstName(), user.getLastName()));
+        viewHolder.txt_subtitle.setText(String.format("%s, %s", user.getUserName(), user.getType().toString()));
         viewHolder.txt_subtitle.setContentDescription(user.getUserName());
         viewHolder.img_item_image.setImageResource(R.drawable.ic_account_circle_med_40);
         viewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_med_30);

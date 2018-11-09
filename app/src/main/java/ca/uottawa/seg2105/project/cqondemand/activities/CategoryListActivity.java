@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -22,14 +23,14 @@ import ca.uottawa.seg2105.project.cqondemand.domain.User;
 public class CategoryListActivity extends AppCompatActivity {
 
     private User currentUser;
-    private RecyclerView category_list;
+    private RecyclerView recycler_list;
     private CategoryListAdapter category_list_adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_list);
-        category_list = findViewById(R.id.recycler_list);
+        recycler_list = findViewById(R.id.recycler_list);
     }
 
     public void onCreateCategoryClick() {
@@ -47,70 +48,39 @@ public class CategoryListActivity extends AppCompatActivity {
         if (null == currentUser) {
             finish();
         } else {
-
-            category_list.setHasFixedSize(true);
-            category_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-
+            recycler_list.setHasFixedSize(true);
+            recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
             Category.getCategories(new AsyncValueEventListener<Category>() {
-
                 @Override
                 public void onSuccess(ArrayList<Category> data) {
                     if (null != data && data.size() > 0) {
                         category_list_adapter = new CategoryListAdapter(getApplicationContext(), data, new View.OnClickListener() {
                             public void onClick(final View view) {
-                                //TextView field = view.findViewById(R.id.txt_title);
+                                TextView field = view.findViewById(R.id.txt_title);
                                 Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
-                                //intent.putExtra("title", field.getContentDescription());
+                                intent.putExtra("category_name", field.getText().toString());
                                 startActivity(intent);
                             }
                         });
-                        category_list.setAdapter(category_list_adapter);
+                        recycler_list.setAdapter(category_list_adapter);
                     }
                 }
-
                 @Override
                 public void onFailure(AsyncEventFailureReason reason) {
 
                 }
             });
-
-            /**
-            if (currentUser.getType() == User.Types.ADMIN) {
-                category_list.setHasFixedSize(true);
-                category_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                Category.getCategories(new AsyncValueEventListener<Category>() {
-
-                    @Override
-                    public void onSuccess(ArrayList<Category> data) {
-                        if (null != data && data.size() > 0) {
-                            category_list_adapter = new CategoryListAdapter(getApplicationContext(), data, new View.OnClickListener() {
-                                public void onClick(final View view) {
-                                    TextView field = view.findViewById(R.id.txt_title);
-                                    Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
-                                    intent.putExtra("title", field.getContentDescription());
-                                    startActivity(intent);
-                                }
-                            });
-                            category_list.setAdapter(category_list_adapter);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(AsyncEventFailureReason reason) {
-
-                    }
-                });
-            }*/
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.category_list_options, menu);
         if (currentUser.getType() != User.Types.ADMIN) {
+            getMenuInflater().inflate(R.menu.category_list_options, menu);
             menu.setGroupVisible(R.id.grp_category_create_controls, false);
+            return true;
         }
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

@@ -372,7 +372,6 @@ public class DbUtil {
             name = service.getName();
             rate = service.getRate();
             category_id = service.getCategoryID();
-
         }
         public Service toItem() { return null; }
         public String generateKey() { return getSanitizedKey(name); }
