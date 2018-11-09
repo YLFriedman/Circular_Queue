@@ -2,7 +2,7 @@ package ca.uottawa.seg2105.project.cqondemand;
 
 import org.junit.Test;
 
-import ca.uottawa.seg2105.project.cqondemand.utilities.DbUtil;
+import ca.uottawa.seg2105.project.cqondemand.database.DbUtil;
 
 import static org.junit.Assert.assertEquals;
 

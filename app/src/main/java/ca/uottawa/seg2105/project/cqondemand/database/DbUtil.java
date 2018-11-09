@@ -1,4 +1,4 @@
-package ca.uottawa.seg2105.project.cqondemand.utilities;
+package ca.uottawa.seg2105.project.cqondemand.database;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +15,10 @@ import java.util.ArrayList;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 /**
  * This class is a utility class for interfacing with the FireBase real-time database. It defines
@@ -304,8 +308,6 @@ public class DbUtil {
         });
     }
 
-
-
     public static <T> void updateItem(final T oldItem, final T newItem, final AsyncActionEventListener listener) {
         if (null == oldItem) { throw new IllegalArgumentException("The oldItem cannot be null."); }
         if (null == newItem) { throw new IllegalArgumentException("The newItem cannot be null."); }
@@ -340,55 +342,6 @@ public class DbUtil {
                 }
             }
         });
-    }
-
-    public static abstract class DbItem<T> {
-        public abstract T toItem();
-        public abstract String generateKey();
-    }
-
-    public static class DbUser extends DbItem<User> {
-        public String first_name;
-        public String last_name;
-        public String username;
-        public String email;
-        public String password;
-        public String type;
-        public DbUser() {}
-        public DbUser(User user) {
-            first_name = user.getFirstName();
-            last_name = user.getLastName();
-            username = user.getUserName();
-            email = user.getEmail();
-            password = user.getPassword();
-            type = user.getType().toString();
-        }
-        public User toItem() { return new User(first_name, last_name, username, email, User.parseType(type), password); }
-        public String generateKey() { return getSanitizedKey(username); }
-    }
-
-    public static class DbService extends DbItem<Service> {
-        public String name;
-        public String category_id;
-        public int rate;
-        public DbService() {}
-        public DbService(Service service) {
-            name = service.getName();
-            rate = service.getRate();
-            category_id = service.getCategoryID();
-        }
-        public Service toItem() { return new Service(name, rate, category_id); }
-        public String generateKey() { return getSanitizedKey(name); }
-    }
-
-    public static class DbCategory extends DbItem<Category> {
-        public String name;
-        public DbCategory() {}
-        public DbCategory(Category category) {
-            name = category.getName();
-        }
-        public Category toItem() { return new Category(name); }
-        public String generateKey() { return getSanitizedKey(name); }
     }
 
 }

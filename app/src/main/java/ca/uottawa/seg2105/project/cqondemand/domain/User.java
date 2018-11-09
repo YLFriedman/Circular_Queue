@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
-import ca.uottawa.seg2105.project.cqondemand.utilities.DbUtil;
+import ca.uottawa.seg2105.project.cqondemand.database.DbUtil;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
