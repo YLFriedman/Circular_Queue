@@ -101,7 +101,7 @@ public class ServiceViewActivity extends AppCompatActivity {
     }
 
     public void onEditServiceClick() {
-        startActivity(new Intent(getApplicationContext(), ServiceCreateActivity.class));
+        startActivity(new Intent(getApplicationContext(), ServiceEditActivity.class));
     }
     public void onDeleteServiceClick() {
         if (null != service) {
