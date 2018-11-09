@@ -10,7 +10,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.security.Provider;
+
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 
 public class ServiceCreateActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
@@ -42,6 +45,25 @@ public class ServiceCreateActivity extends AppCompatActivity implements AdapterV
     public void onCreateCategory(View view){
         final EditText field_service_name = findViewById(R.id.field_service_name);
         final String name = field_service_name.getText().toString().trim();
+
+        final EditText field_rate = findViewById(R.id.field_rate);
+        final String rate = field_rate.getText().toString().trim();
+
+        //Check valid service name
+        if (name.isEmpty()) {
+            field_service_name.setError("Service name is required!");
+            field_service_name.requestFocus();
+            return;
+        } else if (!Service.nameIsValid(name)) {
+            field_service_name.setError("Username is invalid. " + Service.ILLEGAL_SERVICENAME_CHARS_REGEX);
+            field_service_name.requestFocus();
+            return;
+        }
+
+        //Check valid service rate
+
+
+        //Service newService = new Service(name, rate);
     }
 
     @Override
