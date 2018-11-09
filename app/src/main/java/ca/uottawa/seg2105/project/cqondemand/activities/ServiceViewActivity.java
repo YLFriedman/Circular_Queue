@@ -26,7 +26,9 @@ public class ServiceViewActivity extends AppCompatActivity {
     TextView txt_name;
     TextView txt_rate;
     TextView txt_category;
+    String category_name;
     String service_name;
+    String rate;
     Service service;
 
     @Override
@@ -60,11 +62,13 @@ public class ServiceViewActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(@NonNull Service item) {
                     service = item;
+                    rate = Integer.toString(item.getRate());
                     txt_rate.setText(String.format(getString(R.string.service_rate_template), item.getRate()));
                     txt_rate.setVisibility(View.VISIBLE);
                     Category.getCategory(item.getCategoryID(), new AsyncSingleValueEventListener<Category>() {
                         @Override
                         public void onSuccess(@NonNull Category item) {
+                            category_name = item.getName();
                             txt_category.setText(String.format(getString(R.string.category_template), item.getName()));
                             txt_category.setVisibility(View.VISIBLE);
                         }
@@ -101,7 +105,11 @@ public class ServiceViewActivity extends AppCompatActivity {
     }
 
     public void onEditServiceClick() {
-        startActivity(new Intent(getApplicationContext(), ServiceEditActivity.class));
+        Intent intent = new Intent(getApplicationContext(), ServiceEditActivity.class);
+        intent.putExtra("service_name", service_name);
+        intent.putExtra("category_name", category_name);
+        intent.putExtra("rate", rate);
+        startActivity(intent);
     }
     public void onDeleteServiceClick() {
         if (null != service) {
