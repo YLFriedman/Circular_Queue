@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUtil;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
@@ -237,7 +238,7 @@ public class User implements Serializable {
         return null != other && userName.equals(other.userName);
     }
 
-    public static void getUser(final String username, final AsyncValueEventListener<User> listener) {
+    public static void getUser(final String username, final AsyncSingleValueEventListener<User> listener) {
         DbUtil.getItem(DbUtil.DataType.USER, username, listener);
     }
 
@@ -254,10 +255,9 @@ public class User implements Serializable {
      * @param listener the listener that will be informed if authentication was successful or not
      */
     public static void authenticate(final String username, final String password, final AsyncActionEventListener listener) {
-        getUser(username, new AsyncValueEventListener<User>() {
+        getUser(username, new AsyncSingleValueEventListener<User>() {
             @Override
-            public void onSuccess(ArrayList<User> data) {
-                User user = data.get(0);
+            public void onSuccess(User user) {
                 if (user.getPassword().equals(password)) {
                     State.getState().setSignedInUser(user);
                     listener.onSuccess();

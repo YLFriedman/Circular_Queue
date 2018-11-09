@@ -17,6 +17,7 @@ import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
@@ -108,7 +109,6 @@ public class DbUtil {
      * @param type the type of DbItem
      * @return A DatabaseReference pointing to the node which corresponds to the input type
      */
-
     protected static DatabaseReference getRef(DataType type) {
         if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
         return FirebaseDatabase.getInstance().getReference().child(type.toString());
@@ -128,7 +128,7 @@ public class DbUtil {
 
 
     @SuppressWarnings("unchecked")
-    public static <T> void getItem(final DataType type, String key, final AsyncValueEventListener<T> listener) {
+    public static <T> void getItem(final DataType type, String key, final AsyncSingleValueEventListener<T> listener) {
         if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
         if (null == key) { throw new IllegalArgumentException("The key cannot be null."); }
         if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
@@ -141,13 +141,11 @@ public class DbUtil {
                     try {
                         DbItem<T> dbItem = (DbItem<T>) dataSnapshot.getValue(getDbClassObj(type));
                         T domainObjItem = dbItem.toItem();
-                        ArrayList<T> returnValue = new ArrayList<T>(1);
                         if (null == domainObjItem) {
                             listener.onFailure(AsyncEventFailureReason.INVALID_DATA);
-                            return;
+                        } else {
+                            listener.onSuccess(domainObjItem);
                         }
-                        returnValue.add(domainObjItem);
-                        listener.onSuccess(returnValue);
                     } catch (IllegalArgumentException e) {
                         listener.onFailure(AsyncEventFailureReason.INVALID_DATA);
                     } catch (InvalidDataException e) {
@@ -256,9 +254,9 @@ public class DbUtil {
         if (null == type) { throw new IllegalArgumentException("The item must be a supported type."); }
         final DbItem<?> dbItem = objectToDbItem(item);
         final String key = dbItem.generateKey();
-        getItem(type, key, new AsyncValueEventListener<T>() {
+        getItem(type, key, new AsyncSingleValueEventListener<T>() {
             @Override
-            public void onSuccess(ArrayList<T> data) {
+            public void onSuccess(T item) {
                 //Failure condition, Item already exists in db
                 listener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS);
             }
@@ -287,9 +285,9 @@ public class DbUtil {
         if (null == type) { throw new IllegalArgumentException("The item must be a supported type."); }
         final DbItem<?> dbItem = objectToDbItem(item);
         final String key = dbItem.generateKey();
-        getItem(type, key, new AsyncValueEventListener<T>() {
+        getItem(type, key, new AsyncSingleValueEventListener<T>() {
             @Override
-            public void onSuccess(ArrayList<T> data) {
+            public void onSuccess(T item) {
                 // Success condition: Item exists in database and can be updated
                 DatabaseReference ref = getRef(type);
                 ref.child(key).setValue(dbItem, new DatabaseReference.CompletionListener() {
@@ -318,9 +316,9 @@ public class DbUtil {
         if (type != newType) { throw new IllegalArgumentException("The items must be of the same type."); }
         final DbItem<?> dbItem = objectToDbItem(newItem);
         final String key = dbItem.generateKey();
-        getItem(type, key, new AsyncValueEventListener<T>() {
+        getItem(type, key, new AsyncSingleValueEventListener<T>() {
             @Override
-            public void onSuccess(ArrayList<T> data) {
+            public void onSuccess(T item) {
                 // Error condition: The new item already exists
                 listener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS);
             }

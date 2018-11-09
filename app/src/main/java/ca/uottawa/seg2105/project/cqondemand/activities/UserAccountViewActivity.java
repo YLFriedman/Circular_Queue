@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
@@ -55,10 +56,10 @@ public class UserAccountViewActivity extends AppCompatActivity {
         if (null != username) {
             currentUser = null;
             setUserViewValues();
-            User.getUser(username, new AsyncValueEventListener<User>() {
+            User.getUser(username, new AsyncSingleValueEventListener<User>() {
                 @Override
-                public void onSuccess(ArrayList<User> data) {
-                    currentUser = data.get(0);
+                public void onSuccess(User user) {
+                    currentUser = user;
                     setUserViewValues();
                 }
                 @Override

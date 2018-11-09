@@ -1,6 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand.domain;
 
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUtil;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
@@ -54,7 +55,7 @@ public class Category{
         DbUtil.deleteItem(this, listener);
     }
 
-    public static void getCategory(String name, final AsyncValueEventListener<Category> listener) {
+    public static void getCategory(String name, final AsyncSingleValueEventListener<Category> listener) {
         DbUtil.getItem(DbUtil.DataType.CATEGORY, name, listener);
     }
 

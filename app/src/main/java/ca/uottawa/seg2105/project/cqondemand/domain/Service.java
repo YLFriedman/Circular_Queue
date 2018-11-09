@@ -3,6 +3,7 @@ package ca.uottawa.seg2105.project.cqondemand.domain;
 import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUtil;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
@@ -60,11 +61,9 @@ public class Service {
         return this.categoryID;
     }
 
-    public void getCategory(AsyncValueEventListener<Category> listener) {
+    public void getCategory(AsyncSingleValueEventListener<Category> listener) {
         if (null != category) {
-            ArrayList<Category> result = new ArrayList<Category>(1);
-            result.add(category);
-            listener.onSuccess(result);
+            listener.onSuccess(category);
         } else {
             Category.getCategory(categoryID, listener);
         }
@@ -111,7 +110,7 @@ public class Service {
         DbUtil.deleteItem(this, listener);
     }
 
-    public static void getService(String name, final AsyncValueEventListener<Service> listener) {
+    public static void getService(String name, final AsyncSingleValueEventListener<Service> listener) {
         DbUtil.getItem(DbUtil.DataType.SERVICE, name, listener);
     }
 

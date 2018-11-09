@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
@@ -37,9 +38,9 @@ public class SignInActivity extends AppCompatActivity {
             btn_sign_in = findViewById(R.id.btn_sign_in);
             btn_sign_up = findViewById(R.id.btn_sign_up);
             btn_create_admin_account = findViewById(R.id.btn_create_admin_account);
-            User.getUser("admin", new AsyncValueEventListener<User>() {
+            User.getUser("admin", new AsyncSingleValueEventListener<User>() {
                 @Override
-                public void onSuccess(ArrayList<User> data) {
+                public void onSuccess(User user) {
                     btn_create_admin_account.setVisibility(View.GONE);
                 }
                 @Override
@@ -152,49 +153,6 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onFailure(AsyncEventFailureReason reason) { }
         });
-    }
-
-    public void onCreateTestServiceClick(View view){
-        ArrayList<User> providers = new ArrayList<>();
-        providers.add(new User("joe", "blow", "joeblow", "joeblow@mail.com", User.Types.SERVICE_PROVIDER, "CQPASS"));
-        providers.add(new User("buddy", "guy", "buddyguy", "buddyguy@mail.com", User.Types.SERVICE_PROVIDER, "CQPASS"));
-
-
-        /*Service testService = new Service("security", 140, providers, "locksmith");
-        DbUtil.createService(testService, new AsyncActionEventListener() {
-            @Override
-            public void onSuccess() {
-                Toast.makeText(getApplicationContext(), "It worked, apparently!", Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onFailure(AsyncEventFailureReason reason) {
-
-                Toast.makeText(getApplicationContext(), "It failed, apparently because of " + reason.toString(), Toast.LENGTH_LONG).show();
-
-            }
-        });*/
-    }
-
-    public void onGetServiceTestClick(View view){
-        /*DbUtil.getService("locksmith", new AsyncValueEventListener<Service>() {
-            @Override
-            public void onSuccess(ArrayList<Service> data) {
-                String category = data.get(0).getCategory();
-                Toast.makeText(getApplicationContext(), "Wow it worked, the category is " + category, Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onFailure(AsyncEventFailureReason reason) {
-                switch(reason){
-                    case DOES_NOT_EXIST: Toast.makeText(getApplicationContext(), "Doesn't seem to exist", Toast.LENGTH_LONG).show();
-                    break;
-
-                    case DATABASE_ERROR: Toast.makeText(getApplicationContext(), "DB error of some kind", Toast.LENGTH_LONG).show();
-                }
-
-            }
-        });*/
     }
 
 }
