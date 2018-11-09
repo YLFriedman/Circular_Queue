@@ -136,9 +136,13 @@ public class DbUtil {
                 } else {
                     try {
                         DbItem<T> dbItem = (DbItem<T>) dataSnapshot.getValue(getDbClassObj(type));
-                        T item = dbItem.toItem();
+                        T domainObjItem = dbItem.toItem();
                         ArrayList<T> returnValue = new ArrayList<T>(1);
-                        returnValue.add(item);
+                        if (null == domainObjItem) {
+                            listener.onFailure(AsyncEventFailureReason.INVALID_DATA);
+                            return;
+                        }
+                        returnValue.add(domainObjItem);
                         listener.onSuccess(returnValue);
                     } catch (IllegalArgumentException e) {
                         listener.onFailure(AsyncEventFailureReason.INVALID_DATA);
@@ -167,9 +171,9 @@ public class DbUtil {
                 ArrayList<T> returnValue = new ArrayList<T>(size > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) size);
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()){
                     try {
-                        DbItem<T> item = (DbItem<T>) snapshot.getValue(getDbClassObj(type));
-                        T itemValue = item.toItem();
-                        returnValue.add(itemValue);
+                        DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(type));
+                        T domainObjItem = dbItem.toItem();
+                        if (null != dbItem) { returnValue.add(domainObjItem); }
                     }
                     catch (IllegalArgumentException e) { }
                     catch (InvalidDataException e) { }
@@ -205,9 +209,9 @@ public class DbUtil {
                 ArrayList<T> returnValue = new ArrayList<T>(size > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) size);
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()){
                     try {
-                        DbItem<T> item = (DbItem<T>) snapshot.getValue(getDbClassObj(type));
-                        T itemValue = item.toItem();
-                        returnValue.add(itemValue);
+                        DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(type));
+                        T domainObjItem = dbItem.toItem();
+                        if (null != dbItem) { returnValue.add(domainObjItem); }
                     }
                     catch (IllegalArgumentException e) { }
                     catch (InvalidDataException e) { }
@@ -373,7 +377,7 @@ public class DbUtil {
             rate = service.getRate();
             category_id = service.getCategoryID();
         }
-        public Service toItem() { return null; }
+        public Service toItem() { return new Service(name, rate, category_id); }
         public String generateKey() { return getSanitizedKey(name); }
     }
 

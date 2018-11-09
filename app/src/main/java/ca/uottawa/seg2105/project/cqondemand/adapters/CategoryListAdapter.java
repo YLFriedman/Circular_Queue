@@ -46,8 +46,10 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        Category category = data.get(i);
-        viewHolder.txt_title.setText(category.getName());
+        Category item = data.get(i);
+        if (null != item) {
+            viewHolder.txt_title.setText(item.getName());
+        }
         viewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_med_30);
     }
 

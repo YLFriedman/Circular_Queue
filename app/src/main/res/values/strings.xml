@@ -42,7 +42,7 @@
     <string name="new_password_confirm">Confirm New Password</string>
     <string name="sign_out">Sign Out</string>
     <string name="user_list_title">Current User List</string>
-    <string name="welcome_template">Hello %s %s</string>
+    <string name="full_name_template">%s %s</string>
     <string name="logged_in_as_admin_template">You are logged in as an %s</string>
     <string name="logged_in_as_template">You are logged in as a %s</string>
     <string name="create_test">Create Test Account</string>
@@ -72,6 +72,8 @@
     <string name="edit_service">Edit Service</string>
     <string name="delete_service">Delete Service</string>
     <string name="category">Category</string>
+    <string name="service_rate_template">$%d.00 / hour</string>
+    <string name="category_template">Category: %s</string>
     <string-array name = "categories">
         <item>Electric</item>
         <item>Piping</item>

@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -63,11 +64,13 @@ public class CategoryListActivity extends AppCompatActivity {
                             }
                         });
                         recycler_list.setAdapter(category_list_adapter);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "No categories found.", Toast.LENGTH_LONG).show();
                     }
                 }
                 @Override
                 public void onFailure(AsyncEventFailureReason reason) {
-
+                    Toast.makeText(getApplicationContext(), "There was an error getting the categories from the database. Please try again later.", Toast.LENGTH_LONG).show();
                 }
             });
         }

@@ -12,11 +12,11 @@ public class Service {
     public static final String ILLEGAL_SERVICENAME_CHARS_REGEX = ".*[^a-zA-Z -].*";
     public static final String ILLEGAL_SERVICENAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z - space";
 
-    private Category category;
-    private String categoryID;
-    private ArrayList<String> serviceProviderIDs;
     private String name;
     private int rate;
+    private String categoryID;
+    private Category category;
+    private ArrayList<String> serviceProviderIDs;
 
     /**
      * Constructor for a new service Object
@@ -36,8 +36,8 @@ public class Service {
         if (null == categoryID) { throw new IllegalArgumentException("The categoryID cannot be null."); }
         if (rate < 0) { throw new InvalidDataException("Rate cannot be negative. "); }
 
-        this.rate = rate;
         this.name = name;
+        this.rate = rate;
         this.categoryID = categoryID;
     }
 
@@ -76,7 +76,7 @@ public class Service {
      * @return the rate associated with this Service
      */
     public int getRate(){
-        return this.rate;
+        return rate;
     }
 
     /**
@@ -85,8 +85,8 @@ public class Service {
      * @return the name of this service
      */
 
-    public String getName(){
-        return this.name;
+    public String getName() {
+        return name;
     }
 
     public static boolean nameIsValid(String name) {
@@ -117,6 +117,10 @@ public class Service {
 
     public static void getServices(final AsyncValueEventListener<Service> listener) {
         DbUtil.getItems(DbUtil.DataType.SERVICE, listener);
+    }
+
+    public static void getServices(String categoryName, final AsyncValueEventListener<Service> listener) {
+        DbUtil.getItems(DbUtil.DataType.SERVICE, "category_id", DbUtil.getKey(new Category(categoryName)), listener);
     }
 
 }

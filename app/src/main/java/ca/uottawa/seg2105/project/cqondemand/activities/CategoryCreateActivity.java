@@ -66,8 +66,7 @@ public class CategoryCreateActivity extends AppCompatActivity {
                         field_category_name.setError("Category already exists!");
                         field_category_name.requestFocus();
                         break;
-                    default:
-                        // Some other kind of error
+                    default: // Some other kind of error
                         Toast.makeText(getApplicationContext(), "Unable to create the category at this time. Please try again later.", Toast.LENGTH_LONG).show();
                 }
                 btn_create_category.setEnabled(true);

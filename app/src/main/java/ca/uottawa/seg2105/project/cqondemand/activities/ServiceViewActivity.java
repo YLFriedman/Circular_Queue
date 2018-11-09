@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -18,7 +17,6 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class ServiceViewActivity extends AppCompatActivity {
 
-    User currentUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,8 +25,7 @@ public class ServiceViewActivity extends AppCompatActivity {
 
     public void onResume() {
         super.onResume();
-        currentUser = State.getState().getSignedInUser();
-        if (null == currentUser) {
+        if (null == State.getState().getSignedInUser()) {
             finish();
         } else {
 
@@ -38,11 +35,12 @@ public class ServiceViewActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.service_options, menu);
-        if (currentUser.getType() != User.Types.ADMIN) {
+        if (State.getState().getSignedInUser().getType() != User.Types.ADMIN) {
+            getMenuInflater().inflate(R.menu.service_options, menu);
             menu.setGroupVisible(R.id.grp_category_create_controls, false);
+            return true;
         }
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -60,7 +58,7 @@ public class ServiceViewActivity extends AppCompatActivity {
     public void onDeleteServiceClick() {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Account")
-                .setMessage("Are you sure you want to delete the '" + currentUser.getUserName() + "' service?  \r\nThis CANNOT be undone!")
+                .setMessage("Are you sure you want to delete the '" + "" + "' service?  \r\nThis CANNOT be undone!")
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
