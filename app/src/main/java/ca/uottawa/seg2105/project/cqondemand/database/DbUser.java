@@ -16,7 +16,7 @@ public class DbUser extends DbItem<User> {
     public DbUser(User user) {
         first_name = user.getFirstName();
         last_name = user.getLastName();
-        username = user.getUserName();
+        username = user.getUsername();
         email = user.getEmail();
         password = user.getPassword();
         type = user.getType().toString();

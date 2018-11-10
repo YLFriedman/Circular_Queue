@@ -15,7 +15,7 @@ import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
-public class UserAccountChangePasswordActivity extends AppCompatActivity {
+public class UserAccountChangePasswordActivity extends SignedInActivity {
 
     private EditText field_password_old;
     private EditText field_password;
@@ -27,29 +27,19 @@ public class UserAccountChangePasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_account_change_password);
-        currentUser = State.getState().getSignedInUser();
-        if (null == currentUser) {
-            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-        } else {
-            // Set references to the Edit User UI objects
-            field_password_old = findViewById(R.id.field_password_old);
-            field_password = findViewById(R.id.field_password);
-            field_password_confirm = findViewById(R.id.field_password_confirm);
-            // Set references to the Button User UI objects
-            btn_save_password = findViewById(R.id.btn_save_password);
-        }
+        // Set references to the  UI objects
+        field_password_old = findViewById(R.id.field_password_old);
+        field_password = findViewById(R.id.field_password);
+        field_password_confirm = findViewById(R.id.field_password_confirm);
+        btn_save_password = findViewById(R.id.btn_save_password);
+
+        currentUser = State.getState().getCurrentUser();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        currentUser = State.getState().getSignedInUser();
-        if (null != currentUser) {
-            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+        if (!currentUser.equals(State.getState().getCurrentUser())) {
             finish();
         }
     }
@@ -57,63 +47,47 @@ public class UserAccountChangePasswordActivity extends AppCompatActivity {
     public void onSavePasswordClick(View view){
         final String oldPassword = field_password_old.getText().toString();
         final String password = field_password.getText().toString();
-        final String password_confirm = field_password_confirm.getText().toString();
+        final String passwordConfirm = field_password_confirm.getText().toString();
+
         if (!oldPassword.equals(currentUser.getPassword())) {
             field_password_old.setError("Incorrect password.");
             field_password_old.requestFocus();
             field_password_old.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
-        } else {
-            switch (User.validatePassword(currentUser.getUserName(), password, password_confirm)) {
-                case VALID: break;
-                case EMPTY:
-                    field_password.setError("Password is required!");
-                    field_password.requestFocus();
-                    field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
-                    return;
-                case TOO_SHORT:
-                    field_password.setError("Minimum length of password is " + User.PASSWORD_MIN_LENGTH + " characters.");
-                    field_password.requestFocus();
-                    field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
-                    return;
-                case CONFIRM_MISMATCH:
-                    field_password_confirm.setError("Both passwords must match.");
-                    field_password_confirm.requestFocus();
-                    field_password_confirm.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
-                    return;
-                case ILLEGAL_PASSWORD:
-                    field_password.setError("The selected password is banned. Please select a new password.");
-                    field_password.requestFocus();
-                    field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
-                    return;
-                case CONTAINS_USERNAME:
-                    field_password.setError("The password cannot contain the username.");
-                    field_password.requestFocus();
-                    field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
-                    return;
-                default:
-                    field_password.setError("Invalid password.");
-                    field_password.requestFocus();
-                    field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
-                    return;
-            }
-            if (currentUser.getPassword().equals(password)) {
-                field_password.setError("The new password must be different from the existing password!");
-                field_password.requestFocus();
-                field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
-                return;
-            }
-            btn_save_password.setEnabled(false);
-            currentUser.updatePassword(password, new AsyncActionEventListener() {
-                public void onSuccess() {
-                    Toast.makeText(getApplicationContext(), "Password updated successfully!", Toast.LENGTH_LONG).show();
-                    btn_save_password.setEnabled(true);
-                    finish();
-                }
-                public void onFailure(AsyncEventFailureReason reason) {
-                    btn_save_password.setEnabled(true);
-                    Toast.makeText(getApplicationContext(), "Unable to update your password at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
-                }
-            });
+            return;
         }
+
+        Boolean passwordError = true;
+        switch (User.validatePassword(currentUser.getUsername(), password, passwordConfirm)) {
+            case VALID: passwordError = false; break;
+            case EMPTY: field_password.setError("Password is required!"); break;
+            case TOO_SHORT: field_password.setError("Minimum length of password is " + User.PASSWORD_MIN_LENGTH + " characters."); break;
+            case CONFIRM_MISMATCH:
+                field_password_confirm.setError("Both passwords must match.");
+                field_password_confirm.requestFocus();
+                field_password_confirm.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
+                return;
+            case ILLEGAL_PASSWORD: field_password.setError("The selected password is banned. Please select a new password."); break;
+            case CONTAINS_USERNAME: field_password.setError("The password cannot contain the username."); break;
+            default: field_password.setError("Invalid password.");
+        }
+        if (passwordError) {
+            field_password.requestFocus();
+            field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
+            return;
+        }
+
+        btn_save_password.setEnabled(false);
+        currentUser.updatePassword(password, new AsyncActionEventListener() {
+            public void onSuccess() {
+                Toast.makeText(getApplicationContext(), "Password updated successfully!", Toast.LENGTH_LONG).show();
+                btn_save_password.setEnabled(true);
+                finish();
+            }
+            public void onFailure(AsyncEventFailureReason reason) {
+                btn_save_password.setEnabled(true);
+                Toast.makeText(getApplicationContext(), "Unable to update your password at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+            }
+        });
     }
+
 }

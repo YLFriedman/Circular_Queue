@@ -20,10 +20,10 @@ public class UserFunctionTest {
 
     @Test
     public void username_validation() {
-        assertEquals("userNameIsValid failed - empty string",false, User.userNameIsValid(""));
-        assertEquals("userNameIsValid failed - invalid character: .",false, User.userNameIsValid("cq.on.demand"));
-        assertEquals("userNameIsValid failed - invalid characters: {}",false, User.userNameIsValid("cq{on}demand"));
-        assertEquals("userNameIsValid failed - valid username",true, User.userNameIsValid("cq_on_demand"));
+        assertEquals("usernameIsValid failed - empty string",false, User.usernameIsValid(""));
+        assertEquals("usernameIsValid failed - invalid character: .",false, User.usernameIsValid("cq.on.demand"));
+        assertEquals("usernameIsValid failed - invalid characters: {}",false, User.usernameIsValid("cq{on}demand"));
+        assertEquals("usernameIsValid failed - valid username",true, User.usernameIsValid("cq_on_demand"));
     }
 
     @Test
@@ -66,6 +66,7 @@ public class UserFunctionTest {
         assertEquals("nameIsValid failed - character: :",false, User.nameIsValid(":sabelle"));
         assertEquals("nameIsValid failed - character: ;",false, User.nameIsValid("Sabr;na"));
         assertEquals("nameIsValid failed - valid name: ",true, User.nameIsValid("D' Amico"));
+        assertEquals("nameIsValid failed - valid name2: ",true, User.nameIsValid("My-Dashed-Name"));
     }
 
 }

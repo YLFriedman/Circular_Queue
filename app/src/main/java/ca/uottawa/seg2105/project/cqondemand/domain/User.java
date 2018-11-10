@@ -30,7 +30,7 @@ public class User implements Serializable {
 
     private String lastName;
 
-    private String userName;
+    private String username;
 
     private String email;
 
@@ -57,31 +57,30 @@ public class User implements Serializable {
      * Constructor for User objects. This constructor supports users of type Homeowner and of type Service Provider
      *
      * @throws IllegalArgumentException if any of the parameters are null
-     * @param fName The first name of the user
-     * @param lName The last name of the user
-     * @param uName The Username (Used as a unique identifier)
-     * @param emailAddr The user's email address
-     * @param userType The type of the account
+     * @param firstName The first name of the user
+     * @param lastName The last name of the user
+     * @param username The Username (Used as a unique identifier)
+     * @param email The user's email address
+     * @param type The type of the account
      * @param pass The user's password
      */
-    public User(String fName, String lName, String uName, String emailAddr, Types userType, String pass) {
-
-        if (null == userType) { throw new IllegalArgumentException("The userType parameter cannot be null."); }
-        if (!userNameIsValid(uName)) { throw new InvalidDataException("Invalid username. " + ILLEGAL_USERNAME_CHARS_MSG); }
-        PasswordValidationResult passwordValRes = validatePassword(uName, pass, pass);
+    public User(String firstName, String lastName, String username, String email, Types type, String pass) {
+        if (null == type) { throw new IllegalArgumentException("The userType parameter cannot be null."); }
+        if (!usernameIsValid(username)) { throw new InvalidDataException("Invalid username. " + ILLEGAL_USERNAME_CHARS_MSG); }
+        PasswordValidationResult passwordValRes = validatePassword(username, pass, pass);
         if (PasswordValidationResult.VALID != passwordValRes) {
             throw new InvalidDataException("Invalid password. " + passwordValRes.toString());
         }
-        if (!userNameIsValid(fName)) { throw new InvalidDataException("Invalid First Name. ");  }
-        if (!userNameIsValid(lName)) { throw new InvalidDataException("Invalid Last Name. ");  }
+        if (!nameIsValid(firstName)) { throw new InvalidDataException("Invalid First Name. ");  }
+        if (!nameIsValid(lastName)) { throw new InvalidDataException("Invalid Last Name. ");  }
+        if (!emailIsValid(email)) { throw new InvalidDataException("Invalid Email Address. ");  }
 
-        firstName = fName;
-        lastName = lName;
-        userName = uName;
-        email = emailAddr;
-        type = userType;
-        password = pass;
-
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.email = email;
+        this.type = type;
+        this.password = pass;
     }
 
     /**
@@ -104,8 +103,8 @@ public class User implements Serializable {
      * Getter for the user's username
      * @return The user's username
      */
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
     /**
@@ -129,7 +128,11 @@ public class User implements Serializable {
      * @return the user's type
      */
     public Types getType() {
-        return this.type;
+        return type;
+    }
+
+    public boolean isAdmin() {
+        return type == Types.ADMIN;
     }
 
     /**
@@ -139,7 +142,7 @@ public class User implements Serializable {
      * @param username the username you want to check
      * @return true if username is valid, false otherwise
      */
-    public static boolean userNameIsValid(String username) {
+    public static boolean usernameIsValid(String username) {
         if (null == username || username.isEmpty()) { return false; }
         return !username.matches(ILLEGAL_USERNAME_CHARS_REGEX);
     }
@@ -235,7 +238,7 @@ public class User implements Serializable {
     }
 
     public boolean equals(User other) {
-        return null != other && userName.equals(other.userName);
+        return null != other && username.equals(other.username);
     }
 
     public static void getUser(final String username, final AsyncSingleValueEventListener<User> listener) {
@@ -273,7 +276,7 @@ public class User implements Serializable {
     }
 
     public void updatePassword(String password, final AsyncActionEventListener listener) {
-        PasswordValidationResult passwordValRes = validatePassword(userName, password, password);
+        PasswordValidationResult passwordValRes = validatePassword(username, password, password);
         if (PasswordValidationResult.VALID != passwordValRes) {
             throw new InvalidDataException("Invalid password. " + passwordValRes.toString());
         }

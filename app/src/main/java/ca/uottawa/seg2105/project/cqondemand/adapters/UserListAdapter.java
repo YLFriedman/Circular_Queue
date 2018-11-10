@@ -50,8 +50,8 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
         User item = data.get(i);
         if (null != item) {
             viewHolder.txt_title.setText(String.format(Locale.CANADA, context.getString(R.string.full_name_template), item.getFirstName(), item.getLastName()));
-            viewHolder.txt_subtitle.setText(String.format(Locale.CANADA, "%s, %s", item.getUserName(), item.getType().toString()));
-            viewHolder.txt_subtitle.setContentDescription(item.getUserName());
+            viewHolder.txt_subtitle.setText(String.format(Locale.CANADA, "%s, %s", item.getUsername(), item.getType().toString()));
+            viewHolder.txt_subtitle.setContentDescription(item.getUsername());
         }
         viewHolder.img_item_image.setImageResource(R.drawable.ic_account_circle_med_40);
         viewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_med_30);

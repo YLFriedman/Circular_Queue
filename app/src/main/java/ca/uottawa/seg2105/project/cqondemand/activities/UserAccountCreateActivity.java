@@ -15,6 +15,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
+import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 public class UserAccountCreateActivity extends AppCompatActivity {
 
@@ -36,113 +37,82 @@ public class UserAccountCreateActivity extends AppCompatActivity {
 
     public void onCreateClick(View view){
 
-        //Check username validity
         final EditText field_username = findViewById(R.id.field_username);
-        final String username = field_username.getText().toString().trim();
-
-        if (username.isEmpty()) {
-            field_username.setError("Username is required!");
-            field_username.requestFocus();
-            field_username.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
-            return;
-        } else if (!User.userNameIsValid(username)) {
-            field_username.setError("Username is invalid. " + User.ILLEGAL_USERNAME_CHARS_MSG);
-            field_username.requestFocus();
-            field_username.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
-            return;
-        }
-
-        //Check First Name validity
         EditText field_first_name = findViewById(R.id.field_first_name);
-        String firstName = field_first_name.getText().toString().trim();
-
-        if (firstName.isEmpty()) {
-            field_first_name.setError("First name is required!");
-            field_first_name.requestFocus();
-            field_first_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
-            return;
-        } else if (!User.nameIsValid(firstName)) {
-            field_first_name.setError("First name is invalid. ");
-            field_first_name.requestFocus();
-            field_first_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
-            return;
-        }
-
-        //Check Last Name validity
         EditText field_last_name = findViewById(R.id.field_last_name);
-        String lastName = field_last_name.getText().toString().trim();
+        EditText field_email = findViewById(R.id.field_email);
+        EditText field_password = findViewById(R.id.field_password);
+        EditText field_password_confirm = findViewById(R.id.field_password_confirm);
 
-        if (lastName.isEmpty()) {
-            field_last_name.setError("Last name is required!");
-            field_last_name.requestFocus();
-            field_last_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
+        String firstName = field_first_name.getText().toString().trim();
+        String lastName = field_last_name.getText().toString().trim();
+        final String username = field_username.getText().toString().trim();
+        String email = field_email.getText().toString().trim();
+        String password = field_password.getText().toString();
+        String passwordConfirm = field_password_confirm.getText().toString();
+
+        if (!User.usernameIsValid(username)) {
+            if (username.isEmpty()) { field_username.setError("Username is required!"); }
+            else { field_username.setError("Username is invalid. " + User.ILLEGAL_USERNAME_CHARS_MSG); }
+            field_username.requestFocus();
+            field_username.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
-        } else if (!User.nameIsValid(lastName)) {
-            field_last_name.setError("Last name is invalid. ");
+        }
+
+        if (!User.nameIsValid(firstName)) {
+            if (username.isEmpty()) { field_first_name.setError("First name is required!"); }
+            else { field_first_name.setError("First name is invalid. "); }
+            field_first_name.requestFocus();
+            field_first_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
+            return;
+        }
+
+        if (!User.nameIsValid(lastName)) {
+            if (username.isEmpty()) { field_last_name.setError("Last name is required!"); }
+            else { field_last_name.setError("Last name is invalid. "); }
             field_last_name.requestFocus();
             field_last_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
 
-        //Check Email Validity
-        EditText field_email = findViewById(R.id.field_email);
-        String email = field_email.getText().toString();
-
-        if (email.isEmpty()) {
-            field_email.setError("Email is required!");
+        if (!User.emailIsValid(email)) {
+            if (username.isEmpty()) { field_email.setError("Email is required!"); }
+            else { field_email.setError("This is an invalid E-mail!"); }
             field_email.requestFocus();
             field_email.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
-        } else if (!User.emailIsValid(email)) {
-            field_email.setError("This is an invalid E-mail!");
-            field_email.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
-            return;
         }
 
-        //check password matching
-        EditText field_password = findViewById(R.id.field_password);
-        String password = field_password.getText().toString().trim();
-
-        EditText field_password_confirm = findViewById(R.id.field_password_confirm);
-        String passwordConfirm = field_password_confirm.getText().toString().trim();
-
+        Boolean passwordError = true;
         switch (User.validatePassword(username, password, passwordConfirm)) {
-            case VALID: break;
-            case EMPTY:
-                field_password.setError("Password is required!");
-                field_password.requestFocus();
-                field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
-                return;
-            case TOO_SHORT:
-                field_password.setError("Minimum length of password is " + User.PASSWORD_MIN_LENGTH + " characters.");
-                field_password.requestFocus();
-                field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
-                return;
+            case VALID: passwordError = false; break;
+            case EMPTY: field_password.setError("Password is required!"); break;
+            case TOO_SHORT: field_password.setError("Minimum length of password is " + User.PASSWORD_MIN_LENGTH + " characters."); break;
             case CONFIRM_MISMATCH:
                 field_password_confirm.setError("Both passwords must match.");
                 field_password_confirm.requestFocus();
                 field_password_confirm.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                 return;
-            case ILLEGAL_PASSWORD:
-                field_password.setError("The selected password is banned. Please select a new password.");
-                field_password.requestFocus();
-                field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
-                return;
-            case CONTAINS_USERNAME:
-                field_password.setError("The password cannot contain the username.");
-                field_password.requestFocus();
-                field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
-                return;
-            default:
-                field_password.setError("Invalid password.");
-                field_password.requestFocus();
-                field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
-                return;
+            case ILLEGAL_PASSWORD: field_password.setError("The selected password is banned. Please select a new password."); break;
+            case CONTAINS_USERNAME: field_password.setError("The password cannot contain the username."); break;
+            default: field_password.setError("Invalid password.");
+        }
+        if (passwordError) {
+            field_password.requestFocus();
+            field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
+            return;
         }
 
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
         RadioButton radioButton = findViewById(radioGroup.getCheckedRadioButtonId());
-        final User newUser = new User(firstName, lastName, username, email, User.parseType(radioButton.getText().toString()), password);
+
+        final User newUser;
+        try {
+            newUser = new User(firstName, lastName, username, email, User.parseType(radioButton.getText().toString()), password);
+        } catch (InvalidDataException e) {
+            Toast.makeText(getApplicationContext(), "Unable to create the account. An invalid input has been detected: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            return;
+        }
 
         final Button btn_create_account = findViewById(R.id.btn_create_account);
         btn_create_account.setEnabled(false);
