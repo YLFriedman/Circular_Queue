@@ -1,87 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.ServiceEditActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="24dp"
-        android:paddingTop="16dp"
-        android:paddingRight="24dp"
-        android:paddingBottom="16dp">
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/txt_title_category"
-            style="@style/input_label"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/service_category"
-            android:textColor="@color/text_secondary_dark" />
+            android:orientation="vertical"
+            android:paddingLeft="24dp"
+            android:paddingTop="16dp"
+            android:paddingRight="24dp"
+            android:paddingBottom="16dp">
 
-        <Spinner
-            android:id="@+id/spinner_categories"
-            android:layout_width="match_parent"
-            android:layout_height="40dp" />
+            <TextView
+                android:id="@+id/txt_title_category"
+                style="@style/input_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/service_category"
+                android:textColor="@color/text_secondary_dark" />
 
-        <EditText
-            android:id="@+id/field_spinner_categories_error"
-            android:layout_width="1dp"
-            android:layout_height="1dp"
-            android:layout_gravity="right"
-            android:layout_marginRight="54dp"
-            android:layout_marginBottom="5dp"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:inputType="text"
-            android:visibility="visible" />
+            <Spinner
+                android:id="@+id/spinner_categories"
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
 
-        <TextView
-            android:id="@+id/txt_title_service_name"
-            style="@style/input_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/service_name"
-            android:textColor="@color/text_secondary_dark" />
+            <EditText
+                android:id="@+id/field_spinner_categories_error"
+                android:layout_width="1dp"
+                android:layout_height="1dp"
+                android:layout_gravity="right"
+                android:layout_marginRight="54dp"
+                android:layout_marginBottom="5dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:inputType="text"
+                android:visibility="visible" />
 
-        <EditText
-            android:id="@+id/field_service_name"
-            style="@style/input_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:ems="10"
-            android:hint="@string/service_name"
-            android:inputType="textPersonName" />
+            <TextView
+                android:id="@+id/txt_title_service_name"
+                style="@style/input_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/service_name"
+                android:textColor="@color/text_secondary_dark" />
 
-        <TextView
-            android:id="@+id/txt_title_service_rate"
-            style="@style/input_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/service_rate"
-            android:textColor="@color/text_secondary_dark" />
+            <EditText
+                android:id="@+id/field_service_name"
+                style="@style/input_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:ems="10"
+                android:hint="@string/service_name"
+                android:inputType="textPersonName" />
 
-        <EditText
-            android:id="@+id/field_rate"
-            style="@style/input_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/service_rate"
-            android:inputType="numberDecimal" />
+            <TextView
+                android:id="@+id/txt_title_service_rate"
+                style="@style/input_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/service_rate"
+                android:textColor="@color/text_secondary_dark" />
 
-        <Button
-            android:id="@+id/btn_save_service"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:onClick="onSaveService"
-            android:text="@string/save" />
-    </LinearLayout>
+            <EditText
+                android:id="@+id/field_rate"
+                style="@style/input_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/service_rate"
+                android:inputType="numberDecimal" />
 
-</android.support.v4.widget.NestedScrollView>
+            <Button
+                android:id="@+id/btn_save_service"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:onClick="onSaveService"
+                android:text="@string/save" />
+            
+        </LinearLayout>
+
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>

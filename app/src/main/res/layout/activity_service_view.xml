@@ -1,41 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.ServiceViewActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp" >
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/txt_name"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/service_name"
-            android:textColor="@color/text_primary_dark"
-            android:textSize="22sp" />
+            android:orientation="vertical"
+            android:padding="16dp" >
 
-        <TextView
-            android:id="@+id/txt_rate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="24dp"
-            android:text="@string/service_rate_template"
-            android:textColor="@color/text_secondary_dark"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/txt_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/service_name"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="22sp" />
 
-        <TextView
-            android:id="@+id/txt_category"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="24dp"
-            android:text="@string/category_template"
-            android:textColor="@color/text_secondary_dark"
-            android:textSize="18sp" />
-    </LinearLayout>
-</android.support.v4.widget.NestedScrollView>
+            <TextView
+                android:id="@+id/txt_rate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="24dp"
+                android:text="@string/service_rate_template"
+                android:textColor="@color/text_secondary_dark"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txt_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="24dp"
+                android:text="@string/category_template"
+                android:textColor="@color/text_secondary_dark"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>

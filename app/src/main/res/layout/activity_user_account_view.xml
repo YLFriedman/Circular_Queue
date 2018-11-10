@@ -1,96 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
     tools:context=".activities.UserAccountViewActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/txt_title_account_type"
-            style="@style/input_label"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/account_type" />
+            android:orientation="vertical"
+            android:paddingLeft="16dp"
+            android:paddingTop="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="16dp">
 
-        <TextView
-            android:id="@+id/txt_account_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:text="@string/sample_homeowner"
-            android:textColor="@color/text_primary_dark"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/txt_title_account_type"
+                style="@style/input_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/account_type" />
 
-        <TextView
-            android:id="@+id/txt_title_username"
-            style="@style/input_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/username" />
+            <TextView
+                android:id="@+id/txt_account_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="@string/sample_homeowner"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/txt_username"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:text="@string/sample_username"
-            android:textColor="@color/text_primary_dark"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/txt_title_username"
+                style="@style/input_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/username" />
 
-        <TextView
-            android:id="@+id/txt_title_first_name"
-            style="@style/input_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/first_name" />
+            <TextView
+                android:id="@+id/txt_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="@string/sample_username"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/txt_first_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:text="@string/sample_first_name"
-            android:textColor="@color/text_primary_dark"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/txt_title_first_name"
+                style="@style/input_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/first_name" />
 
-        <TextView
-            android:id="@+id/txt_title_last_name"
-            style="@style/input_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/last_name" />
+            <TextView
+                android:id="@+id/txt_first_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="@string/sample_first_name"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/txt_last_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:text="@string/sample_last_name"
-            android:textColor="@color/text_primary_dark"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/txt_title_last_name"
+                style="@style/input_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/last_name" />
 
-        <TextView
-            android:id="@+id/txt_title_email"
-            style="@style/input_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/email" />
+            <TextView
+                android:id="@+id/txt_last_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="@string/sample_last_name"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/txt_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/sample_email"
-            android:textColor="@color/text_primary_dark"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/txt_title_email"
+                style="@style/input_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/email" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/txt_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sample_email"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="18sp" />
 
-</android.support.v4.widget.NestedScrollView>
+        </LinearLayout>
+
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>

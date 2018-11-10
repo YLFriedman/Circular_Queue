@@ -1,64 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.HomeActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="8dp">
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TableLayout
-            android:id="@+id/buttons"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:layout_editor_absoluteX="8dp">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
 
-            <TableRow
-                android:id="@+id/btns_admin_1"
+            <TableLayout
+                android:id="@+id/buttons"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                tools:layout_editor_absoluteX="8dp">
 
-                <Button
-                    android:id="@+id/btn_services"
-                    style="@style/panel_button"
-                    android:drawableTop="@drawable/ic_bell_light_75"
-                    android:onClick="onServicesClick"
-                    android:text="@string/manage_services" />
+                <TableRow
+                    android:id="@+id/btns_admin_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                <Button
-                    android:id="@+id/btn_user_list"
-                    style="@style/panel_button"
-                    android:drawableTop="@drawable/ic_users_light_75"
-                    android:onClick="onUserListClick"
-                    android:text="@string/user_list" />
-            </TableRow>
+                    <Button
+                        android:id="@+id/btn_services"
+                        style="@style/panel_button"
+                        android:drawableTop="@drawable/ic_bell_light_75"
+                        android:onClick="onServicesClick"
+                        android:text="@string/manage_services" />
 
-            <TableRow
-                android:id="@+id/btns_account"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                    <Button
+                        android:id="@+id/btn_user_list"
+                        style="@style/panel_button"
+                        android:drawableTop="@drawable/ic_users_light_75"
+                        android:onClick="onUserListClick"
+                        android:text="@string/user_list" />
+                </TableRow>
 
-                <Button
-                    android:id="@+id/btn_my_account"
-                    style="@style/panel_button"
-                    android:drawableTop="@drawable/ic_account_circle_light_75"
-                    android:onClick="onMyAccountClick"
-                    android:text="@string/my_account" />
+                <TableRow
+                    android:id="@+id/btns_account"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                <Button
-                    android:id="@+id/btn_sign_out"
-                    style="@style/panel_button"
-                    android:drawableTop="@drawable/ic_sign_out_light_75"
-                    android:onClick="onSignOutClick"
-                    android:text="@string/sign_out" />
+                    <Button
+                        android:id="@+id/btn_my_account"
+                        style="@style/panel_button"
+                        android:drawableTop="@drawable/ic_account_circle_light_75"
+                        android:onClick="onMyAccountClick"
+                        android:text="@string/my_account" />
 
-            </TableRow>
+                    <Button
+                        android:id="@+id/btn_sign_out"
+                        style="@style/panel_button"
+                        android:drawableTop="@drawable/ic_sign_out_light_75"
+                        android:onClick="onSignOutClick"
+                        android:text="@string/sign_out" />
 
-        </TableLayout>
-    </LinearLayout>
-</android.support.v4.widget.NestedScrollView>
+                </TableRow>
+
+            </TableLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>

@@ -1,111 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.UserAccountCreateActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="24dp"
-        android:paddingTop="16dp"
-        android:paddingRight="24dp"
-        android:paddingBottom="16dp">
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
-            android:id="@+id/field_username"
-            style="@style/input_field"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:ems="10"
-            android:hint="@string/username"
-            android:inputType="text|textNoSuggestions" />
+            android:orientation="vertical"
+            android:paddingLeft="24dp"
+            android:paddingTop="16dp"
+            android:paddingRight="24dp"
+            android:paddingBottom="16dp">
 
-        <EditText
-            android:id="@+id/field_first_name"
-            style="@style/input_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:ems="10"
-            android:hint="@string/first_name"
-            android:inputType="textPersonName" />
+            <EditText
+                android:id="@+id/field_username"
+                style="@style/input_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:ems="10"
+                android:hint="@string/username"
+                android:inputType="text|textNoSuggestions" />
 
-        <EditText
-            android:id="@+id/field_last_name"
-            style="@style/input_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:ems="10"
-            android:hint="@string/last_name"
-            android:inputType="textPersonName" />
+            <EditText
+                android:id="@+id/field_first_name"
+                style="@style/input_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:ems="10"
+                android:hint="@string/first_name"
+                android:inputType="textPersonName" />
 
-        <EditText
-            android:id="@+id/field_email"
-            style="@style/input_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:ems="10"
-            android:hint="@string/email"
-            android:inputType="textEmailAddress" />
+            <EditText
+                android:id="@+id/field_last_name"
+                style="@style/input_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:ems="10"
+                android:hint="@string/last_name"
+                android:inputType="textPersonName" />
 
-        <EditText
-            android:id="@+id/field_password"
-            style="@style/input_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:ems="10"
-            android:hint="@string/password"
-            android:inputType="textPassword" />
+            <EditText
+                android:id="@+id/field_email"
+                style="@style/input_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:ems="10"
+                android:hint="@string/email"
+                android:inputType="textEmailAddress" />
 
-        <EditText
-            android:id="@+id/field_password_confirm"
-            style="@style/input_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:ems="10"
-            android:hint="@string/password_confirm"
-            android:inputType="textPassword" />
+            <EditText
+                android:id="@+id/field_password"
+                style="@style/input_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:ems="10"
+                android:hint="@string/password"
+                android:inputType="textPassword" />
 
-        <RadioGroup
-            android:id="@+id/radioGroup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
+            <EditText
+                android:id="@+id/field_password_confirm"
+                style="@style/input_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:ems="10"
+                android:hint="@string/password_confirm"
+                android:inputType="textPassword" />
 
-            <RadioButton
-                android:id="@+id/radio_homeowner"
+            <RadioGroup
+                android:id="@+id/radioGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:checked="true"
-                android:text="@string/homeowner" />
+                android:layout_gravity="center_horizontal">
 
-            <RadioButton
-                android:id="@+id/radio_service"
-                android:layout_width="wrap_content"
+                <RadioButton
+                    android:id="@+id/radio_homeowner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="@string/homeowner" />
+
+                <RadioButton
+                    android:id="@+id/radio_service"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/service_provider" />
+
+            </RadioGroup>
+
+            <Button
+                android:id="@+id/btn_create_account"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/service_provider" />
+                android:layout_marginTop="16dp"
+                android:onClick="onCreateClick"
+                android:text="@string/create_account" />
 
-        </RadioGroup>
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/btn_create_account"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:onClick="onCreateClick"
-            android:text="@string/create_account" />
+    </ScrollView>
 
-    </LinearLayout>
-
-</android.support.v4.widget.NestedScrollView>
+</android.support.constraint.ConstraintLayout>

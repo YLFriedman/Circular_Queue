@@ -8,11 +8,9 @@
     android:fillViewport="true">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:orientation="vertical"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,7 +20,9 @@
             android:id="@+id/txt_category_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
             android:layout_marginBottom="8dp"
             android:text="@string/category_template"
             android:textColor="@color/text_primary_dark"
@@ -34,6 +34,8 @@
             android:id="@+id/divider_category_name"
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:background="?android:attr/listDivider" />
 
         <android.support.v4.widget.NestedScrollView
@@ -46,6 +48,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
                 android:paddingBottom="8dp">
 
                 <android.support.v7.widget.RecyclerView

@@ -1,95 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.UserAccountEditActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="24dp"
-        android:paddingTop="16dp"
-        android:paddingRight="24dp"
-        android:paddingBottom="16dp">
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/txt_title_username"
-            style="@style/input_label"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/username" />
+            android:orientation="vertical"
+            android:paddingLeft="24dp"
+            android:paddingTop="16dp"
+            android:paddingRight="24dp"
+            android:paddingBottom="16dp">
 
-        <EditText
-            android:id="@+id/field_username"
-            style="@style/input_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:ems="10"
-            android:hint="@string/username"
-            android:inputType="text" />
+            <TextView
+                android:id="@+id/txt_title_username"
+                style="@style/input_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/username" />
 
-        <TextView
-            android:id="@+id/txt_title_first_name"
-            style="@style/input_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/first_name" />
+            <EditText
+                android:id="@+id/field_username"
+                style="@style/input_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:ems="10"
+                android:hint="@string/username"
+                android:inputType="text" />
 
-        <EditText
-            android:id="@+id/field_first_name"
-            style="@style/input_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:ems="10"
-            android:hint="@string/first_name"
-            android:inputType="textPersonName" />
+            <TextView
+                android:id="@+id/txt_title_first_name"
+                style="@style/input_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/first_name" />
 
-        <TextView
-            android:id="@+id/txt_title_last_name"
-            style="@style/input_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/last_name" />
+            <EditText
+                android:id="@+id/field_first_name"
+                style="@style/input_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:ems="10"
+                android:hint="@string/first_name"
+                android:inputType="textPersonName" />
 
-        <EditText
-            android:id="@+id/field_last_name"
-            style="@style/input_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:ems="10"
-            android:hint="@string/last_name"
-            android:inputType="textPersonName" />
+            <TextView
+                android:id="@+id/txt_title_last_name"
+                style="@style/input_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/last_name" />
 
-        <TextView
-            android:id="@+id/txt_title_email"
-            style="@style/input_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/email" />
+            <EditText
+                android:id="@+id/field_last_name"
+                style="@style/input_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:ems="10"
+                android:hint="@string/last_name"
+                android:inputType="textPersonName" />
 
-        <EditText
-            android:id="@+id/field_email"
-            style="@style/input_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/email"
-            android:inputType="textEmailAddress" />
+            <TextView
+                android:id="@+id/txt_title_email"
+                style="@style/input_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/email" />
 
-        <Button
-            android:id="@+id/btn_save_user"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_weight="1"
-            android:onClick="onSaveUserClick"
-            android:text="@string/save" />
-    </LinearLayout>
+            <EditText
+                android:id="@+id/field_email"
+                style="@style/input_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/email"
+                android:inputType="textEmailAddress" />
 
-</android.support.v4.widget.NestedScrollView>
+            <Button
+                android:id="@+id/btn_save_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_weight="1"
+                android:onClick="onSaveUserClick"
+                android:text="@string/save" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>
