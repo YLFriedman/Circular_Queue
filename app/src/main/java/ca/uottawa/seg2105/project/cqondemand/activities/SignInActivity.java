@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -87,28 +88,44 @@ public class SignInActivity extends AppCompatActivity {
      * @param view the sign in button which was clicked.
      */
     public void onSignInClick(View view) {
-        btn_sign_in.setEnabled(false);
-        btn_sign_up.setEnabled(false);
-        User.authenticate(field_username.getText().toString().trim(), field_password.getText().toString(), new AsyncActionEventListener() {
-            @Override
-            public void onSuccess() {
-                btn_sign_in.setEnabled(true);
-                btn_sign_up.setEnabled(true);
-                Intent loginIntent = new Intent(getApplicationContext(), HomeActivity.class);
-                startActivity(loginIntent);
-                finish();
-            }
-            @Override
-            public void onFailure(AsyncEventFailureReason reason) {
-                btn_sign_in.setEnabled(true);
-                btn_sign_up.setEnabled(true);
-                switch (reason) {
-                    case DATABASE_ERROR: Toast.makeText(getApplicationContext(), "Unable to sign in due to a Database Error! Please try again later.", Toast.LENGTH_LONG).show(); break;
-                    case INVALID_DATA: Toast.makeText(getApplicationContext(), "Unable to sign in, your account data is corrupt.", Toast.LENGTH_LONG).show(); break;
-                    default: Toast.makeText(getApplicationContext(), "Invalid Credentials!", Toast.LENGTH_LONG).show();
+        if (field_username.getText().toString().trim().isEmpty()) {
+            field_username.setError("Username is required!");
+            field_username.requestFocus();
+            field_username.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
+        } else if (field_password.getText().toString().isEmpty()) {
+            field_password.setError("Password is required!");
+            field_password.requestFocus();
+            field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
+        } else {
+            btn_sign_in.setEnabled(false);
+            btn_sign_up.setEnabled(false);
+            User.authenticate(field_username.getText().toString().trim(), field_password.getText().toString(), new AsyncActionEventListener() {
+                @Override
+                public void onSuccess() {
+                    btn_sign_in.setEnabled(true);
+                    btn_sign_up.setEnabled(true);
+                    Intent loginIntent = new Intent(getApplicationContext(), HomeActivity.class);
+                    startActivity(loginIntent);
+                    finish();
                 }
-            }
-        });
+
+                @Override
+                public void onFailure(AsyncEventFailureReason reason) {
+                    btn_sign_in.setEnabled(true);
+                    btn_sign_up.setEnabled(true);
+                    switch (reason) {
+                        case DATABASE_ERROR:
+                            Toast.makeText(getApplicationContext(), "Unable to sign in due to a Database Error! Please try again later.", Toast.LENGTH_LONG).show();
+                            break;
+                        case INVALID_DATA:
+                            Toast.makeText(getApplicationContext(), "Unable to sign in, your account data is corrupt.", Toast.LENGTH_LONG).show();
+                            break;
+                        default:
+                            Toast.makeText(getApplicationContext(), "Invalid Credentials!", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        }
     }
 
     /**

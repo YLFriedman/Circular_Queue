@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.Toast;
@@ -43,10 +44,12 @@ public class CategoryCreateActivity extends AppCompatActivity {
         if (title.isEmpty()) {
             field_category_name.setError("Category name is required!");
             field_category_name.requestFocus();
+            field_category_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         } else if (!Category.nameIsValid(title)) {
             field_category_name.setError("Category name is invalid. " + Category.ILLEGAL_CATEGORY_NAME_CHARS_MSG);
             field_category_name.requestFocus();
+            field_category_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
 

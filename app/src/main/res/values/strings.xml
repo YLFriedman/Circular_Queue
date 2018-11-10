@@ -72,16 +72,10 @@
     <string name="edit_service">Edit Service</string>
     <string name="delete_service">Delete Service</string>
     <string name="category">Category</string>
-    <string name="service_rate_template">$%d.00 / hour</string>
+    <string name="service_rate_template">$%,d.00 / hour</string>
+    <string name="zero_value_service">Free</string>
     <string name="category_template">Category: %s</string>
     <string name="category_title_template">%s Services</string>
     <string name="delete_category">Delete Category</string>
-    <string-array name = "categories">
-        <item>Electric</item>
-        <item>Piping</item>
-        <item>Painting</item>
-        <item>Gas</item>
-        <item>Modeling</item>
-    </string-array>
-
+    <string name="service_category">Service Category</string>
 </resources>

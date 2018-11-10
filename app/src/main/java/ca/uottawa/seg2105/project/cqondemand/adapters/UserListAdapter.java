@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
@@ -41,16 +42,15 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.recycler_list_title_subtitle_icon, parent, false);
         if (null != clickListener) { view.setOnClickListener(clickListener); }
-        ViewHolder holder = new ViewHolder(view);
-        return holder;
+        return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         User item = data.get(i);
         if (null != item) {
-            viewHolder.txt_title.setText(String.format(context.getString(R.string.full_name_template), item.getFirstName(), item.getLastName()));
-            viewHolder.txt_subtitle.setText(String.format("%s, %s", item.getUserName(), item.getType().toString()));
+            viewHolder.txt_title.setText(String.format(Locale.CANADA, context.getString(R.string.full_name_template), item.getFirstName(), item.getLastName()));
+            viewHolder.txt_subtitle.setText(String.format(Locale.CANADA, "%s, %s", item.getUserName(), item.getType().toString()));
             viewHolder.txt_subtitle.setContentDescription(item.getUserName());
         }
         viewHolder.img_item_image.setImageResource(R.drawable.ic_account_circle_med_40);

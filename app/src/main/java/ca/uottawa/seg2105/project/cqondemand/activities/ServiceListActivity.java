@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.adapters.ServiceListAdapter;
@@ -29,7 +30,6 @@ public class ServiceListActivity extends AppCompatActivity {
 
     private RecyclerView recycler_list;
     private ServiceListAdapter service_list_adapter;
-    private TextView txt_category_name;
     private String categoryName;
 
     @Override
@@ -37,11 +37,11 @@ public class ServiceListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_list);
         recycler_list = findViewById(R.id.recycler_list);
-        txt_category_name = findViewById(R.id.txt_category_name);
+        TextView txt_category_name = findViewById(R.id.txt_category_name);
         Intent intent = getIntent();
         categoryName = intent.getStringExtra("category_name");
         if (null != categoryName) {
-            txt_category_name.setText(String.format(getString(R.string.category_title_template), categoryName));
+            txt_category_name.setText(String.format(Locale.CANADA, getString(R.string.category_title_template), categoryName));
         } else {
             txt_category_name.setVisibility(View.GONE);
             findViewById(R.id.divider_category_name).setVisibility(View.GONE);
@@ -156,6 +156,9 @@ public class ServiceListActivity extends AppCompatActivity {
     }
 
     public void onCreateServiceClick() {
-        startActivity(new Intent(getApplicationContext(), ServiceCreateActivity.class));
+        Intent intent = new Intent(getApplicationContext(), ServiceCreateActivity.class);
+        if (null != categoryName) { intent.putExtra("category_name", categoryName); }
+        startActivity(intent);
     }
+
 }

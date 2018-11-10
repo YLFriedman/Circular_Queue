@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -42,10 +43,12 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         if (username.isEmpty()) {
             field_username.setError("Username is required!");
             field_username.requestFocus();
+            field_username.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         } else if (!User.userNameIsValid(username)) {
             field_username.setError("Username is invalid. " + User.ILLEGAL_USERNAME_CHARS_MSG);
             field_username.requestFocus();
+            field_username.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
 
@@ -56,6 +59,12 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         if (firstName.isEmpty()) {
             field_first_name.setError("First name is required!");
             field_first_name.requestFocus();
+            field_first_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
+            return;
+        } else if (!User.nameIsValid(firstName)) {
+            field_first_name.setError("First name is invalid. ");
+            field_first_name.requestFocus();
+            field_first_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
 
@@ -66,6 +75,12 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         if (lastName.isEmpty()) {
             field_last_name.setError("Last name is required!");
             field_last_name.requestFocus();
+            field_last_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
+            return;
+        } else if (!User.nameIsValid(lastName)) {
+            field_last_name.setError("Last name is invalid. ");
+            field_last_name.requestFocus();
+            field_last_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
 
@@ -76,9 +91,11 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         if (email.isEmpty()) {
             field_email.setError("Email is required!");
             field_email.requestFocus();
+            field_email.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         } else if (!User.emailIsValid(email)) {
             field_email.setError("This is an invalid E-mail!");
+            field_email.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
 
@@ -94,26 +111,32 @@ public class UserAccountCreateActivity extends AppCompatActivity {
             case EMPTY:
                 field_password.setError("Password is required!");
                 field_password.requestFocus();
+                field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                 return;
             case TOO_SHORT:
                 field_password.setError("Minimum length of password is " + User.PASSWORD_MIN_LENGTH + " characters.");
                 field_password.requestFocus();
+                field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                 return;
             case CONFIRM_MISMATCH:
                 field_password_confirm.setError("Both passwords must match.");
                 field_password_confirm.requestFocus();
+                field_password_confirm.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                 return;
             case ILLEGAL_PASSWORD:
                 field_password.setError("The selected password is banned. Please select a new password.");
                 field_password.requestFocus();
+                field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                 return;
             case CONTAINS_USERNAME:
                 field_password.setError("The password cannot contain the username.");
                 field_password.requestFocus();
+                field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                 return;
             default:
                 field_password.setError("Invalid password.");
                 field_password.requestFocus();
+                field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                 return;
         }
 

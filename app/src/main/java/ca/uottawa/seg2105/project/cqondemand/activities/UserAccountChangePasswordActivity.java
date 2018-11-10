@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -60,37 +61,45 @@ public class UserAccountChangePasswordActivity extends AppCompatActivity {
         if (!oldPassword.equals(currentUser.getPassword())) {
             field_password_old.setError("Incorrect password.");
             field_password_old.requestFocus();
+            field_password_old.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
         } else {
             switch (User.validatePassword(currentUser.getUserName(), password, password_confirm)) {
                 case VALID: break;
                 case EMPTY:
                     field_password.setError("Password is required!");
                     field_password.requestFocus();
+                    field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                     return;
                 case TOO_SHORT:
                     field_password.setError("Minimum length of password is " + User.PASSWORD_MIN_LENGTH + " characters.");
                     field_password.requestFocus();
+                    field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                     return;
                 case CONFIRM_MISMATCH:
                     field_password_confirm.setError("Both passwords must match.");
                     field_password_confirm.requestFocus();
+                    field_password_confirm.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                     return;
                 case ILLEGAL_PASSWORD:
                     field_password.setError("The selected password is banned. Please select a new password.");
                     field_password.requestFocus();
+                    field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                     return;
                 case CONTAINS_USERNAME:
-                    field_password.setError("Your password cannot contain your username.");
+                    field_password.setError("The password cannot contain the username.");
                     field_password.requestFocus();
+                    field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                     return;
                 default:
                     field_password.setError("Invalid password.");
                     field_password.requestFocus();
+                    field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                     return;
             }
             if (currentUser.getPassword().equals(password)) {
                 field_password.setError("The new password must be different from the existing password!");
                 field_password.requestFocus();
+                field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                 return;
             }
             btn_save_password.setEnabled(false);

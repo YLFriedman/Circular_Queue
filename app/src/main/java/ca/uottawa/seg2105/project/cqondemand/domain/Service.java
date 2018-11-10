@@ -1,8 +1,11 @@
 package ca.uottawa.seg2105.project.cqondemand.domain;
 
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUtil;
@@ -25,21 +28,29 @@ public class Service {
      * @param categoryID The category that this service falls under
      * @param rate The rate per hour that this service costs
      */
-    public Service(String name, int rate, String categoryID){
-        /*this.serviceProviderIDs = new ArrayList<>();
-        for (User user: serviceProviders) {
-            if (!(user.getType() == User.Types.SERVICE_PROVIDER)) {
-                throw new IllegalArgumentException("Only Service Providers can provide a service");
-            }
-            serviceProviderIDs.add(user.getUserName());
-        }*/
+    public Service(String name, int rate, String categoryID) {
         if (!nameIsValid(name)) { throw new InvalidDataException("Invalid service name. " + ILLEGAL_SERVICENAME_CHARS_MSG); }
         if (null == categoryID) { throw new IllegalArgumentException("The categoryID cannot be null."); }
         if (rate < 0) { throw new InvalidDataException("Rate cannot be negative. "); }
-
         this.name = name;
         this.rate = rate;
         this.categoryID = categoryID;
+    }
+
+    /**
+     * Constructor for a new service Object
+     * @param name the name of this Service
+     * @param category The category that this service falls under
+     * @param rate The rate per hour that this service costs
+     */
+    public Service(String name, int rate, Category category) {
+        if (!nameIsValid(name)) { throw new InvalidDataException("Invalid service name. " + ILLEGAL_SERVICENAME_CHARS_MSG); }
+        if (null == category) { throw new IllegalArgumentException("The category cannot be null."); }
+        if (rate < 0) { throw new InvalidDataException("Rate cannot be negative. "); }
+        this.name = name;
+        this.rate = rate;
+        this.category = category;
+        this.categoryID = DbUtil.getKey(category);
     }
 
     /**
@@ -61,11 +72,19 @@ public class Service {
         return this.categoryID;
     }
 
-    public void getCategory(AsyncSingleValueEventListener<Category> listener) {
+    public void getCategory(final AsyncSingleValueEventListener<Category> listener) {
         if (null != category) {
             listener.onSuccess(category);
         } else {
-            Category.getCategory(categoryID, listener);
+            Category.getCategory(categoryID, new AsyncSingleValueEventListener<Category>() {
+                @Override
+                public void onSuccess(@NonNull Category item) {
+                    category = item;
+                    listener.onSuccess(item);
+                }
+                @Override
+                public void onFailure(AsyncEventFailureReason reason) { listener.onFailure(reason); }
+            });
         }
     }
 
@@ -98,7 +117,6 @@ public class Service {
     }
 
     public void update(final Service newService, final AsyncActionEventListener listener) {
-
         if (DbUtil.getKey(this).equals(DbUtil.getKey(newService))) {
             DbUtil.updateItem(newService, listener);
         } else {

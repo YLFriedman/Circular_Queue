@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -57,44 +58,61 @@ public class UserAccountEditActivity extends AppCompatActivity {
     }
 
     public void onSaveUserClick(View view) {
-        final String first_name = field_first_name.getText().toString();
-        final String last_name = field_last_name.getText().toString();
+        final String firstName = field_first_name.getText().toString();
+        final String lastName = field_last_name.getText().toString();
         final String username = field_username.getText().toString();
         final String email = field_email.getText().toString();
-        final User updatedUser = new User(first_name, last_name, username, email, currentUser.getType(), currentUser.getPassword());
+        final User updatedUser = new User(firstName, lastName, username, email, currentUser.getType(), currentUser.getPassword());
 
-        if (first_name.equals(currentUser.getFirstName()) && last_name.equals(currentUser.getLastName())
+        if (firstName.equals(currentUser.getFirstName()) && lastName.equals(currentUser.getLastName())
                 && username.equals(currentUser.getUserName()) && email.equals(currentUser.getEmail())) {
             Toast.makeText(getApplicationContext(), "No changes were made to the account details.", Toast.LENGTH_SHORT).show();
         } else {
-            if (username.isEmpty()) {
+            if (null == username || username.isEmpty()) {
                 field_username.setError("Username is required!");
                 field_username.requestFocus();
+                field_username.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                 return;
             } else if (!User.userNameIsValid(username)) {
                 field_username.setError("Username is invalid. " + User.ILLEGAL_USERNAME_CHARS_MSG);
                 field_username.requestFocus();
+                field_username.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                 return;
             }
-            if (first_name.isEmpty()) {
+            if (null == firstName || firstName.isEmpty()) {
                 field_first_name.setError("First name is required!");
                 field_first_name.requestFocus();
+                field_first_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
+                return;
+            } else if (!User.nameIsValid(firstName)) {
+                field_first_name.setError("First name is invalid. ");
+                field_first_name.requestFocus();
+                field_first_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                 return;
             }
-            if (last_name.isEmpty()) {
+            if (null == lastName || lastName.isEmpty()) {
                 field_last_name.setError("Last name is required!");
                 field_last_name.requestFocus();
+                field_last_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
+                return;
+            } else if (!User.nameIsValid(lastName)) {
+                field_last_name.setError("Last name is invalid. ");
+                field_last_name.requestFocus();
+                field_last_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                 return;
             }
-            if (email.isEmpty()) {
+            if (null == email || email.isEmpty()) {
                 field_email.setError("Email is required!");
                 field_email.requestFocus();
+                field_email.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                 return;
             } else if (!User.emailIsValid(email)) {
                 field_email.setError("This is an invalid E-mail!");
                 field_email.requestFocus();
+                field_email.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                 return;
             }
+
             btn_save_user.setEnabled(false);
 
             currentUser.update(updatedUser, new AsyncActionEventListener() {
@@ -110,6 +128,7 @@ public class UserAccountEditActivity extends AppCompatActivity {
                             btn_save_user.setEnabled(true);
                             field_username.setError("Username is already in use!");
                             field_username.requestFocus();
+                            field_username.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                             break;
                         case DATABASE_ERROR:
                             Toast.makeText(getApplicationContext(), "Unable to update your account at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();

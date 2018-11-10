@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUtil;
@@ -26,76 +28,20 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventList
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
-public class ServiceEditActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
+public class ServiceEditActivity extends AppCompatActivity {
 
-    private Spinner spinner;
-    private String categoryName;
-    private String serviceName;
-    private String rate;
-
+    private Spinner spinner_categories;
     private EditText field_service_name;
     private EditText field_rate;
-    Service currentService;
+    String categoryName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_edit);
-        Intent intent = getIntent();
-
-        serviceName = intent.getStringExtra("service_name");
-        categoryName = intent.getStringExtra("category_name");
-        rate = intent.getStringExtra("rate");
-
+        spinner_categories = findViewById(R.id.spinner_categories);
         field_service_name = findViewById(R.id.field_service_name);
         field_rate = findViewById(R.id.field_rate);
-
-        EditText field_service_name = findViewById(R.id.field_service_name);
-        field_service_name.setText(intent.getStringExtra("name"));
-
-        spinner = findViewById(R.id.spinner_services);
-        spinner.setOnItemSelectedListener(this);
-
-        Category.getCategories(new AsyncValueEventListener<Category>() {
-            @Override
-            public void onSuccess(ArrayList<Category> data) {
-                loadSpinnerData(data);
-            }
-
-            @Override
-            public void onFailure(AsyncEventFailureReason reason) {
-
-            }
-        });
-
-        field_service_name.setText(serviceName);
-        field_rate.setText(rate);
-
-        //Create the current service
-        currentService = new Service(serviceName, Integer.parseInt(rate), DbUtil.getKey(new Category(categoryName)));
-    }
-
-    private void loadSpinnerData(ArrayList<Category> data){
-
-        List<String> names = new ArrayList<String>();
-        for (Category cat: data){
-            names.add(cat.getName());
-        }
-        names.add(0, "<Select Category>");
-
-        // Creating adapter for spinner
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, names);
-
-        // Drop down layout style - list view with radio button
-        dataAdapter
-                .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // attaching data adapter to spinner
-        spinner.setAdapter(dataAdapter);
-
-        if(categoryName != null){
-            spinner.setSelection(dataAdapter.getPosition(categoryName));
-        }
     }
 
     public void onResume() {
@@ -105,10 +51,45 @@ public class ServiceEditActivity extends AppCompatActivity implements AdapterVie
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             finish();
+        } else if (null != State.getState().getCurrentService()) {
+            Service item = State.getState().getCurrentService();
+            field_service_name.setText(item.getName());
+            field_rate.setText(String.valueOf(item.getRate()));
+            item.getCategory(new AsyncSingleValueEventListener<Category>() {
+                @Override
+                public void onSuccess(@NonNull Category item) {
+                    categoryName = item.getName();
+                }
+                @Override
+                public void onFailure(AsyncEventFailureReason reason) { }
+            });
+            Category.getCategories(new AsyncValueEventListener<Category>() {
+                @Override
+                public void onSuccess(ArrayList<Category> data) {
+                    loadSpinnerData(data);
+                }
+                @Override
+                public void onFailure(AsyncEventFailureReason reason) {
+                    Toast.makeText(getApplicationContext(), "Unable to load the category list at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            Toast.makeText(getApplicationContext(), "No service provided.", Toast.LENGTH_LONG).show();
+            finish();
         }
     }
 
-    public void onSaveService(View view){
+    private void loadSpinnerData(ArrayList<Category> data) {
+        List<String> names = new ArrayList<String>();
+        for (Category category: data){ names.add(category.getName()); }
+        names.add(0, "<Select Category>");
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, names);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_categories.setAdapter(dataAdapter);
+        if (categoryName != null) { spinner_categories.setSelection(dataAdapter.getPosition(categoryName)); }
+    }
+
+    public void onSaveService(View view) {
         final EditText field_service_name = findViewById(R.id.field_service_name);
         final String name = field_service_name.getText().toString().trim();
 
@@ -116,14 +97,28 @@ public class ServiceEditActivity extends AppCompatActivity implements AdapterVie
         final String rate = field_rate.getText().toString().trim();
         int rateNum = 0;
 
+        categoryName = spinner_categories.getSelectedItem().toString();
+        EditText field_spinner_categories_error = findViewById(R.id.field_spinner_categories_error);
+
+        // Check valid spinner selection
+        if (categoryName.equals("<Select Category>")) {
+            ((TextView)spinner_categories.getSelectedView()).setError("Please select a category!");
+            field_spinner_categories_error.setError("Please select a category!");
+            field_spinner_categories_error.requestFocus();
+            spinner_categories.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
+            return;
+        }
+
         //Check valid service name
         if (name.isEmpty()) {
             field_service_name.setError("Service name is required!");
             field_service_name.requestFocus();
+            field_service_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         } else if (!Service.nameIsValid(name)) {
             field_service_name.setError("Service name is invalid. " + Service.ILLEGAL_SERVICENAME_CHARS_MSG);
             field_service_name.requestFocus();
+            field_service_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
 
@@ -131,39 +126,35 @@ public class ServiceEditActivity extends AppCompatActivity implements AdapterVie
         if (rate.isEmpty()) {
             field_rate.setError("Service rate is required!");
             field_rate.requestFocus();
+            field_rate.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
-        try{
+        try {
             rateNum = Integer.parseInt(rate);
         } catch(NumberFormatException e) {
-            field_rate.setError("Service rate is too large! Max value is " + Integer.MAX_VALUE);
+            field_rate.setError("Service rate is too large! Max value is " + String.format(Locale.CANADA, "%,d", Integer.MAX_VALUE));
             field_rate.requestFocus();
+            field_rate.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
         if (rateNum < 0){
-            field_rate.setError("Service rate must be positive!");
+            field_rate.setError("Service rate cannot be negative!");
             field_rate.requestFocus();
+            field_rate.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
 
-        //Check valid spinner selection
-        if (categoryName.equals("<Select Category>")){
-            Toast.makeText(getApplicationContext(), "Please select a category!", Toast.LENGTH_SHORT).show();
-            ((TextView)spinner.getSelectedView()).setError("Please select a category!");
-            return;
-        }
-
-        Service newService = new Service(name, rateNum, DbUtil.getKey(new Category(categoryName)));
+        final Service newService = new Service(name, rateNum, new Category(categoryName));
         final Button btn_save_service = findViewById(R.id.btn_save_service);
         btn_save_service.setEnabled(false);
 
-        currentService.update(newService, new AsyncActionEventListener() {
+        State.getState().getCurrentService().update(newService, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
+                State.getState().setCurrentService(newService);
                 Toast.makeText(getApplicationContext(), "The service '" + name + "' has been successfully updated.", Toast.LENGTH_LONG).show();
                 finish();
             }
-
             @Override
             public void onFailure(AsyncEventFailureReason reason) {
                 switch (reason) {
@@ -183,15 +174,4 @@ public class ServiceEditActivity extends AppCompatActivity implements AdapterVie
         });
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        categoryName = parent.getItemAtPosition(position).toString();
-
-        Toast.makeText(parent.getContext(), categoryName, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
 }

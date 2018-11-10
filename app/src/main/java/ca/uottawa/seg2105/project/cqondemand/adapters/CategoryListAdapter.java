@@ -40,8 +40,7 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.recycler_list_title, parent, false);
         if (null != clickListener) { view.setOnClickListener(clickListener); }
-        ViewHolder holder = new ViewHolder(view);
-        return holder;
+        return new ViewHolder(view);
     }
 
     @Override

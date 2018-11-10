@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
@@ -40,8 +41,7 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.recycler_list_title_subtitle, parent, false);
         if (null != clickListener) { view.setOnClickListener(clickListener); }
-        ViewHolder holder = new ViewHolder(view);
-        return holder;
+        return new ViewHolder(view);
     }
 
     @Override
@@ -49,7 +49,11 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
         Service item = data.get(i);
         if (null != item) {
             viewHolder.txt_title.setText(item.getName());
-            viewHolder.txt_subtitle.setText(String.format(context.getString(R.string.service_rate_template), item.getRate()));
+            if (0 == item.getRate()) {
+                viewHolder.txt_subtitle.setText(context.getString(R.string.zero_value_service));
+            } else {
+                viewHolder.txt_subtitle.setText(String.format(Locale.CANADA, context.getString(R.string.service_rate_template), item.getRate()));
+            }
         }
         viewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_med_30);
     }
