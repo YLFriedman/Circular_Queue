@@ -62,7 +62,6 @@ public class UserAccountEditActivity extends AppCompatActivity {
         final String lastName = field_last_name.getText().toString();
         final String username = field_username.getText().toString();
         final String email = field_email.getText().toString();
-        final User updatedUser = new User(firstName, lastName, username, email, currentUser.getType(), currentUser.getPassword());
 
         if (firstName.equals(currentUser.getFirstName()) && lastName.equals(currentUser.getLastName())
                 && username.equals(currentUser.getUserName()) && email.equals(currentUser.getEmail())) {
@@ -114,6 +113,7 @@ public class UserAccountEditActivity extends AppCompatActivity {
             }
 
             btn_save_user.setEnabled(false);
+            final User updatedUser = new User(firstName, lastName, username, email, currentUser.getType(), currentUser.getPassword());
 
             currentUser.update(updatedUser, new AsyncActionEventListener() {
                 public void onSuccess() {
