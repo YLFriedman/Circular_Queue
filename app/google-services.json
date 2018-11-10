@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "1017370276150",
-    "firebase_url": "https://cq-on-demand-dev.firebaseio.com",
-    "project_id": "cq-on-demand-dev",
-    "storage_bucket": "cq-on-demand-dev.appspot.com"
+    "project_number": "154069245847",
+    "firebase_url": "https://cq-on-demand.firebaseio.com",
+    "project_id": "cq-on-demand",
+    "storage_bucket": "cq-on-demand.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1017370276150:android:52eb89eac07e715d",
+        "mobilesdk_app_id": "1:154069245847:android:52eb89eac07e715d",
         "android_client_info": {
           "package_name": "ca.uottawa.seg2105.project.cqondemand"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1017370276150-d5dfc0htetlu8hk6j9tiidq2itpil16c.apps.googleusercontent.com",
+          "client_id": "154069245847-f8rpejaav46c03c0lh3rssqnv43tbtpv.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDbRZCQVqoNR3V61se3Z3sti7u6fBjwtcw"
+          "current_key": "AIzaSyCxbSM8KYCMJCbTnBMA8t6OWyeXIqfJ3vQ"
         }
       ],
       "services": {
