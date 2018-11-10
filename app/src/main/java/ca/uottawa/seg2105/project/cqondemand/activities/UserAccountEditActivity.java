@@ -47,6 +47,7 @@ public class UserAccountEditActivity extends SignedInActivity {
     @Override
     public void onResume() {
         super.onResume();
+        if (isFinishing()) { return; }
         if (!currentUser.equals(State.getState().getCurrentUser())) {
             finish();
         }

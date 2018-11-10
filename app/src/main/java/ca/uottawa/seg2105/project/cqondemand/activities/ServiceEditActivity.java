@@ -1,12 +1,9 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,21 +16,22 @@ import java.util.List;
 import java.util.Locale;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
-import ca.uottawa.seg2105.project.cqondemand.database.DbUtil;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
-public class ServiceEditActivity extends AppCompatActivity {
+public class ServiceEditActivity extends SignedInActivity {
 
     private Spinner spinner_categories;
     private EditText field_service_name;
     private EditText field_rate;
-    String categoryName;
+    private String categoryName;
+    private Service currentService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,20 +40,11 @@ public class ServiceEditActivity extends AppCompatActivity {
         spinner_categories = findViewById(R.id.spinner_categories);
         field_service_name = findViewById(R.id.field_service_name);
         field_rate = findViewById(R.id.field_rate);
-    }
-
-    public void onResume() {
-        super.onResume();
-        if (null == State.getState().getSignedInUser()) {
-            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
-        } else if (null != State.getState().getCurrentService()) {
-            Service item = State.getState().getCurrentService();
-            field_service_name.setText(item.getName());
-            field_rate.setText(String.valueOf(item.getRate()));
-            item.getCategory(new AsyncSingleValueEventListener<Category>() {
+        currentService = State.getState().getCurrentService();
+        if (null != currentService) {
+            field_service_name.setText(currentService.getName());
+            field_rate.setText(String.valueOf(currentService.getRate()));
+            currentService.getCategory(new AsyncSingleValueEventListener<Category>() {
                 @Override
                 public void onSuccess(@NonNull Category item) {
                     categoryName = item.getName();
@@ -63,20 +52,34 @@ public class ServiceEditActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(AsyncEventFailureReason reason) { }
             });
-            Category.getCategories(new AsyncValueEventListener<Category>() {
-                @Override
-                public void onSuccess(ArrayList<Category> data) {
-                    loadSpinnerData(data);
-                }
-                @Override
-                public void onFailure(AsyncEventFailureReason reason) {
-                    Toast.makeText(getApplicationContext(), "Unable to load the category list at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
-                }
-            });
         } else {
-            Toast.makeText(getApplicationContext(), "No service provided.", Toast.LENGTH_LONG).show();
             finish();
         }
+    }
+
+    public void onResume() {
+        super.onResume();
+        if (isFinishing()) { return; }
+        if (!currentService.equals(State.getState().getCurrentService())) {
+            finish();
+            return;
+        }
+        Category.getCategories(new AsyncValueEventListener<Category>() {
+            @Override
+            public void onSuccess(ArrayList<Category> data) {
+                loadSpinnerData(data);
+            }
+            @Override
+            public void onFailure(AsyncEventFailureReason reason) {
+                Toast.makeText(getApplicationContext(), "Unable to load the category list at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        categoryName = spinner_categories.getSelectedItem().toString();
     }
 
     private void loadSpinnerData(ArrayList<Category> data) {
@@ -100,7 +103,7 @@ public class ServiceEditActivity extends AppCompatActivity {
         categoryName = spinner_categories.getSelectedItem().toString();
         EditText field_spinner_categories_error = findViewById(R.id.field_spinner_categories_error);
 
-        // Check valid spinner selection
+        // Check valid category selection
         if (categoryName.equals("<Select Category>")) {
             ((TextView)spinner_categories.getSelectedView()).setError("Please select a category!");
             field_spinner_categories_error.setError("Please select a category!");
@@ -109,20 +112,16 @@ public class ServiceEditActivity extends AppCompatActivity {
             return;
         }
 
-        //Check valid service name
-        if (name.isEmpty()) {
-            field_service_name.setError("Service name is required!");
-            field_service_name.requestFocus();
-            field_service_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
-            return;
-        } else if (!Service.nameIsValid(name)) {
-            field_service_name.setError("Service name is invalid. " + Service.ILLEGAL_SERVICENAME_CHARS_MSG);
+        // Check valid service name
+        if (!Service.nameIsValid(name)) {
+            if (name.isEmpty()) { field_service_name.setError("Service name is required!"); }
+            else { field_service_name.setError("Service name is invalid. " + Service.ILLEGAL_SERVICENAME_CHARS_MSG); }
             field_service_name.requestFocus();
             field_service_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
 
-        //Check valid service rate
+        // Check valid service rate
         if (rate.isEmpty()) {
             field_rate.setError("Service rate is required!");
             field_rate.requestFocus();
@@ -137,14 +136,21 @@ public class ServiceEditActivity extends AppCompatActivity {
             field_rate.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
-        if (rateNum < 0){
+        if (rateNum < 0) {
             field_rate.setError("Service rate cannot be negative!");
             field_rate.requestFocus();
             field_rate.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
 
-        final Service newService = new Service(name, rateNum, new Category(categoryName));
+        final Service newService;
+        try {
+            newService = new Service(name, rateNum, new Category(categoryName));
+        } catch (InvalidDataException e) {
+            Toast.makeText(getApplicationContext(), "Unable to create the service. An invalid input has been detected: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            return;
+        }
+
         final Button btn_save_service = findViewById(R.id.btn_save_service);
         btn_save_service.setEnabled(false);
 

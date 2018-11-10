@@ -26,7 +26,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
-public class ServiceListActivity extends AppCompatActivity {
+public class ServiceListActivity extends SignedInActivity {
 
     private RecyclerView recycler_list;
     private ServiceListAdapter service_list_adapter;
@@ -51,39 +51,33 @@ public class ServiceListActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if (null == State.getState().getSignedInUser()) {
-            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
-        } else {
-            recycler_list.setHasFixedSize(true);
-            recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-            AsyncValueEventListener<Service> listener = new AsyncValueEventListener<Service>() {
-                @Override
-                public void onSuccess(ArrayList<Service> data) {
-                    if (null != data) {
-                        service_list_adapter = new ServiceListAdapter(getApplicationContext(), data, new View.OnClickListener() {
-                            public void onClick(final View view) {
-                                TextView field = view.findViewById(R.id.txt_title);
-                                Intent intent = new Intent(getApplicationContext(), ServiceViewActivity.class);
-                                intent.putExtra("service_name", field.getText().toString());
-                                startActivity(intent);
-                            }
-                        });
-                        recycler_list.setAdapter(service_list_adapter);
-                    }
+        if (isFinishing()) { return; }
+        recycler_list.setHasFixedSize(true);
+        recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        AsyncValueEventListener<Service> listener = new AsyncValueEventListener<Service>() {
+            @Override
+            public void onSuccess(ArrayList<Service> data) {
+                if (null != data) {
+                    service_list_adapter = new ServiceListAdapter(getApplicationContext(), data, new View.OnClickListener() {
+                        public void onClick(final View view) {
+                            TextView field = view.findViewById(R.id.txt_title);
+                            Intent intent = new Intent(getApplicationContext(), ServiceViewActivity.class);
+                            intent.putExtra("service_name", field.getText().toString());
+                            startActivity(intent);
+                        }
+                    });
+                    recycler_list.setAdapter(service_list_adapter);
                 }
-                @Override
-                public void onFailure(AsyncEventFailureReason reason) {
-                    Toast.makeText(getApplicationContext(), "There was an error getting the services from the database. Please try again later.", Toast.LENGTH_LONG).show();
-                }
-            };
-            if (categoryName == null) {
-                Service.getServices(listener);
-            } else {
-                Service.getServices(categoryName, listener);
             }
+            @Override
+            public void onFailure(AsyncEventFailureReason reason) {
+                Toast.makeText(getApplicationContext(), "There was an error getting the services from the database. Please try again later.", Toast.LENGTH_LONG).show();
+            }
+        };
+        if (categoryName == null) {
+            Service.getServices(listener);
+        } else {
+            Service.getServices(categoryName, listener);
         }
     }
 

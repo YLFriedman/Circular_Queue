@@ -28,6 +28,14 @@
                 android:textColor="@color/text_primary_dark"
                 android:textSize="22sp" />
 
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="?android:attr/listDivider" />
+
             <TextView
                 android:id="@+id/txt_rate"
                 android:layout_width="match_parent"

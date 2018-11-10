@@ -25,8 +25,7 @@ public class UserAccountViewActivity extends SignedInActivity {
 
     private TextView txt_account_type;
     private TextView txt_username;
-    private TextView txt_first_name;
-    private TextView txt_last_name;
+    private TextView txt_full_name;
     private TextView txt_email;
 
     @Override
@@ -36,15 +35,14 @@ public class UserAccountViewActivity extends SignedInActivity {
         // Set references to the UI objects
         txt_account_type = findViewById(R.id.txt_account_type);
         txt_username = findViewById(R.id.txt_username);
-        txt_first_name = findViewById(R.id.txt_first_name);
-        txt_last_name = findViewById(R.id.txt_last_name);
+        txt_full_name = findViewById(R.id.txt_full_name);
         txt_email = findViewById(R.id.txt_email);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
+        if (isFinishing()) { return; }
         Intent intent = getIntent();
         final String username = intent.getStringExtra("username");
         if (null != username) { // If a username was passed through the intent
@@ -96,14 +94,12 @@ public class UserAccountViewActivity extends SignedInActivity {
         if (null == currentUser) {
             txt_account_type.setText("");
             txt_username.setText("");
-            txt_first_name.setText("");
-            txt_last_name.setText("");
+            txt_full_name.setText("");
             txt_email.setText("");
         } else {
             txt_account_type.setText(currentUser.getType().toString());
             txt_username.setText(currentUser.getUsername());
-            txt_first_name.setText(currentUser.getFirstName());
-            txt_last_name.setText(currentUser.getLastName());
+            txt_full_name.setText(String.format(getString(R.string.full_name_template), currentUser.getFirstName(), currentUser.getLastName()));
             txt_email.setText(currentUser.getEmail());
         }
     }

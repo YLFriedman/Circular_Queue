@@ -23,7 +23,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
-public class ServiceViewActivity extends AppCompatActivity {
+public class ServiceViewActivity extends SignedInActivity {
 
     TextView txt_name;
     TextView txt_rate;
@@ -46,12 +46,8 @@ public class ServiceViewActivity extends AppCompatActivity {
 
     public void onResume() {
         super.onResume();
-        if (null == State.getState().getSignedInUser()) {
-            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
-        } else if (null != serviceName) {
+        if (isFinishing()) { return; }
+        if (null != serviceName) {
             if (null == State.getState().getCurrentService()) {
                 Service.getService(serviceName, new AsyncSingleValueEventListener<Service>() {
                     @Override

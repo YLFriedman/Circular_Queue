@@ -128,6 +128,10 @@ public class Service {
         DbUtil.deleteItem(this, listener);
     }
 
+    public boolean equals(Service other) {
+        return null != other && name.equals(other.name);
+    }
+
     public static void getService(String name, final AsyncSingleValueEventListener<Service> listener) {
         DbUtil.getItem(DbUtil.DataType.SERVICE, name, listener);
     }

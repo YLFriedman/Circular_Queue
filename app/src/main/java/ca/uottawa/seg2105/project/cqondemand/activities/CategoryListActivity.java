@@ -1,7 +1,6 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,7 +20,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
-public class CategoryListActivity extends AppCompatActivity {
+public class CategoryListActivity extends SignedInActivity {
 
     private RecyclerView recycler_list;
     private CategoryListAdapter category_list_adapter;
@@ -36,35 +35,29 @@ public class CategoryListActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if (null == State.getState().getSignedInUser()) {
-            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
-        } else {
-            recycler_list.setHasFixedSize(true);
-            recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-            Category.getCategories(new AsyncValueEventListener<Category>() {
-                @Override
-                public void onSuccess(ArrayList<Category> data) {
-                    if (null != data) {
-                        category_list_adapter = new CategoryListAdapter(getApplicationContext(), data, new View.OnClickListener() {
-                            public void onClick(final View view) {
-                                TextView field = view.findViewById(R.id.txt_title);
-                                Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
-                                intent.putExtra("category_name", field.getText().toString());
-                                startActivity(intent);
-                            }
-                        });
-                        recycler_list.setAdapter(category_list_adapter);
-                    }
+        if (isFinishing()) { return; }
+        recycler_list.setHasFixedSize(true);
+        recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        Category.getCategories(new AsyncValueEventListener<Category>() {
+            @Override
+            public void onSuccess(ArrayList<Category> data) {
+                if (null != data) {
+                    category_list_adapter = new CategoryListAdapter(getApplicationContext(), data, new View.OnClickListener() {
+                        public void onClick(final View view) {
+                            TextView field = view.findViewById(R.id.txt_title);
+                            Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
+                            intent.putExtra("category_name", field.getText().toString());
+                            startActivity(intent);
+                        }
+                    });
+                    recycler_list.setAdapter(category_list_adapter);
                 }
-                @Override
-                public void onFailure(AsyncEventFailureReason reason) {
-                    Toast.makeText(getApplicationContext(), "There was an error getting the categories from the database. Please try again later.", Toast.LENGTH_LONG).show();
-                }
-            });
-        }
+            }
+            @Override
+            public void onFailure(AsyncEventFailureReason reason) {
+                Toast.makeText(getApplicationContext(), "There was an error getting the categories from the database. Please try again later.", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public void onCreateCategoryClick() {

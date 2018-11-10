@@ -34,7 +34,7 @@ public class UserAccountListActivity extends SignedInActivity {
     @Override
     public void onResume() {
         super.onResume();
-
+        if (isFinishing()) { return; }
         recycler_list.setHasFixedSize(true);
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         User.getUsers(new AsyncValueEventListener<User>() {

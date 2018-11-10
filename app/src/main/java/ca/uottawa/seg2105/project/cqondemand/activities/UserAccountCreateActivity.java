@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
@@ -43,6 +45,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         EditText field_email = findViewById(R.id.field_email);
         EditText field_password = findViewById(R.id.field_password);
         EditText field_password_confirm = findViewById(R.id.field_password_confirm);
+        Spinner spinner_user_type = findViewById(R.id.spinner_user_type);
 
         String firstName = field_first_name.getText().toString().trim();
         String lastName = field_last_name.getText().toString().trim();
@@ -103,12 +106,20 @@ public class UserAccountCreateActivity extends AppCompatActivity {
             return;
         }
 
-        RadioGroup radioGroup = findViewById(R.id.radioGroup);
-        RadioButton radioButton = findViewById(radioGroup.getCheckedRadioButtonId());
+        String userType = spinner_user_type.getSelectedItem().toString();
+        // Check valid spinner selection
+        if (userType.isEmpty()) {
+            EditText field_spinner_user_type_error = findViewById(R.id.field_spinner_user_type_error);
+            ((TextView)spinner_user_type.getSelectedView()).setError("Please select a type!");
+            field_spinner_user_type_error.setError("Please select a type!");
+            field_spinner_user_type_error.requestFocus();
+            spinner_user_type.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
+            return;
+        }
 
         final User newUser;
         try {
-            newUser = new User(firstName, lastName, username, email, User.parseType(radioButton.getText().toString()), password);
+            newUser = new User(firstName, lastName, username, email, User.parseType(userType), password);
         } catch (InvalidDataException e) {
             Toast.makeText(getApplicationContext(), "Unable to create the account. An invalid input has been detected: " + e.getMessage(), Toast.LENGTH_LONG).show();
             return;

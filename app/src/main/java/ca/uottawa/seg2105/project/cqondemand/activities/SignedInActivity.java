@@ -11,12 +11,16 @@ public abstract class SignedInActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         if (null == State.getState().getSignedInUser()) {
-            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
-            return;
+            signOut();
         }
+    }
+
+    protected void signOut() {
+        State.getState().setSignedInUser(null);
+        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
     }
 
 }

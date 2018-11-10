@@ -1,7 +1,6 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -23,9 +22,8 @@ import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
-import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
-public class ServiceCreateActivity extends AppCompatActivity {
+public class ServiceCreateActivity extends SignedInActivity {
 
     Spinner spinner_categories;
     String categoryName;
@@ -42,23 +40,23 @@ public class ServiceCreateActivity extends AppCompatActivity {
 
     public void onResume() {
         super.onResume();
-        if (null == State.getState().getSignedInUser()) {
-            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
-        } else {
-            Category.getCategories(new AsyncValueEventListener<Category>() {
-                @Override
-                public void onSuccess(ArrayList<Category> data) {
-                    loadSpinnerData(data);
-                }
-                @Override
-                public void onFailure(AsyncEventFailureReason reason) {
-                    Toast.makeText(getApplicationContext(), "Unable to load the category list at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
-                }
-            });
-        }
+        if (isFinishing()) { return; }
+        Category.getCategories(new AsyncValueEventListener<Category>() {
+            @Override
+            public void onSuccess(ArrayList<Category> data) {
+                loadSpinnerData(data);
+            }
+            @Override
+            public void onFailure(AsyncEventFailureReason reason) {
+                Toast.makeText(getApplicationContext(), "Unable to load the category list at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        categoryName = spinner_categories.getSelectedItem().toString();
     }
 
     private void loadSpinnerData(ArrayList<Category> data) {

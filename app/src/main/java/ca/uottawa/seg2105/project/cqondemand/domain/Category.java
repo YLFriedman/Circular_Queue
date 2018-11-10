@@ -55,6 +55,10 @@ public class Category{
         DbUtil.deleteItem(this, listener);
     }
 
+    public boolean equals(Category other) {
+        return null != other && name.equals(other.name);
+    }
+
     public static void getCategory(String name, final AsyncSingleValueEventListener<Category> listener) {
         DbUtil.getItem(DbUtil.DataType.CATEGORY, name, listener);
     }

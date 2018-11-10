@@ -36,12 +36,13 @@ public class HomeActivity extends AppCompatActivity {
         if (null == user) {
             onSignOutClick(null);
         } else {
-            // Hide all non-shared button rows
-            btns_admin_1.setVisibility(View.GONE);
+            // Hide all admin button rows for non-admin users
+            if (!user.isAdmin()) { btns_admin_1.setVisibility(View.GONE); }
+
             // Enable the relevant button rows
-            switch (user.getType()) {
+            /*switch (user.getType()) {
                 case ADMIN:
-                    btns_admin_1.setVisibility(View.VISIBLE);
+                    //btns_admin_1.setVisibility(View.VISIBLE);
                     break;
                 case HOMEOWNER:
                     //btns_admin_1.setVisibility(View.VISIBLE);
@@ -49,7 +50,7 @@ public class HomeActivity extends AppCompatActivity {
                 case SERVICE_PROVIDER:
                     //btns_admin_1.setVisibility(View.VISIBLE);
                     break;
-            }
+            }*/
         }
     }
 
