@@ -78,6 +78,7 @@
     <string name="category_title_template">%s Services</string>
     <string name="delete_category">Delete Category</string>
     <string name="service_category">Service Category</string>
+    <string name="hourly_rate">Hourly Rate</string>
     <string-array name="account_types">
         <item>Homeowner</item>
         <item>Service Provider</item>

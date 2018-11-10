@@ -71,7 +71,7 @@
                 style="@style/input_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/service_rate"
+                android:text="@string/hourly_rate"
                 android:textColor="@color/text_secondary_dark" />
 
             <EditText
@@ -80,7 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="@string/service_rate"
+                android:hint="@string/hourly_rate"
                 android:inputType="numberDecimal" />
 
             <Button
