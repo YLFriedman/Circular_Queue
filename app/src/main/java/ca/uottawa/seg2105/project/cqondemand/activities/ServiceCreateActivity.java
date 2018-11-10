@@ -63,8 +63,8 @@ public class ServiceCreateActivity extends SignedInActivity {
         List<String> names = new ArrayList<String>();
         for (Category category: data){ names.add(category.getName()); }
         names.add(0, "<Select Category>");
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, names);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item_title, names);
+        //dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_categories.setAdapter(dataAdapter);
         if (categoryName != null) { spinner_categories.setSelection(dataAdapter.getPosition(categoryName)); }
     }

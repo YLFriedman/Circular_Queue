@@ -29,6 +29,7 @@ public class ServiceViewActivity extends SignedInActivity {
     TextView txt_rate;
     TextView txt_category;
     String serviceName;
+    String categoryName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +84,7 @@ public class ServiceViewActivity extends SignedInActivity {
         item.getCategory(new AsyncSingleValueEventListener<Category>() {
             @Override
             public void onSuccess(@NonNull Category item) {
+                categoryName = item.getName();
                 txt_category.setText(String.format(Locale.CANADA, getString(R.string.category_template), item.getName()));
                 txt_category.setVisibility(View.VISIBLE);
             }
@@ -105,10 +107,17 @@ public class ServiceViewActivity extends SignedInActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_item_service_create: onCreateServiceClick(); return true;
             case R.id.menu_item_service_edit: onEditServiceClick(); return true;
             case R.id.menu_item_service_delete: onDeleteServiceClick(); return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onCreateServiceClick() {
+        Intent intent = new Intent(getApplicationContext(), ServiceCreateActivity.class);
+        if (null != categoryName) { intent.putExtra("category_name", categoryName); }
+        startActivity(intent);
     }
 
     public void onEditServiceClick() {

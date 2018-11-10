@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -28,6 +29,8 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         EditText field_username = findViewById(R.id.field_username);
         Intent intent = getIntent();
         field_username.setText(intent.getStringExtra("username"));
+        Spinner spinner_user_type = findViewById(R.id.spinner_user_type);
+        spinner_user_type.setAdapter(new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item_title, new String[]{ "Homeowner", "Service Provider" }));
     }
 
     @Override
