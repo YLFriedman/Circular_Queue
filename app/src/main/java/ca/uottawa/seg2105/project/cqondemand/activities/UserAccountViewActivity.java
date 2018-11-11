@@ -27,6 +27,7 @@ public class UserAccountViewActivity extends SignedInActivity {
     private TextView txt_username;
     private TextView txt_full_name;
     private TextView txt_email;
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,24 +38,24 @@ public class UserAccountViewActivity extends SignedInActivity {
         txt_username = findViewById(R.id.txt_username);
         txt_full_name = findViewById(R.id.txt_full_name);
         txt_email = findViewById(R.id.txt_email);
+        Intent intent = getIntent();
+        username = intent.getStringExtra("username");
     }
 
     @Override
     public void onResume() {
         super.onResume();
         if (isFinishing()) { return; }
-        Intent intent = getIntent();
-        final String username = intent.getStringExtra("username");
         if (null != username) { // If a username was passed through the intent
             // Clear the text fields
             State.getState().setCurrentUser(null);
-            setFields();
+            setupFields();
             // Try to get the user object
             User.getUser(username, new AsyncSingleValueEventListener<User>() {
                 @Override
                 public void onSuccess(User user) {
                     State.getState().setCurrentUser(user);
-                    setFields();
+                    setupFields();
                 }
                 @Override
                 public void onFailure(AsyncEventFailureReason reason) {
@@ -64,7 +65,7 @@ public class UserAccountViewActivity extends SignedInActivity {
             });
         } else { // If no username was passed through the intent, then load the logged-in user
             State.getState().setCurrentUser(State.getState().getSignedInUser());
-            setFields();
+            setupFields();
         }
 
     }
@@ -89,7 +90,7 @@ public class UserAccountViewActivity extends SignedInActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setFields() {
+    private void setupFields() {
         User currentUser = State.getState().getCurrentUser();
         if (null == currentUser) {
             txt_account_type.setText("");

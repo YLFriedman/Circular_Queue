@@ -49,21 +49,21 @@ public class ServiceViewActivity extends SignedInActivity {
         super.onResume();
         if (isFinishing()) { return; }
         if (null != serviceName) {
-            if (null == State.getState().getCurrentService()) {
-                Service.getService(serviceName, new AsyncSingleValueEventListener<Service>() {
-                    @Override
-                    public void onSuccess(@NonNull Service item) {
-                        State.getState().setCurrentService(item);
-                        setupFields();
-                    }
-                    @Override
-                    public void onFailure(AsyncEventFailureReason reason) {
-                        Toast.makeText(getApplicationContext(), "There was an error getting the service details from the database. Please try again later.", Toast.LENGTH_LONG).show();
-                    }
-                });
-            } else {
-                setupFields();
-            }
+            // Clear the text fields
+            State.getState().setCurrentService(null);
+            setupFields();
+            // Try to get the service object
+            Service.getService(serviceName, new AsyncSingleValueEventListener<Service>() {
+                @Override
+                public void onSuccess(@NonNull Service item) {
+                    State.getState().setCurrentService(item);
+                    setupFields();
+                }
+                @Override
+                public void onFailure(AsyncEventFailureReason reason) {
+                    Toast.makeText(getApplicationContext(), "There was an error getting the service details from the database. Please try again later.", Toast.LENGTH_LONG).show();
+                }
+            });
         } else {
             Toast.makeText(getApplicationContext(), "No service provided.", Toast.LENGTH_LONG).show();
             State.getState().setCurrentService(null);
@@ -72,31 +72,39 @@ public class ServiceViewActivity extends SignedInActivity {
     }
 
     private void setupFields() {
-        Service item = State.getState().getCurrentService();
-        txt_name.setText(item.getName());
-        txt_name.setVisibility(View.VISIBLE);
-        if (0 == item.getRate()) {
-            txt_rate.setText(getString(R.string.zero_value_service));
+        Service currentService = State.getState().getCurrentService();
+        if (null == currentService) {
+            txt_name.setText("");
+            txt_rate.setText("");
+            txt_category.setText("");
         } else {
-            txt_rate.setText(String.format(Locale.CANADA, getString(R.string.service_rate_template), item.getRate()));
-        }
-        txt_rate.setVisibility(View.VISIBLE);
-        item.getCategory(new AsyncSingleValueEventListener<Category>() {
-            @Override
-            public void onSuccess(@NonNull Category item) {
-                categoryName = item.getName();
-                txt_category.setText(String.format(Locale.CANADA, getString(R.string.category_template), item.getName()));
-                txt_category.setVisibility(View.VISIBLE);
+            txt_name.setText(currentService.getName());
+            txt_name.setVisibility(View.VISIBLE);
+            if (0 == currentService.getRate()) {
+                txt_rate.setText(getString(R.string.zero_value_service));
+            } else {
+                txt_rate.setText(String.format(Locale.CANADA, getString(R.string.service_rate_template), currentService.getRate()));
             }
-            @Override
-            public void onFailure(AsyncEventFailureReason reason) { }
-        });
+            txt_rate.setVisibility(View.VISIBLE);
+            currentService.getCategory(new AsyncSingleValueEventListener<Category>() {
+                @Override
+                public void onSuccess(@NonNull Category item) {
+                    categoryName = item.getName();
+                    txt_category.setText(String.format(Locale.CANADA, getString(R.string.category_template), item.getName()));
+                    txt_category.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onFailure(AsyncEventFailureReason reason) {
+                }
+            });
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         User user = State.getState().getSignedInUser();
-        if (null != user && user.getType() == User.Types.ADMIN) {
+        if (null != user && user.isAdmin()) {
             getMenuInflater().inflate(R.menu.service_options, menu);
             menu.setGroupVisible(R.id.grp_category_controls, false);
             return true;
