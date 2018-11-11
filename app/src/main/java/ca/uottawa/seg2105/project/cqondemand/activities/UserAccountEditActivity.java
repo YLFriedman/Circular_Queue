@@ -110,8 +110,8 @@ public class UserAccountEditActivity extends SignedInActivity {
 
         currentUser.update(updatedUser, new AsyncActionEventListener() {
             public void onSuccess() {
-                Toast.makeText(getApplicationContext(), "Account updated successfully!", Toast.LENGTH_LONG).show();
                 currentUser = State.getState().getSignedInUser();
+                Toast.makeText(getApplicationContext(), "Account updated successfully!", Toast.LENGTH_LONG).show();
                 finish();
             }
             public void onFailure(AsyncEventFailureReason reason) {

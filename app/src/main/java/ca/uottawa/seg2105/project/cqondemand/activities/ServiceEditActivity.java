@@ -41,6 +41,7 @@ public class ServiceEditActivity extends SignedInActivity {
         field_service_name = findViewById(R.id.field_service_name);
         field_rate = findViewById(R.id.field_rate);
         currentService = State.getState().getCurrentService();
+        State.getState().setCurrentService(null);
         if (null != currentService) {
             field_service_name.setText(currentService.getName());
             field_rate.setText(String.valueOf(currentService.getRate()));
@@ -60,7 +61,7 @@ public class ServiceEditActivity extends SignedInActivity {
     public void onResume() {
         super.onResume();
         if (isFinishing()) { return; }
-        if (!currentService.equals(State.getState().getCurrentService())) {
+        if (null == currentService) {
             finish();
             return;
         }
@@ -154,11 +155,11 @@ public class ServiceEditActivity extends SignedInActivity {
         final Button btn_save_service = findViewById(R.id.btn_save_service);
         btn_save_service.setEnabled(false);
 
-        State.getState().getCurrentService().update(newService, new AsyncActionEventListener() {
+        currentService.update(newService, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 State.getState().setCurrentService(newService);
-                Toast.makeText(getApplicationContext(), "The service '" + name + "' has been successfully updated.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "The service '" + newService.getName() + "' has been successfully updated.", Toast.LENGTH_LONG).show();
                 finish();
             }
             @Override

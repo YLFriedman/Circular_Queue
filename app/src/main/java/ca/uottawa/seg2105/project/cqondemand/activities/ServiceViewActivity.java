@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,6 +29,7 @@ public class ServiceViewActivity extends SignedInActivity {
     TextView txt_category;
     String serviceName;
     String categoryName;
+    Service currentService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +38,9 @@ public class ServiceViewActivity extends SignedInActivity {
         txt_name = findViewById(R.id.txt_name);
         txt_rate = findViewById(R.id.txt_rate);
         txt_category = findViewById(R.id.txt_category);
-        txt_name.setVisibility(View.GONE);
-        txt_rate.setVisibility(View.GONE);
-        txt_category.setVisibility(View.GONE);
+        txt_name.setText("");
+        txt_rate.setText("");
+        txt_category.setText("");
         Intent intent = getIntent();
         serviceName = intent.getStringExtra("service_name");
     }
@@ -49,54 +49,61 @@ public class ServiceViewActivity extends SignedInActivity {
         super.onResume();
         if (isFinishing()) { return; }
         if (null != serviceName) {
-            if (null == State.getState().getCurrentService()) {
-                Service.getService(serviceName, new AsyncSingleValueEventListener<Service>() {
-                    @Override
-                    public void onSuccess(@NonNull Service item) {
-                        State.getState().setCurrentService(item);
-                        setupFields();
-                    }
-                    @Override
-                    public void onFailure(AsyncEventFailureReason reason) {
-                        Toast.makeText(getApplicationContext(), "There was an error getting the service details from the database. Please try again later.", Toast.LENGTH_LONG).show();
-                    }
-                });
-            } else {
-                setupFields();
-            }
-        } else {
-            Toast.makeText(getApplicationContext(), "No service provided.", Toast.LENGTH_LONG).show();
+            // Clear the text fields
+            setupFields();
+            // Try to get the service object
+            Service.getService(serviceName, new AsyncSingleValueEventListener<Service>() {
+                @Override
+                public void onSuccess(@NonNull Service item) {
+                    serviceName = null;
+                    currentService = item;
+                    setupFields();
+                }
+                @Override
+                public void onFailure(AsyncEventFailureReason reason) {
+                    Toast.makeText(getApplicationContext(), "There was an error getting the service details from the database. Please try again later.", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+            });
+        } else if (null != State.getState().getCurrentService()) {
+            currentService = State.getState().getCurrentService();
             State.getState().setCurrentService(null);
+            setupFields();
+        } else if (null != currentService) {
+            setupFields();
+        }  else {
+            Toast.makeText(getApplicationContext(), "No service provided.", Toast.LENGTH_LONG).show();
             finish();
         }
     }
 
     private void setupFields() {
-        Service item = State.getState().getCurrentService();
-        txt_name.setText(item.getName());
-        txt_name.setVisibility(View.VISIBLE);
-        if (0 == item.getRate()) {
-            txt_rate.setText(getString(R.string.zero_value_service));
-        } else {
-            txt_rate.setText(String.format(Locale.CANADA, getString(R.string.service_rate_template), item.getRate()));
-        }
-        txt_rate.setVisibility(View.VISIBLE);
-        item.getCategory(new AsyncSingleValueEventListener<Category>() {
-            @Override
-            public void onSuccess(@NonNull Category item) {
-                categoryName = item.getName();
-                txt_category.setText(String.format(Locale.CANADA, getString(R.string.category_template), item.getName()));
-                txt_category.setVisibility(View.VISIBLE);
+        txt_name.setText("");
+        txt_rate.setText("");
+        txt_category.setText("");
+        if (null != currentService) {
+            txt_name.setText(currentService.getName());
+            if (0 == currentService.getRate()) {
+                txt_rate.setText(getString(R.string.zero_value_service));
+            } else {
+                txt_rate.setText(String.format(Locale.CANADA, getString(R.string.service_rate_template), currentService.getRate()));
             }
-            @Override
-            public void onFailure(AsyncEventFailureReason reason) { }
-        });
+            currentService.getCategory(new AsyncSingleValueEventListener<Category>() {
+                @Override
+                public void onSuccess(@NonNull Category item) {
+                    categoryName = item.getName();
+                    txt_category.setText(String.format(Locale.CANADA, getString(R.string.category_template), item.getName()));
+                }
+                @Override
+                public void onFailure(AsyncEventFailureReason reason) { }
+            });
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         User user = State.getState().getSignedInUser();
-        if (null != user && user.getType() == User.Types.ADMIN) {
+        if (null != user && user.isAdmin()) {
             getMenuInflater().inflate(R.menu.service_options, menu);
             menu.setGroupVisible(R.id.grp_category_controls, false);
             return true;
@@ -121,28 +128,28 @@ public class ServiceViewActivity extends SignedInActivity {
     }
 
     public void onEditServiceClick() {
+        State.getState().setCurrentService(currentService);
         Intent intent = new Intent(getApplicationContext(), ServiceEditActivity.class);
         startActivity(intent);
     }
 
     public void onDeleteServiceClick() {
-        if (null != State.getState().getCurrentService()) {
+        if (null != currentService) {
             new AlertDialog.Builder(this)
                     .setTitle("Delete Service")
-                    .setMessage("Are you sure you want to delete the '" + serviceName + "' service?  \r\nThis CANNOT be undone!")
+                    .setMessage("Are you sure you want to delete the '" + currentService.getName() + "' service?  \r\nThis CANNOT be undone!")
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            State.getState().getCurrentService().delete(new AsyncActionEventListener() {
+                            currentService.delete(new AsyncActionEventListener() {
                                 @Override
                                 public void onSuccess() {
-                                    Toast.makeText(getApplicationContext(), "The the '" + serviceName + "' service has been successfully deleted.", Toast.LENGTH_LONG).show();
-                                    State.getState().setCurrentService(null);
+                                    Toast.makeText(getApplicationContext(), "The the '" + currentService.getName() + "' service has been successfully deleted.", Toast.LENGTH_LONG).show();
                                     finish();
                                 }
                                 @Override
                                 public void onFailure(AsyncEventFailureReason reason) {
-                                    Toast.makeText(getApplicationContext(), "Unable to delete the '" + serviceName + "' service at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), "Unable to delete the '" + currentService.getName() + "' service at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
                                 }
                             });
                         }

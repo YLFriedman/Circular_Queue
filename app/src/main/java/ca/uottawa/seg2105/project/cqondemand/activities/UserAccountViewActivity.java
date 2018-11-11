@@ -2,21 +2,16 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
-import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
@@ -27,6 +22,7 @@ public class UserAccountViewActivity extends SignedInActivity {
     private TextView txt_username;
     private TextView txt_full_name;
     private TextView txt_email;
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,24 +33,24 @@ public class UserAccountViewActivity extends SignedInActivity {
         txt_username = findViewById(R.id.txt_username);
         txt_full_name = findViewById(R.id.txt_full_name);
         txt_email = findViewById(R.id.txt_email);
+        Intent intent = getIntent();
+        username = intent.getStringExtra("username");
     }
 
     @Override
     public void onResume() {
         super.onResume();
         if (isFinishing()) { return; }
-        Intent intent = getIntent();
-        final String username = intent.getStringExtra("username");
         if (null != username) { // If a username was passed through the intent
             // Clear the text fields
             State.getState().setCurrentUser(null);
-            setFields();
+            setupFields();
             // Try to get the user object
             User.getUser(username, new AsyncSingleValueEventListener<User>() {
                 @Override
                 public void onSuccess(User user) {
                     State.getState().setCurrentUser(user);
-                    setFields();
+                    setupFields();
                 }
                 @Override
                 public void onFailure(AsyncEventFailureReason reason) {
@@ -64,9 +60,24 @@ public class UserAccountViewActivity extends SignedInActivity {
             });
         } else { // If no username was passed through the intent, then load the logged-in user
             State.getState().setCurrentUser(State.getState().getSignedInUser());
-            setFields();
+            setupFields();
         }
 
+    }
+
+    private void setupFields() {
+        User currentUser = State.getState().getCurrentUser();
+        if (null == currentUser) {
+            txt_account_type.setText("");
+            txt_username.setText("");
+            txt_full_name.setText("");
+            txt_email.setText("");
+        } else {
+            txt_account_type.setText(currentUser.getType().toString());
+            txt_username.setText(currentUser.getUsername());
+            txt_full_name.setText(String.format(getString(R.string.full_name_template), currentUser.getFirstName(), currentUser.getLastName()));
+            txt_email.setText(currentUser.getEmail());
+        }
     }
 
     @Override
@@ -87,21 +98,6 @@ public class UserAccountViewActivity extends SignedInActivity {
             case R.id.menu_item_user_delete: onDeleteAccountClick(); return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void setFields() {
-        User currentUser = State.getState().getCurrentUser();
-        if (null == currentUser) {
-            txt_account_type.setText("");
-            txt_username.setText("");
-            txt_full_name.setText("");
-            txt_email.setText("");
-        } else {
-            txt_account_type.setText(currentUser.getType().toString());
-            txt_username.setText(currentUser.getUsername());
-            txt_full_name.setText(String.format(getString(R.string.full_name_template), currentUser.getFirstName(), currentUser.getLastName()));
-            txt_email.setText(currentUser.getEmail());
-        }
     }
 
     public void onEditAccountClick() {
