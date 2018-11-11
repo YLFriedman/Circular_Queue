@@ -13,6 +13,7 @@ import android.widget.Toast;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
@@ -66,15 +67,15 @@ public class UserAccountEditActivity extends SignedInActivity {
             return;
         }
 
-        if (!User.usernameIsValid(username)) {
+        if (!FieldValidation.usernameIsValid(username)) {
             if (username.isEmpty()) { field_username.setError("Username is required!"); }
-            else { field_username.setError("Username is invalid. " + User.ILLEGAL_USERNAME_CHARS_MSG); }
+            else { field_username.setError("Username is invalid. " + FieldValidation.ILLEGAL_USERNAME_CHARS_MSG); }
             field_username.requestFocus();
             field_username.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
 
-        if (!User.nameIsValid(firstName)) {
+        if (!FieldValidation.nameIsValid(firstName)) {
             if (username.isEmpty()) { field_first_name.setError("First name is required!"); }
             else { field_first_name.setError("First name is invalid. "); }
             field_first_name.requestFocus();
@@ -82,7 +83,7 @@ public class UserAccountEditActivity extends SignedInActivity {
             return;
         }
 
-        if (!User.nameIsValid(lastName)) {
+        if (!FieldValidation.nameIsValid(lastName)) {
             if (username.isEmpty()) { field_last_name.setError("Last name is required!"); }
             else { field_last_name.setError("Last name is invalid. "); }
             field_last_name.requestFocus();
@@ -90,7 +91,7 @@ public class UserAccountEditActivity extends SignedInActivity {
             return;
         }
 
-        if (!User.emailIsValid(email)) {
+        if (!FieldValidation.emailIsValid(email)) {
             if (username.isEmpty()) { field_email.setError("Email is required!"); }
             else { field_email.setError("This is an invalid E-mail!"); }
             field_email.requestFocus();

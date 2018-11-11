@@ -8,18 +8,13 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUtil;
+import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
+import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation.PasswordValidationResult;
 
 public class User implements Serializable {
 
-    public static final String ILLEGAL_USERNAME_CHARS_REGEX = ".*[^a-zA-Z0-9_].*";
-    public static final String ILLEGAL_USERNAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z 0-9 _";
-    // Illegal Name Characters: 0-9 < > ] [ } { \ / ! @ # $ % ^ & * _ + = ) (
-    public static final String ILLEGAL_NAME_CHARS_REGEX = ".*[0-9<>\\]\\[}{\\\\/!@#$%^&*_+=)(:;].*";
-    public static final int PASSWORD_MIN_LENGTH = 6;
-    public static final String[] ILLEGAL_PASSWORDS = { "password" };
-    public enum PasswordValidationResult { VALID, EMPTY, TOO_SHORT, CONFIRM_MISMATCH, ILLEGAL_PASSWORD, CONTAINS_USERNAME }
 
     /**
      * The class User allows for the creation of User objects, and stores the pertinent values for each User.
@@ -66,14 +61,15 @@ public class User implements Serializable {
      */
     public User(String firstName, String lastName, String username, String email, Types type, String pass) {
         if (null == type) { throw new IllegalArgumentException("The userType parameter cannot be null."); }
-        if (!usernameIsValid(username)) { throw new InvalidDataException("Invalid username. " + ILLEGAL_USERNAME_CHARS_MSG); }
-        PasswordValidationResult passwordValRes = validatePassword(username, pass, pass);
+        if (!FieldValidation.usernameIsValid(username)) { throw new InvalidDataException("Invalid username. " +
+                FieldValidation.ILLEGAL_USERNAME_CHARS_MSG); }
+        PasswordValidationResult passwordValRes = FieldValidation.validatePassword(username, pass, pass);
         if (PasswordValidationResult.VALID != passwordValRes) {
             throw new InvalidDataException("Invalid password. " + passwordValRes.toString());
         }
-        if (!nameIsValid(firstName)) { throw new InvalidDataException("Invalid First Name. ");  }
-        if (!nameIsValid(lastName)) { throw new InvalidDataException("Invalid Last Name. ");  }
-        if (!emailIsValid(email)) { throw new InvalidDataException("Invalid Email Address. ");  }
+        if (!FieldValidation.nameIsValid(firstName)) { throw new InvalidDataException("Invalid First Name. ");  }
+        if (!FieldValidation.nameIsValid(lastName)) { throw new InvalidDataException("Invalid Last Name. ");  }
+        if (!FieldValidation.emailIsValid(email)) { throw new InvalidDataException("Invalid Email Address. ");  }
 
         this.firstName = firstName;
         this.lastName = lastName;
@@ -135,62 +131,6 @@ public class User implements Serializable {
         return type == Types.ADMIN;
     }
 
-    /**
-     * Method for checking validity of a username (i.e that it is not empty or null, and that it
-     * does not contain illegal characters)
-     *
-     * @param username the username you want to check
-     * @return true if username is valid, false otherwise
-     */
-    public static boolean usernameIsValid(String username) {
-        if (null == username || username.isEmpty()) { return false; }
-        return !username.matches(ILLEGAL_USERNAME_CHARS_REGEX);
-    }
-
-    /**
-     * Method for checking validity of a first or last name (i.e that it is not empty or null, and that it
-     * does not contain illegal characters)
-     *
-     * @param name the username you want to check
-     * @return true if name is valid, false otherwise
-     */
-    public static boolean nameIsValid(String name) {
-        if (null == name || name.isEmpty()) { return false; }
-        return !name.matches(ILLEGAL_NAME_CHARS_REGEX);
-    }
-
-    /**
-     * Method for checking if a given email is valid
-     *
-     * @param email the email address you want to check
-     * @return true if email is valid, false otherwise
-     */
-    public static boolean emailIsValid(CharSequence email) {
-        if (null == email || email.toString().isEmpty()) { return false; }
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
-    }
-
-    /**
-     * Method for checking if a given password is valid. Checks for empty or null inputs, as well as
-     * illegal characters. Also ensures that the password does not contain the User's username and
-     * that both password fields match.
-     *
-     * @param username the username associated with the password you are checking
-     * @param password the input of the primary password field
-     * @param confirmPassword the input of the secondary password field
-     * @return true if the password is valid, false otherwise
-     */
-    public static PasswordValidationResult validatePassword(String username, String password, String confirmPassword) {
-        if (null == password || password.isEmpty()) { return PasswordValidationResult.EMPTY; }
-        if (null != username && username.equals("admin")) { return PasswordValidationResult.VALID; }
-        if (password.length() < PASSWORD_MIN_LENGTH) { return PasswordValidationResult.TOO_SHORT; }
-        if (null != username && password.toLowerCase().contains(username.toLowerCase())) { return PasswordValidationResult.CONTAINS_USERNAME; }
-        for (String illegalPW: ILLEGAL_PASSWORDS) {
-            if (password.toLowerCase().equals(illegalPW)) { return PasswordValidationResult.ILLEGAL_PASSWORD; }
-        }
-        if (!password.equals(confirmPassword)) { return PasswordValidationResult.CONFIRM_MISMATCH; }
-        return PasswordValidationResult.VALID;
-    }
 
     /**
      * A method for converting a string representation of a Type into a Type.
@@ -276,7 +216,7 @@ public class User implements Serializable {
     }
 
     public void updatePassword(String password, final AsyncActionEventListener listener) {
-        PasswordValidationResult passwordValRes = validatePassword(username, password, password);
+        PasswordValidationResult passwordValRes = FieldValidation.validatePassword(username, password, password);
         if (PasswordValidationResult.VALID != passwordValRes) {
             throw new InvalidDataException("Invalid password. " + passwordValRes.toString());
         }
