@@ -2,21 +2,16 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
-import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
@@ -70,6 +65,21 @@ public class UserAccountViewActivity extends SignedInActivity {
 
     }
 
+    private void setupFields() {
+        User currentUser = State.getState().getCurrentUser();
+        if (null == currentUser) {
+            txt_account_type.setText("");
+            txt_username.setText("");
+            txt_full_name.setText("");
+            txt_email.setText("");
+        } else {
+            txt_account_type.setText(currentUser.getType().toString());
+            txt_username.setText(currentUser.getUsername());
+            txt_full_name.setText(String.format(getString(R.string.full_name_template), currentUser.getFirstName(), currentUser.getLastName()));
+            txt_email.setText(currentUser.getEmail());
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         User user = State.getState().getSignedInUser();
@@ -88,21 +98,6 @@ public class UserAccountViewActivity extends SignedInActivity {
             case R.id.menu_item_user_delete: onDeleteAccountClick(); return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void setupFields() {
-        User currentUser = State.getState().getCurrentUser();
-        if (null == currentUser) {
-            txt_account_type.setText("");
-            txt_username.setText("");
-            txt_full_name.setText("");
-            txt_email.setText("");
-        } else {
-            txt_account_type.setText(currentUser.getType().toString());
-            txt_username.setText(currentUser.getUsername());
-            txt_full_name.setText(String.format(getString(R.string.full_name_template), currentUser.getFirstName(), currentUser.getLastName()));
-            txt_email.setText(currentUser.getEmail());
-        }
     }
 
     public void onEditAccountClick() {
