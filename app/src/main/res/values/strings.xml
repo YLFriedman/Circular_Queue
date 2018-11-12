@@ -132,7 +132,7 @@
     <string name="service_list_db_error">There was an error getting the services from the database. Please try again later.</string>
     <string name="category_delete_db_error">Unable to delete the \'%s\' category at this time due to a database error. Please try again later.</string>
     <string name="category_delete_has_services_error">Unable to delete the \'%s\' category because it has services assigned to it. Please re-assign the services, then delete.</string>
-    <string name="category_delete_success">The the \'%s\' category has been successfully deleted.</string>
+    <string name="category_delete_success">The \'%s\' category has been successfully deleted.</string>
     <string name="service_details_db_error">There was an error getting the service details from the database. Please try again later.</string>
     <string name="current_service_empty">No service provided.</string>
     <string name="service_delete_success">The \'%s\' service has been successfully deleted.</string>
