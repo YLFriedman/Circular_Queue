@@ -51,7 +51,7 @@ public class DbUtil {
      * @param object The object to be adapted
      * @return A DbItem adaptation of the input object
      */
-    protected static DbItem<?> objectToDbItem(Object object) {
+    private static DbItem<?> objectToDbItem(Object object) {
         if (null == object) { throw new IllegalArgumentException("The object cannot be null."); }
         if (object instanceof User) { return new DbUser((User) object); }
         if (object instanceof Service) { return new DbService((Service) object); }
@@ -65,7 +65,7 @@ public class DbUtil {
      * @param object
      * @return
      */
-    protected static DataType getType(Object object) {
+    private static DataType getType(Object object) {
         if (null == object) { throw new IllegalArgumentException("The object cannot be null."); }
         if (object instanceof User) { return DataType.USER; }
         if (object instanceof Service) { return DataType.SERVICE; }
@@ -93,13 +93,12 @@ public class DbUtil {
      * @param type the type of object whose class you want
      * @return the class of the specified datatype
      */
-    protected static Class getDbClassObj(DataType type) {
-        if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
+    private static @NonNull Class getDbClassObj(@NonNull DataType type) {
         switch (type) {
             case USER: return DbUser.class;
             case SERVICE: return DbService.class;
             case CATEGORY: return DbCategory.class;
-            default: return null;
+            default: throw new UnsupportedOperationException("The type is unsupported by this method.");
         }
     }
 
@@ -109,7 +108,7 @@ public class DbUtil {
      * @param type the type of DbItem
      * @return A DatabaseReference pointing to the node which corresponds to the input type
      */
-    protected static DatabaseReference getRef(DataType type) {
+    private static DatabaseReference getRef(DataType type) {
         if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
         return FirebaseDatabase.getInstance().getReference().child(type.toString());
     }
@@ -162,11 +161,16 @@ public class DbUtil {
         });
     }
 
-
+    @SuppressWarnings("unchecked")
     public static <T> void getItems(final DataType type, final AsyncValueEventListener<T> listener) {
+        getItems(type, listener, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> void getItems(final DataType type, final AsyncValueEventListener<T> listener, boolean singleEvent) {
         if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
         if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
-        getRef(type).addListenerForSingleValueEvent(new ValueEventListener() {
+        ValueEventListener dataConversionListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 long size = dataSnapshot.getChildrenCount();
@@ -187,7 +191,9 @@ public class DbUtil {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
             }
-        });
+        };
+        if (singleEvent) { getRef(type).addListenerForSingleValueEvent(dataConversionListener); }
+        else { getRef(type).addValueEventListener(dataConversionListener); }
     }
 
     public static <T> void getItems(final DataType type, String childKey, String childValue, final AsyncValueEventListener<T> listener) {
