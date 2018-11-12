@@ -12,6 +12,7 @@ import android.widget.Toast;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
@@ -58,10 +59,10 @@ public class UserAccountChangePasswordActivity extends SignedInActivity {
         }
 
         Boolean passwordError = true;
-        switch (User.validatePassword(currentUser.getUsername(), password, passwordConfirm)) {
+        switch (FieldValidation.validatePassword(currentUser.getUsername(), password, passwordConfirm)) {
             case VALID: passwordError = false; break;
             case EMPTY: field_password.setError("Password is required!"); break;
-            case TOO_SHORT: field_password.setError("Minimum length of password is " + User.PASSWORD_MIN_LENGTH + " characters."); break;
+            case TOO_SHORT: field_password.setError("Minimum length of password is " + FieldValidation.PASSWORD_MIN_LENGTH + " characters."); break;
             case CONFIRM_MISMATCH:
                 field_password_confirm.setError("Both passwords must match.");
                 field_password_confirm.requestFocus();

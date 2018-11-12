@@ -18,6 +18,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
+import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 public class UserAccountCreateActivity extends AppCompatActivity {
@@ -57,15 +58,15 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         String password = field_password.getText().toString();
         String passwordConfirm = field_password_confirm.getText().toString();
 
-        if (!User.usernameIsValid(username)) {
+        if (!FieldValidation.usernameIsValid(username)) {
             if (username.isEmpty()) { field_username.setError("Username is required!"); }
-            else { field_username.setError("Username is invalid. " + User.ILLEGAL_USERNAME_CHARS_MSG); }
+            else { field_username.setError("Username is invalid. " + FieldValidation.ILLEGAL_USERNAME_CHARS_MSG); }
             field_username.requestFocus();
             field_username.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
 
-        if (!User.nameIsValid(firstName)) {
+        if (!FieldValidation.nameIsValid(firstName)) {
             if (username.isEmpty()) { field_first_name.setError("First name is required!"); }
             else { field_first_name.setError("First name is invalid. "); }
             field_first_name.requestFocus();
@@ -73,7 +74,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
             return;
         }
 
-        if (!User.nameIsValid(lastName)) {
+        if (!FieldValidation.nameIsValid(lastName)) {
             if (username.isEmpty()) { field_last_name.setError("Last name is required!"); }
             else { field_last_name.setError("Last name is invalid. "); }
             field_last_name.requestFocus();
@@ -81,7 +82,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
             return;
         }
 
-        if (!User.emailIsValid(email)) {
+        if (!FieldValidation.emailIsValid(email)) {
             if (username.isEmpty()) { field_email.setError("Email is required!"); }
             else { field_email.setError("This is an invalid E-mail!"); }
             field_email.requestFocus();
@@ -90,10 +91,10 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         }
 
         Boolean passwordError = true;
-        switch (User.validatePassword(username, password, passwordConfirm)) {
+        switch (FieldValidation.validatePassword(username, password, passwordConfirm)) {
             case VALID: passwordError = false; break;
             case EMPTY: field_password.setError("Password is required!"); break;
-            case TOO_SHORT: field_password.setError("Minimum length of password is " + User.PASSWORD_MIN_LENGTH + " characters."); break;
+            case TOO_SHORT: field_password.setError("Minimum length of password is " + FieldValidation.PASSWORD_MIN_LENGTH + " characters."); break;
             case CONFIRM_MISMATCH:
                 field_password_confirm.setError("Both passwords must match.");
                 field_password_confirm.requestFocus();

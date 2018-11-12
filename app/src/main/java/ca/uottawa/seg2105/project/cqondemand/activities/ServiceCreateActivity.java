@@ -22,6 +22,7 @@ import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 
 public class ServiceCreateActivity extends SignedInActivity {
 
@@ -95,8 +96,8 @@ public class ServiceCreateActivity extends SignedInActivity {
             field_service_name.requestFocus();
             field_service_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
-        } else if (!Service.nameIsValid(name)) {
-            field_service_name.setError("Service name is invalid. " + Service.ILLEGAL_SERVICENAME_CHARS_MSG);
+        } else if (!FieldValidation.serviceNameIsValid(name)) {
+            field_service_name.setError("Service name is invalid. " + FieldValidation.ILLEGAL_SERVICENAME_CHARS_MSG);
             field_service_name.requestFocus();
             field_service_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;

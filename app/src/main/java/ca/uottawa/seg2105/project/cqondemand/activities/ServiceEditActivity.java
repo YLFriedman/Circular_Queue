@@ -22,6 +22,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
@@ -114,9 +115,9 @@ public class ServiceEditActivity extends SignedInActivity {
         }
 
         // Check valid service name
-        if (!Service.nameIsValid(name)) {
+        if (!FieldValidation.serviceNameIsValid(name)) {
             if (name.isEmpty()) { field_service_name.setError("Service name is required!"); }
-            else { field_service_name.setError("Service name is invalid. " + Service.ILLEGAL_SERVICENAME_CHARS_MSG); }
+            else { field_service_name.setError("Service name is invalid. " + FieldValidation.ILLEGAL_SERVICENAME_CHARS_MSG); }
             field_service_name.requestFocus();
             field_service_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;

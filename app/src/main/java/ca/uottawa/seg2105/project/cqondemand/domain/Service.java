@@ -9,12 +9,11 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUtil;
+import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 public class Service {
 
-    public static final String ILLEGAL_SERVICENAME_CHARS_REGEX = ".*[^'a-zA-Z -].*";
-    public static final String ILLEGAL_SERVICENAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z - space '";
 
     private String name;
     private int rate;
@@ -29,7 +28,8 @@ public class Service {
      * @param rate The rate per hour that this service costs
      */
     public Service(String name, int rate, String categoryID) {
-        if (!nameIsValid(name)) { throw new InvalidDataException("Invalid service name. " + ILLEGAL_SERVICENAME_CHARS_MSG); }
+        if (!FieldValidation.serviceNameIsValid(name)) { throw new InvalidDataException("Invalid service name. " +
+                FieldValidation.ILLEGAL_SERVICENAME_CHARS_MSG); }
         if (null == categoryID) { throw new IllegalArgumentException("The categoryID cannot be null."); }
         if (rate < 0) { throw new InvalidDataException("Rate cannot be negative. "); }
         this.name = name;
@@ -44,7 +44,8 @@ public class Service {
      * @param rate The rate per hour that this service costs
      */
     public Service(String name, int rate, Category category) {
-        if (!nameIsValid(name)) { throw new InvalidDataException("Invalid service name. " + ILLEGAL_SERVICENAME_CHARS_MSG); }
+        if (!FieldValidation.serviceNameIsValid(name)) { throw new InvalidDataException("Invalid service name. " +
+                FieldValidation.ILLEGAL_SERVICENAME_CHARS_MSG); }
         if (null == category) { throw new IllegalArgumentException("The category cannot be null."); }
         if (rate < 0) { throw new InvalidDataException("Rate cannot be negative. "); }
         this.name = name;
@@ -107,10 +108,6 @@ public class Service {
         return name;
     }
 
-    public static boolean nameIsValid(String name) {
-        if (name == null || name.isEmpty()) { return false;  }
-        return !name.matches(ILLEGAL_SERVICENAME_CHARS_REGEX);
-    }
 
     public void create(final AsyncActionEventListener listener) {
         DbUtil.createItem(this, listener);

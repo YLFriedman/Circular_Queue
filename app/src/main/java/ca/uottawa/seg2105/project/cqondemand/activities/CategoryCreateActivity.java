@@ -12,6 +12,7 @@ import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
+import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 public class CategoryCreateActivity extends SignedInActivity {
@@ -27,9 +28,9 @@ public class CategoryCreateActivity extends SignedInActivity {
         final String categoryName = field_category_name.getText().toString().trim();
         final Button btn_create_category = findViewById(R.id.btn_create_category);
 
-        if (!Category.nameIsValid(categoryName)) {
+        if (!FieldValidation.categoryNameIsValid(categoryName)) {
             if (categoryName.isEmpty()) { field_category_name.setError("Category name is required!"); }
-            else { field_category_name.setError("Category name is invalid. " + Category.ILLEGAL_CATEGORY_NAME_CHARS_MSG); }
+            else { field_category_name.setError("Category name is invalid. " + FieldValidation.ILLEGAL_SERVICENAME_CHARS_MSG); }
             field_category_name.requestFocus();
             field_category_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
