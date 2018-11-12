@@ -90,11 +90,11 @@ public class SignInActivity extends AppCompatActivity {
      */
     public void onSignInClick(View view) {
         if (field_username.getText().toString().trim().isEmpty()) {
-            field_username.setError("Username is required!");
+            field_username.setError(getString(R.string.empty_username_error));
             field_username.requestFocus();
             field_username.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
         } else if (field_password.getText().toString().isEmpty()) {
-            field_password.setError("Password is required!");
+            field_password.setError(getString(R.string.empty_password_error));
             field_password.requestFocus();
             field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
         } else {
@@ -116,13 +116,13 @@ public class SignInActivity extends AppCompatActivity {
                     btn_sign_up.setEnabled(true);
                     switch (reason) {
                         case DATABASE_ERROR:
-                            Toast.makeText(getApplicationContext(), "Unable to sign in due to a Database Error! Please try again later.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), R.string.sign_in_db_error, Toast.LENGTH_LONG).show();
                             break;
                         case INVALID_DATA:
-                            Toast.makeText(getApplicationContext(), "Unable to sign in, your account data is corrupt.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), R.string.sign_in_corrupt_data_error, Toast.LENGTH_LONG).show();
                             break;
                         default:
-                            Toast.makeText(getApplicationContext(), "Invalid Credentials!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), R.string.sign_in_invalid_creds, Toast.LENGTH_LONG).show();
                     }
                 }
             });

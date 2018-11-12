@@ -56,7 +56,7 @@ public class CategoryListActivity extends SignedInActivity {
             }
             @Override
             public void onFailure(AsyncEventFailureReason reason) {
-                Toast.makeText(getApplicationContext(), "There was an error getting the categories from the database. Please try again later.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.category_list_db_error), Toast.LENGTH_LONG).show();
             }
         });
     }

@@ -63,38 +63,38 @@ public class UserAccountEditActivity extends SignedInActivity {
 
         if (firstName.equals(currentUser.getFirstName()) && lastName.equals(currentUser.getLastName())
                 && username.equals(currentUser.getUsername()) && email.equals(currentUser.getEmail())) {
-            Toast.makeText(getApplicationContext(), "No changes were made to the account details.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.no_changes_made_error, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
         if (!FieldValidation.usernameIsValid(username)) {
-            if (username.isEmpty()) { field_username.setError("Username is required!"); }
-            else { field_username.setError("Username is invalid. " + FieldValidation.ILLEGAL_USERNAME_CHARS_MSG); }
+            if (username.isEmpty()) { field_username.setError(getString(R.string.empty_username_error)); }
+            else { field_username.setError(getString(R.string.invalid_username_msg)); }
             field_username.requestFocus();
             field_username.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
 
         if (!FieldValidation.nameIsValid(firstName)) {
-            if (username.isEmpty()) { field_first_name.setError("First name is required!"); }
-            else { field_first_name.setError("First name is invalid. "); }
+            if (username.isEmpty()) { field_first_name.setError(getString(R.string.empty_first_name_error)); }
+            else { field_first_name.setError(getString(R.string.invalid_first_name_error)); }
             field_first_name.requestFocus();
             field_first_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
 
         if (!FieldValidation.nameIsValid(lastName)) {
-            if (username.isEmpty()) { field_last_name.setError("Last name is required!"); }
-            else { field_last_name.setError("Last name is invalid. "); }
+            if (username.isEmpty()) { field_last_name.setError(getString(R.string.empty_last_name_error)); }
+            else { field_last_name.setError(getString(R.string.invalid_last_name_error)); }
             field_last_name.requestFocus();
             field_last_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
 
         if (!FieldValidation.emailIsValid(email)) {
-            if (username.isEmpty()) { field_email.setError("Email is required!"); }
-            else { field_email.setError("This is an invalid E-mail!"); }
+            if (username.isEmpty()) { field_email.setError(getString(R.string.empty_email_error)); }
+            else { field_email.setError(getString(R.string.invalid_email_error)); }
             field_email.requestFocus();
             field_email.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
@@ -103,34 +103,30 @@ public class UserAccountEditActivity extends SignedInActivity {
         final User updatedUser;
         final Button btn_save_user = findViewById(R.id.btn_save_user);
         btn_save_user.setEnabled(false);
-        try {
-            updatedUser = new User(firstName, lastName, username, email, currentUser.getType(), currentUser.getPassword());
-        } catch (InvalidDataException e) {
-            Toast.makeText(getApplicationContext(), "Unable to update your account. An invalid input has been detected: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            return;
-        }
+        updatedUser = new User(firstName, lastName, username, email, currentUser.getType(), currentUser.getPassword());
+
 
         DbUser.updateUser(currentUser, updatedUser, new AsyncActionEventListener() {
             public void onSuccess() {
                 currentUser = State.getState().getSignedInUser();
-                Toast.makeText(getApplicationContext(), "Account updated successfully!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), R.string.account_update_success, Toast.LENGTH_LONG).show();
                 finish();
             }
             public void onFailure(AsyncEventFailureReason reason) {
                 switch (reason) {
                     case ALREADY_EXISTS:
                         btn_save_user.setEnabled(true);
-                        field_username.setError("Username is already in use!");
+                        field_username.setError(getString(R.string.username_already_taken));
                         field_username.requestFocus();
                         field_username.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                         break;
                     case DATABASE_ERROR:
-                        Toast.makeText(getApplicationContext(), "Unable to update your account at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), R.string.account_update_db_error, Toast.LENGTH_LONG).show();
                         break;
                     default:
                         // Some other kind of error
                         btn_save_user.setEnabled(true);
-                        Toast.makeText(getApplicationContext(), "Unable to update your account at this time. Please try again later.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), R.string.account_update_generic_error, Toast.LENGTH_LONG).show();
                 }
                 btn_save_user.setEnabled(true);
             }

@@ -63,7 +63,7 @@ public class ServiceViewActivity extends SignedInActivity {
                 }
                 @Override
                 public void onFailure(AsyncEventFailureReason reason) {
-                    Toast.makeText(getApplicationContext(), "There was an error getting the service details from the database. Please try again later.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.service_details_db_error, Toast.LENGTH_LONG).show();
                     finish();
                 }
             });
@@ -74,7 +74,7 @@ public class ServiceViewActivity extends SignedInActivity {
         } else if (null != currentService) {
             setupFields();
         }  else {
-            Toast.makeText(getApplicationContext(), "No service provided.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.current_service_empty, Toast.LENGTH_LONG).show();
             finish();
         }
     }
@@ -138,7 +138,7 @@ public class ServiceViewActivity extends SignedInActivity {
     public void onDeleteServiceClick() {
         if (null != currentService) {
             new AlertDialog.Builder(this)
-                    .setTitle("Delete Service")
+                    .setTitle(R.string.delete_service)
                     .setMessage("Are you sure you want to delete the '" + currentService.getName() + "' service?  \r\nThis CANNOT be undone!")
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
@@ -146,12 +146,12 @@ public class ServiceViewActivity extends SignedInActivity {
                             DbService.deleteService(currentService, new AsyncActionEventListener() {
                                 @Override
                                 public void onSuccess() {
-                                    Toast.makeText(getApplicationContext(), "The '" + currentService.getName() + "' service has been successfully deleted.", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), String.format(getString(R.string.service_delete_success), currentService.getName()), Toast.LENGTH_LONG).show();
                                     finish();
                                 }
                                 @Override
                                 public void onFailure(AsyncEventFailureReason reason) {
-                                    Toast.makeText(getApplicationContext(), "Unable to delete the '" + currentService.getName() + "' service at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), String.format(getString(R.string.service_delete_db_error), currentService.getName()), Toast.LENGTH_LONG).show();
                                 }
                             });
                         }

@@ -55,7 +55,7 @@ public class UserAccountViewActivity extends SignedInActivity {
                 }
                 @Override
                 public void onFailure(AsyncEventFailureReason reason) {
-                    Toast.makeText(getApplicationContext(), "Unable to retrieve the user '" + username + "' from the database.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), String.format(getString(R.string.user_retrieval_db_error), username), Toast.LENGTH_LONG).show();
                     finish();
                 }
             });
@@ -113,14 +113,14 @@ public class UserAccountViewActivity extends SignedInActivity {
         final User currentUser = State.getState().getCurrentUser();
         if (null != currentUser) {
             new AlertDialog.Builder(this)
-                    .setTitle("Delete Account")
+                    .setTitle(R.string.delete_account)
                     .setMessage("Are you sure you want to delete the '" + currentUser.getUsername() + "' account?  \r\nThis CANNOT be undone!")
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             DbUser.deleteUser(currentUser, new AsyncActionEventListener() {
                                 public void onSuccess() {
-                                    Toast.makeText(getApplicationContext(), "The user account '" + currentUser.getUsername() + "' has been successfully deleted.", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), String.format(getString(R.string.account_delete_success), currentUser.getUsername()), Toast.LENGTH_LONG).show();
                                     if (null != State.getState().getSignedInUser() && State.getState().getSignedInUser().equals(currentUser)) {
                                         State.getState().setSignedInUser(null);
                                     }
@@ -128,7 +128,7 @@ public class UserAccountViewActivity extends SignedInActivity {
                                     finish();
                                 }
                                 public void onFailure(AsyncEventFailureReason reason) {
-                                    Toast.makeText(getApplicationContext(), "Unable to delete your account at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), R.string.account_delete_db_error, Toast.LENGTH_LONG).show();
                                 }
                             });
                         }
