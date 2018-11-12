@@ -1,6 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -116,7 +117,7 @@ public class UserAccountEditActivity extends SignedInActivity {
                 Toast.makeText(getApplicationContext(), "Account updated successfully!", Toast.LENGTH_LONG).show();
                 finish();
             }
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 switch (reason) {
                     case ALREADY_EXISTS:
                         btn_save_user.setEnabled(true);

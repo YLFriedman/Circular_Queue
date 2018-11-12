@@ -1,6 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -40,11 +41,11 @@ public class SignInActivity extends AppCompatActivity {
             btn_create_admin_account = findViewById(R.id.btn_create_admin_account);
             DbUser.getUser("admin", new AsyncSingleValueEventListener<User>() {
                 @Override
-                public void onSuccess(User user) {
+                public void onSuccess(@NonNull User user) {
                     btn_create_admin_account.setVisibility(View.GONE);
                 }
                 @Override
-                public void onFailure(AsyncEventFailureReason reason) {
+                public void onFailure(@NonNull AsyncEventFailureReason reason) {
                     if (AsyncEventFailureReason.DOES_NOT_EXIST == reason) {
                         btn_create_admin_account.setVisibility(View.VISIBLE);
                     } else {
@@ -111,7 +112,7 @@ public class SignInActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(AsyncEventFailureReason reason) {
+                public void onFailure(@NonNull AsyncEventFailureReason reason) {
                     btn_sign_in.setEnabled(true);
                     btn_sign_up.setEnabled(true);
                     switch (reason) {
@@ -150,7 +151,7 @@ public class SignInActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 if (AsyncEventFailureReason.ALREADY_EXISTS == reason) {
                     Toast.makeText(getApplicationContext(), "The admin account already exists.", Toast.LENGTH_LONG).show();
                     btn_create_admin_account.setVisibility(View.GONE);
@@ -167,7 +168,7 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onSuccess() { }
             @Override
-            public void onFailure(AsyncEventFailureReason reason) { }
+            public void onFailure(@NonNull AsyncEventFailureReason reason) { }
         });
     }
 

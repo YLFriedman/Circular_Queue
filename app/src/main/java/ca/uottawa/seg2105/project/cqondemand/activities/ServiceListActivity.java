@@ -2,6 +2,7 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -58,21 +59,19 @@ public class ServiceListActivity extends SignedInActivity {
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         AsyncValueEventListener<Service> listener = new AsyncValueEventListener<Service>() {
             @Override
-            public void onSuccess(ArrayList<Service> data) {
-                if (null != data) {
-                    service_list_adapter = new ServiceListAdapter(getApplicationContext(), data, new View.OnClickListener() {
-                        public void onClick(final View view) {
-                            TextView field = view.findViewById(R.id.txt_title);
-                            Intent intent = new Intent(getApplicationContext(), ServiceViewActivity.class);
-                            intent.putExtra("service_name", field.getText().toString());
-                            startActivity(intent);
-                        }
-                    });
-                    recycler_list.setAdapter(service_list_adapter);
-                }
+            public void onSuccess(@NonNull ArrayList<Service> data) {
+                service_list_adapter = new ServiceListAdapter(getApplicationContext(), data, new View.OnClickListener() {
+                    public void onClick(final View view) {
+                        TextView field = view.findViewById(R.id.txt_title);
+                        Intent intent = new Intent(getApplicationContext(), ServiceViewActivity.class);
+                        intent.putExtra("service_name", field.getText().toString());
+                        startActivity(intent);
+                    }
+                });
+                recycler_list.setAdapter(service_list_adapter);
             }
             @Override
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), "There was an error getting the services from the database. Please try again later.", Toast.LENGTH_LONG).show();
             }
         };
@@ -117,10 +116,8 @@ public class ServiceListActivity extends SignedInActivity {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             DbService.getServices(categoryName, new AsyncValueEventListener<Service>() {
                                 @Override
-                                public void onSuccess(ArrayList<Service> data) {
-                                    if (null == data) {
-                                        Toast.makeText(getApplicationContext(), "Unable to delete the '" + categoryName + "' category at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
-                                    } else if (data.size() > 0) {
+                                public void onSuccess(@NonNull ArrayList<Service> data) {
+                                    if (data.size() > 0) {
                                         Toast.makeText(getApplicationContext(), "Unable to delete the '" + categoryName + "' category because it has services assigned to it. Please re-assign the services, then delete.", Toast.LENGTH_LONG).show();
                                     } else {
                                         DbCategory.deleteCategory(category, new AsyncActionEventListener() {
@@ -130,14 +127,14 @@ public class ServiceListActivity extends SignedInActivity {
                                                 finish();
                                             }
                                             @Override
-                                            public void onFailure(AsyncEventFailureReason reason) {
+                                            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                                                 Toast.makeText(getApplicationContext(), "Unable to delete the '" + categoryName + "' category at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
                                             }
                                         });
                                     }
                                 }
                                 @Override
-                                public void onFailure(AsyncEventFailureReason reason) {
+                                public void onFailure(@NonNull AsyncEventFailureReason reason) {
                                     Toast.makeText(getApplicationContext(), "Unable to delete the '" + categoryName + "' category at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
                                 }
                             });

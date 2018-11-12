@@ -1,6 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -86,7 +87,7 @@ public class UserAccountChangePasswordActivity extends SignedInActivity {
                 btn_save_password.setEnabled(true);
                 finish();
             }
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 btn_save_password.setEnabled(true);
                 Toast.makeText(getApplicationContext(), "Unable to update your password at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
             }

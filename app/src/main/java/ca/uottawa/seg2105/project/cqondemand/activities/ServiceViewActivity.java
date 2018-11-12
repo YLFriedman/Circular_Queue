@@ -62,7 +62,7 @@ public class ServiceViewActivity extends SignedInActivity {
                     setupFields();
                 }
                 @Override
-                public void onFailure(AsyncEventFailureReason reason) {
+                public void onFailure(@NonNull AsyncEventFailureReason reason) {
                     Toast.makeText(getApplicationContext(), "There was an error getting the service details from the database. Please try again later.", Toast.LENGTH_LONG).show();
                     finish();
                 }
@@ -97,7 +97,7 @@ public class ServiceViewActivity extends SignedInActivity {
                     txt_category.setText(String.format(Locale.CANADA, getString(R.string.category_template), item.getName()));
                 }
                 @Override
-                public void onFailure(AsyncEventFailureReason reason) { }
+                public void onFailure(@NonNull AsyncEventFailureReason reason) { }
             });
         }
     }
@@ -150,7 +150,7 @@ public class ServiceViewActivity extends SignedInActivity {
                                     finish();
                                 }
                                 @Override
-                                public void onFailure(AsyncEventFailureReason reason) {
+                                public void onFailure(@NonNull AsyncEventFailureReason reason) {
                                     Toast.makeText(getApplicationContext(), "Unable to delete the '" + currentService.getName() + "' service at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
                                 }
                             });

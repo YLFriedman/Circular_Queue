@@ -52,7 +52,7 @@ public class ServiceEditActivity extends SignedInActivity {
                     categoryName = item.getName();
                 }
                 @Override
-                public void onFailure(AsyncEventFailureReason reason) { }
+                public void onFailure(@NonNull AsyncEventFailureReason reason) { }
             });
         } else {
             finish();
@@ -68,11 +68,11 @@ public class ServiceEditActivity extends SignedInActivity {
         }
         DbCategory.getCategories(new AsyncValueEventListener<Category>() {
             @Override
-            public void onSuccess(ArrayList<Category> data) {
+            public void onSuccess(@NonNull ArrayList<Category> data) {
                 loadSpinnerData(data);
             }
             @Override
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), "Unable to load the category list at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
             }
         });
@@ -164,7 +164,7 @@ public class ServiceEditActivity extends SignedInActivity {
                 finish();
             }
             @Override
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 switch (reason) {
                     case DATABASE_ERROR:
                         Toast.makeText(getApplicationContext(), "Unable to update your service at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();

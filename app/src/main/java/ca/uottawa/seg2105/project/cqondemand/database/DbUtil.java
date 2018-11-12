@@ -181,7 +181,7 @@ public class DbUtil {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 long size = dataSnapshot.getChildrenCount();
                 ArrayList<T> returnValue = new ArrayList<T>(size > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) size);
-                for (DataSnapshot snapshot: dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
                     try {
                         DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(type));
                         T domainObjItem = dbItem.toDomainObj();
@@ -273,12 +273,12 @@ public class DbUtil {
         final String key = dbItem.generateKey();
         getItem(type, key, new AsyncSingleValueEventListener<T>() {
             @Override
-            public void onSuccess(T item) {
+            public void onSuccess(@NonNull T item) {
                 //Failure condition, Item already exists in db
                 listener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS);
             }
             @Override
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 //Success condition, item can be safely created;
                 if (reason == AsyncEventFailureReason.DOES_NOT_EXIST) {
                     getRef(type).child(key).setValue(dbItem, new DatabaseReference.CompletionListener() {
@@ -304,7 +304,7 @@ public class DbUtil {
         final String key = dbItem.generateKey();
         getItem(type, key, new AsyncSingleValueEventListener<T>() {
             @Override
-            public void onSuccess(T item) {
+            public void onSuccess(@NonNull T item) {
                 // Success condition: Item exists in database and can be updated
                 DatabaseReference ref = getRef(type);
                 ref.child(key).setValue(dbItem, new DatabaseReference.CompletionListener() {
@@ -316,7 +316,7 @@ public class DbUtil {
                 });
             }
             @Override
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 // Failure condition: cannot update an item that doesn't currently exist in the db
                 listener.onFailure(reason);
             }
@@ -335,12 +335,12 @@ public class DbUtil {
         final String key = dbItem.generateKey();
         getItem(type, key, new AsyncSingleValueEventListener<T>() {
             @Override
-            public void onSuccess(T item) {
+            public void onSuccess(@NonNull T item) {
                 // Error condition: The new item already exists
                 listener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS);
             }
             @Override
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 if (AsyncEventFailureReason.DOES_NOT_EXIST == reason) {
                     deleteItem(oldItem, new AsyncActionEventListener() {
                         @Override
@@ -348,7 +348,7 @@ public class DbUtil {
                             createItem(newItem, listener);
                         }
                         @Override
-                        public void onFailure(AsyncEventFailureReason reason) {
+                        public void onFailure(@NonNull AsyncEventFailureReason reason) {
                             listener.onFailure(reason);
                         }
                     });

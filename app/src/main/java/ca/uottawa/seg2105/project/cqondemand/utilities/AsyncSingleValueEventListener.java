@@ -8,6 +8,6 @@ public interface AsyncSingleValueEventListener<E> {
 
     public void onSuccess(@NonNull E item);
 
-    public void onFailure(AsyncEventFailureReason reason);
+    public void onFailure(@NonNull AsyncEventFailureReason reason);
 
 }

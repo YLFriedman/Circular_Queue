@@ -2,6 +2,7 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.view.Menu;
@@ -49,12 +50,12 @@ public class UserAccountViewActivity extends SignedInActivity {
             // Try to get the user object
             DbUser.getUser(username, new AsyncSingleValueEventListener<User>() {
                 @Override
-                public void onSuccess(User user) {
+                public void onSuccess(@NonNull User user) {
                     State.getState().setCurrentUser(user);
                     setupFields();
                 }
                 @Override
-                public void onFailure(AsyncEventFailureReason reason) {
+                public void onFailure(@NonNull AsyncEventFailureReason reason) {
                     Toast.makeText(getApplicationContext(), "Unable to retrieve the user '" + username + "' from the database.", Toast.LENGTH_LONG).show();
                     finish();
                 }
@@ -127,7 +128,7 @@ public class UserAccountViewActivity extends SignedInActivity {
                                     State.getState().setCurrentUser(null);
                                     finish();
                                 }
-                                public void onFailure(AsyncEventFailureReason reason) {
+                                public void onFailure(@NonNull AsyncEventFailureReason reason) {
                                     Toast.makeText(getApplicationContext(), "Unable to delete your account at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
                                 }
                             });

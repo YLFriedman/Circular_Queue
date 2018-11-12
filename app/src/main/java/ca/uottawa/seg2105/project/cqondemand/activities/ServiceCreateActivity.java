@@ -2,6 +2,7 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
@@ -46,11 +47,11 @@ public class ServiceCreateActivity extends SignedInActivity {
         if (isFinishing()) { return; }
         DbCategory.getCategories(new AsyncValueEventListener<Category>() {
             @Override
-            public void onSuccess(ArrayList<Category> data) {
+            public void onSuccess(@NonNull ArrayList<Category> data) {
                 loadSpinnerData(data);
             }
             @Override
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), "Unable to load the category list at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
             }
         });
@@ -141,7 +142,7 @@ public class ServiceCreateActivity extends SignedInActivity {
                 finish();
             }
             @Override
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 switch (reason) {
                     case DATABASE_ERROR:
                         Toast.makeText(getApplicationContext(), "Unable to create your service at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();

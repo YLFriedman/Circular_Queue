@@ -1,5 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand.database;
 
+import android.support.annotation.NonNull;
+
 import com.google.firebase.database.ValueEventListener;
 
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
@@ -53,7 +55,7 @@ public class DbUser extends DbItem<User> {
                 listener.onSuccess();
             }
             @Override
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 listener.onFailure(reason);
             }
         };
@@ -87,7 +89,7 @@ public class DbUser extends DbItem<User> {
     public static void authenticate(final String username, final String password, final AsyncActionEventListener listener) {
         getUser(username, new AsyncSingleValueEventListener<User>() {
             @Override
-            public void onSuccess(User user) {
+            public void onSuccess(@NonNull User user) {
                 if (user.getPassword().equals(password)) {
                     State.getState().setSignedInUser(user);
                     listener.onSuccess();
@@ -96,7 +98,7 @@ public class DbUser extends DbItem<User> {
                 }
             }
             @Override
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 listener.onFailure(reason);
             }
         });
