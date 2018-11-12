@@ -18,6 +18,8 @@ import java.util.Locale;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.adapters.ServiceListAdapter;
+import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
+import ca.uottawa.seg2105.project.cqondemand.database.DbService;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
@@ -75,9 +77,9 @@ public class ServiceListActivity extends SignedInActivity {
             }
         };
         if (categoryName == null) {
-            Service.getServices(listener);
+            DbService.getServices(listener);
         } else {
-            Service.getServices(categoryName, listener);
+            DbService.getServices(categoryName, listener);
         }
     }
 
@@ -113,7 +115,7 @@ public class ServiceListActivity extends SignedInActivity {
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            Service.getServices(categoryName, new AsyncValueEventListener<Service>() {
+                            DbService.getServices(categoryName, new AsyncValueEventListener<Service>() {
                                 @Override
                                 public void onSuccess(ArrayList<Service> data) {
                                     if (null == data) {
@@ -121,7 +123,7 @@ public class ServiceListActivity extends SignedInActivity {
                                     } else if (data.size() > 0) {
                                         Toast.makeText(getApplicationContext(), "Unable to delete the '" + categoryName + "' category because it has services assigned to it. Please re-assign the services, then delete.", Toast.LENGTH_LONG).show();
                                     } else {
-                                        category.delete(new AsyncActionEventListener() {
+                                        DbCategory.deleteCategory(category, new AsyncActionEventListener() {
                                             @Override
                                             public void onSuccess() {
                                                 Toast.makeText(getApplicationContext(), "The the '" + categoryName + "' category has been successfully deleted.", Toast.LENGTH_LONG).show();

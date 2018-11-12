@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Locale;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
+import ca.uottawa.seg2105.project.cqondemand.database.DbService;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUtil;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
@@ -42,7 +44,7 @@ public class ServiceCreateActivity extends SignedInActivity {
     public void onResume() {
         super.onResume();
         if (isFinishing()) { return; }
-        Category.getCategories(new AsyncValueEventListener<Category>() {
+        DbCategory.getCategories(new AsyncValueEventListener<Category>() {
             @Override
             public void onSuccess(ArrayList<Category> data) {
                 loadSpinnerData(data);
@@ -97,7 +99,7 @@ public class ServiceCreateActivity extends SignedInActivity {
             field_service_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         } else if (!FieldValidation.serviceNameIsValid(name)) {
-            field_service_name.setError("Service name is invalid. " + FieldValidation.ILLEGAL_SERVICENAME_CHARS_MSG);
+            field_service_name.setError("Service name is invalid. " + FieldValidation.ILLEGAL_SERVICE_NAME_CHARS_MSG);
             field_service_name.requestFocus();
             field_service_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
@@ -128,7 +130,7 @@ public class ServiceCreateActivity extends SignedInActivity {
         Service newService = new Service(name, rateNum, DbUtil.getKey(new Category(categoryName)));
         final Button btn_create_service = findViewById(R.id.btn_create_service);
         btn_create_service.setEnabled(false);
-        newService.create(new AsyncActionEventListener() {
+        DbService.createService(newService, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), "The service '" + name + "' has been successfully created.", Toast.LENGTH_LONG).show();

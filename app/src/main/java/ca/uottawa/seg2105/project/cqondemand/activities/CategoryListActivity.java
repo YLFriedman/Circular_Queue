@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.adapters.CategoryListAdapter;
+import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
@@ -38,7 +39,7 @@ public class CategoryListActivity extends SignedInActivity {
         if (isFinishing()) { return; }
         recycler_list.setHasFixedSize(true);
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        Category.getCategories(new AsyncValueEventListener<Category>() {
+        DbCategory.getCategories(new AsyncValueEventListener<Category>() {
             @Override
             public void onSuccess(ArrayList<Category> data) {
                 if (null != data) {

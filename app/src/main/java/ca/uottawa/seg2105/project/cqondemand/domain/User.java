@@ -1,20 +1,10 @@
 package ca.uottawa.seg2105.project.cqondemand.domain;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-
-import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
-import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
-import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
-import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
-import ca.uottawa.seg2105.project.cqondemand.database.DbUtil;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
-import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation.PasswordValidationResult;
 
-public class User implements Serializable {
-
+public class User {
 
     /**
      * The class User allows for the creation of User objects, and stores the pertinent values for each User.
@@ -131,7 +121,6 @@ public class User implements Serializable {
         return type == Types.ADMIN;
     }
 
-
     /**
      * A method for converting a string representation of a Type into a Type.
      *
@@ -149,79 +138,8 @@ public class User implements Serializable {
         }
     }
 
-    public void create(final AsyncActionEventListener listener) {
-        DbUtil.createItem(this, listener);
-    }
-
-    public void update(final User newUser, final AsyncActionEventListener listener) {
-        AsyncActionEventListener interceptListener = new AsyncActionEventListener() {
-            @Override
-            public void onSuccess() {
-                // If we are updating the logged in user, replace the user object
-                if (State.getState().getSignedInUser() == User.this) { State.getState().setSignedInUser(newUser); }
-                listener.onSuccess();
-            }
-            @Override
-            public void onFailure(AsyncEventFailureReason reason) {
-                listener.onFailure(reason);
-            }
-        };
-        if (DbUtil.getKey(this).equals(DbUtil.getKey(newUser))) {
-            DbUtil.updateItem(newUser, interceptListener);
-        } else {
-            DbUtil.updateItem(this, newUser, interceptListener);
-        }
-    }
-
-    public void delete(final AsyncActionEventListener listener) {
-        DbUtil.deleteItem(this, listener);
-    }
-
     public boolean equals(User other) {
         return null != other && username.equals(other.username);
-    }
-
-    public static void getUser(final String username, final AsyncSingleValueEventListener<User> listener) {
-        DbUtil.getItem(DbUtil.DataType.USER, username, listener);
-    }
-
-    public static void getUsers(final AsyncValueEventListener<User> listener) {
-        DbUtil.getItems(DbUtil.DataType.USER, listener);
-    }
-
-    /**
-     * Callback method for authenticating a given set of user credentials through the database. Fails
-     * if username does not exist or does not match store password value.
-     *
-     * @param username the username to be authenticated
-     * @param password the password to be authenticated
-     * @param listener the listener that will be informed if authentication was successful or not
-     */
-    public static void authenticate(final String username, final String password, final AsyncActionEventListener listener) {
-        getUser(username, new AsyncSingleValueEventListener<User>() {
-            @Override
-            public void onSuccess(User user) {
-                if (user.getPassword().equals(password)) {
-                    State.getState().setSignedInUser(user);
-                    listener.onSuccess();
-                } else {
-                    listener.onFailure(AsyncEventFailureReason.PASSWORD_MISMATCH);
-                }
-            }
-            @Override
-            public void onFailure(AsyncEventFailureReason reason) {
-                listener.onFailure(reason);
-            }
-        });
-    }
-
-    public void updatePassword(String password, final AsyncActionEventListener listener) {
-        PasswordValidationResult passwordValRes = FieldValidation.validatePassword(username, password, password);
-        if (PasswordValidationResult.VALID != passwordValRes) {
-            throw new InvalidDataException("Invalid password. " + passwordValRes.toString());
-        }
-        this.password = password;
-        update(this, listener);
     }
 
 }

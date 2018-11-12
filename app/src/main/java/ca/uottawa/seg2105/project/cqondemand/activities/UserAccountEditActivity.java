@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.R;
@@ -109,7 +110,7 @@ public class UserAccountEditActivity extends SignedInActivity {
             return;
         }
 
-        currentUser.update(updatedUser, new AsyncActionEventListener() {
+        DbUser.updateUser(currentUser, updatedUser, new AsyncActionEventListener() {
             public void onSuccess() {
                 currentUser = State.getState().getSignedInUser();
                 Toast.makeText(getApplicationContext(), "Account updated successfully!", Toast.LENGTH_LONG).show();

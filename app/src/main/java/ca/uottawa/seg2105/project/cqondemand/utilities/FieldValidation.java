@@ -2,25 +2,28 @@ package ca.uottawa.seg2105.project.cqondemand.utilities;
 
 public class FieldValidation {
 
-    public static final String ILLEGAL_USERNAME_CHARS_REGEX = ".*[^a-zA-Z0-9_].*";
+    private static final String ILLEGAL_USERNAME_CHARS_REGEX = ".*[^a-zA-Z0-9_].*";
     public static final String ILLEGAL_USERNAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z 0-9 _";
     // Illegal Name Characters: 0-9 < > ] [ } { \ / ! @ # $ % ^ & * _ + = ) (
-    public static final String ILLEGAL_NAME_CHARS_REGEX = ".*[0-9<>\\]\\[}{\\\\/!@#$%^&*_+=)(:;].*";
+    private static final String ILLEGAL_PERSON_NAME_CHARS_REGEX = ".*[0-9<>\\]\\[}{\\\\/!@#$%^&*_+=)(:;].*";
+    public static final String ILLEGAL_PERSON_NAME_CHARS_MSG = "The following characters are NOT allowed: 0-9 < > ] [ } { \\ / ! @ # $ % ^ & * _ + = ) ( '";
+
     public static final int PASSWORD_MIN_LENGTH = 6;
-    public static final String[] ILLEGAL_PASSWORDS = { "password" };
+    private static final String[] ILLEGAL_PASSWORDS = { "password" };
     public enum PasswordValidationResult { VALID, EMPTY, TOO_SHORT, CONFIRM_MISMATCH, ILLEGAL_PASSWORD, CONTAINS_USERNAME }
 
-    public static final String ILLEGAL_SERVICENAME_CHARS_REGEX = ".*[^'a-zA-Z -].*";
-    public static final String ILLEGAL_SERVICENAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z - space '";
+    private static final String ILLEGAL_OBJECT_NAME_CHARS_REGEX = ".*[^'a-zA-Z -].*";
+    public static final String ILLEGAL_SERVICE_NAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z - space '";
+    public static final String ILLEGAL_CATEGORY_NAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z - space '";
 
     public static boolean serviceNameIsValid(String name) {
         if (name == null || name.isEmpty()) { return false;  }
-        return !name.matches(ILLEGAL_SERVICENAME_CHARS_REGEX);
+        return !name.matches(ILLEGAL_OBJECT_NAME_CHARS_REGEX);
     }
 
     public static boolean categoryNameIsValid(String name){
         if(name == null || name.isEmpty()) { return false; }
-        return !name.matches(ILLEGAL_SERVICENAME_CHARS_REGEX);
+        return !name.matches(ILLEGAL_OBJECT_NAME_CHARS_REGEX);
     }
 
     public static boolean usernameIsValid(String username) {
@@ -30,7 +33,7 @@ public class FieldValidation {
 
     public static boolean nameIsValid(String name) {
         if (null == name || name.isEmpty()) { return false; }
-        return !name.matches(ILLEGAL_NAME_CHARS_REGEX);
+        return !name.matches(ILLEGAL_PERSON_NAME_CHARS_REGEX);
     }
 
     public static boolean emailIsValid(CharSequence email) {

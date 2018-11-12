@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
@@ -30,7 +31,7 @@ public class CategoryCreateActivity extends SignedInActivity {
 
         if (!FieldValidation.categoryNameIsValid(categoryName)) {
             if (categoryName.isEmpty()) { field_category_name.setError("Category name is required!"); }
-            else { field_category_name.setError("Category name is invalid. " + FieldValidation.ILLEGAL_SERVICENAME_CHARS_MSG); }
+            else { field_category_name.setError("Category name is invalid. " + FieldValidation.ILLEGAL_CATEGORY_NAME_CHARS_MSG); }
             field_category_name.requestFocus();
             field_category_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
@@ -46,7 +47,7 @@ public class CategoryCreateActivity extends SignedInActivity {
 
         btn_create_category.setEnabled(false);
 
-        newCategory.create(new AsyncActionEventListener() {
+        DbCategory.createCategory(newCategory, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), "The category '" + newCategory.getName() + "' has been successfully created. ", Toast.LENGTH_LONG).show();

@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Locale;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
+import ca.uottawa.seg2105.project.cqondemand.database.DbService;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
@@ -29,8 +31,6 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 public class ServiceEditActivity extends SignedInActivity {
 
     private Spinner spinner_categories;
-    private EditText field_service_name;
-    private EditText field_rate;
     private String categoryName;
     private Service currentService;
 
@@ -39,8 +39,8 @@ public class ServiceEditActivity extends SignedInActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_edit);
         spinner_categories = findViewById(R.id.spinner_categories);
-        field_service_name = findViewById(R.id.field_service_name);
-        field_rate = findViewById(R.id.field_rate);
+        EditText field_service_name = findViewById(R.id.field_service_name);
+        EditText field_rate = findViewById(R.id.field_rate);
         currentService = State.getState().getCurrentService();
         State.getState().setCurrentService(null);
         if (null != currentService) {
@@ -66,7 +66,7 @@ public class ServiceEditActivity extends SignedInActivity {
             finish();
             return;
         }
-        Category.getCategories(new AsyncValueEventListener<Category>() {
+        DbCategory.getCategories(new AsyncValueEventListener<Category>() {
             @Override
             public void onSuccess(ArrayList<Category> data) {
                 loadSpinnerData(data);
@@ -117,7 +117,7 @@ public class ServiceEditActivity extends SignedInActivity {
         // Check valid service name
         if (!FieldValidation.serviceNameIsValid(name)) {
             if (name.isEmpty()) { field_service_name.setError("Service name is required!"); }
-            else { field_service_name.setError("Service name is invalid. " + FieldValidation.ILLEGAL_SERVICENAME_CHARS_MSG); }
+            else { field_service_name.setError("Service name is invalid. " + FieldValidation.ILLEGAL_SERVICE_NAME_CHARS_MSG); }
             field_service_name.requestFocus();
             field_service_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
@@ -156,7 +156,7 @@ public class ServiceEditActivity extends SignedInActivity {
         final Button btn_save_service = findViewById(R.id.btn_save_service);
         btn_save_service.setEnabled(false);
 
-        currentService.update(newService, new AsyncActionEventListener() {
+        DbService.updateService(currentService, newService, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 State.getState().setCurrentService(newService);

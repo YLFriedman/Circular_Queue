@@ -14,6 +14,8 @@ import android.widget.Toast;
 import java.util.Locale;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
+import ca.uottawa.seg2105.project.cqondemand.database.DbService;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
@@ -52,7 +54,7 @@ public class ServiceViewActivity extends SignedInActivity {
             // Clear the text fields
             setupFields();
             // Try to get the service object
-            Service.getService(serviceName, new AsyncSingleValueEventListener<Service>() {
+            DbService.getService(serviceName, new AsyncSingleValueEventListener<Service>() {
                 @Override
                 public void onSuccess(@NonNull Service item) {
                     serviceName = null;
@@ -141,10 +143,10 @@ public class ServiceViewActivity extends SignedInActivity {
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            currentService.delete(new AsyncActionEventListener() {
+                            DbService.deleteService(currentService, new AsyncActionEventListener() {
                                 @Override
                                 public void onSuccess() {
-                                    Toast.makeText(getApplicationContext(), "The the '" + currentService.getName() + "' service has been successfully deleted.", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), "The '" + currentService.getName() + "' service has been successfully deleted.", Toast.LENGTH_LONG).show();
                                     finish();
                                 }
                                 @Override

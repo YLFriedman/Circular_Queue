@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.R;
@@ -79,7 +80,7 @@ public class UserAccountChangePasswordActivity extends SignedInActivity {
         }
 
         btn_save_password.setEnabled(false);
-        currentUser.updatePassword(password, new AsyncActionEventListener() {
+        DbUser.updatePassword(currentUser, password, new AsyncActionEventListener() {
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), "Password updated successfully!", Toast.LENGTH_LONG).show();
                 btn_save_password.setEnabled(true);

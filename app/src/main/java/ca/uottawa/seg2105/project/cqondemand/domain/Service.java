@@ -4,11 +4,10 @@ import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 
-import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
+import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
+import ca.uottawa.seg2105.project.cqondemand.database.DbUtil;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
-import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
-import ca.uottawa.seg2105.project.cqondemand.database.DbUtil;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
@@ -29,7 +28,7 @@ public class Service {
      */
     public Service(String name, int rate, String categoryID) {
         if (!FieldValidation.serviceNameIsValid(name)) { throw new InvalidDataException("Invalid service name. " +
-                FieldValidation.ILLEGAL_SERVICENAME_CHARS_MSG); }
+                FieldValidation.ILLEGAL_SERVICE_NAME_CHARS_MSG); }
         if (null == categoryID) { throw new IllegalArgumentException("The categoryID cannot be null."); }
         if (rate < 0) { throw new InvalidDataException("Rate cannot be negative. "); }
         this.name = name;
@@ -45,7 +44,7 @@ public class Service {
      */
     public Service(String name, int rate, Category category) {
         if (!FieldValidation.serviceNameIsValid(name)) { throw new InvalidDataException("Invalid service name. " +
-                FieldValidation.ILLEGAL_SERVICENAME_CHARS_MSG); }
+                FieldValidation.ILLEGAL_SERVICE_NAME_CHARS_MSG); }
         if (null == category) { throw new IllegalArgumentException("The category cannot be null."); }
         if (rate < 0) { throw new InvalidDataException("Rate cannot be negative. "); }
         this.name = name;
@@ -77,7 +76,7 @@ public class Service {
         if (null != category) {
             listener.onSuccess(category);
         } else {
-            Category.getCategory(categoryID, new AsyncSingleValueEventListener<Category>() {
+            DbCategory.getCategory(categoryID, new AsyncSingleValueEventListener<Category>() {
                 @Override
                 public void onSuccess(@NonNull Category item) {
                     category = item;
@@ -103,42 +102,12 @@ public class Service {
      *
      * @return the name of this service
      */
-
     public String getName() {
         return name;
     }
 
-
-    public void create(final AsyncActionEventListener listener) {
-        DbUtil.createItem(this, listener);
-    }
-
-    public void update(final Service newService, final AsyncActionEventListener listener) {
-        if (DbUtil.getKey(this).equals(DbUtil.getKey(newService))) {
-            DbUtil.updateItem(newService, listener);
-        } else {
-            DbUtil.updateItem(this, newService, listener);
-        }
-    }
-
-    public void delete(final AsyncActionEventListener listener) {
-        DbUtil.deleteItem(this, listener);
-    }
-
     public boolean equals(Service other) {
         return null != other && name.equals(other.name);
-    }
-
-    public static void getService(String name, final AsyncSingleValueEventListener<Service> listener) {
-        DbUtil.getItem(DbUtil.DataType.SERVICE, name, listener);
-    }
-
-    public static void getServices(final AsyncValueEventListener<Service> listener) {
-        DbUtil.getItems(DbUtil.DataType.SERVICE, listener);
-    }
-
-    public static void getServices(String categoryName, final AsyncValueEventListener<Service> listener) {
-        DbUtil.getItems(DbUtil.DataType.SERVICE, "category_id", DbUtil.getKey(new Category(categoryName)), listener);
     }
 
 }

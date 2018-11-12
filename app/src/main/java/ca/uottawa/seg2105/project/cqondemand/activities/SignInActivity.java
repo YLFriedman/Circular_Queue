@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
@@ -37,7 +38,7 @@ public class SignInActivity extends AppCompatActivity {
             btn_sign_in = findViewById(R.id.btn_sign_in);
             btn_sign_up = findViewById(R.id.btn_sign_up);
             btn_create_admin_account = findViewById(R.id.btn_create_admin_account);
-            User.getUser("admin", new AsyncSingleValueEventListener<User>() {
+            DbUser.getUser("admin", new AsyncSingleValueEventListener<User>() {
                 @Override
                 public void onSuccess(User user) {
                     btn_create_admin_account.setVisibility(View.GONE);
@@ -99,7 +100,7 @@ public class SignInActivity extends AppCompatActivity {
         } else {
             btn_sign_in.setEnabled(false);
             btn_sign_up.setEnabled(false);
-            User.authenticate(field_username.getText().toString().trim(), field_password.getText().toString(), new AsyncActionEventListener() {
+            DbUser.authenticate(field_username.getText().toString().trim(), field_password.getText().toString(), new AsyncActionEventListener() {
                 @Override
                 public void onSuccess() {
                     btn_sign_in.setEnabled(true);
@@ -141,12 +142,13 @@ public class SignInActivity extends AppCompatActivity {
 
     public void onCreateAdminAccountClick(View view) {
         User user = new User("Admin", "User", "admin", "yfrie071@uottawa.ca", User.Types.ADMIN, "admin");
-        user.create(new AsyncActionEventListener() {
+        DbUser.createUser(user, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), "The admin user has been created successfully. Login with the username and password 'admin'.", Toast.LENGTH_LONG).show();
                 btn_create_admin_account.setVisibility(View.GONE);
             }
+
             @Override
             public void onFailure(AsyncEventFailureReason reason) {
                 if (AsyncEventFailureReason.ALREADY_EXISTS == reason) {
@@ -161,7 +163,7 @@ public class SignInActivity extends AppCompatActivity {
 
     public void onCreateTestAccountClick(View view) {
         User user = new User("Test", "User", "test", "test@test.test", User.Types.SERVICE_PROVIDER, "cqpass");
-        user.create(new AsyncActionEventListener() {
+        DbUser.createUser(user, new AsyncActionEventListener() {
             @Override
             public void onSuccess() { }
             @Override

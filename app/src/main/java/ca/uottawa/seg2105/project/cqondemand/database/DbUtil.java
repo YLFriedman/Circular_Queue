@@ -139,7 +139,7 @@ public class DbUtil {
                 } else {
                     try {
                         DbItem<T> dbItem = (DbItem<T>) dataSnapshot.getValue(getDbClassObj(type));
-                        T domainObjItem = dbItem.toItem();
+                        T domainObjItem = dbItem.toDomainObj();
                         if (null == domainObjItem) {
                             listener.onFailure(AsyncEventFailureReason.INVALID_DATA);
                         } else {
@@ -167,9 +167,15 @@ public class DbUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> void getItems(final DataType type, final AsyncValueEventListener<T> listener, boolean singleEvent) {
+    public static <T> DbListener<ValueEventListener> getItemsLive(final DataType type, final AsyncValueEventListener<T> listener) {
+        return getItems(type, listener, false);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> DbListener<ValueEventListener> getItems(final DataType type, final AsyncValueEventListener<T> listener, boolean singleEvent) {
         if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
         if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
+        DbListener<ValueEventListener> dbListener = null;
         ValueEventListener dataConversionListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -178,7 +184,7 @@ public class DbUtil {
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()){
                     try {
                         DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(type));
-                        T domainObjItem = dbItem.toItem();
+                        T domainObjItem = dbItem.toDomainObj();
                         if (null != dbItem) { returnValue.add(domainObjItem); }
                     }
                     catch (IllegalArgumentException e) { }
@@ -192,8 +198,13 @@ public class DbUtil {
                 listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
             }
         };
-        if (singleEvent) { getRef(type).addListenerForSingleValueEvent(dataConversionListener); }
-        else { getRef(type).addValueEventListener(dataConversionListener); }
+        if (singleEvent) {
+            getRef(type).addListenerForSingleValueEvent(dataConversionListener);
+        } else {
+            DatabaseReference ref = getRef(type);
+            dbListener = new DbListener<ValueEventListener>(ref, ref.addValueEventListener(dataConversionListener));
+        }
+        return dbListener;
     }
 
     public static <T> void getItems(final DataType type, String childKey, String childValue, final AsyncValueEventListener<T> listener) {
@@ -206,7 +217,7 @@ public class DbUtil {
         getItems(type, query, listener);
     }
 
-    protected static <T> void getItems(final DataType type, Query query, final AsyncValueEventListener<T> listener) {
+    private static <T> void getItems(final DataType type, Query query, final AsyncValueEventListener<T> listener) {
         if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
         if (null == query) { throw new IllegalArgumentException("The query cannot be null."); }
         if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
@@ -218,7 +229,7 @@ public class DbUtil {
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()){
                     try {
                         DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(type));
-                        T domainObjItem = dbItem.toItem();
+                        T domainObjItem = dbItem.toDomainObj();
                         if (null != dbItem) { returnValue.add(domainObjItem); }
                     }
                     catch (IllegalArgumentException e) { }

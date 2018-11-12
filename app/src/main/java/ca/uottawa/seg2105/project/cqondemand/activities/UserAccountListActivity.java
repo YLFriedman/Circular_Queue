@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import ca.uottawa.seg2105.project.cqondemand.database.DbListener;
+import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.R;
@@ -21,7 +23,7 @@ import ca.uottawa.seg2105.project.cqondemand.adapters.UserListAdapter;
 public class UserAccountListActivity extends SignedInActivity {
 
     private RecyclerView recycler_list;
-    private UserListAdapter user_list_adapter;
+    DbListener<?> listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,27 +31,21 @@ public class UserAccountListActivity extends SignedInActivity {
         setContentView(R.layout.activity_user_account_list);
         recycler_list = findViewById(R.id.recycler_list);
         if (!State.getState().getSignedInUser().isAdmin()) { finish(); }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (isFinishing()) { return; }
         recycler_list.setHasFixedSize(true);
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        User.getUsers(new AsyncValueEventListener<User>() {
+        listener = DbUser.getUsersLive(new AsyncValueEventListener<User>() {
             @Override
             public void onSuccess(ArrayList<User> data) {
                 if (null != data) {
-                    user_list_adapter = new UserListAdapter(getApplicationContext(), data, new View.OnClickListener() {
+                    //user_list_adapter.notifyItemRangeRemoved(0, user_list_adapter.getItemCount());
+                    recycler_list.setAdapter(new UserListAdapter(getApplicationContext(), data, new View.OnClickListener() {
                         public void onClick(final View view) {
                             TextView field = view.findViewById(R.id.txt_subtitle);
                             Intent intent = new Intent(getApplicationContext(), UserAccountViewActivity.class);
                             intent.putExtra("username", field.getContentDescription());
                             startActivity(intent);
                         }
-                    });
-                    recycler_list.setAdapter(user_list_adapter);
+                    }));
                 }
             }
             @Override
@@ -57,6 +53,13 @@ public class UserAccountListActivity extends SignedInActivity {
                 Toast.makeText(getApplicationContext(), "There was an error getting the users from the database. Please try again later.", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Cleanup the data listener for the users list
+        if (null != listener) { listener.removeListener(); }
     }
 
 }

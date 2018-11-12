@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
@@ -46,7 +47,7 @@ public class UserAccountViewActivity extends SignedInActivity {
             State.getState().setCurrentUser(null);
             setupFields();
             // Try to get the user object
-            User.getUser(username, new AsyncSingleValueEventListener<User>() {
+            DbUser.getUser(username, new AsyncSingleValueEventListener<User>() {
                 @Override
                 public void onSuccess(User user) {
                     State.getState().setCurrentUser(user);
@@ -117,7 +118,7 @@ public class UserAccountViewActivity extends SignedInActivity {
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            currentUser.delete(new AsyncActionEventListener() {
+                            DbUser.deleteUser(currentUser, new AsyncActionEventListener() {
                                 public void onSuccess() {
                                     Toast.makeText(getApplicationContext(), "The user account '" + currentUser.getUsername() + "' has been successfully deleted.", Toast.LENGTH_LONG).show();
                                     if (null != State.getState().getSignedInUser() && State.getState().getSignedInUser().equals(currentUser)) {
