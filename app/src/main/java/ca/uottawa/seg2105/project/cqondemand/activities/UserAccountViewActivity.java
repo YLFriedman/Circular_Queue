@@ -2,6 +2,7 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.view.Menu;
@@ -49,7 +50,7 @@ public class UserAccountViewActivity extends SignedInActivity {
             // Try to get the user object
             DbUser.getUser(username, new AsyncSingleValueEventListener<User>() {
                 @Override
-                public void onSuccess(User user) {
+                public void onSuccess(@NonNull User user) {
                     State.getState().setCurrentUser(user);
                     setupFields();
                 }
@@ -127,8 +128,10 @@ public class UserAccountViewActivity extends SignedInActivity {
                                     State.getState().setCurrentUser(null);
                                     finish();
                                 }
+
                                 public void onFailure(AsyncEventFailureReason reason) {
                                     Toast.makeText(getApplicationContext(), R.string.account_delete_db_error, Toast.LENGTH_LONG).show();
+
                                 }
                             });
                         }

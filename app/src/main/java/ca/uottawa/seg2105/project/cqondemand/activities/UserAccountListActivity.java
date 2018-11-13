@@ -1,6 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -35,22 +36,21 @@ public class UserAccountListActivity extends SignedInActivity {
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         listener = DbUser.getUsersLive(new AsyncValueEventListener<User>() {
             @Override
-            public void onSuccess(ArrayList<User> data) {
-                if (null != data) {
-                    //user_list_adapter.notifyItemRangeRemoved(0, user_list_adapter.getItemCount());
-                    recycler_list.setAdapter(new UserListAdapter(getApplicationContext(), data, new View.OnClickListener() {
-                        public void onClick(final View view) {
-                            TextView field = view.findViewById(R.id.txt_subtitle);
-                            Intent intent = new Intent(getApplicationContext(), UserAccountViewActivity.class);
-                            intent.putExtra("username", field.getContentDescription());
-                            startActivity(intent);
-                        }
-                    }));
-                }
+            public void onSuccess(@NonNull ArrayList<User> data) {
+                //user_list_adapter.notifyItemRangeRemoved(0, user_list_adapter.getItemCount());
+                recycler_list.setAdapter(new UserListAdapter(getApplicationContext(), data, new View.OnClickListener() {
+                    public void onClick(final View view) {
+                        TextView field = view.findViewById(R.id.txt_subtitle);
+                        Intent intent = new Intent(getApplicationContext(), UserAccountViewActivity.class);
+                        intent.putExtra("username", field.getContentDescription());
+                        startActivity(intent);
+                    }
+                }));
             }
             @Override
             public void onFailure(AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), R.string.user_list_db_error, Toast.LENGTH_LONG).show();
+
             }
         });
     }

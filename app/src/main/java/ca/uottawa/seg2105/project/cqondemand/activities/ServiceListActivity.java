@@ -2,6 +2,7 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -58,22 +59,21 @@ public class ServiceListActivity extends SignedInActivity {
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         AsyncValueEventListener<Service> listener = new AsyncValueEventListener<Service>() {
             @Override
-            public void onSuccess(ArrayList<Service> data) {
-                if (null != data) {
-                    service_list_adapter = new ServiceListAdapter(getApplicationContext(), data, new View.OnClickListener() {
-                        public void onClick(final View view) {
-                            TextView field = view.findViewById(R.id.txt_title);
-                            Intent intent = new Intent(getApplicationContext(), ServiceViewActivity.class);
-                            intent.putExtra("service_name", field.getText().toString());
-                            startActivity(intent);
-                        }
-                    });
-                    recycler_list.setAdapter(service_list_adapter);
-                }
+            public void onSuccess(@NonNull ArrayList<Service> data) {
+                service_list_adapter = new ServiceListAdapter(getApplicationContext(), data, new View.OnClickListener() {
+                    public void onClick(final View view) {
+                        TextView field = view.findViewById(R.id.txt_title);
+                        Intent intent = new Intent(getApplicationContext(), ServiceViewActivity.class);
+                        intent.putExtra("service_name", field.getText().toString());
+                        startActivity(intent);
+                    }
+                });
+                recycler_list.setAdapter(service_list_adapter);
             }
             @Override
             public void onFailure(AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), R.string.service_list_db_error, Toast.LENGTH_LONG).show();
+
             }
         };
         if (categoryName == null) {
@@ -122,6 +122,7 @@ public class ServiceListActivity extends SignedInActivity {
                                         Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), categoryName), Toast.LENGTH_LONG).show();
                                     } else if (data.size() > 0) {
                                         Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_has_services_error), categoryName), Toast.LENGTH_LONG).show();
+
                                     } else {
                                         DbCategory.deleteCategory(category, new AsyncActionEventListener() {
                                             @Override
@@ -130,8 +131,10 @@ public class ServiceListActivity extends SignedInActivity {
                                                 finish();
                                             }
                                             @Override
+
                                             public void onFailure(AsyncEventFailureReason reason) {
                                                 Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), categoryName), Toast.LENGTH_LONG).show();
+
                                             }
                                         });
                                     }
@@ -139,6 +142,7 @@ public class ServiceListActivity extends SignedInActivity {
                                 @Override
                                 public void onFailure(AsyncEventFailureReason reason) {
                                     Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), categoryName), Toast.LENGTH_LONG).show();
+
                                 }
                             });
                         }

@@ -52,7 +52,7 @@ public class ServiceEditActivity extends SignedInActivity {
                     categoryName = item.getName();
                 }
                 @Override
-                public void onFailure(AsyncEventFailureReason reason) { }
+                public void onFailure(@NonNull AsyncEventFailureReason reason) { }
             });
         } else {
             finish();
@@ -68,7 +68,7 @@ public class ServiceEditActivity extends SignedInActivity {
         }
         DbCategory.getCategories(new AsyncValueEventListener<Category>() {
             @Override
-            public void onSuccess(ArrayList<Category> data) {
+            public void onSuccess(@NonNull ArrayList<Category> data) {
                 loadSpinnerData(data);
             }
             @Override
@@ -159,7 +159,7 @@ public class ServiceEditActivity extends SignedInActivity {
                 finish();
             }
             @Override
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 switch (reason) {
                     case DATABASE_ERROR:
                         Toast.makeText(getApplicationContext(), R.string.service_update_db_error, Toast.LENGTH_LONG).show();

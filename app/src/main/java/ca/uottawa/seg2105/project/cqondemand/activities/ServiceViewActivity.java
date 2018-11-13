@@ -97,7 +97,7 @@ public class ServiceViewActivity extends SignedInActivity {
                     txt_category.setText(String.format(Locale.CANADA, getString(R.string.category_template), item.getName()));
                 }
                 @Override
-                public void onFailure(AsyncEventFailureReason reason) { }
+                public void onFailure(@NonNull AsyncEventFailureReason reason) { }
             });
         }
     }
@@ -150,8 +150,10 @@ public class ServiceViewActivity extends SignedInActivity {
                                     finish();
                                 }
                                 @Override
+
                                 public void onFailure(AsyncEventFailureReason reason) {
                                     Toast.makeText(getApplicationContext(), String.format(getString(R.string.service_delete_db_error), currentService.getName()), Toast.LENGTH_LONG).show();
+
                                 }
                             });
                         }

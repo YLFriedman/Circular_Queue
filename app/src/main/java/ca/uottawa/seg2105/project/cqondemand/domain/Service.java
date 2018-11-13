@@ -83,7 +83,7 @@ public class Service {
                     listener.onSuccess(item);
                 }
                 @Override
-                public void onFailure(AsyncEventFailureReason reason) { listener.onFailure(reason); }
+                public void onFailure(@NonNull AsyncEventFailureReason reason) { listener.onFailure(reason); }
             });
         }
     }

@@ -2,6 +2,7 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -41,18 +42,16 @@ public class CategoryListActivity extends SignedInActivity {
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         DbCategory.getCategories(new AsyncValueEventListener<Category>() {
             @Override
-            public void onSuccess(ArrayList<Category> data) {
-                if (null != data) {
-                    category_list_adapter = new CategoryListAdapter(getApplicationContext(), data, new View.OnClickListener() {
-                        public void onClick(final View view) {
-                            TextView field = view.findViewById(R.id.txt_title);
-                            Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
-                            intent.putExtra("category_name", field.getText().toString());
-                            startActivity(intent);
-                        }
-                    });
-                    recycler_list.setAdapter(category_list_adapter);
-                }
+            public void onSuccess(@NonNull ArrayList<Category> data) {
+                category_list_adapter = new CategoryListAdapter(getApplicationContext(), data, new View.OnClickListener() {
+                    public void onClick(final View view) {
+                        TextView field = view.findViewById(R.id.txt_title);
+                        Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
+                        intent.putExtra("category_name", field.getText().toString());
+                        startActivity(intent);
+                    }
+                });
+                recycler_list.setAdapter(category_list_adapter);
             }
             @Override
             public void onFailure(AsyncEventFailureReason reason) {

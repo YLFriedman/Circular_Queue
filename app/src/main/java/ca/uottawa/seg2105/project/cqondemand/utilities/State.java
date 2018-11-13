@@ -1,5 +1,8 @@
 package ca.uottawa.seg2105.project.cqondemand.utilities;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
@@ -16,34 +19,38 @@ public class State {
     }
 
     // Access the single state object
-    public static State getState(){
+    @NonNull
+    public static State getState() {
         if (null == state) { state = new State(); }
         return state;
     }
 
     // Getters
+    @Nullable
     public User getSignedInUser() {
         return signedInUser;
     }
 
+    @Nullable
     public User getCurrentUser() {
         return currentUser;
     }
 
+    @Nullable
     public Service getCurrentService() {
         return currentService;
     }
 
     // Setters
-    public void setSignedInUser(User signedInUser) {
+    public void setSignedInUser(@Nullable User signedInUser) {
         this.signedInUser = signedInUser;
     }
 
-    public void setCurrentUser(User currentUser) {
+    public void setCurrentUser(@Nullable User currentUser) {
         this.currentUser = currentUser;
     }
 
-    public void setCurrentService(Service currentService) {
+    public void setCurrentService(@Nullable Service currentService) {
         this.currentService = currentService;
     }
 

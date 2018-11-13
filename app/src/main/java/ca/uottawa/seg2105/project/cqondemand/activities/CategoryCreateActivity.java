@@ -2,6 +2,7 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
@@ -53,7 +54,7 @@ public class CategoryCreateActivity extends SignedInActivity {
                 finish();
             }
             @Override
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 switch (reason) {
                     case DATABASE_ERROR:
                         Toast.makeText(getApplicationContext(), getString(R.string.category_create_db_error), Toast.LENGTH_LONG).show();
