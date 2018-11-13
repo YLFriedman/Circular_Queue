@@ -61,32 +61,32 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         String passwordConfirm = field_password_confirm.getText().toString();
 
         if (!FieldValidation.usernameIsValid(username)) {
-            if (username.isEmpty()) { field_username.setError("Username is required!"); }
-            else { field_username.setError("Username is invalid. " + FieldValidation.ILLEGAL_USERNAME_CHARS_MSG); }
+            if (username.isEmpty()) { field_username.setError(getString(R.string.empty_username_error)); }
+            else { field_username.setError(getString(R.string.invalid_username_msg)); }
             field_username.requestFocus();
             field_username.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
 
         if (!FieldValidation.nameIsValid(firstName)) {
-            if (username.isEmpty()) { field_first_name.setError("First name is required!"); }
-            else { field_first_name.setError("First name is invalid. "); }
+            if (username.isEmpty()) { field_first_name.setError(getString(R.string.empty_first_name_error)); }
+            else { field_first_name.setError(getString(R.string.invalid_first_name_error)); }
             field_first_name.requestFocus();
             field_first_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
 
         if (!FieldValidation.nameIsValid(lastName)) {
-            if (username.isEmpty()) { field_last_name.setError("Last name is required!"); }
-            else { field_last_name.setError("Last name is invalid. "); }
+            if (username.isEmpty()) { field_last_name.setError(getString(R.string.empty_last_name_error)); }
+            else { field_last_name.setError(getString(R.string.invalid_last_name_error)); }
             field_last_name.requestFocus();
             field_last_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
 
         if (!FieldValidation.emailIsValid(email)) {
-            if (username.isEmpty()) { field_email.setError("Email is required!"); }
-            else { field_email.setError("This is an invalid E-mail!"); }
+            if (username.isEmpty()) { field_email.setError(getString(R.string.empty_email_error)); }
+            else { field_email.setError(getString(R.string.invalid_email_error)); }
             field_email.requestFocus();
             field_email.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
@@ -95,16 +95,16 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         Boolean passwordError = true;
         switch (FieldValidation.validatePassword(username, password, passwordConfirm)) {
             case VALID: passwordError = false; break;
-            case EMPTY: field_password.setError("Password is required!"); break;
-            case TOO_SHORT: field_password.setError("Minimum length of password is " + FieldValidation.PASSWORD_MIN_LENGTH + " characters."); break;
+            case EMPTY: field_password.setError(getString(R.string.empty_password_error)); break;
+            case TOO_SHORT: field_password.setError(getString(R.string.password_too_short_error)); break;
             case CONFIRM_MISMATCH:
-                field_password_confirm.setError("Both passwords must match.");
+                field_password_confirm.setError(getString(R.string.password_mismatch_error));
                 field_password_confirm.requestFocus();
                 field_password_confirm.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                 return;
-            case ILLEGAL_PASSWORD: field_password.setError("The selected password is banned. Please select a new password."); break;
-            case CONTAINS_USERNAME: field_password.setError("The password cannot contain the username."); break;
-            default: field_password.setError("Invalid password.");
+            case ILLEGAL_PASSWORD: field_password.setError(getString(R.string.banned_password_error)); break;
+            case CONTAINS_USERNAME: field_password.setError(getString(R.string.password_contains_username)); break;
+            default: field_password.setError(getString(R.string.password_error_generic));
         }
         if (passwordError) {
             field_password.requestFocus();
@@ -122,21 +122,15 @@ public class UserAccountCreateActivity extends AppCompatActivity {
             spinner_user_type.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
+        User newUser = new User(firstName, lastName, username, email, User.parseType(userType), password);
 
-        final User newUser;
-        try {
-            newUser = new User(firstName, lastName, username, email, User.parseType(userType), password);
-        } catch (InvalidDataException e) {
-            Toast.makeText(getApplicationContext(), "Unable to create the account. An invalid input has been detected: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            return;
-        }
 
         final Button btn_create_account = findViewById(R.id.btn_create_account);
         btn_create_account.setEnabled(false);
 
         DbUser.createUser(newUser, new AsyncActionEventListener() {
             public void onSuccess() {
-                Toast.makeText(getApplicationContext(), "The user account '" + username + "' has been successfully created.  Please sign in to continue.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), String.format(getString(R.string.account_create_success), username), Toast.LENGTH_LONG).show();
                 Intent intent = new Intent();
                 intent.putExtra("username", username);
                 setResult(RESULT_OK, intent);
@@ -145,15 +139,15 @@ public class UserAccountCreateActivity extends AppCompatActivity {
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 switch (reason) {
                     case DATABASE_ERROR:
-                        Toast.makeText(getApplicationContext(), "Unable to create your account at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), R.string.account_create_db_error, Toast.LENGTH_LONG).show();
                         break;
                     case ALREADY_EXISTS:
-                        field_username.setError("Username is already in use!");
+                        field_username.setError(getString(R.string.username_already_taken));
                         field_username.requestFocus();
                         break;
                     default:
                         // Some other kind of error
-                        Toast.makeText(getApplicationContext(), "Unable to create your account at this time. Please try again later.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), R.string.generic_account_create_error, Toast.LENGTH_LONG).show();
                 }
                 btn_create_account.setEnabled(true);
             }

@@ -62,8 +62,9 @@ public class ServiceListActivity extends SignedInActivity {
                 recycler_list.setAdapter(service_list_adapter);
             }
             @Override
-            public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                Toast.makeText(getApplicationContext(), "There was an error getting the services from the database. Please try again later.", Toast.LENGTH_LONG).show();
+            public void onFailure(AsyncEventFailureReason reason) {
+                Toast.makeText(getApplicationContext(), R.string.service_list_db_error, Toast.LENGTH_LONG).show();
+
             }
         };
 
@@ -113,33 +114,39 @@ public class ServiceListActivity extends SignedInActivity {
         if (categoryName != null) {
             final Category category = new Category(categoryName);
             new AlertDialog.Builder(this)
-                    .setTitle("Delete Category")
+                    .setTitle(R.string.delete_category)
                     .setMessage("Are you sure you want to delete the '" + categoryName + "' category?  \r\nThis CANNOT be undone!")
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             DbService.getServices(categoryName, new AsyncValueEventListener<Service>() {
                                 @Override
-                                public void onSuccess(@NonNull ArrayList<Service> data) {
-                                    if (data.size() > 0) {
-                                        Toast.makeText(getApplicationContext(), "Unable to delete the '" + categoryName + "' category because it has services assigned to it. Please re-assign the services, then delete.", Toast.LENGTH_LONG).show();
+                                public void onSuccess(ArrayList<Service> data) {
+                                    if (null == data) {
+                                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), categoryName), Toast.LENGTH_LONG).show();
+                                    } else if (data.size() > 0) {
+                                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_has_services_error), categoryName), Toast.LENGTH_LONG).show();
+
                                     } else {
                                         DbCategory.deleteCategory(category, new AsyncActionEventListener() {
                                             @Override
                                             public void onSuccess() {
-                                                Toast.makeText(getApplicationContext(), "The the '" + categoryName + "' category has been successfully deleted.", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_success), categoryName), Toast.LENGTH_LONG).show();
                                                 finish();
                                             }
                                             @Override
-                                            public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                                                Toast.makeText(getApplicationContext(), "Unable to delete the '" + categoryName + "' category at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+
+                                            public void onFailure(AsyncEventFailureReason reason) {
+                                                Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), categoryName), Toast.LENGTH_LONG).show();
+
                                             }
                                         });
                                     }
                                 }
                                 @Override
-                                public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                                    Toast.makeText(getApplicationContext(), "Unable to delete the '" + categoryName + "' category at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+                                public void onFailure(AsyncEventFailureReason reason) {
+                                    Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), categoryName), Toast.LENGTH_LONG).show();
+
                                 }
                             });
                         }

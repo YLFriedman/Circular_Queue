@@ -54,7 +54,7 @@ public class UserAccountChangePasswordActivity extends SignedInActivity {
         final String passwordConfirm = field_password_confirm.getText().toString();
 
         if (!oldPassword.equals(currentUser.getPassword())) {
-            field_password_old.setError("Incorrect password.");
+            field_password_old.setError(getString(R.string.incorrect_password_error));
             field_password_old.requestFocus();
             field_password_old.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
@@ -63,16 +63,16 @@ public class UserAccountChangePasswordActivity extends SignedInActivity {
         Boolean passwordError = true;
         switch (FieldValidation.validatePassword(currentUser.getUsername(), password, passwordConfirm)) {
             case VALID: passwordError = false; break;
-            case EMPTY: field_password.setError("Password is required!"); break;
-            case TOO_SHORT: field_password.setError("Minimum length of password is " + FieldValidation.PASSWORD_MIN_LENGTH + " characters."); break;
+            case EMPTY: field_password.setError(getString(R.string.empty_password_error)); break;
+            case TOO_SHORT: field_password.setError(getString(R.string.password_too_short_error)); break;
             case CONFIRM_MISMATCH:
-                field_password_confirm.setError("Both passwords must match.");
+                field_password_confirm.setError(getString(R.string.password_mismatch_error));
                 field_password_confirm.requestFocus();
                 field_password_confirm.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                 return;
-            case ILLEGAL_PASSWORD: field_password.setError("The selected password is banned. Please select a new password."); break;
-            case CONTAINS_USERNAME: field_password.setError("The password cannot contain the username."); break;
-            default: field_password.setError("Invalid password.");
+            case ILLEGAL_PASSWORD: field_password.setError(getString(R.string.banned_password_error)); break;
+            case CONTAINS_USERNAME: field_password.setError(getString(R.string.password_contains_username)); break;
+            default: field_password.setError(getString(R.string.password_error_generic));
         }
         if (passwordError) {
             field_password.requestFocus();
@@ -83,13 +83,13 @@ public class UserAccountChangePasswordActivity extends SignedInActivity {
         btn_save_password.setEnabled(false);
         DbUser.updatePassword(currentUser, password, new AsyncActionEventListener() {
             public void onSuccess() {
-                Toast.makeText(getApplicationContext(), "Password updated successfully!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), R.string.password_update_success, Toast.LENGTH_LONG).show();
                 btn_save_password.setEnabled(true);
                 finish();
             }
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 btn_save_password.setEnabled(true);
-                Toast.makeText(getApplicationContext(), "Unable to update your password at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), R.string.password_update_db_error, Toast.LENGTH_LONG).show();
             }
         });
     }

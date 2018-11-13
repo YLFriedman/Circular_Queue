@@ -72,8 +72,8 @@ public class ServiceEditActivity extends SignedInActivity {
                 loadSpinnerData(data);
             }
             @Override
-            public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                Toast.makeText(getApplicationContext(), "Unable to load the category list at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+            public void onFailure(AsyncEventFailureReason reason) {
+                Toast.makeText(getApplicationContext(), getString(R.string.category_list_db_error), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -106,9 +106,9 @@ public class ServiceEditActivity extends SignedInActivity {
         EditText field_spinner_categories_error = findViewById(R.id.field_spinner_categories_error);
 
         // Check valid category selection
-        if (categoryName.equals("<Select Category>")) {
-            ((TextView)spinner_categories.getSelectedView()).setError("Please select a category!");
-            field_spinner_categories_error.setError("Please select a category!");
+        if (categoryName.equals(getString(R.string.category_select))) {
+            ((TextView)spinner_categories.getSelectedView()).setError(getString(R.string.category_selection_error));
+            field_spinner_categories_error.setError(getString(R.string.category_selection_error));
             field_spinner_categories_error.requestFocus();
             spinner_categories.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
@@ -116,8 +116,8 @@ public class ServiceEditActivity extends SignedInActivity {
 
         // Check valid service name
         if (!FieldValidation.serviceNameIsValid(name)) {
-            if (name.isEmpty()) { field_service_name.setError("Service name is required!"); }
-            else { field_service_name.setError("Service name is invalid. " + FieldValidation.ILLEGAL_SERVICE_NAME_CHARS_MSG); }
+            if (name.isEmpty()) { field_service_name.setError(getString(R.string.empty_service_name_msg)); }
+            else { field_service_name.setError(getString(R.string.service_name_invalid)); }
             field_service_name.requestFocus();
             field_service_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
@@ -125,7 +125,7 @@ public class ServiceEditActivity extends SignedInActivity {
 
         // Check valid service rate
         if (rate.isEmpty()) {
-            field_rate.setError("Service rate is required!");
+            field_rate.setError(getString(R.string.empty_service_rate_error));
             field_rate.requestFocus();
             field_rate.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
@@ -133,25 +133,20 @@ public class ServiceEditActivity extends SignedInActivity {
         try {
             rateNum = Integer.parseInt(rate);
         } catch(NumberFormatException e) {
-            field_rate.setError("Service rate is too large! Max value is " + String.format(Locale.CANADA, "%,d", Integer.MAX_VALUE));
+            field_rate.setError(String.format(getString(R.string.rate_too_high_msg), String.format(Locale.CANADA, "%,d", Integer.MAX_VALUE)));
             field_rate.requestFocus();
             field_rate.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
         if (rateNum < 0) {
-            field_rate.setError("Service rate cannot be negative!");
+            field_rate.setError(getString(R.string.negative_service_rate_error));
             field_rate.requestFocus();
             field_rate.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
 
         final Service newService;
-        try {
-            newService = new Service(name, rateNum, new Category(categoryName));
-        } catch (InvalidDataException e) {
-            Toast.makeText(getApplicationContext(), "Unable to create the service. An invalid input has been detected: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            return;
-        }
+        newService = new Service(name, rateNum, new Category(categoryName));
 
         final Button btn_save_service = findViewById(R.id.btn_save_service);
         btn_save_service.setEnabled(false);
@@ -160,22 +155,22 @@ public class ServiceEditActivity extends SignedInActivity {
             @Override
             public void onSuccess() {
                 State.getState().setCurrentService(newService);
-                Toast.makeText(getApplicationContext(), "The service '" + newService.getName() + "' has been successfully updated.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), String.format(getString(R.string.service_update_success), newService.getName()), Toast.LENGTH_LONG).show();
                 finish();
             }
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 switch (reason) {
                     case DATABASE_ERROR:
-                        Toast.makeText(getApplicationContext(), "Unable to update your service at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), R.string.service_update_db_error, Toast.LENGTH_LONG).show();
                         break;
                     case ALREADY_EXISTS:
-                        field_service_name.setError("Service name already exist!");
+                        field_service_name.setError(getString(R.string.service_name_taken_error));
                         field_service_name.requestFocus();
                         break;
                     default:
                         // Some other kind of error
-                        Toast.makeText(getApplicationContext(), "Unable to update your service at this time. Please try again later.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), R.string.service_update_error_generic, Toast.LENGTH_LONG).show();
                 }
                 btn_save_service.setEnabled(true);
             }

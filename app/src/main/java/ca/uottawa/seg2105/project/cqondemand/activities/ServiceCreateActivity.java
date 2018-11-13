@@ -51,8 +51,8 @@ public class ServiceCreateActivity extends SignedInActivity {
                 loadSpinnerData(data);
             }
             @Override
-            public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                Toast.makeText(getApplicationContext(), "Unable to load the category list at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+            public void onFailure(AsyncEventFailureReason reason) {
+                Toast.makeText(getApplicationContext(), getString(R.string.category_list_db_error), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -66,7 +66,7 @@ public class ServiceCreateActivity extends SignedInActivity {
     private void loadSpinnerData(ArrayList<Category> data) {
         List<String> names = new ArrayList<String>();
         for (Category category: data){ names.add(category.getName()); }
-        names.add(0, "<Select Category>");
+        names.add(0, getString(R.string.category_list_select));
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item_title, names);
         //dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_categories.setAdapter(dataAdapter);
@@ -85,9 +85,9 @@ public class ServiceCreateActivity extends SignedInActivity {
         EditText field_spinner_categories_error = findViewById(R.id.field_spinner_categories_error);
 
         // Check valid spinner selection
-        if (categoryName.equals("<Select Category>")) {
-            ((TextView)spinner_categories.getSelectedView()).setError("Please select a category!");
-            field_spinner_categories_error.setError("Please select a category!");
+        if (categoryName.equals(getString(R.string.category_select))) {
+            ((TextView)spinner_categories.getSelectedView()).setError(getString(R.string.category_selection_error));
+            field_spinner_categories_error.setError(getString(R.string.category_selection_error));
             field_spinner_categories_error.requestFocus();
             spinner_categories.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
@@ -95,12 +95,12 @@ public class ServiceCreateActivity extends SignedInActivity {
 
         //Check valid service name
         if (name.isEmpty()) {
-            field_service_name.setError("Service name is required!");
+            field_service_name.setError(getString(R.string.empty_service_name_msg));
             field_service_name.requestFocus();
             field_service_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         } else if (!FieldValidation.serviceNameIsValid(name)) {
-            field_service_name.setError("Service name is invalid. " + FieldValidation.ILLEGAL_SERVICE_NAME_CHARS_MSG);
+            field_service_name.setError(getString(R.string.service_name_invalid));
             field_service_name.requestFocus();
             field_service_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
@@ -108,7 +108,7 @@ public class ServiceCreateActivity extends SignedInActivity {
 
         //Check valid service rate
         if (rate.isEmpty()) {
-            field_rate.setError("Service rate is required!");
+            field_rate.setError(getString(R.string.empty_service_rate_error));
             field_rate.requestFocus();
             field_rate.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
@@ -116,13 +116,13 @@ public class ServiceCreateActivity extends SignedInActivity {
         try {
             rateNum = Integer.parseInt(rate);
         } catch(NumberFormatException e) {
-            field_rate.setError("Service rate is too large! Max value is " + String.format(Locale.CANADA, "%,d", Integer.MAX_VALUE));
+            field_rate.setError(String.format(getString(R.string.rate_too_high_msg), String.format(Locale.CANADA, "%,d", Integer.MAX_VALUE)));
             field_rate.requestFocus();
             field_rate.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
         if (rateNum < 0){
-            field_rate.setError("Service rate cannot be negative!");
+            field_rate.setError(getString(R.string.negative_service_rate_error));
             field_rate.requestFocus();
             field_rate.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
@@ -134,7 +134,7 @@ public class ServiceCreateActivity extends SignedInActivity {
         DbService.createService(newService, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
-                Toast.makeText(getApplicationContext(), "The service '" + name + "' has been successfully created.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), String.format(getString(R.string.service_creation_success), name), Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("category_name", categoryName);
@@ -145,14 +145,14 @@ public class ServiceCreateActivity extends SignedInActivity {
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 switch (reason) {
                     case DATABASE_ERROR:
-                        Toast.makeText(getApplicationContext(), "Unable to create your service at this time due to a database error. Please try again later.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), getString(R.string.service_create_db_error), Toast.LENGTH_LONG).show();
                         break;
                     case ALREADY_EXISTS:
-                        field_service_name.setError("Service name already exist!");
+                        field_service_name.setError(getString(R.string.service_name_taken_error));
                         field_service_name.requestFocus();
                         break;
                     default: // Some other kind of error
-                        Toast.makeText(getApplicationContext(), "Unable to create your service at this time. Please try again later.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), getString(R.string.service_create_error_generic), Toast.LENGTH_LONG).show();
                 }
                 btn_create_service.setEnabled(true);
             }

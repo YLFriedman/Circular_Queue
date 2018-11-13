@@ -48,8 +48,9 @@ public class UserAccountListActivity extends SignedInActivity {
                 }));
             }
             @Override
-            public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                Toast.makeText(getApplicationContext(), "There was an error getting the users from the database. Please try again later.", Toast.LENGTH_LONG).show();
+            public void onFailure(AsyncEventFailureReason reason) {
+                Toast.makeText(getApplicationContext(), R.string.user_list_db_error, Toast.LENGTH_LONG).show();
+
             }
         });
     }
