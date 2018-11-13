@@ -146,6 +146,8 @@
     <string name="account_update_db_error">Unable to update your account at this time due to a database error. Please try again later.</string>
     <string name="account_update_generic_error">Unable to update your account at this time. Please try again later.</string>
     <string name="delete_confirm_dialog_template">Are you sure you want to delete the \'%s\' %s?\nThis CANNOT be undone!</string>
+    <string name="field_required_template">%s is required!</string>
+    <string name="field_invalid_template">%s is invalid!</string>
 
     <string-array name="account_types">
         <item>Homeowner</item>
@@ -153,6 +155,16 @@
     </string-array>
 
     <string name="category_list_select">Select Category</string>
+    <string name="next">Next</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="address">Address</string>
+    <string name="licensed">Licensed for Services Proivided</string>
+    <string name="unit">Unit</string>
+    <string name="number">Number</string>
+    <string name="street">Street</string>
+    <string name="postal">Postal</string>
+    <string name="city">City</string>
+    <string name="country">Country</string>
     <string-array name="empty_category_spinner">
         <item>Select Category</item>
     </string-array>
