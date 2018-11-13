@@ -170,10 +170,8 @@ public class DbUtil {
         return getItems(type, listener, false);
     }
 
-    @NonNull
     @SuppressWarnings("unchecked")
     private static <T> DbListener<ValueEventListener> getItems(@NonNull final DataType type, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
-        DbListener<ValueEventListener> dbListener = null;
         ValueEventListener dataConversionListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -200,26 +198,38 @@ public class DbUtil {
         };
         if (singleEvent) {
             getRef(type).addListenerForSingleValueEvent(dataConversionListener);
+            return null;
         } else {
             DatabaseReference ref = getRef(type);
-            dbListener = new DbListener<ValueEventListener>(ref, ref.addValueEventListener(dataConversionListener));
+            return new DbListener<ValueEventListener>(ref, ref.addValueEventListener(dataConversionListener));
         }
-        return dbListener;
     }
 
     static <T> void getItems(@NonNull final DataType type, @NonNull String childKey, @NonNull String childValue, @NonNull final AsyncValueEventListener<T> listener) {
         Query query = getRef(type).orderByChild(childKey).equalTo(childValue);
-        getItems(type, query, listener);
+        getItems(type, query, listener, true);
     }
 
     static <T> void getItems(@NonNull final DataType type, @NonNull String childKey, int childValue, @NonNull final AsyncValueEventListener<T> listener) {
         Query query = getRef(type).orderByChild(childKey).equalTo(childValue);
-        getItems(type, query, listener);
+        getItems(type, query, listener, true);
+    }
+
+    @NonNull
+    static <T> DbListener<ValueEventListener> getItemsLive(@NonNull final DataType type, @NonNull String childKey, @NonNull String childValue, @NonNull final AsyncValueEventListener<T> listener) {
+        Query query = getRef(type).orderByChild(childKey).equalTo(childValue);
+        return getItems(type, query, listener, false);
+    }
+
+    @NonNull
+    static <T> DbListener<ValueEventListener> getItemsLive(@NonNull final DataType type, @NonNull String childKey, int childValue, @NonNull final AsyncValueEventListener<T> listener) {
+        Query query = getRef(type).orderByChild(childKey).equalTo(childValue);
+        return getItems(type, query, listener, false);
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> void getItems(@NonNull final DataType type, @NonNull Query query, @NonNull final AsyncValueEventListener<T> listener) {
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+    private static <T> DbListener<ValueEventListener> getItems(@NonNull final DataType type, @NonNull Query query, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
+        ValueEventListener dataConversionListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 long size = dataSnapshot.getChildrenCount();
@@ -242,7 +252,13 @@ public class DbUtil {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
             }
-        });
+        };
+        if (singleEvent) {
+            query.addListenerForSingleValueEvent(dataConversionListener);
+            return null;
+        } else {
+            return new DbListener<ValueEventListener>(getRef(type), query.addValueEventListener(dataConversionListener));
+        }
     }
 
     static <T> void deleteItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {

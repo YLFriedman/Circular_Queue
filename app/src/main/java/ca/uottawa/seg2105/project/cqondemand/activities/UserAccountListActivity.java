@@ -24,7 +24,7 @@ import ca.uottawa.seg2105.project.cqondemand.adapters.UserListAdapter;
 public class UserAccountListActivity extends SignedInActivity {
 
     private RecyclerView recycler_list;
-    DbListener<?> listener;
+    DbListener<?> dbListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +34,7 @@ public class UserAccountListActivity extends SignedInActivity {
         if (!State.getState().getSignedInUser().isAdmin()) { finish(); }
         recycler_list.setHasFixedSize(true);
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        listener = DbUser.getUsersLive(new AsyncValueEventListener<User>() {
+        dbListener = DbUser.getUsersLive(new AsyncValueEventListener<User>() {
             @Override
             public void onSuccess(@NonNull ArrayList<User> data) {
                 //user_list_adapter.notifyItemRangeRemoved(0, user_list_adapter.getItemCount());
@@ -58,7 +58,7 @@ public class UserAccountListActivity extends SignedInActivity {
     public void onDestroy() {
         super.onDestroy();
         // Cleanup the data listener for the users list
-        if (null != listener) { listener.removeListener(); }
+        if (null != dbListener) { dbListener.removeListener(); }
     }
 
 }

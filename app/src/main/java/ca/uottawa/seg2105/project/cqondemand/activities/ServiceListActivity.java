@@ -20,6 +20,7 @@ import java.util.Locale;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.adapters.ServiceListAdapter;
 import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
+import ca.uottawa.seg2105.project.cqondemand.database.DbListener;
 import ca.uottawa.seg2105.project.cqondemand.database.DbService;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
@@ -34,29 +35,19 @@ public class ServiceListActivity extends SignedInActivity {
     private RecyclerView recycler_list;
     private ServiceListAdapter service_list_adapter;
     private String categoryName;
+    DbListener<?> dbListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_list);
         recycler_list = findViewById(R.id.recycler_list);
+        recycler_list.setHasFixedSize(true);
+        recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         TextView txt_category_name = findViewById(R.id.txt_category_name);
         Intent intent = getIntent();
         categoryName = intent.getStringExtra("category_name");
-        if (null != categoryName) {
-            txt_category_name.setText(String.format(Locale.CANADA, getString(R.string.category_title_template), categoryName));
-        } else {
-            txt_category_name.setVisibility(View.GONE);
-            findViewById(R.id.divider_category_name).setVisibility(View.GONE);
-        }
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (isFinishing()) { return; }
-        recycler_list.setHasFixedSize(true);
-        recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         AsyncValueEventListener<Service> listener = new AsyncValueEventListener<Service>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Service> data) {
@@ -75,11 +66,24 @@ public class ServiceListActivity extends SignedInActivity {
                 Toast.makeText(getApplicationContext(), "There was an error getting the services from the database. Please try again later.", Toast.LENGTH_LONG).show();
             }
         };
-        if (categoryName == null) {
-            DbService.getServices(listener);
+
+        if (null != categoryName) {
+            txt_category_name.setText(String.format(Locale.CANADA, getString(R.string.category_title_template), categoryName));
+            dbListener = DbService.getServicesLive(categoryName, listener);
+            //DbService.getServices(categoryName, listener);
         } else {
-            DbService.getServices(categoryName, listener);
+            txt_category_name.setVisibility(View.GONE);
+            findViewById(R.id.divider_category_name).setVisibility(View.GONE);
+            dbListener = DbService.getServicesLive(listener);
+            //DbService.getServices(listener);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Cleanup the data listener for the services list
+        if (null != dbListener) { dbListener.removeListener(); }
     }
 
     @Override

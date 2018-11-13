@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
+import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
@@ -46,6 +47,11 @@ public class DbCategory extends DbItem<Category> {
 
     public static void getCategories(@NonNull AsyncValueEventListener<Category> listener) {
         DbUtil.getItems(DbUtil.DataType.CATEGORY, listener);
+    }
+
+    @NonNull
+    public static DbListener<?> getCategoriesLive(@NonNull final AsyncValueEventListener<Category> listener) {
+        return DbUtil.getItemsLive(DbUtil.DataType.CATEGORY, listener);
     }
 
 }
