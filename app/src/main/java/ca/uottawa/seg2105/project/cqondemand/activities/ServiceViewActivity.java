@@ -139,7 +139,7 @@ public class ServiceViewActivity extends SignedInActivity {
         if (null != currentService) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.delete_service)
-                    .setMessage("Are you sure you want to delete the '" + currentService.getName() + "' service?  \r\nThis CANNOT be undone!")
+                    .setMessage(String.format(getString(R.string.delete_confirm_dialog_template), currentService.getName(), getString(R.string.service)))
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {

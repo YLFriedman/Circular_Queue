@@ -47,7 +47,6 @@ public class ServiceListActivity extends SignedInActivity {
         TextView txt_category_name = findViewById(R.id.txt_category_name);
         Intent intent = getIntent();
         categoryName = intent.getStringExtra("category_name");
-
         AsyncValueEventListener<Service> listener = new AsyncValueEventListener<Service>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Service> data) {
@@ -64,19 +63,15 @@ public class ServiceListActivity extends SignedInActivity {
             @Override
             public void onFailure(AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), R.string.service_list_db_error, Toast.LENGTH_LONG).show();
-
             }
         };
-
         if (null != categoryName) {
             txt_category_name.setText(String.format(Locale.CANADA, getString(R.string.category_title_template), categoryName));
             dbListener = DbService.getServicesLive(categoryName, listener);
-            //DbService.getServices(categoryName, listener);
         } else {
             txt_category_name.setVisibility(View.GONE);
             findViewById(R.id.divider_category_name).setVisibility(View.GONE);
             dbListener = DbService.getServicesLive(listener);
-            //DbService.getServices(listener);
         }
     }
 
@@ -115,7 +110,7 @@ public class ServiceListActivity extends SignedInActivity {
             final Category category = new Category(categoryName);
             new AlertDialog.Builder(this)
                     .setTitle(R.string.delete_category)
-                    .setMessage("Are you sure you want to delete the '" + categoryName + "' category?  \r\nThis CANNOT be undone!")
+                    .setMessage(String.format(getString(R.string.delete_confirm_dialog_template), category.getName(), getString(R.string.category)))
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
@@ -135,7 +130,6 @@ public class ServiceListActivity extends SignedInActivity {
                                                 finish();
                                             }
                                             @Override
-
                                             public void onFailure(AsyncEventFailureReason reason) {
                                                 Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), categoryName), Toast.LENGTH_LONG).show();
 

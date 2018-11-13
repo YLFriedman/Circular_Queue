@@ -115,7 +115,7 @@ public class UserAccountViewActivity extends SignedInActivity {
         if (null != currentUser) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.delete_account)
-                    .setMessage("Are you sure you want to delete the '" + currentUser.getUsername() + "' account?  \r\nThis CANNOT be undone!")
+                    .setMessage(String.format(getString(R.string.delete_confirm_dialog_template), currentUser.getUsername(), getString(R.string.account)))
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
