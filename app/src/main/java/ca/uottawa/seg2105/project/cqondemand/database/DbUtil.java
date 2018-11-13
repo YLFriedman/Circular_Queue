@@ -121,7 +121,7 @@ public class DbUtil {
      * @return A sanitized, database-ready String version of the input key
      */
     @NonNull
-    static String getSanitizedKey(@NonNull String uniqueID) {
+    public static String getSanitizedKey(@NonNull String uniqueID) {
         uniqueID = uniqueID.toLowerCase();
         uniqueID = uniqueID.replaceAll("[\\s]", "_");
         uniqueID = uniqueID.replaceAll("[^a-z0-9_]", "_");
