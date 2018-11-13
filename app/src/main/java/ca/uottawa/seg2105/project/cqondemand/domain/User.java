@@ -148,4 +148,8 @@ public class User {
         return null != other && username.equals(other.username);
     }
 
+    public String toString() {
+        return this.username;
+    }
+
 }

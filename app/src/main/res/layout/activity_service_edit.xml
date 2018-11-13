@@ -35,8 +35,8 @@
                 android:id="@+id/spinner_categories"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp" />
+                android:entries="@array/empty_category_spinner"
+                android:minHeight="40dp" />
 
             <EditText
                 android:id="@+id/field_spinner_categories_error"

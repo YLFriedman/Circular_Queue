@@ -126,7 +126,6 @@
     <string name="category_name_taken">Category already exists!</string>
     <string name="category_create_generic_error">Unable to create the category at this time. Please try again later.</string>
     <string name="category_create_success">The category \'%s\' has been successfully created.</string>
-    <string name="category_list_select">Select Category</string>
     <string name="service_update_success">The service \'%s\' has been successfully updated.</string>
     <string name="service_update_db_error">Unable to update your service at this time due to a database error. Please try again later.</string>
     <string name="service_update_error_generic">Unable to update your service at this time. Please try again later.</string>
@@ -150,5 +149,10 @@
     <string-array name="account_types">
         <item>Homeowner</item>
         <item>Service Provider</item>
+    </string-array>
+
+    <string name="category_list_select">Select Category</string>
+    <string-array name="empty_category_spinner">
+        <item>Select Category</item>
     </string-array>
 </resources>

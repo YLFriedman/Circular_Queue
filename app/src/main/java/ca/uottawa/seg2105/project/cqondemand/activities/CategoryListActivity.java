@@ -15,10 +15,8 @@ import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.adapters.CategoryListAdapter;
-import ca.uottawa.seg2105.project.cqondemand.adapters.UserListAdapter;
 import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
 import ca.uottawa.seg2105.project.cqondemand.database.DbListener;
-import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
