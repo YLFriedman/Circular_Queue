@@ -49,7 +49,7 @@ public class ServiceCreateActivity extends SignedInActivity {
                 loadSpinnerData(data);
             }
             @Override
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), getString(R.string.category_list_db_error), Toast.LENGTH_LONG).show();
             }
         });
@@ -127,7 +127,7 @@ public class ServiceCreateActivity extends SignedInActivity {
             field_rate.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
-        if (rateNum < 0){
+        if (rateNum < 0) {
             field_rate.setError(getString(R.string.negative_service_rate_error));
             field_rate.requestFocus();
             field_rate.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));

@@ -73,6 +73,9 @@ public class UserAccountViewActivity extends SignedInActivity {
         if (null != user && user.getType() == User.Types.ADMIN) {
             menu.setGroupVisible(R.id.grp_user_edit_controls, false);
         }
+        if (!State.getState().getSignedInUser().equals(currentUser)) {
+            menu.setGroupVisible(R.id.grp_user_password_controls, false);
+        }
         return true;
     }
 

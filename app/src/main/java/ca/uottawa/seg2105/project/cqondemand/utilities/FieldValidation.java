@@ -44,7 +44,7 @@ public class FieldValidation {
 
     public static PasswordValidationResult validatePassword(String username, String password, String confirmPassword) {
         if (null == password || password.isEmpty()) { return PasswordValidationResult.EMPTY; }
-        if (null != username && username.equals("admin")) { return PasswordValidationResult.VALID; }
+        if (null != username && username.equals("admin") && password.equals("admin")) { return PasswordValidationResult.VALID; }
         if (password.length() < PASSWORD_MIN_LENGTH) { return PasswordValidationResult.TOO_SHORT; }
         if (null != username && password.toLowerCase().contains(username.toLowerCase())) { return PasswordValidationResult.CONTAINS_USERNAME; }
         for (String illegalPW: ILLEGAL_PASSWORDS) {

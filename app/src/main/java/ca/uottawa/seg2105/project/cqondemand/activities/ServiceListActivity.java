@@ -45,7 +45,10 @@ public class ServiceListActivity extends SignedInActivity {
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         TextView txt_category_name = findViewById(R.id.txt_category_name);
         Intent intent = getIntent();
+        String categoryName = intent.getStringExtra("category_name");
         currentCategory = State.getState().getCurrentCategory();
+        State.getState().setCurrentCategory(null);
+        if (null == currentCategory && null != categoryName) { currentCategory = new Category(categoryName); }
         AsyncValueEventListener<Service> listener = new AsyncValueEventListener<Service>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Service> data) {
@@ -59,7 +62,7 @@ public class ServiceListActivity extends SignedInActivity {
                 recycler_list.setAdapter(service_list_adapter);
             }
             @Override
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), R.string.service_list_db_error, Toast.LENGTH_LONG).show();
             }
         };
@@ -113,7 +116,7 @@ public class ServiceListActivity extends SignedInActivity {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             DbService.getServices(currentCategory.getName(), new AsyncValueEventListener<Service>() {
                                 @Override
-                                public void onSuccess(ArrayList<Service> data) {
+                                public void onSuccess(@NonNull ArrayList<Service> data) {
                                     if (null == data) {
                                         Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), currentCategory.getName()), Toast.LENGTH_LONG).show();
                                     } else if (data.size() > 0) {
@@ -126,14 +129,14 @@ public class ServiceListActivity extends SignedInActivity {
                                                 finish();
                                             }
                                             @Override
-                                            public void onFailure(AsyncEventFailureReason reason) {
+                                            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                                                 Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), currentCategory.getName()), Toast.LENGTH_LONG).show();
                                             }
                                         });
                                     }
                                 }
                                 @Override
-                                public void onFailure(AsyncEventFailureReason reason) {
+                                public void onFailure(@NonNull AsyncEventFailureReason reason) {
                                     Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), currentCategory.getName()), Toast.LENGTH_LONG).show();
                                 }
                             });

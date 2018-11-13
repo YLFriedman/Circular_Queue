@@ -196,11 +196,11 @@ public class DbUtil {
                 listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
             }
         };
+        DatabaseReference ref = getRef(type);
         if (singleEvent) {
-            getRef(type).addListenerForSingleValueEvent(dataConversionListener);
-            return null;
+            ref.addListenerForSingleValueEvent(dataConversionListener);
+            return new DbListener<ValueEventListener>(ref, null);
         } else {
-            DatabaseReference ref = getRef(type);
             return new DbListener<ValueEventListener>(ref, ref.addValueEventListener(dataConversionListener));
         }
     }
@@ -253,11 +253,12 @@ public class DbUtil {
                 listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
             }
         };
+        DatabaseReference ref = getRef(type);
         if (singleEvent) {
             query.addListenerForSingleValueEvent(dataConversionListener);
-            return null;
+            return new DbListener<ValueEventListener>(ref, null);
         } else {
-            return new DbListener<ValueEventListener>(getRef(type), query.addValueEventListener(dataConversionListener));
+            return new DbListener<ValueEventListener>(ref, query.addValueEventListener(dataConversionListener));
         }
     }
 

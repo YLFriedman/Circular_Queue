@@ -100,7 +100,7 @@ public class UserAccountEditActivity extends SignedInActivity {
 
         DbUser.updateUser(currentUser, updatedUser, new AsyncActionEventListener() {
             public void onSuccess() {
-                currentUser = updatedUser;
+                State.getState().setCurrentUser(updatedUser);
                 Toast.makeText(getApplicationContext(), R.string.account_update_success, Toast.LENGTH_LONG).show();
                 finish();
             }

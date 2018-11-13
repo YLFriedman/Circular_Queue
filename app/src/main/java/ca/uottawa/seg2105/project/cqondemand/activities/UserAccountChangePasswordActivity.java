@@ -14,6 +14,7 @@ import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
@@ -77,8 +78,9 @@ public class UserAccountChangePasswordActivity extends SignedInActivity {
         }
 
         btn_save_password.setEnabled(false);
-        DbUser.updatePassword(currentUser, password, new AsyncActionEventListener() {
-            public void onSuccess() {
+        DbUser.updatePassword(currentUser, password, new AsyncSingleValueEventListener<User>() {
+            public void onSuccess(@NonNull User item) {
+                State.getState().setCurrentUser(item);
                 Toast.makeText(getApplicationContext(), R.string.password_update_success, Toast.LENGTH_LONG).show();
                 finish();
             }

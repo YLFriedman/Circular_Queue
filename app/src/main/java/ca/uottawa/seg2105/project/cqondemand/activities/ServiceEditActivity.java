@@ -54,7 +54,7 @@ public class ServiceEditActivity extends SignedInActivity {
                     loadSpinnerData(data);
                 }
                 @Override
-                public void onFailure(AsyncEventFailureReason reason) {
+                public void onFailure(@NonNull AsyncEventFailureReason reason) {
                     Toast.makeText(getApplicationContext(), getString(R.string.category_list_db_error), Toast.LENGTH_LONG).show();
                 }
             });

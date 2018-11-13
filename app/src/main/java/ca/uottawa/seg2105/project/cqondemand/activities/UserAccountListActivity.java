@@ -47,7 +47,7 @@ public class UserAccountListActivity extends SignedInActivity {
                 }));
             }
             @Override
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), R.string.user_list_db_error, Toast.LENGTH_LONG).show();
 
             }
