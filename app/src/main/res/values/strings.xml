@@ -80,8 +80,8 @@
     <string name="delete_category">Delete Category</string>
     <string name="service_category">Service Category</string>
     <string name="hourly_rate">Hourly Rate</string>
-    <string name="service_name_invalid">Please only use letters, numbers, spaces, apostrophes or underscores for the name of a service</string>
-    <string name="category_name_invalid">Please only use letters, numbers, spaces, apostrophes or underscores for the name of a category</string>
+    <string name="service_name_invalid">Please only use letters, numbers, spaces, or apostrophes for the name of a service</string>
+    <string name="category_name_invalid">Please only use letters, numbers, spaces, or apostrophes for the name of a category</string>
     <string name="category_select">Select Category</string>
     <string name="category_list_db_error">Unable to load the category list at this time due to a database error. Please try again later.</string>
     <string name="category_selection_error">Please select a category!</string>
@@ -97,9 +97,9 @@
     <string name="invalid_username_msg">Please use only letters, numbers or underscores for your username</string>
     <string name="empty_username_error">Username is required!</string>
     <string name="empty_first_name_error">First name is required!</string>
-    <string name="invalid_first_name_error">Please only use letters for your first name.</string>
+    <string name="invalid_first_name_error">Please only use letters, spaces or apostrophes for your first name.</string>
     <string name="empty_last_name_error">Last name is required!</string>
-    <string name="invalid_last_name_error">Please only use letter for your last name.</string>
+    <string name="invalid_last_name_error">Please only use letters, spaces or apostrophes for your last name.</string>
     <string name="empty_email_error">Email is required!</string>
     <string name="invalid_email_error">This is an invalid E-mail!</string>
     <string name="empty_password_error">Password is required!</string>
