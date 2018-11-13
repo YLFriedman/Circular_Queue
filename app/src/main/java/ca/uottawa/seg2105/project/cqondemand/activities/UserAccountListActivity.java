@@ -23,8 +23,8 @@ import ca.uottawa.seg2105.project.cqondemand.adapters.UserListAdapter;
 
 public class UserAccountListActivity extends SignedInActivity {
 
-    private RecyclerView recycler_list;
-    DbListener<?> dbListener;
+    protected RecyclerView recycler_list;
+    protected DbListener<?> dbListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +40,8 @@ public class UserAccountListActivity extends SignedInActivity {
                 //user_list_adapter.notifyItemRangeRemoved(0, user_list_adapter.getItemCount());
                 recycler_list.setAdapter(new UserListAdapter(getApplicationContext(), data, new View.OnClickListener() {
                     public void onClick(final View view) {
-                        TextView field = view.findViewById(R.id.txt_subtitle);
+                        State.getState().setCurrentUser((User) view.getTag());
                         Intent intent = new Intent(getApplicationContext(), UserAccountViewActivity.class);
-                        intent.putExtra("username", field.getContentDescription());
                         startActivity(intent);
                     }
                 }));

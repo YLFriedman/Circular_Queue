@@ -30,9 +30,9 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 
 public class ServiceCreateActivity extends SignedInActivity {
 
-    Spinner spinner_categories;
-    String categoryName;
-    DbListener<?> dbListener;
+    protected Spinner spinner_categories;
+    protected String categoryName;
+    protected DbListener<?> dbListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

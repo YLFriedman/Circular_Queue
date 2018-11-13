@@ -46,7 +46,7 @@ public class DbUser extends DbItem<User> {
             @Override
             public void onSuccess() {
                 // If we are updating the logged in user, replace the user object
-                if (State.getState().getSignedInUser() == oldUser) { State.getState().setSignedInUser(newUser); }
+                if (oldUser.equals(State.getState().getSignedInUser())) { State.getState().setSignedInUser(newUser); }
                 if (null != listener) { listener.onSuccess(); }
             }
             @Override

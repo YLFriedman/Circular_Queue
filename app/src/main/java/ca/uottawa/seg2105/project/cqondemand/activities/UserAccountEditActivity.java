@@ -1,8 +1,6 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -16,17 +14,16 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
-import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class UserAccountEditActivity extends SignedInActivity {
 
-    private EditText field_username;
-    private EditText field_first_name;
-    private EditText field_last_name;
-    private EditText field_email;
-    private User currentUser;
+    protected EditText field_username;
+    protected EditText field_first_name;
+    protected EditText field_last_name;
+    protected EditText field_email;
+    protected User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,19 +36,14 @@ public class UserAccountEditActivity extends SignedInActivity {
         field_email = findViewById(R.id.field_email);
 
         currentUser = State.getState().getCurrentUser();
+        State.getState().setCurrentUser(null);
         if (null != currentUser) {
             field_username.setText(currentUser.getUsername(), TextView.BufferType.EDITABLE);
             field_first_name.setText(currentUser.getFirstName(), TextView.BufferType.EDITABLE);
             field_last_name.setText(currentUser.getLastName(), TextView.BufferType.EDITABLE);
             field_email.setText(currentUser.getEmail(), TextView.BufferType.EDITABLE);
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (isFinishing()) { return; }
-        if (!currentUser.equals(State.getState().getCurrentUser())) {
+        } else {
+            Toast.makeText(getApplicationContext(),  String.format(getString(R.string.current_item_provided_template), getString(R.string.account)), Toast.LENGTH_SHORT).show();
             finish();
         }
     }
@@ -106,10 +98,9 @@ public class UserAccountEditActivity extends SignedInActivity {
         btn_save_user.setEnabled(false);
         updatedUser = new User(firstName, lastName, username, email, currentUser.getType(), currentUser.getPassword());
 
-
         DbUser.updateUser(currentUser, updatedUser, new AsyncActionEventListener() {
             public void onSuccess() {
-                currentUser = State.getState().getSignedInUser();
+                currentUser = updatedUser;
                 Toast.makeText(getApplicationContext(), R.string.account_update_success, Toast.LENGTH_LONG).show();
                 finish();
             }

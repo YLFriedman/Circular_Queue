@@ -31,10 +31,10 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class ServiceEditActivity extends SignedInActivity {
 
-    private Spinner spinner_categories;
-    private String categoryName;
-    private Service currentService;
-    DbListener<?> dbListener;
+    protected Spinner spinner_categories;
+    protected String categoryName;
+    protected Service currentService;
+    protected DbListener<?> dbListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

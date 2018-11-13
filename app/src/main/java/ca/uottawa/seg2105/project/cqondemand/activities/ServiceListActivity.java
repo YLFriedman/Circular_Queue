@@ -31,10 +31,10 @@ import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class ServiceListActivity extends SignedInActivity {
 
-    private RecyclerView recycler_list;
-    private ServiceListAdapter service_list_adapter;
-    private String categoryName;
-    DbListener<?> dbListener;
+    protected RecyclerView recycler_list;
+    protected ServiceListAdapter service_list_adapter;
+    protected Category currentCategory;
+    protected DbListener<?> dbListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,15 +45,14 @@ public class ServiceListActivity extends SignedInActivity {
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         TextView txt_category_name = findViewById(R.id.txt_category_name);
         Intent intent = getIntent();
-        categoryName = intent.getStringExtra("category_name");
+        currentCategory = State.getState().getCurrentCategory();
         AsyncValueEventListener<Service> listener = new AsyncValueEventListener<Service>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Service> data) {
                 service_list_adapter = new ServiceListAdapter(getApplicationContext(), data, new View.OnClickListener() {
                     public void onClick(final View view) {
-                        TextView field = view.findViewById(R.id.txt_title);
+                        State.getState().setCurrentService((Service) view.getTag());
                         Intent intent = new Intent(getApplicationContext(), ServiceViewActivity.class);
-                        intent.putExtra("service_name", field.getText().toString());
                         startActivity(intent);
                     }
                 });
@@ -64,9 +63,9 @@ public class ServiceListActivity extends SignedInActivity {
                 Toast.makeText(getApplicationContext(), R.string.service_list_db_error, Toast.LENGTH_LONG).show();
             }
         };
-        if (null != categoryName) {
-            txt_category_name.setText(String.format(Locale.CANADA, getString(R.string.category_title_template), categoryName));
-            dbListener = DbService.getServicesLive(categoryName, listener);
+        if (null != currentCategory) {
+            txt_category_name.setText(String.format(Locale.CANADA, getString(R.string.category_title_template), currentCategory.getName()));
+            dbListener = DbService.getServicesLive(currentCategory.getName(), listener);
         } else {
             txt_category_name.setVisibility(View.GONE);
             findViewById(R.id.divider_category_name).setVisibility(View.GONE);
@@ -86,7 +85,7 @@ public class ServiceListActivity extends SignedInActivity {
         User user = State.getState().getSignedInUser();
         if (null != user && user.getType() == User.Types.ADMIN) {
             getMenuInflater().inflate(R.menu.service_list_options, menu);
-            if (categoryName == null) {
+            if (currentCategory == null) {
                 menu.setGroupVisible(R.id.grp_category_controls, false);
             }
             return true;
@@ -105,41 +104,37 @@ public class ServiceListActivity extends SignedInActivity {
     }
 
     public void onDeleteCategoryClick() {
-        if (categoryName != null) {
-            final Category category = new Category(categoryName);
+        if (currentCategory != null) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.delete_category)
-                    .setMessage(String.format(getString(R.string.delete_confirm_dialog_template), category.getName(), getString(R.string.category)))
+                    .setMessage(String.format(getString(R.string.delete_confirm_dialog_template), currentCategory.getName(), getString(R.string.category)))
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            DbService.getServices(categoryName, new AsyncValueEventListener<Service>() {
+                            DbService.getServices(currentCategory.getName(), new AsyncValueEventListener<Service>() {
                                 @Override
                                 public void onSuccess(ArrayList<Service> data) {
                                     if (null == data) {
-                                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), categoryName), Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), currentCategory.getName()), Toast.LENGTH_LONG).show();
                                     } else if (data.size() > 0) {
-                                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_has_services_error), categoryName), Toast.LENGTH_LONG).show();
-
+                                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_has_services_error), currentCategory.getName()), Toast.LENGTH_LONG).show();
                                     } else {
-                                        DbCategory.deleteCategory(category, new AsyncActionEventListener() {
+                                        DbCategory.deleteCategory(currentCategory, new AsyncActionEventListener() {
                                             @Override
                                             public void onSuccess() {
-                                                Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_success), categoryName), Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_success), currentCategory.getName()), Toast.LENGTH_LONG).show();
                                                 finish();
                                             }
                                             @Override
                                             public void onFailure(AsyncEventFailureReason reason) {
-                                                Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), categoryName), Toast.LENGTH_LONG).show();
-
+                                                Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), currentCategory.getName()), Toast.LENGTH_LONG).show();
                                             }
                                         });
                                     }
                                 }
                                 @Override
                                 public void onFailure(AsyncEventFailureReason reason) {
-                                    Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), categoryName), Toast.LENGTH_LONG).show();
-
+                                    Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), currentCategory.getName()), Toast.LENGTH_LONG).show();
                                 }
                             });
                         }
@@ -154,7 +149,7 @@ public class ServiceListActivity extends SignedInActivity {
 
     public void onCreateServiceClick() {
         Intent intent = new Intent(getApplicationContext(), ServiceCreateActivity.class);
-        if (null != categoryName) { intent.putExtra("category_name", categoryName); }
+        if (null != currentCategory.getName()) { intent.putExtra("category_name", currentCategory.getName()); }
         startActivity(intent);
     }
 

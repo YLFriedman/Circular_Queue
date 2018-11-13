@@ -10,24 +10,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
-import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class SignInActivity extends AppCompatActivity {
 
-    private Button btn_sign_in;
-    private Button btn_sign_up;
-    private Button btn_create_admin_account;
-    private EditText field_username;
-    private EditText field_password;
+    protected Button btn_sign_in;
+    protected Button btn_sign_up;
+    protected Button btn_create_admin_account;
+    protected EditText field_username;
+    protected EditText field_password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +107,6 @@ public class SignInActivity extends AppCompatActivity {
                     startActivity(loginIntent);
                     finish();
                 }
-
                 @Override
                 public void onFailure(@NonNull AsyncEventFailureReason reason) {
                     btn_sign_in.setEnabled(true);
@@ -149,7 +145,6 @@ public class SignInActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "The admin user has been created successfully. Login with the username and password 'admin'.", Toast.LENGTH_LONG).show();
                 btn_create_admin_account.setVisibility(View.GONE);
             }
-
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 if (AsyncEventFailureReason.ALREADY_EXISTS == reason) {

@@ -16,7 +16,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private TableRow btns_admin_1;
+    protected TableRow btns_admin_1;
 
     /*
      * Fills in layout for UserHome activity

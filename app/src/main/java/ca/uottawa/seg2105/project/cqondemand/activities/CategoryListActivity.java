@@ -25,8 +25,8 @@ import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class CategoryListActivity extends SignedInActivity {
 
-    private RecyclerView recycler_list;
-    DbListener<?> dbListener;
+    protected RecyclerView recycler_list;
+    protected DbListener<?> dbListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +40,8 @@ public class CategoryListActivity extends SignedInActivity {
             public void onSuccess(@NonNull ArrayList<Category> data) {
                 recycler_list.setAdapter(new CategoryListAdapter(getApplicationContext(), data, new View.OnClickListener() {
                     public void onClick(final View view) {
-                        TextView field = view.findViewById(R.id.txt_title);
+                        State.getState().setCurrentCategory((Category) view.getTag());
                         Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
-                        intent.putExtra("category_name", field.getText().toString());
                         startActivity(intent);
                     }
                 }));

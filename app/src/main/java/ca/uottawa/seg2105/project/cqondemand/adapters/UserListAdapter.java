@@ -48,6 +48,8 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         User item = data.get(i);
+        // Set the current item as the view's tag so it can be retrieve easily in the onClick handler
+        viewHolder.itemView.setTag(item);
         if (null != item) {
             viewHolder.txt_title.setText(String.format(Locale.CANADA, context.getString(R.string.full_name_template), item.getFirstName(), item.getLastName()));
             viewHolder.txt_subtitle.setText(String.format(Locale.CANADA, "%s, %s", item.getUsername(), item.getType().toString()));

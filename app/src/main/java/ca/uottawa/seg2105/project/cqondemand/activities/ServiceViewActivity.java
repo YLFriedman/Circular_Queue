@@ -14,7 +14,6 @@ import android.widget.Toast;
 import java.util.Locale;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
-import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
 import ca.uottawa.seg2105.project.cqondemand.database.DbService;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
@@ -26,12 +25,11 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class ServiceViewActivity extends SignedInActivity {
 
-    TextView txt_name;
-    TextView txt_rate;
-    TextView txt_category;
-    String serviceName;
-    String categoryName;
-    Service currentService;
+    protected TextView txt_name;
+    protected TextView txt_rate;
+    protected TextView txt_category;
+    protected String categoryName;
+    protected Service currentService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,31 +41,12 @@ public class ServiceViewActivity extends SignedInActivity {
         txt_name.setText("");
         txt_rate.setText("");
         txt_category.setText("");
-        Intent intent = getIntent();
-        serviceName = intent.getStringExtra("service_name");
     }
 
     public void onResume() {
         super.onResume();
         if (isFinishing()) { return; }
-        if (null != serviceName) {
-            // Clear the text fields
-            setupFields();
-            // Try to get the service object
-            DbService.getService(serviceName, new AsyncSingleValueEventListener<Service>() {
-                @Override
-                public void onSuccess(@NonNull Service item) {
-                    serviceName = null;
-                    currentService = item;
-                    setupFields();
-                }
-                @Override
-                public void onFailure(AsyncEventFailureReason reason) {
-                    Toast.makeText(getApplicationContext(), R.string.service_details_db_error, Toast.LENGTH_LONG).show();
-                    finish();
-                }
-            });
-        } else if (null != State.getState().getCurrentService()) {
+        if (null != State.getState().getCurrentService()) {
             currentService = State.getState().getCurrentService();
             State.getState().setCurrentService(null);
             setupFields();
@@ -150,10 +129,8 @@ public class ServiceViewActivity extends SignedInActivity {
                                     finish();
                                 }
                                 @Override
-
                                 public void onFailure(AsyncEventFailureReason reason) {
                                     Toast.makeText(getApplicationContext(), String.format(getString(R.string.service_delete_db_error), currentService.getName()), Toast.LENGTH_LONG).show();
-
                                 }
                             });
                         }
