@@ -1,5 +1,11 @@
 package ca.uottawa.seg2105.project.cqondemand.domain;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
+import ca.uottawa.seg2105.project.cqondemand.database.DbUtil;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation.PasswordValidationResult;

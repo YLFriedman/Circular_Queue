@@ -32,8 +32,9 @@ public class DbUtil {
     /**
      * Enum for differentiating between different object types
      */
-    public enum DataType {
+    enum DataType {
         USER, SERVICE, CATEGORY;
+        @NonNull
         public String toString() {
             switch (this) {
                 case USER: return "users";
@@ -51,8 +52,8 @@ public class DbUtil {
      * @param object The object to be adapted
      * @return A DbItem adaptation of the input object
      */
-    private static DbItem<?> objectToDbItem(Object object) {
-        if (null == object) { throw new IllegalArgumentException("The object cannot be null."); }
+    @NonNull
+    private static DbItem<?> objectToDbItem(@NonNull Object object) {
         if (object instanceof User) { return new DbUser((User) object); }
         if (object instanceof Service) { return new DbService((Service) object); }
         if (object instanceof Category) { return new DbCategory((Category) object); }
@@ -65,8 +66,8 @@ public class DbUtil {
      * @param object
      * @return
      */
-    private static DataType getType(Object object) {
-        if (null == object) { throw new IllegalArgumentException("The object cannot be null."); }
+    @NonNull
+    private static DataType getType(@NonNull Object object) {
         if (object instanceof User) { return DataType.USER; }
         if (object instanceof Service) { return DataType.SERVICE; }
         if (object instanceof Category) { return DataType.CATEGORY; }
@@ -79,8 +80,8 @@ public class DbUtil {
      * @param object The object whose key you want
      * @return A string representation of the database key
      */
-    public static String getKey(Object object) {
-        if (null == object) { throw new IllegalArgumentException("The object cannot be null."); }
+    @NonNull
+    public static String getKey(@NonNull Object object) {
         if (object instanceof User) { return new DbUser((User) object).generateKey(); }
         if (object instanceof Service) { return new DbService((Service) object).generateKey(); }
         if (object instanceof Category) { return new DbCategory((Category) object).generateKey(); }
@@ -93,7 +94,8 @@ public class DbUtil {
      * @param type the type of object whose class you want
      * @return the class of the specified datatype
      */
-    private static @NonNull Class getDbClassObj(@NonNull DataType type) {
+    @NonNull
+    private static Class getDbClassObj(@NonNull DataType type) {
         switch (type) {
             case USER: return DbUser.class;
             case SERVICE: return DbService.class;
@@ -108,8 +110,8 @@ public class DbUtil {
      * @param type the type of DbItem
      * @return A DatabaseReference pointing to the node which corresponds to the input type
      */
-    private static DatabaseReference getRef(DataType type) {
-        if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
+    @NonNull
+    private static DatabaseReference getRef(@NonNull DataType type) {
         return FirebaseDatabase.getInstance().getReference().child(type.toString());
     }
 
@@ -118,7 +120,8 @@ public class DbUtil {
      * @param uniqueID the String representation of a uniqueID
      * @return A sanitized, database-ready String version of the input key
      */
-    public static String getSanitizedKey(String uniqueID) {
+    @NonNull
+    static String getSanitizedKey(@NonNull String uniqueID) {
         uniqueID = uniqueID.toLowerCase();
         uniqueID = uniqueID.replaceAll("[\\s]", "_");
         uniqueID = uniqueID.replaceAll("[^a-z0-9_]", "_");
@@ -127,10 +130,7 @@ public class DbUtil {
 
 
     @SuppressWarnings("unchecked")
-    public static <T> void getItem(final DataType type, String key, final AsyncSingleValueEventListener<T> listener) {
-        if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
-        if (null == key) { throw new IllegalArgumentException("The key cannot be null."); }
-        if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
+    static <T> void getItem(@NonNull final DataType type, @NonNull String key, @NonNull final AsyncSingleValueEventListener<T> listener) {
         getRef(type).child(getSanitizedKey(key)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -139,11 +139,11 @@ public class DbUtil {
                 } else {
                     try {
                         DbItem<T> dbItem = (DbItem<T>) dataSnapshot.getValue(getDbClassObj(type));
-                        T domainObjItem = dbItem.toDomainObj();
-                        if (null == domainObjItem) {
-                            listener.onFailure(AsyncEventFailureReason.INVALID_DATA);
-                        } else {
+                        if (null != dbItem) {
+                            T domainObjItem = dbItem.toDomainObj();
                             listener.onSuccess(domainObjItem);
+                        } else {
+                            listener.onFailure(AsyncEventFailureReason.INVALID_DATA);
                         }
                     } catch (IllegalArgumentException e) {
                         listener.onFailure(AsyncEventFailureReason.INVALID_DATA);
@@ -161,20 +161,18 @@ public class DbUtil {
         });
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> void getItems(final DataType type, final AsyncValueEventListener<T> listener) {
+    static <T> void getItems(@NonNull final DataType type, @NonNull final AsyncValueEventListener<T> listener) {
         getItems(type, listener, true);
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> DbListener<ValueEventListener> getItemsLive(final DataType type, final AsyncValueEventListener<T> listener) {
+    @NonNull
+    static <T> DbListener<ValueEventListener> getItemsLive(@NonNull final DataType type, @NonNull final AsyncValueEventListener<T> listener) {
         return getItems(type, listener, false);
     }
 
+    @NonNull
     @SuppressWarnings("unchecked")
-    private static <T> DbListener<ValueEventListener> getItems(final DataType type, final AsyncValueEventListener<T> listener, boolean singleEvent) {
-        if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
-        if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
+    private static <T> DbListener<ValueEventListener> getItems(@NonNull final DataType type, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
         DbListener<ValueEventListener> dbListener = null;
         ValueEventListener dataConversionListener = new ValueEventListener() {
             @Override
@@ -184,8 +182,10 @@ public class DbUtil {
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
                     try {
                         DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(type));
-                        T domainObjItem = dbItem.toDomainObj();
-                        if (null != dbItem) { returnValue.add(domainObjItem); }
+                        if (null != dbItem) {
+                            T domainObjItem = dbItem.toDomainObj();
+                            returnValue.add(domainObjItem);
+                        }
                     }
                     catch (IllegalArgumentException e) { }
                     catch (InvalidDataException e) { }
@@ -207,30 +207,30 @@ public class DbUtil {
         return dbListener;
     }
 
-    public static <T> void getItems(final DataType type, String childKey, String childValue, final AsyncValueEventListener<T> listener) {
+    static <T> void getItems(@NonNull final DataType type, @NonNull String childKey, @NonNull String childValue, @NonNull final AsyncValueEventListener<T> listener) {
         Query query = getRef(type).orderByChild(childKey).equalTo(childValue);
         getItems(type, query, listener);
     }
 
-    public static <T> void getItems(final DataType type, String childKey, int childValue, final AsyncValueEventListener<T> listener) {
+    static <T> void getItems(@NonNull final DataType type, @NonNull String childKey, int childValue, @NonNull final AsyncValueEventListener<T> listener) {
         Query query = getRef(type).orderByChild(childKey).equalTo(childValue);
         getItems(type, query, listener);
     }
 
-    private static <T> void getItems(final DataType type, Query query, final AsyncValueEventListener<T> listener) {
-        if (null == type) { throw new IllegalArgumentException("The type cannot be null."); }
-        if (null == query) { throw new IllegalArgumentException("The query cannot be null."); }
-        if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
+    @SuppressWarnings("unchecked")
+    private static <T> void getItems(@NonNull final DataType type, @NonNull Query query, @NonNull final AsyncValueEventListener<T> listener) {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 long size = dataSnapshot.getChildrenCount();
                 ArrayList<T> returnValue = new ArrayList<T>(size > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) size);
-                for (DataSnapshot snapshot: dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
                     try {
                         DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(type));
-                        T domainObjItem = dbItem.toDomainObj();
-                        if (null != dbItem) { returnValue.add(domainObjItem); }
+                        if (null != dbItem) {
+                            T domainObjItem = dbItem.toDomainObj();
+                            returnValue.add(domainObjItem);
+                        }
                     }
                     catch (IllegalArgumentException e) { }
                     catch (InvalidDataException e) { }
@@ -245,37 +245,29 @@ public class DbUtil {
         });
     }
 
-    public static <T> void deleteItem(T item, final AsyncActionEventListener listener) {
-        if (null == item) { throw new IllegalArgumentException("The item cannot be null."); }
-        if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
+    static <T> void deleteItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(item);
-        if (null == type) { throw new IllegalArgumentException("The item must be a supported type."); }
         final DbItem<?> dbItem = objectToDbItem(item);
         getRef(type).child(dbItem.generateKey()).removeValue(new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                if (databaseError == null) {
-                    listener.onSuccess();
-                } else {
-                    listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
+                if (null != listener) {
+                    if (databaseError == null) { listener.onSuccess(); }
+                    else { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
                 }
             }
         });
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> void createItem(T item, final AsyncActionEventListener listener) {
-        if (null == item) { throw new IllegalArgumentException("The item cannot be null."); }
-        if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
+    static <T> void createItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(item);
-        if (null == type) { throw new IllegalArgumentException("The item must be a supported type."); }
         final DbItem<?> dbItem = objectToDbItem(item);
         final String key = dbItem.generateKey();
         getItem(type, key, new AsyncSingleValueEventListener<T>() {
             @Override
             public void onSuccess(@NonNull T item) {
                 //Failure condition, Item already exists in db
-                listener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS);
+                if (null != listener) { listener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS); }
             }
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
@@ -284,22 +276,21 @@ public class DbUtil {
                     getRef(type).child(key).setValue(dbItem, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                            if (null == databaseError) { listener.onSuccess(); }
-                            else { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
+                            if (null != listener) {
+                                if (null == databaseError) { listener.onSuccess(); }
+                                else { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
+                            }
                         }
                     });
                 } else {
-                    listener.onFailure(reason);
+                    if (null != listener) { listener.onFailure(reason); }
                 }
             }
         });
     }
 
-    public static <T> void updateItem(T item, final AsyncActionEventListener listener) {
-        if (null == item) { throw new IllegalArgumentException("The item cannot be null."); }
-        if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
+    static <T> void updateItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(item);
-        if (null == type) { throw new IllegalArgumentException("The item must be a supported type."); }
         final DbItem<?> dbItem = objectToDbItem(item);
         final String key = dbItem.generateKey();
         getItem(type, key, new AsyncSingleValueEventListener<T>() {
@@ -310,26 +301,24 @@ public class DbUtil {
                 ref.child(key).setValue(dbItem, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                        if (null == databaseError) { listener.onSuccess(); }
-                        else { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
+                        if (null != listener) {
+                            if (null == databaseError) { listener.onSuccess(); }
+                            else { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
+                        }
                     }
                 });
             }
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 // Failure condition: cannot update an item that doesn't currently exist in the db
-                listener.onFailure(reason);
+                if (null != listener) { listener.onFailure(reason); }
             }
         });
     }
 
-    public static <T> void updateItem(final T oldItem, final T newItem, final AsyncActionEventListener listener) {
-        if (null == oldItem) { throw new IllegalArgumentException("The oldItem cannot be null."); }
-        if (null == newItem) { throw new IllegalArgumentException("The newItem cannot be null."); }
-        if (null == listener) { throw new IllegalArgumentException("The listener cannot be null."); }
+    static <T> void updateItem(@NonNull final T oldItem, @NonNull final T newItem, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(oldItem);
         final DataType newType = getType(newItem);
-        if (null == type || null == newType) { throw new IllegalArgumentException("The item must be a supported type."); }
         if (type != newType) { throw new IllegalArgumentException("The items must be of the same type."); }
         final DbItem<?> dbItem = objectToDbItem(newItem);
         final String key = dbItem.generateKey();
@@ -337,7 +326,7 @@ public class DbUtil {
             @Override
             public void onSuccess(@NonNull T item) {
                 // Error condition: The new item already exists
-                listener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS);
+                if (null != listener) { listener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS); }
             }
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
@@ -349,10 +338,10 @@ public class DbUtil {
                         }
                         @Override
                         public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                            listener.onFailure(reason);
+                            if (null != listener) { listener.onFailure(reason); }
                         }
                     });
-                } else {
+                } else if (null != listener) {
                     listener.onFailure(reason);
                 }
             }
