@@ -29,4 +29,5 @@ public class DbAddress extends DbItem<Address> {
 
     @NonNull
     public String generateKey() { return DbUtil.getSanitizedKey(""); }
+
 }
