@@ -14,22 +14,19 @@ public class DbCategory extends DbItem<Category> {
 
     public DbCategory() {}
 
-    public DbCategory(Category category) {
+    DbCategory(Category category) {
         name = category.getName();
     }
 
     @NonNull
-    public Category toDomainObj() { return new Category(name); }
-
-    @NonNull
-    public String generateKey() { return DbUtil.getSanitizedKey(name); }
+    public Category toDomainObj() { return new Category(key, name); }
 
     public static void createCategory(@NonNull Category category, @Nullable AsyncActionEventListener listener) {
         DbUtil.createItem(category, listener);
     }
 
     public static void updateCategory(@NonNull Category oldCategory, @NonNull Category newCategory, @Nullable AsyncActionEventListener listener) {
-        if (DbUtil.getKey(oldCategory).equals(DbUtil.getKey(newCategory))) {
+        if (oldCategory.equals(newCategory)) {
             DbUtil.updateItem(newCategory, listener);
         } else {
             DbUtil.updateItem(oldCategory, newCategory, listener);

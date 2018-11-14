@@ -134,6 +134,7 @@ public class ServiceCreateActivity extends SignedInActivity {
             return;
         }
 
+        // TODO: store category objects for creating services
         Service newService = new Service(name, rateNum, DbUtil.getKey(new Category(categoryName)));
         final Button btn_create_service = findViewById(R.id.btn_create_service);
         btn_create_service.setEnabled(false);

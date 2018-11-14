@@ -4,8 +4,16 @@ import android.support.annotation.NonNull;
 
 public abstract class DbItem<T> {
 
+    protected String key;
+
     public abstract @NonNull T toDomainObj();
 
-    public abstract @NonNull String generateKey();
+    public @NonNull String generateKey() {
+        return key;
+    }
+
+    public void storeKey(@NonNull String key) {
+        this.key = key;
+    }
 
 }

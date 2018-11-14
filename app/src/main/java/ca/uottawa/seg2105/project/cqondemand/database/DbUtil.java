@@ -75,20 +75,6 @@ public class DbUtil {
     }
 
     /**
-     * Method for obtaining the database key for a specific object. Accepts objects of type Service, User, and Category.
-     * Throws an IllegalArgumentException if passed any other type of object.
-     * @param object The object whose key you want
-     * @return A string representation of the database key
-     */
-    @NonNull
-    public static String getKey(@NonNull Object object) {
-        if (object instanceof User) { return new DbUser((User) object).generateKey(); }
-        if (object instanceof Service) { return new DbService((Service) object).generateKey(); }
-        if (object instanceof Category) { return new DbCategory((Category) object).generateKey(); }
-        throw new IllegalArgumentException("Unsupported type.");
-    }
-
-    /**
      * Method for returning the class of a specific type of object
      *
      * @param type the type of object whose class you want
@@ -265,7 +251,7 @@ public class DbUtil {
     static <T> void deleteItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(item);
         final DbItem<?> dbItem = objectToDbItem(item);
-        getRef(type).child(dbItem.generateKey()).removeValue(new DatabaseReference.CompletionListener() {
+        getRef(type).child(dbItem.key).removeValue(new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                 if (null != listener) {
@@ -279,28 +265,16 @@ public class DbUtil {
     static <T> void createItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(item);
         final DbItem<?> dbItem = objectToDbItem(item);
-        final String key = dbItem.generateKey();
-        getItem(type, key, new AsyncSingleValueEventListener<T>() {
+        final DatabaseReference pushRef = getRef(type).push();
+        String key = pushRef.getKey();
+        if (null == key) { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
+        dbItem.storeKey(pushRef.getKey());
+        pushRef.setValue(dbItem, new DatabaseReference.CompletionListener() {
             @Override
-            public void onSuccess(@NonNull T item) {
-                //Failure condition, Item already exists in db
-                if (null != listener) { listener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS); }
-            }
-            @Override
-            public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                //Success condition, item can be safely created;
-                if (reason == AsyncEventFailureReason.DOES_NOT_EXIST) {
-                    getRef(type).child(key).setValue(dbItem, new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                            if (null != listener) {
-                                if (null == databaseError) { listener.onSuccess(); }
-                                else { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
-                            }
-                        }
-                    });
-                } else {
-                    if (null != listener) { listener.onFailure(reason); }
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                if (null != listener) {
+                    if (null == databaseError) { listener.onSuccess(); }
+                    else { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
                 }
             }
         });
@@ -309,13 +283,12 @@ public class DbUtil {
     static <T> void updateItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(item);
         final DbItem<?> dbItem = objectToDbItem(item);
-        final String key = dbItem.generateKey();
-        getItem(type, key, new AsyncSingleValueEventListener<T>() {
+        getItem(type, dbItem.key, new AsyncSingleValueEventListener<T>() {
             @Override
             public void onSuccess(@NonNull T item) {
                 // Success condition: Item exists in database and can be updated
                 DatabaseReference ref = getRef(type);
-                ref.child(key).setValue(dbItem, new DatabaseReference.CompletionListener() {
+                ref.child(dbItem.key).setValue(dbItem, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                         if (null != listener) {
@@ -338,8 +311,7 @@ public class DbUtil {
         final DataType newType = getType(newItem);
         if (type != newType) { throw new IllegalArgumentException("The items must be of the same type."); }
         final DbItem<?> dbItem = objectToDbItem(newItem);
-        final String key = dbItem.generateKey();
-        getItem(type, key, new AsyncSingleValueEventListener<T>() {
+        getItem(type, dbItem.key, new AsyncSingleValueEventListener<T>() {
             @Override
             public void onSuccess(@NonNull T item) {
                 // Error condition: The new item already exists

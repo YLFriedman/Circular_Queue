@@ -6,16 +6,16 @@ import ca.uottawa.seg2105.project.cqondemand.domain.Address;
 
 public class DbAddress extends DbItem<Address> {
 
-    protected String unit;
-    protected int street_number;
-    protected String street;
-    protected String city;
-    protected String country;
-    protected String postal_code;
+    public String unit;
+    public int street_number;
+    public String street;
+    public String city;
+    public String country;
+    public String postal_code;
 
     public DbAddress() {}
 
-    public DbAddress(Address address) {
+    DbAddress(Address address) {
         unit = address.getUnit();
         street_number = address.getStreetNumber();
         street = address.getStreet();
@@ -25,9 +25,6 @@ public class DbAddress extends DbItem<Address> {
     }
 
     @NonNull
-    public Address toDomainObj() { return new Address(unit, street_number, street, city, country, postal_code); }
-
-    @NonNull
-    public String generateKey() { return DbUtil.getSanitizedKey(""); }
+    public Address toDomainObj() { return new Address(key, unit, street_number, street, city, country, postal_code); }
 
 }

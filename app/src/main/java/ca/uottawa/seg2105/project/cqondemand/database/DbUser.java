@@ -3,6 +3,8 @@ package ca.uottawa.seg2105.project.cqondemand.database;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.ArrayList;
+
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
@@ -13,6 +15,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class DbUser extends DbItem<User> {
 
+    public String unique_name;
     public String first_name;
     public String last_name;
     public String username;
@@ -22,7 +25,8 @@ public class DbUser extends DbItem<User> {
 
     public DbUser() {}
 
-    public DbUser(User user) {
+    DbUser(User user) {
+        unique_name = user.getUniqueName();
         first_name = user.getFirstName();
         last_name = user.getLastName();
         username = user.getUsername();
@@ -32,10 +36,7 @@ public class DbUser extends DbItem<User> {
     }
 
     @NonNull
-    public User toDomainObj() { return new User(first_name, last_name, username, email, User.parseType(type), password); }
-
-    @NonNull
-    public String generateKey() { return DbUtil.getSanitizedKey(username); }
+    public User toDomainObj() { return new User(key, first_name, last_name, username, email, User.parseType(type), password); }
 
     public static void createUser(@NonNull User user, @Nullable final AsyncActionEventListener listener) {
         DbUtil.createItem(user, listener);
@@ -54,7 +55,7 @@ public class DbUser extends DbItem<User> {
                 if (null != listener) { listener.onFailure(reason); }
             }
         };
-        if (DbUtil.getKey(oldUser).equals(DbUtil.getKey(newUser))) {
+        if (oldUser.equals(newUser)) {
             DbUtil.updateItem(newUser, interceptListener);
         } else {
             DbUtil.updateItem(oldUser, newUser, interceptListener);
@@ -65,8 +66,16 @@ public class DbUser extends DbItem<User> {
         DbUtil.deleteItem(user, listener);
     }
 
-    public static void getUser(@NonNull String username, @NonNull AsyncSingleValueEventListener<User> listener) {
-        DbUtil.getItem(DbUtil.DataType.USER, username, listener);
+    public static void getUserByUsername(@NonNull String username, @NonNull final AsyncSingleValueEventListener<User> listener) {
+        DbUtil.getItems(DbUtil.DataType.USER, "unique_name", User.getUniqueName(username), new AsyncValueEventListener<User>() {
+            @Override
+            public void onSuccess(@NonNull ArrayList<User> data) {
+                if (data.size() != 1) { listener.onFailure(AsyncEventFailureReason.NOT_UNIQUE); }
+                else { listener.onSuccess(data.get(0)); }
+            }
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) { listener.onFailure(reason); }
+        });
     }
 
     public static void getUsers(@NonNull AsyncValueEventListener<User> listener) {
@@ -87,14 +96,19 @@ public class DbUser extends DbItem<User> {
      * @param listener the listener that will be informed if authentication was successful or not
      */
     public static void authenticate(@NonNull String username, @NonNull final String password, @Nullable final AsyncActionEventListener listener) {
-        getUser(username, new AsyncSingleValueEventListener<User>() {
+        DbUtil.getItems(DbUtil.DataType.USER, "unique_name", User.getUniqueName(username), new AsyncValueEventListener<User>() {
             @Override
-            public void onSuccess(@NonNull User user) {
-                if (user.getPassword().equals(password)) {
-                    State.getState().setSignedInUser(user);
-                    if (null != listener) { listener.onSuccess(); }
+            public void onSuccess(@NonNull ArrayList<User> data) {
+                if (data.size() != 1) {
+                    if (null != listener) { listener.onFailure(AsyncEventFailureReason.NOT_UNIQUE); }
                 } else {
-                    if (null != listener) { listener.onFailure(AsyncEventFailureReason.PASSWORD_MISMATCH); }
+                    User user = data.get(0);
+                    if (user.getPassword().equals(password)) {
+                        State.getState().setSignedInUser(user);
+                        if (null != listener) { listener.onSuccess(); }
+                    } else {
+                        if (null != listener) { listener.onFailure(AsyncEventFailureReason.PASSWORD_MISMATCH); }
+                    }
                 }
             }
             @Override

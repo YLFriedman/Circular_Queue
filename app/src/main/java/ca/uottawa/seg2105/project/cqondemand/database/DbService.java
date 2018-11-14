@@ -17,24 +17,21 @@ public class DbService extends DbItem<Service> {
 
     public DbService() {}
 
-    public DbService(Service service) {
+    DbService(Service service) {
         name = service.getName();
         rate = service.getRate();
         category_id = service.getCategoryID();
     }
 
     @NonNull
-    public Service toDomainObj() { return new Service(name, rate, category_id); }
-
-    @NonNull
-    public String generateKey() { return DbUtil.getSanitizedKey(name); }
+    public Service toDomainObj() { return new Service(key, name, rate, category_id); }
 
     public static void createService(@NonNull Service service, @Nullable AsyncActionEventListener listener) {
         DbUtil.createItem(service, listener);
     }
 
     public static void updateService(@NonNull Service oldService, @NonNull Service newService, @Nullable AsyncActionEventListener listener) {
-        if (DbUtil.getKey(oldService).equals(DbUtil.getKey(newService))) {
+        if (oldService.equals(newService)) {
             DbUtil.updateItem(newService, listener);
         } else {
             DbUtil.updateItem(oldService, newService, listener);
@@ -58,13 +55,13 @@ public class DbService extends DbItem<Service> {
         return DbUtil.getItemsLive(DbUtil.DataType.SERVICE, listener);
     }
 
-    public static void getServices(@NonNull String categoryName, @NonNull AsyncValueEventListener<Service> listener) {
-        DbUtil.getItems(DbUtil.DataType.SERVICE, "category_id", DbUtil.getKey(new Category(categoryName)), listener);
+    public static void getServices(@NonNull Category category, @NonNull AsyncValueEventListener<Service> listener) {
+        DbUtil.getItems(DbUtil.DataType.SERVICE, "category_id", category.getKey(), listener);
     }
 
     @NonNull
-    public static DbListener<?> getServicesLive(@NonNull String categoryName, @NonNull final AsyncValueEventListener<Service> listener) {
-        return DbUtil.getItemsLive(DbUtil.DataType.SERVICE, "category_id", DbUtil.getKey(new Category(categoryName)), listener);
+    public static DbListener<?> getServicesLive(@NonNull Category category, @NonNull final AsyncValueEventListener<Service> listener) {
+        return DbUtil.getItemsLive(DbUtil.DataType.SERVICE, "category_id", category.getKey(), listener);
     }
 
 }

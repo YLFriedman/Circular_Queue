@@ -7,6 +7,7 @@ public enum AsyncEventFailureReason {
     DOES_NOT_EXIST,
     ALREADY_EXISTS,
     INVALID_DATA,
+    NOT_UNIQUE,
 
     // User Specific Reasons
     PASSWORD_MISMATCH;
