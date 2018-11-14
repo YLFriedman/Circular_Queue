@@ -1,0 +1,1124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.AvailabilityWeekViewActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="16dp"
+            android:paddingTop="24dp"
+            android:paddingRight="16dp">
+
+            <LinearLayout
+                android:id="@+id/col_times"
+                android:layout_width="32dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txt_00"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_00" />
+
+                <TextView
+                    android:id="@+id/txt_01"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_01" />
+
+                <TextView
+                    android:id="@+id/txt_02"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_02" />
+
+                <TextView
+                    android:id="@+id/txt_03"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_03" />
+
+                <TextView
+                    android:id="@+id/txt_04"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_04" />
+
+                <TextView
+                    android:id="@+id/txt_05"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_05" />
+
+                <TextView
+                    android:id="@+id/txt_06"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_06" />
+
+                <TextView
+                    android:id="@+id/txt_07"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_07" />
+
+                <TextView
+                    android:id="@+id/txt_08"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_08" />
+
+                <TextView
+                    android:id="@+id/txt_09"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_09" />
+
+                <TextView
+                    android:id="@+id/txt_10"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_10" />
+
+                <TextView
+                    android:id="@+id/txt_11"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_11" />
+
+                <TextView
+                    android:id="@+id/txt_12"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_12" />
+
+                <TextView
+                    android:id="@+id/txt_13"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_01" />
+
+                <TextView
+                    android:id="@+id/txt_14"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_02" />
+
+                <TextView
+                    android:id="@+id/txt_15"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_03" />
+
+                <TextView
+                    android:id="@+id/txt_16"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_04" />
+
+                <TextView
+                    android:id="@+id/txt_17"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_05" />
+
+                <TextView
+                    android:id="@+id/txt_18"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_06" />
+
+                <TextView
+                    android:id="@+id/txt_19"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_07" />
+
+                <TextView
+                    android:id="@+id/txt_20"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_08" />
+
+                <TextView
+                    android:id="@+id/txt_21"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_09" />
+
+                <TextView
+                    android:id="@+id/txt_22"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_10" />
+
+                <TextView
+                    android:id="@+id/txt_23"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_11" />
+
+                <TextView
+                    android:id="@+id/txt_24"
+                    style="@style/availability_txt_time"
+                    android:text="@string/time_12" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/col_grid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="9dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/row_00"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_00"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_00"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_00"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_00"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_00"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_00"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_00"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_01"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_01"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_01"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_01"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_01"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_01"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_01"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_01"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_02"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_02"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_02"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_02"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_02"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_02"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_02"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_02"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_03"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_03"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_03"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_03"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_03"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_03"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_03"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_03"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_04"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_04"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_04"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_04"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_04"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_04"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_04"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_04"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_05"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_05"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_05"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_05"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_05"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_05"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_05"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_05"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_06"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_06"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_06"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_06"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_06"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_06"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_06"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_06"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_07"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_07"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_07"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_07"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_07"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_07"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_07"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_07"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_08"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_08"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_08"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_08"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_08"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_08"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_08"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_08"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_09"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_09"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_09"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_09"
+                        style="@style/availability_grid_cell.booked" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_09"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_09"
+                        style="@style/availability_grid_cell.available" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_09"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_09"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_10"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_10"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_10"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_10"
+                        style="@style/availability_grid_cell.booked" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_10"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_10"
+                        style="@style/availability_grid_cell.available" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_10"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_10"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_11"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_11"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_11"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_11"
+                        style="@style/availability_grid_cell.booked" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_11"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_11"
+                        style="@style/availability_grid_cell.available" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_11"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_11"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_12"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_12"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_12"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_12"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_12"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_12"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_12"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_12"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_13"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_13"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_13"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_13"
+                        style="@style/availability_grid_cell.available" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_13"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_13"
+                        style="@style/availability_grid_cell.booked" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_13"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_13"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_14"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_14"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_14"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_14"
+                        style="@style/availability_grid_cell.available" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_14"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_14"
+                        style="@style/availability_grid_cell.available" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_14"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_14"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_15"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_15"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_15"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_15"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_15"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_15"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_15"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_15"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_16"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_16"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_16"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_16"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_16"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_16"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_16"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_16"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_17"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_17"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_17"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_17"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_17"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_17"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_17"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_17"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_18"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_18"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_18"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_18"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_18"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_18"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_18"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_18"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_19"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_19"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_19"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_19"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_19"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_19"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_19"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_19"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_20"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_20"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_20"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_20"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_20"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_20"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_20"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_20"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_21"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_21"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_21"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_21"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_21"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_21"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_21"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_21"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_22"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_22"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_22"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_22"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_22"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_22"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_22"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_22"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/row_23"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/cell_sun_23"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_mon_23"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_tue_23"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_wed_23"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_thu_23"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_fri_23"
+                        style="@style/availability_grid_cell" />
+
+                    <ImageView
+                        android:id="@+id/cell_sat_23"
+                        style="@style/availability_grid_cell" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/title_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_weight="1"
+        android:background="?android:attr/colorBackground"
+        android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:paddingBottom="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txt_sun"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="bottom|center_horizontal"
+                android:text="S" />
+
+            <TextView
+                android:id="@+id/txt_mon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="bottom|center_horizontal"
+                android:text="M" />
+
+            <TextView
+                android:id="@+id/txt_tue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="bottom|center_horizontal"
+                android:text="T" />
+
+            <TextView
+                android:id="@+id/txt_wed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="bottom|center_horizontal"
+                android:text="W" />
+
+            <TextView
+                android:id="@+id/txt_thu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="bottom|center_horizontal"
+                android:text="T" />
+
+            <TextView
+                android:id="@+id/txt_fri"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="bottom|center_horizontal"
+                android:text="F" />
+
+            <TextView
+                android:id="@+id/txt_sat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="bottom|center_horizontal"
+                android:text="S" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_weight="1"
+            android:background="?android:attr/listDivider" />
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

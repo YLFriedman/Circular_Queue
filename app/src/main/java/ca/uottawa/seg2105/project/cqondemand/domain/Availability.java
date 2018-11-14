@@ -2,12 +2,28 @@ package ca.uottawa.seg2105.project.cqondemand.domain;
 
 import android.support.annotation.NonNull;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class Availability {
 
     public enum Day {
         SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY;
+        @Override
         public String toString() {
             return this.name().substring(0,1) + this.name().substring(1).toLowerCase();
+        }
+        public int toInt() {
+            switch (this) {
+                case SUNDAY: return 0;
+                case MONDAY: return 1;
+                case TUESDAY: return 2;
+                case WEDNESDAY: return 3;
+                case THURSDAY: return 4;
+                case FRIDAY: return 5;
+                case SATURDAY: return 6;
+                default: throw new IllegalArgumentException("'" + this.toString() + "' is not a valid day. ");
+            }
         }
     }
 
@@ -33,6 +49,10 @@ public class Availability {
         return endTime;
     }
 
+    public boolean equals(Availability other) {
+        return day == other.day && startTime == other.startTime && endTime == other.endTime;
+    }
+
     public static Availability.Day parseDay(@NonNull String input) {
         switch (input.toUpperCase()) {
             case "SUNDAY": return Day.SUNDAY;
@@ -44,6 +64,53 @@ public class Availability {
             case "SATURDAY": return Day.SATURDAY;
             default: throw new IllegalArgumentException("'" + input + "' is not a valid day. ");
         }
+    }
+
+    public static Availability.Day parseDay(@NonNull int input) {
+        switch (input) {
+            case 0: return Day.SUNDAY;
+            case 1: return Day.MONDAY;
+            case 2: return Day.TUESDAY;
+            case 3: return Day.WEDNESDAY;
+            case 4: return Day.THURSDAY;
+            case 5: return Day.FRIDAY;
+            case 6: return Day.SATURDAY;
+            default: throw new IllegalArgumentException("'" + input + "' is not a valid day. ");
+        }
+    }
+
+    public static boolean[][] toArrays(@NonNull List<Availability> list) {
+        boolean[][] output = new boolean[7][24];
+        for (Availability item: list) {
+            int day = item.getDay().toInt();
+            for (int i = item.getStartTime(); i < item.getEndTime(); i++) { output[day][i] = true; }
+        }
+        return output;
+    }
+
+    public static List<Availability> toList(@NonNull boolean[][] timeslots) {
+        if (timeslots.length != 7) { throw new IllegalArgumentException("Invalid input array.  Must be 7 x 24: boolean[7][24]"); }
+        List<Availability> output = new LinkedList<Availability>();
+        int start = -1;
+        int end = -1;
+        boolean found = false;
+        for (int day = 0; day < 7; day++) {
+            for (int time = 0; time < 24; time++) {
+                if (timeslots[day][time]) {
+                    if (!found) {
+                        found = true;
+                        start = end = time;
+                    } else {
+                        end++;
+                    }
+                } else if (found) {
+                    found = false;
+                    end++;
+                    output.add(new Availability(parseDay(day), start, end));
+                }
+            }
+        }
+        return output;
     }
 
 }

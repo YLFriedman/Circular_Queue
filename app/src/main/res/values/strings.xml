@@ -165,6 +165,20 @@
     <string name="postal">Postal</string>
     <string name="city">City</string>
     <string name="country">Country</string>
+    <string name="time_00">00:00</string>
+    <string name="time_01">01:00</string>
+    <string name="time_02">02:00</string>
+    <string name="time_03">03:00</string>
+    <string name="time_04">04:00</string>
+    <string name="time_05">05:00</string>
+    <string name="time_06">06:00</string>
+    <string name="time_07">07:00</string>
+    <string name="time_08">08:00</string>
+    <string name="time_09">09:00</string>
+    <string name="time_10">10:00</string>
+    <string name="time_11">11:00</string>
+    <string name="time_12">12:00</string>
+    <string name="my_availability">My Availability</string>
     <string-array name="empty_category_spinner">
         <item>Select Category</item>
     </string-array>

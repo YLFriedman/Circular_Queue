@@ -69,6 +69,9 @@ public class HomeActivity extends AppCompatActivity {
     public void onMyAccountClick(View view) {
         startActivity(new Intent(getApplicationContext(), UserAccountViewActivity.class));
     }
+    public void onMyAvailabilityClick(View view) {
+        startActivity(new Intent(getApplicationContext(), AvailabilityWeekViewActivity.class));
+    }
 
     public void onSignOutClick(View view) {
         State.getState().setSignedInUser(null);
