@@ -54,8 +54,10 @@ public class Category {
         return uniqueName;
     }
 
-    public boolean equals(Category other) {
-        if (null == other) { return false; }
+    @Override
+    public boolean equals(Object otherObj) {
+        if (!(otherObj instanceof Category)) { return false; }
+        Category other = (Category) otherObj;
         if (null != key && null != other.key) { return key.equals(other.key); }
         return null != getUniqueName() && getUniqueName().equals(other.getUniqueName());
     }

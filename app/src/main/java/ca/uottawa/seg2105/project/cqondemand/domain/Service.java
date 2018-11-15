@@ -112,8 +112,10 @@ public class Service {
         return uniqueName;
     }
 
-    public boolean equals(Service other) {
-        if (null == other) { return false; }
+    @Override
+    public boolean equals(Object otherObj) {
+        if (!(otherObj instanceof Service)) { return false; }
+        Service other = (Service) otherObj;
         if (null != key && null != other.key) { return key.equals(other.key); }
         return null != getUniqueName() && getUniqueName().equals(other.getUniqueName());
     }

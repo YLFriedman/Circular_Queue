@@ -73,11 +73,7 @@ public class ServiceCreateActivity extends SignedInActivity {
         ArrayAdapter<Category> dataAdapter = new ArrayAdapter<Category>(getApplicationContext(), R.layout.spinner_item_title, data);
         spinner_categories.setAdapter(dataAdapter);
         // Set the spinner to be the previously selected or initial category
-        if (null != categoryName) {
-            Category category = new Category(categoryName);
-            for (Category cat: data) { if (cat.equals(category)) { category = cat; break; } }
-            spinner_categories.setSelection(dataAdapter.getPosition(category));
-        }
+        if (null != categoryName) { spinner_categories.setSelection(dataAdapter.getPosition(new Category(categoryName))); }
     }
 
     public void onCreateServiceClick(View view) {
