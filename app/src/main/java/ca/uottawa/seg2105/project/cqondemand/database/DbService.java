@@ -14,6 +14,7 @@ import java.util.HashMap;
 
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
+import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
@@ -121,11 +122,19 @@ public class DbService extends DbItem<Service> {
         });
     }
 
-    public static void relateToProvider(Service service, String providerID, final AsyncActionEventListener listener){
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("user_services").child(providerID);
-        DbService objectToAdd = new DbService(service);
-        String serviceKey = objectToAdd.generateKey();
-        ref.child(serviceKey).setValue(objectToAdd, new DatabaseReference.CompletionListener() {
+    public static void relateToProvider(Service service, User user, final AsyncActionEventListener listener){
+        HashMap<String, Object> map = new HashMap<>();
+        DbService serviceDB = new DbService(service);
+        DbUser userDB = new DbUser(user);
+        String userToServicesPath = String.format("user_services/%s/%s", userDB.generateKey(), serviceDB.generateKey());
+        String serviceToUsersPath = String.format("service_users/%s/%s", serviceDB.generateKey(), userDB.generateKey());
+        String userServiceLookupPath = String.format("user_service_lookup/%s/%s", serviceDB.generateKey(), userDB.generateKey());
+        String serviceUserLookupPath = String.format("service_users_lookup/%s/%s", userDB.generateKey(), serviceDB.generateKey());
+        map.put(userToServicesPath, serviceDB);
+        map.put(serviceToUsersPath, userDB);
+        map.put(userServiceLookupPath, true);
+        map.put(serviceUserLookupPath, true);
+        FirebaseDatabase.getInstance().getReference().updateChildren(map, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                 if(databaseError == null){
@@ -137,7 +146,10 @@ public class DbService extends DbItem<Service> {
             }
         });
 
+
+
     }
+
     @NonNull
     public static DbListener<?> getServicesLive(@NonNull String categoryName, @NonNull final AsyncValueEventListener<Service> listener) {
         return DbUtil.getItemsLive(DbUtil.DataType.SERVICE, "category_id", DbUtil.getKey(new Category(categoryName)), listener);

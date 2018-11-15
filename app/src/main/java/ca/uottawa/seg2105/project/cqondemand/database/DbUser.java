@@ -3,6 +3,14 @@ package ca.uottawa.seg2105.project.cqondemand.database;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
@@ -111,6 +119,54 @@ public class DbUser extends DbItem<User> {
             public void onSuccess() { if (null != listener) { listener.onSuccess(newUser); } }
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) { if (null != listener) { listener.onFailure(reason); } }
+        });
+    }
+
+    public static void getProvidersByService(String serviceID, @NonNull AsyncValueEventListener<User> listener){
+        DbUtil.getItemsRelational(DbUtil.DataType.SERVICE_USERS, DbUtil.DataType.USER, serviceID, listener);
+    }
+
+    public static void updateProviderRelational(final User newUser, final String userKey, final AsyncActionEventListener listener){
+        AsyncSingleValueEventListener<HashMap<String, Object>> mapListener = new AsyncSingleValueEventListener<HashMap<String, Object>>() {
+            @Override
+            public void onSuccess(HashMap<String, Object> data) {
+                DbUser updatedUser = new DbUser(newUser);
+                data.put(String.format("users/%s", userKey), updatedUser);
+                FirebaseDatabase.getInstance().getReference().updateChildren(data);
+                listener.onSuccess();
+            }
+
+            @Override
+            public void onFailure(AsyncEventFailureReason reason) {
+                listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
+            }
+        };
+        createUpdateMap(newUser, userKey, mapListener);
+
+
+    }
+
+    private static void createUpdateMap(final User newUser, final String userKey,
+                                        final AsyncSingleValueEventListener<HashMap<String, Object>> listener) {
+
+        final HashMap<String, Object> pathMap = new HashMap<>();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("service_users_lookup").child(userKey);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    DbUser updatedUser = new DbUser(newUser);
+                    String serviceKey = child.getKey();
+                    String path = String.format("service_users/%s/%s", serviceKey, userKey);
+                    pathMap.put(path, updatedUser);
+                }
+                listener.onSuccess(pathMap);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
+            }
         });
     }
 

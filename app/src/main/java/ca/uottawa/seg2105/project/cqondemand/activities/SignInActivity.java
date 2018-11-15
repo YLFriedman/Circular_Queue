@@ -173,18 +173,20 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     public void onUpdateServiceTestClick(View view){
-       DbService.getServicesByProvider("hudi_124", new AsyncValueEventListener<Service>() {
-           @Override
-           public void onSuccess(ArrayList<Service> data) {
-               field_username.setText(data.get(0).getName());
-               field_password.setText(data.get(1).getName());
-           }
+        User user = new User("Yehuda", "Friedman", "hudi124", "free@lol.com", User.Types.SERVICE_PROVIDER, "438348rjh");
+        Service service = new Service("Tommy's Nuts", 6969, "nuts");
+        DbService.relateToProvider(service, user, new AsyncActionEventListener() {
+            @Override
+            public void onSuccess() {
+                System.out.println("WE ARE THE CHAMPIONS");
+            }
 
-           @Override
-           public void onFailure(AsyncEventFailureReason reason) {
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                System.out.println("OOPSIE WHOOPSIE");
 
-           }
-       });
+            }
+        });
     }
 
 }

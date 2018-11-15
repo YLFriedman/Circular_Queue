@@ -33,7 +33,7 @@ public class DbUtil {
      * Enum for differentiating between different object types
      */
     enum DataType {
-        USER, SERVICE, CATEGORY, USER_SERVICES;
+        USER, SERVICE, CATEGORY, USER_SERVICES, SERVICE_USERS;
         @NonNull
         public String toString() {
             switch (this) {
@@ -41,6 +41,7 @@ public class DbUtil {
                 case SERVICE: return "services";
                 case CATEGORY: return "categories";
                 case USER_SERVICES: return "user_services";
+                case SERVICE_USERS: return "service_users";
                 default: return this.name();
             }
         }
