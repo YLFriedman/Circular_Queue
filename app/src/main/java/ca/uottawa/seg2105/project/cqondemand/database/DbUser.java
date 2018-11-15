@@ -204,11 +204,51 @@ public class DbUser extends DbItem<User> {
     }
 
     public static void deleteUserRelational(String userKey, final AsyncActionEventListener listener){
+        AsyncSingleValueEventListener<HashMap<String, Object>> mapListener = new AsyncSingleValueEventListener<HashMap<String, Object>>() {
+            @Override
+            public void onSuccess(@NonNull HashMap<String, Object> item) {
+                FirebaseDatabase.getInstance().getReference().updateChildren(item);
+                listener.onSuccess();
+            }
+
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                listener.onFailure(reason);
+
+            }
+        };
+        createDeletionMap(userKey, mapListener);
 
     }
 
-    private static void createDeletionMap(String userKey, final AsyncValueEventListener<HashMap<String, Object>> listener){
+    private static void createDeletionMap(final String userKey, final AsyncSingleValueEventListener<HashMap<String, Object>> listener){
+        final HashMap<String, Object> pathMap = new HashMap<>();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("service_users_lookup").child(userKey);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot child : dataSnapshot.getChildren()) {
+                    String serviceKey = child.getKey();
+                    String serviceUsersPath = String.format("service_users/%s/%s", serviceKey, userKey);
+                    String lookupPath = String.format("user_service_lookup/%s/%s", serviceKey, userKey);
+                    pathMap.put(serviceUsersPath, null);
+                    pathMap.put(lookupPath, null);
+                }
+                String userServicesPath = String.format("user_services/%s", userKey);
+                String lookupPathPrimary = String.format("service_users_lookup/%s", userKey);
+                String mainPath = String.format("users/%s", userKey);
+                pathMap.put(userServicesPath, null);
+                pathMap.put(lookupPathPrimary, null);
+                pathMap.put(mainPath, null);
+                listener.onSuccess(pathMap);
 
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
+            }
+        });
     }
 
 }
