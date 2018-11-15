@@ -1,5 +1,6 @@
 package ca.uottawa.seg2105.project.cqondemand.database;
 
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -11,6 +12,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
@@ -29,6 +31,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 public class DbUtil {
 
+    private static final HashMap<DataType, DatabaseReference> references = new HashMap<DataType, DatabaseReference>();
     /**
      * Enum for differentiating between different object types
      */
@@ -98,22 +101,13 @@ public class DbUtil {
      */
     @NonNull
     private static DatabaseReference getRef(@NonNull DataType type) {
-        return FirebaseDatabase.getInstance().getReference().child(type.toString());
+        DatabaseReference ref = references.get(type);
+        if (null == ref) {
+            ref = FirebaseDatabase.getInstance().getReference().child(type.toString());
+            references.put(type, ref);
+        }
+        return ref;
     }
-
-    /**
-     * Method for returning a database-ready key from a specific String
-     * @param uniqueID the String representation of a uniqueID
-     * @return A sanitized, database-ready String version of the input key
-     */
-    @NonNull
-    public static String getSanitizedKey(@NonNull String uniqueID) {
-        uniqueID = uniqueID.toLowerCase();
-        uniqueID = uniqueID.replaceAll("[\\s]", "_");
-        uniqueID = uniqueID.replaceAll("[^a-z0-9_]", "_");
-        return uniqueID;
-    }
-
 
     @SuppressWarnings("unchecked")
     static <T> void getItem(@NonNull final DataType type, @NonNull String key, @NonNull final AsyncSingleValueEventListener<T> listener) {

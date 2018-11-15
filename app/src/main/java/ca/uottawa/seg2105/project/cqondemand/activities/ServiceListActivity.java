@@ -44,11 +44,8 @@ public class ServiceListActivity extends SignedInActivity {
         recycler_list.setHasFixedSize(true);
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         TextView txt_category_name = findViewById(R.id.txt_category_name);
-        Intent intent = getIntent();
-        String categoryName = intent.getStringExtra("category_name");
         currentCategory = State.getState().getCurrentCategory();
         State.getState().setCurrentCategory(null);
-        if (null == currentCategory && null != categoryName) { currentCategory = new Category(categoryName); }
         AsyncValueEventListener<Service> listener = new AsyncValueEventListener<Service>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Service> data) {

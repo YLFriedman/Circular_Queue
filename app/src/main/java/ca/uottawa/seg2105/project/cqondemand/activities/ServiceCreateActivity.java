@@ -27,6 +27,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
+import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class ServiceCreateActivity extends SignedInActivity {
 
@@ -140,7 +141,7 @@ public class ServiceCreateActivity extends SignedInActivity {
                 Toast.makeText(getApplicationContext(), String.format(getString(R.string.service_creation_success), name), Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("category_name", category.getName());
+                State.getState().setCurrentCategory(category);
                 startActivity(intent);
                 finish();
             }
