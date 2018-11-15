@@ -56,7 +56,6 @@ public class DbUser extends DbItem<User> {
         });
     }
 
-    // TODO: Check if unique_name exists before updating
     public static void updateUser(@NonNull final User user, @Nullable final AsyncActionEventListener listener) {
         if (null == user.getKey() || user.getKey().isEmpty()) { throw new IllegalArgumentException("A user object with a key is required. Unable to update the database without the key."); }
         final AsyncActionEventListener loggedInUserUpdateListener = new AsyncActionEventListener() {
@@ -89,6 +88,7 @@ public class DbUser extends DbItem<User> {
     }
 
     public static void deleteUser(@NonNull User user, @Nullable AsyncActionEventListener listener) {
+        if (null == user.getKey() || user.getKey().isEmpty()) { throw new IllegalArgumentException("A user object with a key is required. Unable to delete from the database without the key."); }
         DbUtil.deleteItem(user, listener);
     }
 

@@ -45,7 +45,6 @@ public class Service {
         this.categoryID = categoryID;
     }
 
-
     public String getKey() {
         return key;
     }
@@ -101,6 +100,16 @@ public class Service {
      */
     public String getName() {
         return name;
+    }
+
+    public String getUniqueName() {
+        return getUniqueName(name);
+    }
+
+    public static String getUniqueName(@NonNull String name) {
+        String uniqueName = name.toLowerCase();
+        uniqueName = uniqueName.replaceAll("[^a-z0-9]+", "_");
+        return uniqueName;
     }
 
     public boolean equals(Service other) {

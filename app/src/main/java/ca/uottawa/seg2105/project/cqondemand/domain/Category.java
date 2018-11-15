@@ -44,6 +44,16 @@ public class Category {
         return name;
     }
 
+    public String getUniqueName() {
+        return getUniqueName(name);
+    }
+
+    public static String getUniqueName(@NonNull String name) {
+        String uniqueName = name.toLowerCase();
+        uniqueName = uniqueName.replaceAll("[^a-z0-9]+", "_");
+        return uniqueName;
+    }
+
     public boolean equals(Category other) {
         return key != null && key.equals(other.key);
     }
