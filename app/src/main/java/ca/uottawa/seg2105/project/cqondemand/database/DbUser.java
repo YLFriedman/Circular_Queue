@@ -40,22 +40,25 @@ public class DbUser extends DbItem<User> {
     public User toDomainObj() { return new User(retrieveKey(), first_name, last_name, username, email, User.parseType(type), password); }
 
     public static void createUser(@NonNull final User user, @Nullable final AsyncActionEventListener listener) {
-        DbUtil.getItems(DbUtil.DataType.USER, "unique_name", User.getUniqueName(user.getUsername()), new AsyncValueEventListener<User>() {
+        getUserByUsername(user.getUsername(), new AsyncSingleValueEventListener<User>() {
             @Override
-            public void onSuccess(@NonNull ArrayList<User> data) {
-                if (null != listener) {
-                    if (data.size() != 0) { listener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS); }
-                    else { DbUtil.createItem(user, listener); }
-                }
+            public void onSuccess(@NonNull User item) {
+                // Failure Condition: User already exists
+                if (null != listener) { listener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS); }
             }
             @Override
-            public void onFailure(@NonNull AsyncEventFailureReason reason) { if (null != listener) { listener.onFailure(reason); } }
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                if (AsyncEventFailureReason.DOES_NOT_EXIST == reason) {
+                    // Success Condition: User does not exist
+                    DbUtil.createItem(user, listener);
+                } else if (null != listener) { listener.onFailure(reason); }
+            }
         });
     }
 
     public static void updateUser(@NonNull final User user, @Nullable final AsyncActionEventListener listener) {
         if (null == user.getKey() || user.getKey().isEmpty()) { throw new IllegalArgumentException("A user object with a key is required. Unable to update the database without the key."); }
-        final AsyncActionEventListener interceptListener = new AsyncActionEventListener() {
+        DbUtil.updateItem(user, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 // If we are updating the logged in user, replace the user object
@@ -66,15 +69,6 @@ public class DbUser extends DbItem<User> {
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 if (null != listener) { listener.onFailure(reason); }
             }
-        };
-        getUser(user.getUsername(), new AsyncSingleValueEventListener<User>() {
-            @Override
-            public void onSuccess(@NonNull User item) {
-                if (user.equals(item)) { DbUtil.updateItem(user, interceptListener); }
-                else { interceptListener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS); }
-            }
-            @Override
-            public void onFailure(@NonNull AsyncEventFailureReason reason) { listener.onFailure(reason); }
         });
     }
 
@@ -82,12 +76,17 @@ public class DbUser extends DbItem<User> {
         DbUtil.deleteItem(user, listener);
     }
 
-    public static void getUser(@NonNull String username, @NonNull final AsyncSingleValueEventListener<User> listener) {
+    public static void getUser(@NonNull String key, @NonNull final AsyncSingleValueEventListener<User> listener) {
+        DbUtil.getItem(DbUtil.DataType.USER, key, listener);
+    }
+
+    public static void getUserByUsername(@NonNull String username, @NonNull final AsyncSingleValueEventListener<User> listener) {
         DbUtil.getItems(DbUtil.DataType.USER, "unique_name", User.getUniqueName(username), new AsyncValueEventListener<User>() {
             @Override
             public void onSuccess(@NonNull ArrayList<User> data) {
-                if (data.size() != 1) { listener.onFailure(AsyncEventFailureReason.NOT_UNIQUE); }
-                else { listener.onSuccess(data.get(0)); }
+                if (data.size() == 1) { listener.onSuccess(data.get(0)); }
+                else if (data.size() == 0) { listener.onFailure(AsyncEventFailureReason.DOES_NOT_EXIST); }
+                else { listener.onFailure(AsyncEventFailureReason.NOT_UNIQUE); }
             }
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) { listener.onFailure(reason); }
@@ -112,19 +111,14 @@ public class DbUser extends DbItem<User> {
      * @param listener the listener that will be informed if authentication was successful or not
      */
     public static void authenticate(@NonNull String username, @NonNull final String password, @Nullable final AsyncActionEventListener listener) {
-        DbUtil.getItems(DbUtil.DataType.USER, "unique_name", User.getUniqueName(username), new AsyncValueEventListener<User>() {
+        getUserByUsername(username, new AsyncSingleValueEventListener<User>() {
             @Override
-            public void onSuccess(@NonNull ArrayList<User> data) {
-                if (data.size() != 1) {
-                    if (null != listener) { listener.onFailure(AsyncEventFailureReason.NOT_UNIQUE); }
+            public void onSuccess(@NonNull User user) {
+                if (user.getPassword().equals(password)) {
+                    State.getState().setSignedInUser(user);
+                    if (null != listener) { listener.onSuccess(); }
                 } else {
-                    User user = data.get(0);
-                    if (user.getPassword().equals(password)) {
-                        State.getState().setSignedInUser(user);
-                        if (null != listener) { listener.onSuccess(); }
-                    } else {
-                        if (null != listener) { listener.onFailure(AsyncEventFailureReason.PASSWORD_MISMATCH); }
-                    }
+                    if (null != listener) { listener.onFailure(AsyncEventFailureReason.PASSWORD_MISMATCH); }
                 }
             }
             @Override

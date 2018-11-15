@@ -117,7 +117,7 @@ public class DbUtil {
 
     @SuppressWarnings("unchecked")
     static <T> void getItem(@NonNull final DataType type, @NonNull String key, @NonNull final AsyncSingleValueEventListener<T> listener) {
-        getRef(type).child(getSanitizedKey(key)).addListenerForSingleValueEvent(new ValueEventListener() {
+        getRef(type).child(key).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
@@ -242,12 +242,11 @@ public class DbUtil {
                 listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
             }
         };
-        DatabaseReference ref = getRef(type);
         if (singleEvent) {
             query.addListenerForSingleValueEvent(dataConversionListener);
-            return new DbListener<ValueEventListener>(ref, null);
+            return new DbListener<ValueEventListener>(query.getRef(), null);
         } else {
-            return new DbListener<ValueEventListener>(ref, query.addValueEventListener(dataConversionListener));
+            return new DbListener<ValueEventListener>(query.getRef(), query.addValueEventListener(dataConversionListener));
         }
     }
 
@@ -291,8 +290,7 @@ public class DbUtil {
             @Override
             public void onSuccess(@NonNull T item) {
                 // Success condition: Item exists in database and can be updated
-                DatabaseReference ref = getRef(type);
-                ref.child(dbItem.retrieveKey()).setValue(dbItem, new DatabaseReference.CompletionListener() {
+                getRef(type).child(dbItem.retrieveKey()).setValue(dbItem, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                         if (null != listener) {

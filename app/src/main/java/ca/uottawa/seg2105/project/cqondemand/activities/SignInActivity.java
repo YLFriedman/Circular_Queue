@@ -36,7 +36,7 @@ public class SignInActivity extends AppCompatActivity {
             btn_sign_in = findViewById(R.id.btn_sign_in);
             btn_sign_up = findViewById(R.id.btn_sign_up);
             btn_create_admin_account = findViewById(R.id.btn_create_admin_account);
-            DbUser.getUser("admin", new AsyncSingleValueEventListener<User>() {
+            DbUser.getUserByUsername("admin", new AsyncSingleValueEventListener<User>() {
                 @Override
                 public void onSuccess(@NonNull User user) {
                     btn_create_admin_account.setVisibility(View.GONE);
