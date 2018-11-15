@@ -14,7 +14,7 @@ public class FieldValidationTest {
     @Test
     public void username_validation() {
         assertEquals("usernameIsValid failed - empty string",false, usernameIsValid(""));
-        assertEquals("usernameIsValid failed - invalid character: .",false, usernameIsValid("cq.on.demand"));
+        assertEquals("usernameIsValid failed - invalid character: ;",false, usernameIsValid("cq;on;demand"));
         assertEquals("usernameIsValid failed - invalid characters: {}",false, usernameIsValid("cq{on}demand"));
         assertEquals("usernameIsValid failed - valid username",true, usernameIsValid("cq_on_demand"));
     }
