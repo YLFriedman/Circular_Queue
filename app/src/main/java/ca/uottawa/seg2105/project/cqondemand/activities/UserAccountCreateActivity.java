@@ -171,8 +171,9 @@ public class UserAccountCreateActivity extends AppCompatActivity {
             return false;
         }
 
-        if (!FieldValidation.usernameIsValid(username)) {
+        if (!FieldValidation.usernameIsValid(username) || FieldValidation.usernameIsReserved(username)) {
             if (username.isEmpty()) { field_username.setError(getString(R.string.empty_username_error)); }
+            else if (FieldValidation.usernameIsReserved(username)) { field_username.setError(getString(R.string.banned_username_msg)); }
             else { field_username.setError(getString(R.string.invalid_username_msg)); }
             field_username.requestFocus();
             field_username.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));

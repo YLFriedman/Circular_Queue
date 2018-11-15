@@ -13,7 +13,7 @@ public class FieldValidation {
 
     public static final int PASSWORD_MIN_LENGTH = 6;
     private static final String[] ILLEGAL_PASSWORDS = { "password" };
-    public static final String[] RESERVED_USERNAMES = { "admin" };
+    private static final String[] RESERVED_USERNAMES = { "admin" };
     public enum PasswordValidationResult { VALID, EMPTY, TOO_SHORT, CONFIRM_MISMATCH, ILLEGAL_PASSWORD, CONTAINS_USERNAME }
 
     private static final String ILLEGAL_OBJECT_NAME_CHARS_REGEX = ".*[^'a-zA-Z -].*";
@@ -30,10 +30,13 @@ public class FieldValidation {
         return !name.matches(ILLEGAL_OBJECT_NAME_CHARS_REGEX);
     }
 
+    public static boolean usernameIsReserved(String username) {
+        return FieldValidation.contains(RESERVED_USERNAMES, username);
+    }
+
     public static boolean usernameIsValid(String username) {
         if (null == username || username.isEmpty()) { return false; }
         if (username.matches(ILLEGAL_USERNAME_CHARS_REGEX)) { return false; }
-        if (FieldValidation.contains(RESERVED_USERNAMES, username)) { return false; }
         return true;
     }
 

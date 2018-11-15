@@ -56,9 +56,10 @@ public class DbUser extends DbItem<User> {
         });
     }
 
+    // TODO: Check if unique_name exists before updating
     public static void updateUser(@NonNull final User user, @Nullable final AsyncActionEventListener listener) {
         if (null == user.getKey() || user.getKey().isEmpty()) { throw new IllegalArgumentException("A user object with a key is required. Unable to update the database without the key."); }
-        DbUtil.updateItem(user, new AsyncActionEventListener() {
+        final AsyncActionEventListener loggedInUserUpdateListener = new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 // If we are updating the logged in user, replace the user object
@@ -68,6 +69,21 @@ public class DbUser extends DbItem<User> {
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 if (null != listener) { listener.onFailure(reason); }
+            }
+        };
+        // Check if the username is already in use
+        getUserByUsername(user.getUsername(), new AsyncSingleValueEventListener<User>() {
+            @Override
+            public void onSuccess(@NonNull User item) {
+                // Success Condition: The only user with this username is the user being updated
+                if (item.equals(user)) { DbUtil.updateItem(user, loggedInUserUpdateListener); }
+                else { loggedInUserUpdateListener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS); }
+            }
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                // Success Condition: Username is not in use
+                if (AsyncEventFailureReason.DOES_NOT_EXIST == reason) { DbUtil.updateItem(user, loggedInUserUpdateListener); }
+                else { loggedInUserUpdateListener.onFailure(reason); }
             }
         });
     }
