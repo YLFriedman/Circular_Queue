@@ -10,11 +10,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
+import ca.uottawa.seg2105.project.cqondemand.database.DbService;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
+import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
@@ -165,6 +170,21 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) { }
         });
+    }
+
+    public void onUpdateServiceTestClick(View view){
+       DbService.getServicesByProvider("hudi_124", new AsyncValueEventListener<Service>() {
+           @Override
+           public void onSuccess(ArrayList<Service> data) {
+               field_username.setText(data.get(0).getName());
+               field_password.setText(data.get(1).getName());
+           }
+
+           @Override
+           public void onFailure(AsyncEventFailureReason reason) {
+
+           }
+       });
     }
 
 }

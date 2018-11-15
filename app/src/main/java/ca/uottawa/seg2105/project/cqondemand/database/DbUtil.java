@@ -33,13 +33,14 @@ public class DbUtil {
      * Enum for differentiating between different object types
      */
     enum DataType {
-        USER, SERVICE, CATEGORY;
+        USER, SERVICE, CATEGORY, USER_SERVICES;
         @NonNull
         public String toString() {
             switch (this) {
                 case USER: return "users";
                 case SERVICE: return "services";
                 case CATEGORY: return "categories";
+                case USER_SERVICES: return "user_services";
                 default: return this.name();
             }
         }
@@ -260,6 +261,34 @@ public class DbUtil {
         } else {
             return new DbListener<ValueEventListener>(ref, query.addValueEventListener(dataConversionListener));
         }
+    }
+
+    public static <T> void getItemsRelational(final DataType relationType, final DataType returnType, String childKey, final AsyncValueEventListener<T> listener) {
+        getRef(relationType).child(childKey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long size = dataSnapshot.getChildrenCount();
+                ArrayList<T> returnValue = new ArrayList<T>(size > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) size);
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    try {
+                        DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(returnType));
+                        if (null != dbItem) {
+                            T domainObjItem = dbItem.toDomainObj();
+                            returnValue.add(domainObjItem);
+                        }
+                    } catch (IllegalArgumentException e) {
+                    } catch (InvalidDataException e) {
+                    } catch (ClassCastException e) {
+                    }
+                }
+                listener.onSuccess(returnValue);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
+            }
+        });
     }
 
     static <T> void deleteItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {
