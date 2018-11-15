@@ -5,6 +5,8 @@ public class FieldValidation {
     private static final String ILLEGAL_USERNAME_CHARS_REGEX = ".*[^a-zA-Z0-9_].*";
     public static final String ILLEGAL_USERNAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z 0-9 _";
 
+    private static final String ILLEGAL_STREET_CHARS_REGEX = "[a-zA-Z]+";
+
     // Illegal Name Characters: 0-9 < > ] [ } { \ / ! @ # $ % ^ & * _ + = ) (
     private static final String ILLEGAL_PERSON_NAME_CHARS_REGEX = ".*[0-9<>\\]\\[}{\\\\/!?@#$%^&*_+=)(:;].*";
     public static final String ILLEGAL_PERSON_NAME_CHARS_MSG = "The following characters are NOT allowed: 0-9 < > ] [ } { \\ / ! @ # $ % ^ & * _ + = ) ( '";
@@ -40,6 +42,31 @@ public class FieldValidation {
     public static boolean emailIsValid(CharSequence email) {
         if (null == email || email.toString().isEmpty()) { return false; }
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    public static boolean phoneIsValid(CharSequence phone) {
+        if (null == phone || phone.toString().isEmpty()) { return false; }
+        String str = "^(1\\-)?[0-9]{3}\\-?[0-9]{3}\\-?[0-9]{4}$";
+        return !phone.toString().matches(str);
+    }
+
+    public static boolean unitIsValid(CharSequence unit) {
+        if (unit.length() > 9)
+            return false;
+        String str = "^[0-9]*$";            //Only numbers are allowed
+        return unit.toString().matches(str);
+    }
+
+    public static boolean numberIsValid(CharSequence unit) {
+        if (unit.length() > 9)
+            return false;
+        String str = "^[0-9]*$";            //Only numbers are allowed
+        return unit.toString().matches(str);
+    }
+
+    public static boolean streetNameIsValid(String street) {
+        if (null == street || street.isEmpty()) { return false; }
+        return !street.matches(ILLEGAL_STREET_CHARS_REGEX);
     }
 
     public static PasswordValidationResult validatePassword(String username, String password, String confirmPassword) {

@@ -232,7 +232,11 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         companyName = field_company_name.getText().toString().trim();
         licensed = switch_licensed.isChecked();
         phoneNumber = field_phone.getText().toString().trim();
+
         unit = field_unit.getText().toString().trim();
+        if (null == unit)
+            unit = "0";
+
         streetNumber = field_street_number.getText().toString().trim();
         streetName = field_street_name.getText().toString().trim();
         city = field_city.getText().toString().trim();
@@ -240,40 +244,39 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         postalCode = field_postal.getText().toString().trim();
 
         if (!FieldValidation.usernameIsValid(companyName)) {
-            if (companyName.isEmpty()) { field_company_name.setError(String.format(getString(R.string.field_required_template), getString(R.string.company_name))); }
-            else { field_company_name.setError(String.format(getString(R.string.field_invalid_template), getString(R.string.company_name))); }
+            if (companyName.isEmpty()) { field_company_name.setError(getString(R.string.empty_company_name_error)); }
+            else { field_company_name.setError(getString(R.string.invalid_company_name_error)); }
             field_company_name.requestFocus();
             field_company_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return false;
         }
 
-        if (!FieldValidation.usernameIsValid(phoneNumber)) {
-            if (phoneNumber.isEmpty()) { field_phone.setError(String.format(getString(R.string.field_required_template), getString(R.string.phone_number))); }
-            else { field_phone.setError(String.format(getString(R.string.field_invalid_template), getString(R.string.phone_number))); }
+        if (!FieldValidation.phoneIsValid(phoneNumber)) {
+            if (phoneNumber.isEmpty()) { field_phone.setError(getString(R.string.empty_phone_error)); }
+            else { field_phone.setError(getString(R.string.invalid_phone_error)); }
             field_phone.requestFocus();
             field_phone.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return false;
         }
 
-        if (!FieldValidation.usernameIsValid(unit)) {
-            if (unit.isEmpty()) { field_unit.setError(String.format(getString(R.string.field_required_template), getString(R.string.unit))); }
-            else { field_unit.setError(String.format(getString(R.string.field_invalid_template), getString(R.string.unit))); }
+        if (!FieldValidation.unitIsValid(unit)) {
+            field_unit.setError(getString(R.string.unit_error));
             field_unit.requestFocus();
             field_unit.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return false;
         }
 
-        if (!FieldValidation.usernameIsValid(streetNumber)) {
-            if (streetNumber.isEmpty()) { field_street_number.setError(String.format(getString(R.string.field_required_template), getString(R.string.number))); }
-            else { field_street_number.setError(String.format(getString(R.string.field_invalid_template), getString(R.string.number))); }
+        if (!FieldValidation.numberIsValid(streetNumber)) {
+            if (streetNumber.isEmpty()) { field_street_number.setError(getString(R.string.empty_street_number_error)); }
+            else { field_street_number.setError(getString(R.string.invalid_street_number_error)); }
             field_street_number.requestFocus();
             field_street_number.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return false;
         }
 
-        if (!FieldValidation.usernameIsValid(streetName)) {
-            if (streetName.isEmpty()) { field_street_name.setError(String.format(getString(R.string.field_required_template), getString(R.string.street))); }
-            else { field_street_name.setError(String.format(getString(R.string.field_invalid_template), getString(R.string.street))); }
+        if (!FieldValidation.streetNameIsValid(streetName)) {
+            if (streetName.isEmpty()) { field_street_name.setError(getString(R.string.empty_street_name_error)); }
+            else { field_street_name.setError(getString(R.string.invalid_street_name_error)); }
             field_street_name.requestFocus();
             field_street_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return false;
