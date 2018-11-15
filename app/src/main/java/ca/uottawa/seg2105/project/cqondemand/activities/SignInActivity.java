@@ -173,17 +173,14 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     public void onUpdateServiceTestClick(View view){
-        User user = new User("Yehuda", "Friedman", "hudi124", "free@lol.com", User.Types.SERVICE_PROVIDER, "438348rjh");
-        Service service = new Service("Tommy's Nuts", 6969, "nuts");
-        DbService.relateToProvider(service, user, new AsyncActionEventListener() {
+        DbService.deleteServiceRelational("service_delete", new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
-                System.out.println("WE ARE THE CHAMPIONS");
+
             }
 
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                System.out.println("OOPSIE WHOOPSIE");
 
             }
         });

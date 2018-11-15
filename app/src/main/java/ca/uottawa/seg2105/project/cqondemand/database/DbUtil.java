@@ -269,7 +269,7 @@ public class DbUtil {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 long size = dataSnapshot.getChildrenCount();
-                ArrayList<T> returnValue = new ArrayList<T>(size > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) size);
+                ArrayList<T> returnValue = new ArrayList<T>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     try {
                         DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(returnType));

@@ -170,6 +170,14 @@ public class DbUser extends DbItem<User> {
         });
     }
 
+    public static void deleteUserRelational(String userKey, final AsyncActionEventListener listener){
+
+    }
+
+    private static void createDeletionMap(String userKey, final AsyncValueEventListener<HashMap<String, Object>> listener){
+
+    }
+
 
 
 }

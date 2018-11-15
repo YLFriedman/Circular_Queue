@@ -150,6 +150,60 @@ public class DbService extends DbItem<Service> {
 
     }
 
+    public static void deleteServiceRelational(final String serviceKey, final AsyncActionEventListener listener){
+        AsyncSingleValueEventListener<HashMap<String, Object>> mapListener = new AsyncSingleValueEventListener<HashMap<String, Object>>() {
+            @Override
+            public void onSuccess(@NonNull HashMap<String, Object> item) {
+                FirebaseDatabase.getInstance().getReference().updateChildren(item);
+                listener.onSuccess();
+
+            }
+
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+
+                listener.onFailure(reason);
+
+            }
+        };
+
+        createDeletionMap(serviceKey, mapListener);
+
+
+    }
+
+    private static void createDeletionMap(final String serviceKey, final AsyncSingleValueEventListener<HashMap<String, Object>> listener){
+        final HashMap<String, Object> pathMap = new HashMap<>();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("user_service_lookup").child(serviceKey);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    String providerKey = child.getKey();
+                    String userServicesPath = String.format("user_services/%s/%s", providerKey, serviceKey);
+                    String lookupPath = String.format("service_users_lookup/%s/%s", providerKey, serviceKey);
+                    pathMap.put(userServicesPath, null);
+                    pathMap.put(lookupPath, null);
+                }
+                String serviceUsersPath = String.format("service_users/%s", serviceKey);
+                String lookupPathPrimary = String.format("user_service_lookup/%s", serviceKey);
+                String serviceMainPath = String.format("services/%s", serviceKey);
+                pathMap.put(serviceUsersPath, null);
+                pathMap.put(lookupPathPrimary, null);
+                pathMap.put(serviceMainPath, null);
+                listener.onSuccess(pathMap);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
+
+            }
+        });
+    }
+
     @NonNull
     public static DbListener<?> getServicesLive(@NonNull String categoryName, @NonNull final AsyncValueEventListener<Service> listener) {
         return DbUtil.getItemsLive(DbUtil.DataType.SERVICE, "category_id", DbUtil.getKey(new Category(categoryName)), listener);
