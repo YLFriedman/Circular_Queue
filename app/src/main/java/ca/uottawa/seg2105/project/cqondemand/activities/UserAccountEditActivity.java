@@ -54,13 +54,6 @@ public class UserAccountEditActivity extends SignedInActivity {
         final String username = field_username.getText().toString().trim();
         final String email = field_email.getText().toString().trim();
 
-        if (firstName.equals(currentUser.getFirstName()) && lastName.equals(currentUser.getLastName())
-                && username.equals(currentUser.getUsername()) && email.equals(currentUser.getEmail())) {
-            Toast.makeText(getApplicationContext(), R.string.no_changes_made_error, Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-
         if (!FieldValidation.usernameIsValid(username)) {
             if (username.isEmpty()) { field_username.setError(getString(R.string.empty_username_error)); }
             else { field_username.setError(getString(R.string.invalid_username_msg)); }
@@ -90,6 +83,13 @@ public class UserAccountEditActivity extends SignedInActivity {
             else { field_email.setError(getString(R.string.invalid_email_error)); }
             field_email.requestFocus();
             field_email.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
+            return;
+        }
+
+        if (firstName.equals(currentUser.getFirstName()) && lastName.equals(currentUser.getLastName())
+                && username.equals(currentUser.getUsername()) && email.equals(currentUser.getEmail())) {
+            Toast.makeText(getApplicationContext(), String.format(getString(R.string.no_changes_made_error_tempalte), getString(R.string.service).toLowerCase()), Toast.LENGTH_SHORT).show();
+            finish();
             return;
         }
 

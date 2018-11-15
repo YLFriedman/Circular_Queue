@@ -104,8 +104,6 @@ public class ServiceEditActivity extends SignedInActivity {
         final Category category = (Category) spinner_categories.getSelectedItem();
         EditText field_spinner_categories_error = findViewById(R.id.field_spinner_categories_error);
 
-        // TODO: Check if there were not changes made
-        
         // Check valid category selection
         if (category.getName().equals(getString(R.string.category_select))) {
             ((TextView)spinner_categories.getSelectedView()).setError(getString(R.string.category_selection_error));
@@ -143,6 +141,12 @@ public class ServiceEditActivity extends SignedInActivity {
             field_rate.setError(getString(R.string.negative_service_rate_error));
             field_rate.requestFocus();
             field_rate.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
+            return;
+        }
+
+        if (name.equals(currentService.getName()) && currentService.getRate() == rateNum && category.getKey().equals(currentService.getCategoryID())) {
+            Toast.makeText(getApplicationContext(), String.format(getString(R.string.no_changes_made_error_tempalte), getString(R.string.service).toLowerCase()), Toast.LENGTH_SHORT).show();
+            finish();
             return;
         }
 

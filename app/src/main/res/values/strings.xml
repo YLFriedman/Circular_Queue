@@ -76,6 +76,7 @@
     <string name="category">Category</string>
     <string name="service">Service</string>
     <string name="account">Account</string>
+    <string name="user_account">User Account</string>
     <string name="service_rate_template">$%,d.00 / hour</string>
     <string name="zero_value_service">Free</string>
     <string name="category_template">Category: %s</string>
@@ -117,7 +118,7 @@
     <string name="account_create_db_error">Unable to create your account at this time due to a database error. Please try again later.</string>
     <string name="username_already_taken">Username is already in use!</string>
     <string name="generic_account_create_error">Unable to create your account at this time. Please try again later.</string>
-    <string name="no_changes_made_error">No changes were made to the account details.</string>
+    <string name="no_changes_made_error_tempalte">No changes were made to the %s.</string>
     <string name="user_list_db_error">There was an error getting the users from the database. Please try again later.</string>
     <string name="password_update_success">Password updated successfully!</string>
     <string name="password_update_db_error">Unable to update your password at this time due to a database error. Please try again later.</string>
