@@ -55,7 +55,9 @@ public class Category {
     }
 
     public boolean equals(Category other) {
-        return key != null && key.equals(other.key);
+        if (null == other) { return false; }
+        if (null != key && null != other.key) { return key.equals(other.key); }
+        return null != getUniqueName() && getUniqueName().equals(other.getUniqueName());
     }
 
     public String toString() {

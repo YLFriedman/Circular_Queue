@@ -75,7 +75,7 @@ public class DbUser extends DbItem<User> {
             @Override
             public void onSuccess(@NonNull User item) {
                 // Success Condition: The only user with this username is the user being updated
-                if (item.equals(user)) { DbUtil.updateItem(user, loggedInUserUpdateListener); }
+                if (user.getKey().equals(item.getKey())) { DbUtil.updateItem(user, loggedInUserUpdateListener); }
                 else { loggedInUserUpdateListener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS); }
             }
             @Override

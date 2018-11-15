@@ -51,7 +51,7 @@ public class DbCategory extends DbItem<Category> {
             @Override
             public void onSuccess(@NonNull Category item) {
                 // Success Condition: The only category with this name is the category being updated
-                if (item.equals(category)) { DbUtil.updateItem(category, listener); }
+                if (category.getKey().equals(item.getKey())) { DbUtil.updateItem(category, listener); }
                 else if (null != listener) { listener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS); }
             }
             @Override

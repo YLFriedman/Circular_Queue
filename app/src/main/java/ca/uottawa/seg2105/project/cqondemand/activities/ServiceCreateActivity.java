@@ -63,23 +63,24 @@ public class ServiceCreateActivity extends SignedInActivity {
     }
 
     private void loadSpinnerData(ArrayList<Category> data) {
+        data.add(0, new Category(getString(R.string.category_select)));
         // Check if there was already a selection made
-        Object currentSelectedCategory = spinner_categories.getSelectedItem();
-        if (null != currentSelectedCategory && !currentSelectedCategory.toString().equals(getString(R.string.category_list_select))) {
-            categoryName = currentSelectedCategory.toString();
+        Object currentSelection = spinner_categories.getSelectedItem();
+        if (null != currentSelection && !currentSelection.toString().equals(getString(R.string.category_list_select))) {
+            categoryName = currentSelection.toString();
         }
-        // Convert the categories list to a string list of category names to be passed to the spinner's adapter
-        List<String> names = new ArrayList<String>();
-        names.add(getString(R.string.category_list_select));
-        for (Category category: data) { names.add(category.getName()); }
         // Create the adapter and pass it to the spinner
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item_title, names);
+        ArrayAdapter<Category> dataAdapter = new ArrayAdapter<Category>(getApplicationContext(), R.layout.spinner_item_title, data);
         spinner_categories.setAdapter(dataAdapter);
         // Set the spinner to be the previously selected or initial category
-        spinner_categories.setSelection(dataAdapter.getPosition(categoryName));
+        if (null != categoryName) {
+            Category category = new Category(categoryName);
+            for (Category cat: data) { if (cat.equals(category)) { category = cat; break; } }
+            spinner_categories.setSelection(dataAdapter.getPosition(category));
+        }
     }
 
-    public void onCreateCategory(View view) {
+    public void onCreateServiceClick(View view) {
         final EditText field_service_name = findViewById(R.id.field_service_name);
         final String name = field_service_name.getText().toString().trim();
 
@@ -87,11 +88,11 @@ public class ServiceCreateActivity extends SignedInActivity {
         final String rate = field_rate.getText().toString().trim();
         int rateNum = 0;
 
-        categoryName = spinner_categories.getSelectedItem().toString();
+        final Category category = (Category) spinner_categories.getSelectedItem();
         EditText field_spinner_categories_error = findViewById(R.id.field_spinner_categories_error);
 
         // Check valid spinner selection
-        if (categoryName.equals(getString(R.string.category_select))) {
+        if (category.getName().equals(getString(R.string.category_select))) {
             ((TextView)spinner_categories.getSelectedView()).setError(getString(R.string.category_selection_error));
             field_spinner_categories_error.setError(getString(R.string.category_selection_error));
             field_spinner_categories_error.requestFocus();
@@ -134,8 +135,7 @@ public class ServiceCreateActivity extends SignedInActivity {
             return;
         }
 
-        // TODO: store category objects for creating services
-        Service newService = new Service(name, rateNum, categoryName);
+        Service newService = new Service(name, rateNum, category.getKey());
         final Button btn_create_service = findViewById(R.id.btn_create_service);
         btn_create_service.setEnabled(false);
         DbService.createService(newService, new AsyncActionEventListener() {
@@ -144,7 +144,7 @@ public class ServiceCreateActivity extends SignedInActivity {
                 Toast.makeText(getApplicationContext(), String.format(getString(R.string.service_creation_success), name), Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("category_name", categoryName);
+                intent.putExtra("category_name", category.getName());
                 startActivity(intent);
                 finish();
             }

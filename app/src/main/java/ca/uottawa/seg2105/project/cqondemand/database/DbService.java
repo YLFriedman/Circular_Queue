@@ -56,7 +56,7 @@ public class DbService extends DbItem<Service> {
             @Override
             public void onSuccess(@NonNull Service item) {
                 // Success Condition: The only service with this name is the service being updated
-                if (item.equals(service)) { DbUtil.updateItem(service, listener); }
+                if (service.getKey().equals(item.getKey())) { DbUtil.updateItem(service, listener); }
                 else if (null != listener) { listener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS); }
             }
             @Override

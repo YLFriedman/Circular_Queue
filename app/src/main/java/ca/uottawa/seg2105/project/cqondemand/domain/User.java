@@ -180,7 +180,9 @@ public class User {
     }
 
     public boolean equals(User other) {
-        return key != null && key.equals(other.key);
+        if (null == other) { return false; }
+        if (null != key && null != other.key) { return key.equals(other.key); }
+        return null != getUniqueName() && getUniqueName().equals(other.getUniqueName());
     }
 
     @NonNull
