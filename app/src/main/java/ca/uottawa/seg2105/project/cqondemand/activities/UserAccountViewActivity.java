@@ -13,18 +13,17 @@ import android.widget.Toast;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
-import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class UserAccountViewActivity extends SignedInActivity {
 
-    private TextView txt_account_type;
-    private TextView txt_username;
-    private TextView txt_full_name;
-    private TextView txt_email;
-    private String username;
+    protected TextView txt_account_type;
+    protected TextView txt_username;
+    protected TextView txt_full_name;
+    protected TextView txt_email;
+    protected User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,40 +34,25 @@ public class UserAccountViewActivity extends SignedInActivity {
         txt_username = findViewById(R.id.txt_username);
         txt_full_name = findViewById(R.id.txt_full_name);
         txt_email = findViewById(R.id.txt_email);
-        Intent intent = getIntent();
-        username = intent.getStringExtra("username");
     }
 
     @Override
     public void onResume() {
         super.onResume();
         if (isFinishing()) { return; }
-        if (null != username) { // If a username was passed through the intent
-            // Clear the text fields
+        if (null != State.getState().getCurrentUser()) {
+            currentUser = State.getState().getCurrentUser();
             State.getState().setCurrentUser(null);
             setupFields();
-            // Try to get the user object
-            DbUser.getUser(username, new AsyncSingleValueEventListener<User>() {
-                @Override
-                public void onSuccess(@NonNull User user) {
-                    State.getState().setCurrentUser(user);
-                    setupFields();
-                }
-                @Override
-                public void onFailure(AsyncEventFailureReason reason) {
-                    Toast.makeText(getApplicationContext(), String.format(getString(R.string.user_retrieval_db_error), username), Toast.LENGTH_LONG).show();
-                    finish();
-                }
-            });
-        } else { // If no username was passed through the intent, then load the logged-in user
-            State.getState().setCurrentUser(State.getState().getSignedInUser());
+        } else if (null != currentUser) {
+            setupFields();
+        } else {
+            currentUser = State.getState().getSignedInUser();
             setupFields();
         }
-
     }
 
     private void setupFields() {
-        User currentUser = State.getState().getCurrentUser();
         if (null == currentUser) {
             txt_account_type.setText("");
             txt_username.setText("");
@@ -89,6 +73,9 @@ public class UserAccountViewActivity extends SignedInActivity {
         if (null != user && user.getType() == User.Types.ADMIN) {
             menu.setGroupVisible(R.id.grp_user_edit_controls, false);
         }
+        if (!State.getState().getSignedInUser().equals(currentUser)) {
+            menu.setGroupVisible(R.id.grp_user_password_controls, false);
+        }
         return true;
     }
 
@@ -103,35 +90,31 @@ public class UserAccountViewActivity extends SignedInActivity {
     }
 
     public void onEditAccountClick() {
+        State.getState().setCurrentUser(currentUser);
         startActivity(new Intent(getApplicationContext(), UserAccountEditActivity.class));
     }
 
     public void onChangePasswordClick() {
+        State.getState().setCurrentUser(currentUser);
         startActivity(new Intent(getApplicationContext(), UserAccountChangePasswordActivity.class));
     }
 
     public void onDeleteAccountClick() {
-        final User currentUser = State.getState().getCurrentUser();
         if (null != currentUser) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.delete_account)
-                    .setMessage("Are you sure you want to delete the '" + currentUser.getUsername() + "' account?  \r\nThis CANNOT be undone!")
+                    .setMessage(String.format(getString(R.string.delete_confirm_dialog_template), currentUser.getUsername(), getString(R.string.account)))
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             DbUser.deleteUser(currentUser, new AsyncActionEventListener() {
                                 public void onSuccess() {
                                     Toast.makeText(getApplicationContext(), String.format(getString(R.string.account_delete_success), currentUser.getUsername()), Toast.LENGTH_LONG).show();
-                                    if (null != State.getState().getSignedInUser() && State.getState().getSignedInUser().equals(currentUser)) {
-                                        State.getState().setSignedInUser(null);
-                                    }
-                                    State.getState().setCurrentUser(null);
+                                    if (currentUser.equals(State.getState().getSignedInUser())) { State.getState().setSignedInUser(null); }
                                     finish();
                                 }
-
-                                public void onFailure(AsyncEventFailureReason reason) {
+                                public void onFailure(@NonNull AsyncEventFailureReason reason) {
                                     Toast.makeText(getApplicationContext(), R.string.account_delete_db_error, Toast.LENGTH_LONG).show();
-
                                 }
                             });
                         }
@@ -139,4 +122,5 @@ public class UserAccountViewActivity extends SignedInActivity {
                     .setNegativeButton(R.string.cancel, null).show();
         }
     }
+
 }

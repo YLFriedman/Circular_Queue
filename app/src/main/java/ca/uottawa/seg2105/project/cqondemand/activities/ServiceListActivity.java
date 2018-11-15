@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +19,7 @@ import java.util.Locale;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.adapters.ServiceListAdapter;
 import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
+import ca.uottawa.seg2105.project.cqondemand.database.DbListener;
 import ca.uottawa.seg2105.project.cqondemand.database.DbService;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
@@ -31,56 +31,56 @@ import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class ServiceListActivity extends SignedInActivity {
 
-    private RecyclerView recycler_list;
-    private ServiceListAdapter service_list_adapter;
-    private String categoryName;
+    protected RecyclerView recycler_list;
+    protected ServiceListAdapter service_list_adapter;
+    protected Category currentCategory;
+    protected DbListener<?> dbListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_list);
         recycler_list = findViewById(R.id.recycler_list);
-        TextView txt_category_name = findViewById(R.id.txt_category_name);
-        Intent intent = getIntent();
-        categoryName = intent.getStringExtra("category_name");
-        if (null != categoryName) {
-            txt_category_name.setText(String.format(Locale.CANADA, getString(R.string.category_title_template), categoryName));
-        } else {
-            txt_category_name.setVisibility(View.GONE);
-            findViewById(R.id.divider_category_name).setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (isFinishing()) { return; }
         recycler_list.setHasFixedSize(true);
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        TextView txt_category_name = findViewById(R.id.txt_category_name);
+        Intent intent = getIntent();
+        String categoryName = intent.getStringExtra("category_name");
+        currentCategory = State.getState().getCurrentCategory();
+        State.getState().setCurrentCategory(null);
+        if (null == currentCategory && null != categoryName) { currentCategory = new Category(categoryName); }
         AsyncValueEventListener<Service> listener = new AsyncValueEventListener<Service>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Service> data) {
                 service_list_adapter = new ServiceListAdapter(getApplicationContext(), data, new View.OnClickListener() {
                     public void onClick(final View view) {
-                        TextView field = view.findViewById(R.id.txt_title);
+                        State.getState().setCurrentService((Service) view.getTag());
                         Intent intent = new Intent(getApplicationContext(), ServiceViewActivity.class);
-                        intent.putExtra("service_name", field.getText().toString());
                         startActivity(intent);
                     }
                 });
                 recycler_list.setAdapter(service_list_adapter);
             }
             @Override
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), R.string.service_list_db_error, Toast.LENGTH_LONG).show();
-
             }
         };
-        if (categoryName == null) {
-            DbService.getServices(listener);
+        if (null != currentCategory) {
+            txt_category_name.setText(String.format(Locale.CANADA, getString(R.string.category_title_template), currentCategory.getName()));
+            dbListener = DbService.getServicesLive(currentCategory.getName(), listener);
         } else {
-            DbService.getServices(categoryName, listener);
+            txt_category_name.setVisibility(View.GONE);
+            findViewById(R.id.divider_category_name).setVisibility(View.GONE);
+            dbListener = DbService.getServicesLive(listener);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Cleanup the data listener for the services list
+        if (null != dbListener) { dbListener.removeListener(); }
     }
 
     @Override
@@ -88,7 +88,7 @@ public class ServiceListActivity extends SignedInActivity {
         User user = State.getState().getSignedInUser();
         if (null != user && user.getType() == User.Types.ADMIN) {
             getMenuInflater().inflate(R.menu.service_list_options, menu);
-            if (categoryName == null) {
+            if (currentCategory == null) {
                 menu.setGroupVisible(R.id.grp_category_controls, false);
             }
             return true;
@@ -107,42 +107,37 @@ public class ServiceListActivity extends SignedInActivity {
     }
 
     public void onDeleteCategoryClick() {
-        if (categoryName != null) {
-            final Category category = new Category(categoryName);
+        if (currentCategory != null) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.delete_category)
-                    .setMessage("Are you sure you want to delete the '" + categoryName + "' category?  \r\nThis CANNOT be undone!")
+                    .setMessage(String.format(getString(R.string.delete_confirm_dialog_template), currentCategory.getName(), getString(R.string.category)))
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            DbService.getServices(categoryName, new AsyncValueEventListener<Service>() {
+                            DbService.getServices(currentCategory.getName(), new AsyncValueEventListener<Service>() {
                                 @Override
-                                public void onSuccess(ArrayList<Service> data) {
+                                public void onSuccess(@NonNull ArrayList<Service> data) {
                                     if (null == data) {
-                                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), categoryName), Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), currentCategory.getName()), Toast.LENGTH_LONG).show();
                                     } else if (data.size() > 0) {
-                                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_has_services_error), categoryName), Toast.LENGTH_LONG).show();
-
+                                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_has_services_error), currentCategory.getName()), Toast.LENGTH_LONG).show();
                                     } else {
-                                        DbCategory.deleteCategory(category, new AsyncActionEventListener() {
+                                        DbCategory.deleteCategory(currentCategory, new AsyncActionEventListener() {
                                             @Override
                                             public void onSuccess() {
-                                                Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_success), categoryName), Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_success), currentCategory.getName()), Toast.LENGTH_LONG).show();
                                                 finish();
                                             }
                                             @Override
-
-                                            public void onFailure(AsyncEventFailureReason reason) {
-                                                Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), categoryName), Toast.LENGTH_LONG).show();
-
+                                            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                                                Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), currentCategory.getName()), Toast.LENGTH_LONG).show();
                                             }
                                         });
                                     }
                                 }
                                 @Override
-                                public void onFailure(AsyncEventFailureReason reason) {
-                                    Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), categoryName), Toast.LENGTH_LONG).show();
-
+                                public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                                    Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), currentCategory.getName()), Toast.LENGTH_LONG).show();
                                 }
                             });
                         }
@@ -157,7 +152,7 @@ public class ServiceListActivity extends SignedInActivity {
 
     public void onCreateServiceClick() {
         Intent intent = new Intent(getApplicationContext(), ServiceCreateActivity.class);
-        if (null != categoryName) { intent.putExtra("category_name", categoryName); }
+        if (null != currentCategory.getName()) { intent.putExtra("category_name", currentCategory.getName()); }
         startActivity(intent);
     }
 

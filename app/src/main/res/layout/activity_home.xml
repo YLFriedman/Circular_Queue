@@ -27,6 +27,20 @@
                 tools:layout_editor_absoluteX="8dp">
 
                 <TableRow
+                    android:id="@+id/btns_service_provider_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <Button
+                        android:id="@+id/btn_availability"
+                        style="@style/panel_button"
+                        android:drawableTop="@drawable/ic_time_light_75"
+                        android:onClick="onMyAvailabilityClick"
+                        android:text="@string/my_availability" />
+
+                </TableRow>
+
+                <TableRow
                     android:id="@+id/btns_admin_1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">

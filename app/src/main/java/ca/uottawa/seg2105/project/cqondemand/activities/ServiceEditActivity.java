@@ -17,6 +17,7 @@ import java.util.Locale;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
+import ca.uottawa.seg2105.project.cqondemand.database.DbListener;
 import ca.uottawa.seg2105.project.cqondemand.database.DbService;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
@@ -30,9 +31,10 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class ServiceEditActivity extends SignedInActivity {
 
-    private Spinner spinner_categories;
-    private String categoryName;
-    private Service currentService;
+    protected Spinner spinner_categories;
+    protected String categoryName;
+    protected Service currentService;
+    protected DbListener<?> dbListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,52 +48,54 @@ public class ServiceEditActivity extends SignedInActivity {
         if (null != currentService) {
             field_service_name.setText(currentService.getName());
             field_rate.setText(String.valueOf(currentService.getRate()));
-            currentService.getCategory(new AsyncSingleValueEventListener<Category>() {
+            dbListener = DbCategory.getCategoriesLive(new AsyncValueEventListener<Category>() {
                 @Override
-                public void onSuccess(@NonNull Category item) {
-                    categoryName = item.getName();
+                public void onSuccess(@NonNull ArrayList<Category> data) {
+                    loadSpinnerData(data);
                 }
                 @Override
-                public void onFailure(@NonNull AsyncEventFailureReason reason) { }
+                public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                    Toast.makeText(getApplicationContext(), getString(R.string.category_list_db_error), Toast.LENGTH_LONG).show();
+                }
             });
         } else {
             finish();
         }
     }
 
-    public void onResume() {
-        super.onResume();
-        if (isFinishing()) { return; }
-        if (null == currentService) {
-            finish();
-            return;
-        }
-        DbCategory.getCategories(new AsyncValueEventListener<Category>() {
-            @Override
-            public void onSuccess(@NonNull ArrayList<Category> data) {
-                loadSpinnerData(data);
-            }
-            @Override
-            public void onFailure(AsyncEventFailureReason reason) {
-                Toast.makeText(getApplicationContext(), getString(R.string.category_list_db_error), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
     @Override
-    public void onPause() {
-        super.onPause();
-        categoryName = spinner_categories.getSelectedItem().toString();
+    public void onDestroy() {
+        super.onDestroy();
+        // Cleanup the data listener for the services list
+        if (null != dbListener) { dbListener.removeListener(); }
     }
 
     private void loadSpinnerData(ArrayList<Category> data) {
+        // Check if there was already a selection made
+        Object currentSelectedCategory = spinner_categories.getSelectedItem();
+        if (null != currentSelectedCategory && !currentSelectedCategory.toString().equals(getString(R.string.category_list_select))) {
+            categoryName = currentSelectedCategory.toString();
+        }
+        // Convert the categories list to a string list of category names to be passed to the spinner's adapter
         List<String> names = new ArrayList<String>();
-        for (Category category: data){ names.add(category.getName()); }
-        names.add(0, "<Select Category>");
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item_title, names);
-        //dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        names.add(getString(R.string.category_list_select));
+        for (Category category: data) { names.add(category.getName()); }
+        // Create the adapter and pass it to the spinner
+        final ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item_title, names);
         spinner_categories.setAdapter(dataAdapter);
-        if (categoryName != null) { spinner_categories.setSelection(dataAdapter.getPosition(categoryName)); }
+        // Set the spinner to be the previously selected or initial category
+        if (null == categoryName) {
+            // If no category exists, attempt to get one from the currentService object
+            currentService.getCategory(new AsyncSingleValueEventListener<Category>() {
+                @Override
+                public void onSuccess(@NonNull Category item) {
+                    categoryName = item.getName();
+                    spinner_categories.setSelection(dataAdapter.getPosition(categoryName));
+                }
+                @Override
+                public void onFailure(@NonNull AsyncEventFailureReason reason) { }
+            });
+        } else { spinner_categories.setSelection(dataAdapter.getPosition(categoryName)); }
     }
 
     public void onSaveService(View view) {

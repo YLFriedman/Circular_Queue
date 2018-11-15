@@ -12,6 +12,10 @@
             android:title="@string/edit_account"
             android:titleCondensed="@string/edit"
             app:showAsAction="ifRoom" />
+    </group>
+    <group
+        android:id="@+id/grp_user_password_controls"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/menu_item_user_change_password"
             android:checkable="false"

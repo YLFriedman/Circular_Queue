@@ -110,4 +110,8 @@ public class Service {
         return null != other && name.equals(other.name);
     }
 
+    public String toString() {
+        return this.name;
+    }
+
 }

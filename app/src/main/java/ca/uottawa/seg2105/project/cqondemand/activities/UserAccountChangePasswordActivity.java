@@ -14,17 +14,18 @@ import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class UserAccountChangePasswordActivity extends SignedInActivity {
 
-    private EditText field_password_old;
-    private EditText field_password;
-    private EditText field_password_confirm;
-    private Button btn_save_password;
-    private User currentUser;
+    protected EditText field_password_old;
+    protected EditText field_password;
+    protected EditText field_password_confirm;
+    protected Button btn_save_password;
+    protected User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +38,9 @@ public class UserAccountChangePasswordActivity extends SignedInActivity {
         btn_save_password = findViewById(R.id.btn_save_password);
 
         currentUser = State.getState().getCurrentUser();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (isFinishing()) { return; }
-        if (!currentUser.equals(State.getState().getCurrentUser())) {
+        State.getState().setCurrentUser(null);
+        if (null == currentUser) {
+            Toast.makeText(getApplicationContext(),  String.format(getString(R.string.current_item_provided_template), getString(R.string.account)), Toast.LENGTH_SHORT).show();
             finish();
         }
     }
@@ -81,15 +78,15 @@ public class UserAccountChangePasswordActivity extends SignedInActivity {
         }
 
         btn_save_password.setEnabled(false);
-        DbUser.updatePassword(currentUser, password, new AsyncActionEventListener() {
-            public void onSuccess() {
+        DbUser.updatePassword(currentUser, password, new AsyncSingleValueEventListener<User>() {
+            public void onSuccess(@NonNull User item) {
+                State.getState().setCurrentUser(item);
                 Toast.makeText(getApplicationContext(), R.string.password_update_success, Toast.LENGTH_LONG).show();
-                btn_save_password.setEnabled(true);
                 finish();
             }
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                btn_save_password.setEnabled(true);
                 Toast.makeText(getApplicationContext(), R.string.password_update_db_error, Toast.LENGTH_LONG).show();
+                btn_save_password.setEnabled(true);
             }
         });
     }

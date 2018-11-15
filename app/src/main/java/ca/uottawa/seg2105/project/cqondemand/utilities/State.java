@@ -3,6 +3,7 @@ package ca.uottawa.seg2105.project.cqondemand.utilities;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
@@ -13,6 +14,7 @@ public class State {
     private User signedInUser;
     private User currentUser;
     private Service currentService;
+    private Category currentCategory;
 
     private State() {
 
@@ -41,6 +43,11 @@ public class State {
         return currentService;
     }
 
+    @Nullable
+    public Category getCurrentCategory() {
+        return currentCategory;
+    }
+
     // Setters
     public void setSignedInUser(@Nullable User signedInUser) {
         this.signedInUser = signedInUser;
@@ -52,6 +59,10 @@ public class State {
 
     public void setCurrentService(@Nullable Service currentService) {
         this.currentService = currentService;
+    }
+
+    public void setCurrentCategory(@Nullable Category currentCategory) {
+        this.currentCategory = currentCategory;
     }
 
 }

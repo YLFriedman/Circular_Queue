@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.adapters.CategoryListAdapter;
 import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
+import ca.uottawa.seg2105.project.cqondemand.database.DbListener;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
@@ -24,40 +25,39 @@ import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class CategoryListActivity extends SignedInActivity {
 
-    private RecyclerView recycler_list;
-    private CategoryListAdapter category_list_adapter;
+    protected RecyclerView recycler_list;
+    protected DbListener<?> dbListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_list);
         recycler_list = findViewById(R.id.recycler_list);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (isFinishing()) { return; }
         recycler_list.setHasFixedSize(true);
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        DbCategory.getCategories(new AsyncValueEventListener<Category>() {
+        dbListener = DbCategory.getCategoriesLive(new AsyncValueEventListener<Category>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Category> data) {
-                category_list_adapter = new CategoryListAdapter(getApplicationContext(), data, new View.OnClickListener() {
+                recycler_list.setAdapter(new CategoryListAdapter(getApplicationContext(), data, new View.OnClickListener() {
                     public void onClick(final View view) {
-                        TextView field = view.findViewById(R.id.txt_title);
+                        State.getState().setCurrentCategory((Category) view.getTag());
                         Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
-                        intent.putExtra("category_name", field.getText().toString());
                         startActivity(intent);
                     }
-                });
-                recycler_list.setAdapter(category_list_adapter);
+                }));
             }
             @Override
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), getString(R.string.category_list_db_error), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Cleanup the data listener for the categories list
+        if (null != dbListener) { dbListener.removeListener(); }
     }
 
     public void onCreateCategoryClick() {

@@ -46,6 +46,8 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         Category item = data.get(i);
+        // Set the current item as the view's tag so it can be retrieve easily in the onClick handler
+        viewHolder.itemView.setTag(item);
         if (null != item) {
             viewHolder.txt_title.setText(item.getName());
         }

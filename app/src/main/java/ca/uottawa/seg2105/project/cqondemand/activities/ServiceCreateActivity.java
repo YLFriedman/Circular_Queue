@@ -18,6 +18,7 @@ import java.util.Locale;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
+import ca.uottawa.seg2105.project.cqondemand.database.DbListener;
 import ca.uottawa.seg2105.project.cqondemand.database.DbService;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUtil;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
@@ -29,8 +30,9 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 
 public class ServiceCreateActivity extends SignedInActivity {
 
-    Spinner spinner_categories;
-    String categoryName;
+    protected Spinner spinner_categories;
+    protected String categoryName;
+    protected DbListener<?> dbListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,37 +42,41 @@ public class ServiceCreateActivity extends SignedInActivity {
         Intent intent = getIntent();
         categoryName = intent.getStringExtra("category_name");
         spinner_categories = findViewById(R.id.spinner_categories);
-    }
 
-    public void onResume() {
-        super.onResume();
-        if (isFinishing()) { return; }
-        DbCategory.getCategories(new AsyncValueEventListener<Category>() {
+        dbListener = DbCategory.getCategoriesLive(new AsyncValueEventListener<Category>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Category> data) {
                 loadSpinnerData(data);
             }
             @Override
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), getString(R.string.category_list_db_error), Toast.LENGTH_LONG).show();
             }
         });
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        categoryName = spinner_categories.getSelectedItem().toString();
+    public void onDestroy() {
+        super.onDestroy();
+        // Cleanup the data listener for the services list
+        if (null != dbListener) { dbListener.removeListener(); }
     }
 
     private void loadSpinnerData(ArrayList<Category> data) {
+        // Check if there was already a selection made
+        Object currentSelectedCategory = spinner_categories.getSelectedItem();
+        if (null != currentSelectedCategory && !currentSelectedCategory.toString().equals(getString(R.string.category_list_select))) {
+            categoryName = currentSelectedCategory.toString();
+        }
+        // Convert the categories list to a string list of category names to be passed to the spinner's adapter
         List<String> names = new ArrayList<String>();
-        for (Category category: data){ names.add(category.getName()); }
-        names.add(0, getString(R.string.category_list_select));
+        names.add(getString(R.string.category_list_select));
+        for (Category category: data) { names.add(category.getName()); }
+        // Create the adapter and pass it to the spinner
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item_title, names);
-        //dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_categories.setAdapter(dataAdapter);
-        if (categoryName != null) { spinner_categories.setSelection(dataAdapter.getPosition(categoryName)); }
+        // Set the spinner to be the previously selected or initial category
+        spinner_categories.setSelection(dataAdapter.getPosition(categoryName));
     }
 
     public void onCreateCategory(View view) {
@@ -115,13 +121,13 @@ public class ServiceCreateActivity extends SignedInActivity {
         }
         try {
             rateNum = Integer.parseInt(rate);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             field_rate.setError(String.format(getString(R.string.rate_too_high_msg), String.format(Locale.CANADA, "%,d", Integer.MAX_VALUE)));
             field_rate.requestFocus();
             field_rate.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
         }
-        if (rateNum < 0){
+        if (rateNum < 0) {
             field_rate.setError(getString(R.string.negative_service_rate_error));
             field_rate.requestFocus();
             field_rate.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));

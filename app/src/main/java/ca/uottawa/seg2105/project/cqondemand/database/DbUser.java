@@ -46,7 +46,7 @@ public class DbUser extends DbItem<User> {
             @Override
             public void onSuccess() {
                 // If we are updating the logged in user, replace the user object
-                if (State.getState().getSignedInUser() == oldUser) { State.getState().setSignedInUser(newUser); }
+                if (oldUser.equals(State.getState().getSignedInUser())) { State.getState().setSignedInUser(newUser); }
                 if (null != listener) { listener.onSuccess(); }
             }
             @Override
@@ -104,9 +104,14 @@ public class DbUser extends DbItem<User> {
         });
     }
 
-    public static void updatePassword(@NonNull User user, @NonNull String newPassword, @Nullable final AsyncActionEventListener listener) {
-        User newUser = new User(user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail(), user.getType(), newPassword);
-        updateUser(user, newUser, listener);
+    public static void updatePassword(@NonNull User user, @NonNull String newPassword, @Nullable final AsyncSingleValueEventListener<User> listener) {
+        final User newUser = new User(user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail(), user.getType(), newPassword);
+        updateUser(user, newUser, new AsyncActionEventListener() {
+            @Override
+            public void onSuccess() { if (null != listener) { listener.onSuccess(newUser); } }
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) { if (null != listener) { listener.onFailure(reason); } }
+        });
     }
 
 

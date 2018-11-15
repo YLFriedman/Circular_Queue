@@ -73,6 +73,8 @@
     <string name="edit_service">Edit Service</string>
     <string name="delete_service">Delete Service</string>
     <string name="category">Category</string>
+    <string name="service">Service</string>
+    <string name="account">Account</string>
     <string name="service_rate_template">$%,d.00 / hour</string>
     <string name="zero_value_service">Free</string>
     <string name="category_template">Category: %s</string>
@@ -118,14 +120,12 @@
     <string name="password_update_success">Password updated successfully!</string>
     <string name="password_update_db_error">Unable to update your password at this time due to a database error. Please try again later.</string>
     <string name="user_retrieval_db_error">Unable to retrieve the user \'%s\' from the database.</string>
-    <string name="account_delete_alert_title">Delete Account</string><string name="delete_account_warning">x</string>
     <string name="account_delete_success">The user account \'%s\' has been successfully deleted.</string>
     <string name="account_delete_db_error">Unable to delete your account at this time due to a database error. Please try again later.</string>
     <string name="category_create_db_error">Unable to create the category at this time due to a database error. Please try again later.</string>
     <string name="category_name_taken">Category already exists!</string>
     <string name="category_create_generic_error">Unable to create the category at this time. Please try again later.</string>
     <string name="category_create_success">The category \'%s\' has been successfully created.</string>
-    <string name="category_list_select">Select Category</string>
     <string name="service_update_success">The service \'%s\' has been successfully updated.</string>
     <string name="service_update_db_error">Unable to update your service at this time due to a database error. Please try again later.</string>
     <string name="service_update_error_generic">Unable to update your service at this time. Please try again later.</string>
@@ -135,6 +135,7 @@
     <string name="category_delete_success">The \'%s\' category has been successfully deleted.</string>
     <string name="service_details_db_error">There was an error getting the service details from the database. Please try again later.</string>
     <string name="current_service_empty">No service provided.</string>
+    <string name="current_item_provided_template">No %s provided.</string>
     <string name="service_delete_success">The \'%s\' service has been successfully deleted.</string>
     <string name="service_delete_db_error">Unable to delete the \'%s\' service at this time due to a database error. Please try again later.</string>
     <string name="sign_in_db_error">Unable to sign in due to a Database Error! Please try again later.</string>
@@ -144,9 +145,51 @@
     <string name="account_update_success">Account updated successfully!</string>
     <string name="account_update_db_error">Unable to update your account at this time due to a database error. Please try again later.</string>
     <string name="account_update_generic_error">Unable to update your account at this time. Please try again later.</string>
+
     <string name="bttn_test_update">Test Service Update</string>
+    <string name="delete_confirm_dialog_template">Are you sure you want to delete the \'%s\' %s?\nThis CANNOT be undone!</string>
+    <string name="invalid_company_name_error">Please use only letters, numbers or underscores for your company name!</string>
+    <string name="empty_company_name_error">Company name is required!</string>
+    <string name="invalid_phone_error">Please use only numbers or dashes in phone number format!</string>
+    <string name="empty_phone_error">A phone number is required!</string>
+    <string name="unit_error">The unit number must be a number with less than 9 digits!</string>
+    <string name="empty_street_number_error">A street number is required!</string>
+    <string name="invalid_street_number_error">The street number must be a number with less than 9 digits!</string>
+    <string name="empty_street_name_error">A street name is required!</string>
+    <string name="invalid_street_name_error">Please only use letters for your street name!</string>
+    <string name="field_required_template">%s is required!</string>
+    <string name="field_invalid_template">%s is invalid!</string>
     <string-array name="account_types">
         <item>Homeowner</item>
         <item>Service Provider</item>
+    </string-array>
+
+    <string name="category_list_select">Select Category</string>
+    <string name="next">Next</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="address">Address</string>
+    <string name="licensed">Licensed for Services Proivided</string>
+    <string name="unit">Unit</string>
+    <string name="number">Number</string>
+    <string name="street">Street</string>
+    <string name="postal">Postal</string>
+    <string name="city">City</string>
+    <string name="country">Country</string>
+    <string name="time_00">00:00</string>
+    <string name="time_01">01:00</string>
+    <string name="time_02">02:00</string>
+    <string name="time_03">03:00</string>
+    <string name="time_04">04:00</string>
+    <string name="time_05">05:00</string>
+    <string name="time_06">06:00</string>
+    <string name="time_07">07:00</string>
+    <string name="time_08">08:00</string>
+    <string name="time_09">09:00</string>
+    <string name="time_10">10:00</string>
+    <string name="time_11">11:00</string>
+    <string name="time_12">12:00</string>
+    <string name="my_availability">My Availability</string>
+    <string-array name="empty_category_spinner">
+        <item>Select Category</item>
     </string-array>
 </resources>

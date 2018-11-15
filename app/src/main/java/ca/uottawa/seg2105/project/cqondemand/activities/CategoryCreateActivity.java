@@ -16,6 +16,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
+import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class CategoryCreateActivity extends SignedInActivity {
 
@@ -47,9 +48,9 @@ public class CategoryCreateActivity extends SignedInActivity {
             @Override
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_create_success), newCategory.getName()), Toast.LENGTH_LONG).show();
+                State.getState().setCurrentCategory(newCategory);
                 Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("category_name", newCategory.getName());
                 startActivity(intent);
                 finish();
             }

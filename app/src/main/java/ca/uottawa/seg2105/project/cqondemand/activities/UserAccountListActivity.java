@@ -23,8 +23,8 @@ import ca.uottawa.seg2105.project.cqondemand.adapters.UserListAdapter;
 
 public class UserAccountListActivity extends SignedInActivity {
 
-    private RecyclerView recycler_list;
-    DbListener<?> listener;
+    protected RecyclerView recycler_list;
+    protected DbListener<?> dbListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,21 +34,20 @@ public class UserAccountListActivity extends SignedInActivity {
         if (!State.getState().getSignedInUser().isAdmin()) { finish(); }
         recycler_list.setHasFixedSize(true);
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        listener = DbUser.getUsersLive(new AsyncValueEventListener<User>() {
+        dbListener = DbUser.getUsersLive(new AsyncValueEventListener<User>() {
             @Override
             public void onSuccess(@NonNull ArrayList<User> data) {
                 //user_list_adapter.notifyItemRangeRemoved(0, user_list_adapter.getItemCount());
                 recycler_list.setAdapter(new UserListAdapter(getApplicationContext(), data, new View.OnClickListener() {
                     public void onClick(final View view) {
-                        TextView field = view.findViewById(R.id.txt_subtitle);
+                        State.getState().setCurrentUser((User) view.getTag());
                         Intent intent = new Intent(getApplicationContext(), UserAccountViewActivity.class);
-                        intent.putExtra("username", field.getContentDescription());
                         startActivity(intent);
                     }
                 }));
             }
             @Override
-            public void onFailure(AsyncEventFailureReason reason) {
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), R.string.user_list_db_error, Toast.LENGTH_LONG).show();
 
             }
@@ -59,7 +58,7 @@ public class UserAccountListActivity extends SignedInActivity {
     public void onDestroy() {
         super.onDestroy();
         // Cleanup the data listener for the users list
-        if (null != listener) { listener.removeListener(); }
+        if (null != dbListener) { dbListener.removeListener(); }
     }
 
 }

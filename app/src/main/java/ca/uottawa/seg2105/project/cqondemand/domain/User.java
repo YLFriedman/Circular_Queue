@@ -61,7 +61,7 @@ public class User {
                 FieldValidation.ILLEGAL_USERNAME_CHARS_MSG); }
         PasswordValidationResult passwordValRes = FieldValidation.validatePassword(username, pass, pass);
         if (PasswordValidationResult.VALID != passwordValRes) {
-            throw  new InvalidDataException("Invalid password. " + passwordValRes.toString());
+            throw new InvalidDataException("Invalid password. " + passwordValRes.toString());
         }
         if (!FieldValidation.nameIsValid(firstName)) { throw new InvalidDataException("Invalid First Name. ");  }
         if (!FieldValidation.nameIsValid(lastName)) { throw new InvalidDataException("Invalid Last Name. ");  }
@@ -146,6 +146,10 @@ public class User {
 
     public boolean equals(User other) {
         return null != other && username.equals(other.username);
+    }
+
+    public String toString() {
+        return this.username;
     }
 
 }

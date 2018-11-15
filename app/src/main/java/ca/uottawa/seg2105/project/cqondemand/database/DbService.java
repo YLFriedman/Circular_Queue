@@ -63,9 +63,15 @@ public class DbService extends DbItem<Service> {
         DbUtil.getItems(DbUtil.DataType.SERVICE, listener);
     }
 
+    @NonNull
+    public static DbListener<?> getServicesLive(@NonNull final AsyncValueEventListener<Service> listener) {
+        return DbUtil.getItemsLive(DbUtil.DataType.SERVICE, listener);
+    }
+
     public static void getServices(@NonNull String categoryName, @NonNull AsyncValueEventListener<Service> listener) {
         DbUtil.getItems(DbUtil.DataType.SERVICE, "category_id", DbUtil.getKey(new Category(categoryName)), listener);
     }
+
 
     public static void getServicesByProvider(String providerID, @NonNull final AsyncValueEventListener<Service> listener) {
         DbUtil.getItemsRelational(DbUtil.DataType.USER_SERVICES, DbUtil.DataType.SERVICE, providerID, listener);
@@ -130,6 +136,12 @@ public class DbService extends DbItem<Service> {
                 }
             }
         });
+
+    }
+    @NonNull
+    public static DbListener<?> getServicesLive(@NonNull String categoryName, @NonNull final AsyncValueEventListener<Service> listener) {
+        return DbUtil.getItemsLive(DbUtil.DataType.SERVICE, "category_id", DbUtil.getKey(new Category(categoryName)), listener);
+
     }
 
 }

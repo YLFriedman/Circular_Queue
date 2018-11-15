@@ -16,7 +16,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private TableRow btns_admin_1;
+    protected TableRow btns_admin_1;
 
     /*
      * Fills in layout for UserHome activity
@@ -68,6 +68,9 @@ public class HomeActivity extends AppCompatActivity {
      */
     public void onMyAccountClick(View view) {
         startActivity(new Intent(getApplicationContext(), UserAccountViewActivity.class));
+    }
+    public void onMyAvailabilityClick(View view) {
+        startActivity(new Intent(getApplicationContext(), AvailabilityWeekViewActivity.class));
     }
 
     public void onSignOutClick(View view) {

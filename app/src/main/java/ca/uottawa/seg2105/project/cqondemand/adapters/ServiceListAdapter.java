@@ -47,6 +47,8 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         Service item = data.get(i);
+        // Set the current item as the view's tag so it can be retrieve easily in the onClick handler
+        viewHolder.itemView.setTag(item);
         if (null != item) {
             viewHolder.txt_title.setText(item.getName());
             if (0 == item.getRate()) {
