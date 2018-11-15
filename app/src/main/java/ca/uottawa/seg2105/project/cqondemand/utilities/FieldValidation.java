@@ -6,6 +6,7 @@ public class FieldValidation {
     public static final String ILLEGAL_USERNAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z 0-9 _";
 
     private static final String ILLEGAL_STREET_CHARS_REGEX = "[a-zA-Z]+";
+    private static final String ILLEGAL_POSTAL_CODE_REGEX = "^(?!.*[DFIOQU])[A-VXY][0-9][A-Z] ?[0-9][A-Z][0-9]$";
 
     // Illegal Name Characters: 0-9 < > ] [ } { \ / ! @ # $ % ^ & * _ + = ) (
     private static final String ILLEGAL_PERSON_NAME_CHARS_REGEX = ".*[0-9<>\\]\\[}{\\\\/!?@#$%^&*_+=)(:;].*";
@@ -46,8 +47,7 @@ public class FieldValidation {
 
     public static boolean phoneIsValid(CharSequence phone) {
         if (null == phone || phone.toString().isEmpty()) { return false; }
-        String str = "^(1\\-)?[0-9]{3}\\-?[0-9]{3}\\-?[0-9]{4}$";
-        return !phone.toString().matches(str);
+        return android.util.Patterns.PHONE.matcher(phone).matches();
     }
 
     public static boolean unitIsValid(CharSequence unit) {
@@ -57,16 +57,21 @@ public class FieldValidation {
         return unit.toString().matches(str);
     }
 
-    public static boolean numberIsValid(CharSequence unit) {
-        if (unit.length() > 9)
+    public static boolean numberIsValid(CharSequence num) {
+        if (null == num || num.length() > 9)
             return false;
         String str = "^[0-9]*$";            //Only numbers are allowed
-        return unit.toString().matches(str);
+        return num.toString().matches(str);
     }
 
-    public static boolean streetNameIsValid(String street) {
+    public static boolean letterNameIsValid(String street) {
         if (null == street || street.isEmpty()) { return false; }
-        return !street.matches(ILLEGAL_STREET_CHARS_REGEX);
+        return street.matches(ILLEGAL_STREET_CHARS_REGEX);
+    }
+
+    public static boolean postalCodeIsValid(CharSequence zip){
+        if (null == zip || zip.toString().isEmpty()) { return false; }
+        return zip.toString().matches(ILLEGAL_POSTAL_CODE_REGEX);
     }
 
     public static PasswordValidationResult validatePassword(String username, String password, String confirmPassword) {
