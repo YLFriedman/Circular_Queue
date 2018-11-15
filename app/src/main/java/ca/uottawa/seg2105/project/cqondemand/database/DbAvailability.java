@@ -6,20 +6,21 @@ import ca.uottawa.seg2105.project.cqondemand.domain.Availability;
 
 public class DbAvailability extends DbItem<Availability> {
 
-    public String key;
     public String day;
     public int start_time;
     public int end_time;
 
     public DbAvailability() {}
 
-    DbAvailability(Availability availability) {
-        this.day = availability.getDay().toString();
-        this.start_time = availability.getStartTime();
-        this.end_time = availability.getEndTime();
+    DbAvailability(Availability item) {
+        super(item.getKey());
+        storeKey(item.getKey());
+        this.day = item.getDay().toString();
+        this.start_time = item.getStartTime();
+        this.end_time = item.getEndTime();
     }
 
     @NonNull
-    public Availability toDomainObj() { return new Availability(key, Availability.parseDay(day), start_time, end_time); }
+    public Availability toDomainObj() { return new Availability(retrieveKey(), Availability.parseDay(day), start_time, end_time); }
 
 }

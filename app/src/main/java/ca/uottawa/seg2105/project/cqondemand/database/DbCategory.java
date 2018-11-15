@@ -14,12 +14,14 @@ public class DbCategory extends DbItem<Category> {
 
     public DbCategory() {}
 
-    DbCategory(Category category) {
-        name = category.getName();
+    DbCategory(Category item) {
+        super(item.getKey());
+        storeKey(item.getKey());
+        name = item.getName();
     }
 
     @NonNull
-    public Category toDomainObj() { return new Category(key, name); }
+    public Category toDomainObj() { return new Category(retrieveKey(), name); }
 
     public static void createCategory(@NonNull Category category, @Nullable AsyncActionEventListener listener) {
         DbUtil.createItem(category, listener);

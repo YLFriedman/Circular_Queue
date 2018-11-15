@@ -96,9 +96,9 @@ public class UserAccountEditActivity extends SignedInActivity {
         final User updatedUser;
         final Button btn_save_user = findViewById(R.id.btn_save_user);
         btn_save_user.setEnabled(false);
-        updatedUser = new User(firstName, lastName, username, email, currentUser.getType(), currentUser.getPassword());
+        updatedUser = new User(currentUser.getKey(), firstName, lastName, username, email, currentUser.getType(), currentUser.getPassword());
 
-        DbUser.updateUser(currentUser, updatedUser, new AsyncActionEventListener() {
+        DbUser.updateUser(updatedUser, new AsyncActionEventListener() {
             public void onSuccess() {
                 State.getState().setCurrentUser(updatedUser);
                 Toast.makeText(getApplicationContext(), R.string.account_update_success, Toast.LENGTH_LONG).show();
@@ -106,6 +106,7 @@ public class UserAccountEditActivity extends SignedInActivity {
             }
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 switch (reason) {
+                    case NOT_UNIQUE:
                     case ALREADY_EXISTS:
                         btn_save_user.setEnabled(true);
                         field_username.setError(getString(R.string.username_already_taken));

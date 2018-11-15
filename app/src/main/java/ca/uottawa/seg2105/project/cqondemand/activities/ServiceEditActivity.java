@@ -150,7 +150,7 @@ public class ServiceEditActivity extends SignedInActivity {
         }
 
         final Service newService;
-        newService = new Service(name, rateNum, new Category(categoryName));
+        newService = new Service(name, rateNum, categoryName);
 
         final Button btn_save_service = findViewById(R.id.btn_save_service);
         btn_save_service.setEnabled(false);

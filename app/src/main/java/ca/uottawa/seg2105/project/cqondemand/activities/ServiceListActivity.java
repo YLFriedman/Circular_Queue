@@ -68,7 +68,7 @@ public class ServiceListActivity extends SignedInActivity {
         };
         if (null != currentCategory) {
             txt_category_name.setText(String.format(Locale.CANADA, getString(R.string.category_title_template), currentCategory.getName()));
-            dbListener = DbService.getServicesLive(currentCategory.getName(), listener);
+            dbListener = DbService.getServicesLive(currentCategory, listener);
         } else {
             txt_category_name.setVisibility(View.GONE);
             findViewById(R.id.divider_category_name).setVisibility(View.GONE);
@@ -114,7 +114,7 @@ public class ServiceListActivity extends SignedInActivity {
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            DbService.getServices(currentCategory.getName(), new AsyncValueEventListener<Service>() {
+                            DbService.getServices(currentCategory, new AsyncValueEventListener<Service>() {
                                 @Override
                                 public void onSuccess(@NonNull ArrayList<Service> data) {
                                     if (null == data) {

@@ -2,18 +2,29 @@ package ca.uottawa.seg2105.project.cqondemand.database;
 
 import android.support.annotation.NonNull;
 
-public abstract class DbItem<T> {
+abstract class DbItem<T> {
 
-    protected String key;
+    private String key;
 
-    public abstract @NonNull T toDomainObj();
+    DbItem() { }
 
-    public @NonNull String generateKey() {
+    DbItem(String key) {
+        this.key = key;
+    }
+
+    abstract @NonNull T toDomainObj();
+
+    void storeKey(@NonNull String key) {
+        this.key = key;
+    }
+
+    String retrieveKey() {
         return key;
     }
 
-    public void storeKey(@NonNull String key) {
-        this.key = key;
+    // TODO: Remove this after merging with Hudi (Replace with retrieveKey)
+    String generateKey() {
+        return key;
     }
 
 }

@@ -17,14 +17,16 @@ public class DbService extends DbItem<Service> {
 
     public DbService() {}
 
-    DbService(Service service) {
-        name = service.getName();
-        rate = service.getRate();
-        category_id = service.getCategoryID();
+    DbService(Service item) {
+        super(item.getKey());
+        storeKey(item.getKey());
+        name = item.getName();
+        rate = item.getRate();
+        category_id = item.getCategoryID();
     }
 
     @NonNull
-    public Service toDomainObj() { return new Service(key, name, rate, category_id); }
+    public Service toDomainObj() { return new Service(retrieveKey(), name, rate, category_id); }
 
     public static void createService(@NonNull Service service, @Nullable AsyncActionEventListener listener) {
         DbUtil.createItem(service, listener);

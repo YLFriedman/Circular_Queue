@@ -15,16 +15,17 @@ public class DbAddress extends DbItem<Address> {
 
     public DbAddress() {}
 
-    DbAddress(Address address) {
-        unit = address.getUnit();
-        street_number = address.getStreetNumber();
-        street = address.getStreet();
-        city = address.getCity();
-        country = address.getCountry();
-        postal_code = address.getPostalCode();
+    DbAddress(Address item) {
+        super(item.getKey());
+        unit = item.getUnit();
+        street_number = item.getStreetNumber();
+        street = item.getStreet();
+        city = item.getCity();
+        country = item.getCountry();
+        postal_code = item.getPostalCode();
     }
 
     @NonNull
-    public Address toDomainObj() { return new Address(key, unit, street_number, street, city, country, postal_code); }
+    public Address toDomainObj() { return new Address(retrieveKey(), unit, street_number, street, city, country, postal_code); }
 
 }

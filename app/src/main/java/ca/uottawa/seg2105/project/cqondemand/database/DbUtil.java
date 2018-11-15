@@ -119,13 +119,14 @@ public class DbUtil {
     static <T> void getItem(@NonNull final DataType type, @NonNull String key, @NonNull final AsyncSingleValueEventListener<T> listener) {
         getRef(type).child(getSanitizedKey(key)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists()) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
                     listener.onFailure(AsyncEventFailureReason.DOES_NOT_EXIST);
                 } else {
                     try {
-                        DbItem<T> dbItem = (DbItem<T>) dataSnapshot.getValue(getDbClassObj(type));
-                        if (null != dbItem) {
+                        DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(type));
+                        if (null != dbItem && null != snapshot.getKey()) {
+                            dbItem.storeKey(snapshot.getKey());
                             T domainObjItem = dbItem.toDomainObj();
                             listener.onSuccess(domainObjItem);
                         } else {
@@ -166,7 +167,8 @@ public class DbUtil {
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
                     try {
                         DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(type));
-                        if (null != dbItem) {
+                        if (null != dbItem && null != snapshot.getKey()) {
+                            dbItem.storeKey(snapshot.getKey());
                             T domainObjItem = dbItem.toDomainObj();
                             returnValue.add(domainObjItem);
                         }
@@ -223,7 +225,8 @@ public class DbUtil {
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
                     try {
                         DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(type));
-                        if (null != dbItem) {
+                        if (null != dbItem && null != snapshot.getKey()) {
+                            dbItem.storeKey(snapshot.getKey());
                             T domainObjItem = dbItem.toDomainObj();
                             returnValue.add(domainObjItem);
                         }
@@ -251,7 +254,8 @@ public class DbUtil {
     static <T> void deleteItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(item);
         final DbItem<?> dbItem = objectToDbItem(item);
-        getRef(type).child(dbItem.key).removeValue(new DatabaseReference.CompletionListener() {
+        if (null == dbItem.retrieveKey() || dbItem.retrieveKey().isEmpty()) { throw new IllegalArgumentException("An item key is required. Unable to delete from the database without the key."); }
+        getRef(type).child(dbItem.retrieveKey()).removeValue(new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                 if (null != listener) {
@@ -283,12 +287,12 @@ public class DbUtil {
     static <T> void updateItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(item);
         final DbItem<?> dbItem = objectToDbItem(item);
-        getItem(type, dbItem.key, new AsyncSingleValueEventListener<T>() {
+        getItem(type, dbItem.retrieveKey(), new AsyncSingleValueEventListener<T>() {
             @Override
             public void onSuccess(@NonNull T item) {
                 // Success condition: Item exists in database and can be updated
                 DatabaseReference ref = getRef(type);
-                ref.child(dbItem.key).setValue(dbItem, new DatabaseReference.CompletionListener() {
+                ref.child(dbItem.retrieveKey()).setValue(dbItem, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                         if (null != listener) {
@@ -306,12 +310,14 @@ public class DbUtil {
         });
     }
 
+
+    // TODO: Remove this - no more delete and add when updating since the key will stay the same
     static <T> void updateItem(@NonNull final T oldItem, @NonNull final T newItem, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(oldItem);
         final DataType newType = getType(newItem);
         if (type != newType) { throw new IllegalArgumentException("The items must be of the same type."); }
         final DbItem<?> dbItem = objectToDbItem(newItem);
-        getItem(type, dbItem.key, new AsyncSingleValueEventListener<T>() {
+        getItem(type, dbItem.retrieveKey(), new AsyncSingleValueEventListener<T>() {
             @Override
             public void onSuccess(@NonNull T item) {
                 // Error condition: The new item already exists
