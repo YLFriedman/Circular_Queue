@@ -274,7 +274,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
             return false;
         }
 
-        if (!FieldValidation.streetNameIsValid(streetName)) {
+        if (!FieldValidation.letterNameIsValid(streetName)) {
             if (streetName.isEmpty()) { field_street_name.setError(getString(R.string.empty_street_name_error)); }
             else { field_street_name.setError(getString(R.string.invalid_street_name_error)); }
             field_street_name.requestFocus();
@@ -282,25 +282,25 @@ public class UserAccountCreateActivity extends AppCompatActivity {
             return false;
         }
 
-        if (!FieldValidation.usernameIsValid(city)) {
-            if (city.isEmpty()) { field_city.setError(String.format(getString(R.string.field_required_template), getString(R.string.city))); }
-            else { field_city.setError(String.format(getString(R.string.field_invalid_template), getString(R.string.city))); }
+        if (!FieldValidation.letterNameIsValid(city)) {
+            if (city.isEmpty()) { field_city.setError(getString(R.string.empty_city_name_error)); }
+            else { field_city.setError(getString(R.string.invalid_city_name_error)); }
             field_city.requestFocus();
             field_city.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return false;
         }
 
-        if (!FieldValidation.usernameIsValid(country)) {
-            if (country.isEmpty()) { field_country.setError(String.format(getString(R.string.field_required_template), getString(R.string.country))); }
-            else { field_country.setError(String.format(getString(R.string.field_invalid_template), getString(R.string.country))); }
+        if (!FieldValidation.letterNameIsValid(country)) {
+            if (country.isEmpty()) { field_country.setError(getString(R.string.empty_country_name_error)); }
+            else { field_country.setError(getString(R.string.invalid_country_name_error)); }
             field_country.requestFocus();
             field_country.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return false;
         }
 
-        if (!FieldValidation.usernameIsValid(postalCode)) {
-            if (postalCode.isEmpty()) { field_postal.setError(String.format(getString(R.string.field_required_template), getString(R.string.postal))); }
-            else { field_postal.setError(String.format(getString(R.string.field_invalid_template), getString(R.string.postal))); }
+        if (!FieldValidation.postalCodeIsValid(postalCode)) {
+            if (postalCode.isEmpty()) { field_postal.setError(getString(R.string.empty_postal_code_error)); }
+            else { field_postal.setError(getString(R.string.invalid_postal_code_error)); }
             field_postal.requestFocus();
             field_postal.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return false;
