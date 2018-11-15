@@ -27,6 +27,7 @@ public class Availability {
         }
     }
 
+    protected String key;
     protected Day day;
     protected int startTime;
     protected int endTime;
@@ -35,6 +36,17 @@ public class Availability {
         this.day = day;
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+
+    public Availability(@NonNull String key, @NonNull Day day, int startTime, int endTime) {
+        this.key = key;
+        this.day = day;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
+    public String getKey() {
+        return key;
     }
 
     public Day getDay() {
@@ -95,6 +107,7 @@ public class Availability {
         int end = -1;
         boolean found = false;
         for (int day = 0; day < 7; day++) {
+            if (timeslots[day].length != 24) { throw new IllegalArgumentException("Invalid input array.  Must be 7 x 24: boolean[7][24]"); }
             for (int time = 0; time < 24; time++) {
                 if (timeslots[day][time]) {
                     if (!found) {
@@ -102,7 +115,7 @@ public class Availability {
                         start = end = time;
                     } else {
                         end++;
-                    }
+                    } // TODO: create availability it spans to the end of the day
                 } else if (found) {
                     found = false;
                     end++;

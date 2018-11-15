@@ -118,7 +118,7 @@ public class ServiceViewActivity extends SignedInActivity {
         if (null != currentService) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.delete_service)
-                    .setMessage(String.format(getString(R.string.delete_confirm_dialog_template), currentService.getName(), getString(R.string.service)))
+                    .setMessage(String.format(getString(R.string.delete_confirm_dialog_template), currentService.getName(), getString(R.string.service).toLowerCase()))
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {

@@ -12,28 +12,30 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation.PasswordV
 
 public class User {
 
+    protected String key;
     /**
      * The class User allows for the creation of User objects, and stores the pertinent values for each User.
      * Users can be of type Homeowner, Service Provider or Admin. Getters or Setters for all mutable values
      * are also provided.
      */
-    private String firstName;
+    protected String firstName;
 
-    private String lastName;
+    protected String lastName;
 
-    private String username;
+    protected String username;
 
-    private String email;
+    protected String email;
 
-    private String password;
+    protected String password;
 
-    private final Types type;
+    protected final Types type;
 
     /**
      * A simple enum for distinguishing different types of user accounts
      */
     public enum Types {
         ADMIN, HOMEOWNER, SERVICE_PROVIDER;
+        @NonNull
         public String toString() {
             switch (this) {
                 case ADMIN: return "Admin";
@@ -55,8 +57,7 @@ public class User {
      * @param type The type of the account
      * @param pass The user's password
      */
-    public User(String firstName, String lastName, String username, String email, Types type, String pass) {
-        if (null == type) { throw new IllegalArgumentException("The userType parameter cannot be null."); }
+    public User(@NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull Types type, @NonNull String pass) {
         if (!FieldValidation.usernameIsValid(username)) { throw new InvalidDataException("Invalid username. " +
                 FieldValidation.ILLEGAL_USERNAME_CHARS_MSG); }
         PasswordValidationResult passwordValRes = FieldValidation.validatePassword(username, pass, pass);
@@ -73,6 +74,30 @@ public class User {
         this.email = email;
         this.type = type;
         this.password = pass;
+    }
+
+    public User(@NonNull String key, @NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull Types type, @NonNull String pass) {
+        if (!FieldValidation.usernameIsValid(username)) { throw new InvalidDataException("Invalid username. " +
+                FieldValidation.ILLEGAL_USERNAME_CHARS_MSG); }
+        PasswordValidationResult passwordValRes = FieldValidation.validatePassword(username, pass, pass);
+        if (PasswordValidationResult.VALID != passwordValRes) {
+            throw new InvalidDataException("Invalid password. " + passwordValRes.toString());
+        }
+        if (!FieldValidation.nameIsValid(firstName)) { throw new InvalidDataException("Invalid First Name. ");  }
+        if (!FieldValidation.nameIsValid(lastName)) { throw new InvalidDataException("Invalid Last Name. ");  }
+        if (!FieldValidation.emailIsValid(email)) { throw new InvalidDataException("Invalid Email Address. ");  }
+
+        this.key = key;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.email = email;
+        this.type = type;
+        this.password = pass;
+    }
+
+    public String getKey() {
+        return key;
     }
 
     /**
@@ -123,6 +148,16 @@ public class User {
         return type;
     }
 
+    public String getUniqueName() {
+        return getUniqueName(username);
+    }
+
+    public static String getUniqueName(@NonNull String username) {
+        String uniqueName = username.toLowerCase();
+        uniqueName = uniqueName.replaceAll("[^a-z0-9]+", "_");
+        return uniqueName;
+    }
+
     public boolean isAdmin() {
         return type == Types.ADMIN;
     }
@@ -144,12 +179,18 @@ public class User {
         }
     }
 
-    public boolean equals(User other) {
-        return null != other && username.equals(other.username);
+    @Override
+    public boolean equals(Object otherObj) {
+        if (!(otherObj instanceof User)) { return false; }
+        User other = (User) otherObj;
+        if (null != key && null != other.key) { return key.equals(other.key); }
+        return null != getUniqueName() && getUniqueName().equals(other.getUniqueName());
     }
 
+    @NonNull
+    @Override
     public String toString() {
-        return this.username;
+        return String.format("%s %s (%s)", firstName, lastName, username);
     }
 
 }

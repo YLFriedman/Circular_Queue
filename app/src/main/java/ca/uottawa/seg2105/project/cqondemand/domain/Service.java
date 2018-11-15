@@ -13,12 +13,12 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 public class Service {
 
-
-    private String name;
-    private int rate;
-    private String categoryID;
-    private Category category;
-    private ArrayList<String> serviceProviderIDs;
+    protected String key;
+    protected String name;
+    protected int rate;
+    protected String categoryID;
+    protected Category category;
+    protected ArrayList<String> serviceProviderIDs;
 
     /**
      * Constructor for a new service Object
@@ -26,31 +26,27 @@ public class Service {
      * @param categoryID The category that this service falls under
      * @param rate The rate per hour that this service costs
      */
-    public Service(String name, int rate, String categoryID) {
+    public Service(@NonNull String name, int rate, @NonNull String categoryID) {
         if (!FieldValidation.serviceNameIsValid(name)) { throw new InvalidDataException("Invalid service name. " +
                 FieldValidation.ILLEGAL_SERVICE_NAME_CHARS_MSG); }
-        if (null == categoryID) { throw new IllegalArgumentException("The categoryID cannot be null."); }
         if (rate < 0) { throw new InvalidDataException("Rate cannot be negative. "); }
         this.name = name;
         this.rate = rate;
         this.categoryID = categoryID;
     }
 
-    /**
-     * Constructor for a new service Object
-     * @param name the name of this Service
-     * @param category The category that this service falls under
-     * @param rate The rate per hour that this service costs
-     */
-    public Service(String name, int rate, Category category) {
+    public Service(@NonNull String key, @NonNull String name, int rate, @NonNull String categoryID) {
         if (!FieldValidation.serviceNameIsValid(name)) { throw new InvalidDataException("Invalid service name. " +
                 FieldValidation.ILLEGAL_SERVICE_NAME_CHARS_MSG); }
-        if (null == category) { throw new IllegalArgumentException("The category cannot be null."); }
         if (rate < 0) { throw new InvalidDataException("Rate cannot be negative. "); }
+        this.key = key;
         this.name = name;
         this.rate = rate;
-        this.category = category;
-        this.categoryID = DbUtil.getKey(category);
+        this.categoryID = categoryID;
+    }
+
+    public String getKey() {
+        return key;
     }
 
     /**
@@ -106,8 +102,22 @@ public class Service {
         return name;
     }
 
-    public boolean equals(Service other) {
-        return null != other && name.equals(other.name);
+    public String getUniqueName() {
+        return getUniqueName(name);
+    }
+
+    public static String getUniqueName(@NonNull String name) {
+        String uniqueName = name.toLowerCase();
+        uniqueName = uniqueName.replaceAll("[^a-z0-9]+", "_");
+        return uniqueName;
+    }
+
+    @Override
+    public boolean equals(Object otherObj) {
+        if (!(otherObj instanceof Service)) { return false; }
+        Service other = (Service) otherObj;
+        if (null != key && null != other.key) { return key.equals(other.key); }
+        return null != getUniqueName() && getUniqueName().equals(other.getUniqueName());
     }
 
     public String toString() {

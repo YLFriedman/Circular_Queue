@@ -9,6 +9,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
@@ -21,6 +22,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class DbUser extends DbItem<User> {
 
+    public String unique_name;
     public String first_name;
     public String last_name;
     public String username;
@@ -30,31 +32,44 @@ public class DbUser extends DbItem<User> {
 
     public DbUser() {}
 
-    public DbUser(User user) {
-        first_name = user.getFirstName();
-        last_name = user.getLastName();
-        username = user.getUsername();
-        email = user.getEmail();
-        password = user.getPassword();
-        type = user.getType().toString();
+    DbUser(User item) {
+        super(item.getKey());
+        unique_name = item.getUniqueName();
+        first_name = item.getFirstName();
+        last_name = item.getLastName();
+        username = item.getUsername();
+        email = item.getEmail();
+        password = item.getPassword();
+        type = item.getType().toString();
     }
 
     @NonNull
-    public User toDomainObj() { return new User(first_name, last_name, username, email, User.parseType(type), password); }
+    public User toDomainObj() { return new User(retrieveKey(), first_name, last_name, username, email, User.parseType(type), password); }
 
-    @NonNull
-    public String generateKey() { return DbUtil.getSanitizedKey(username); }
-
-    public static void createUser(@NonNull User user, @Nullable final AsyncActionEventListener listener) {
-        DbUtil.createItem(user, listener);
+    public static void createUser(@NonNull final User user, @Nullable final AsyncActionEventListener listener) {
+        getUserByUsername(user.getUsername(), new AsyncSingleValueEventListener<User>() {
+            @Override
+            public void onSuccess(@NonNull User item) {
+                // Failure Condition: User already exists
+                if (null != listener) { listener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS); }
+            }
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                if (AsyncEventFailureReason.DOES_NOT_EXIST == reason) {
+                    // Success Condition: User does not exist
+                    DbUtil.createItem(user, listener);
+                } else if (null != listener) { listener.onFailure(reason); }
+            }
+        });
     }
 
-    public static void updateUser(@NonNull final User oldUser, @NonNull final User newUser, @Nullable final AsyncActionEventListener listener) {
-        AsyncActionEventListener interceptListener = new AsyncActionEventListener() {
+    public static void updateUser(@NonNull final User user, @Nullable final AsyncActionEventListener listener) {
+        if (null == user.getKey() || user.getKey().isEmpty()) { throw new IllegalArgumentException("A user object with a key is required. Unable to update the database without the key."); }
+        final AsyncActionEventListener loggedInUserUpdateListener = new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 // If we are updating the logged in user, replace the user object
-                if (oldUser.equals(State.getState().getSignedInUser())) { State.getState().setSignedInUser(newUser); }
+                if (user.equals(State.getState().getSignedInUser())) { State.getState().setSignedInUser(user); }
                 if (null != listener) { listener.onSuccess(); }
             }
             @Override
@@ -62,19 +77,43 @@ public class DbUser extends DbItem<User> {
                 if (null != listener) { listener.onFailure(reason); }
             }
         };
-        if (DbUtil.getKey(oldUser).equals(DbUtil.getKey(newUser))) {
-            DbUtil.updateItem(newUser, interceptListener);
-        } else {
-            DbUtil.updateItem(oldUser, newUser, interceptListener);
-        }
+        // Check if the username is already in use
+        getUserByUsername(user.getUsername(), new AsyncSingleValueEventListener<User>() {
+            @Override
+            public void onSuccess(@NonNull User item) {
+                // Success Condition: The only user with this username is the user being updated
+                if (user.getKey().equals(item.getKey())) { DbUtil.updateItem(user, loggedInUserUpdateListener); }
+                else { loggedInUserUpdateListener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS); }
+            }
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                // Success Condition: Username is not in use
+                if (AsyncEventFailureReason.DOES_NOT_EXIST == reason) { DbUtil.updateItem(user, loggedInUserUpdateListener); }
+                else { loggedInUserUpdateListener.onFailure(reason); }
+            }
+        });
     }
 
     public static void deleteUser(@NonNull User user, @Nullable AsyncActionEventListener listener) {
+        if (null == user.getKey() || user.getKey().isEmpty()) { throw new IllegalArgumentException("A user object with a key is required. Unable to delete from the database without the key."); }
         DbUtil.deleteItem(user, listener);
     }
 
-    public static void getUser(@NonNull String username, @NonNull AsyncSingleValueEventListener<User> listener) {
-        DbUtil.getItem(DbUtil.DataType.USER, username, listener);
+    public static void getUser(@NonNull String key, @NonNull final AsyncSingleValueEventListener<User> listener) {
+        DbUtil.getItem(DbUtil.DataType.USER, key, listener);
+    }
+
+    public static void getUserByUsername(@NonNull String username, @NonNull final AsyncSingleValueEventListener<User> listener) {
+        DbUtil.getItems(DbUtil.DataType.USER, "unique_name", User.getUniqueName(username), new AsyncValueEventListener<User>() {
+            @Override
+            public void onSuccess(@NonNull ArrayList<User> data) {
+                if (data.size() == 1) { listener.onSuccess(data.get(0)); }
+                else if (data.size() == 0) { listener.onFailure(AsyncEventFailureReason.DOES_NOT_EXIST); }
+                else { listener.onFailure(AsyncEventFailureReason.NOT_UNIQUE); }
+            }
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) { listener.onFailure(reason); }
+        });
     }
 
     public static void getUsers(@NonNull AsyncValueEventListener<User> listener) {
@@ -95,7 +134,7 @@ public class DbUser extends DbItem<User> {
      * @param listener the listener that will be informed if authentication was successful or not
      */
     public static void authenticate(@NonNull String username, @NonNull final String password, @Nullable final AsyncActionEventListener listener) {
-        getUser(username, new AsyncSingleValueEventListener<User>() {
+        getUserByUsername(username, new AsyncSingleValueEventListener<User>() {
             @Override
             public void onSuccess(@NonNull User user) {
                 if (user.getPassword().equals(password)) {
@@ -113,8 +152,8 @@ public class DbUser extends DbItem<User> {
     }
 
     public static void updatePassword(@NonNull User user, @NonNull String newPassword, @Nullable final AsyncSingleValueEventListener<User> listener) {
-        final User newUser = new User(user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail(), user.getType(), newPassword);
-        updateUser(user, newUser, new AsyncActionEventListener() {
+        final User newUser = new User(user.getKey(), user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail(), user.getType(), newPassword);
+        updateUser(newUser, new AsyncActionEventListener() {
             @Override
             public void onSuccess() { if (null != listener) { listener.onSuccess(newUser); } }
             @Override
@@ -135,20 +174,15 @@ public class DbUser extends DbItem<User> {
                 FirebaseDatabase.getInstance().getReference().updateChildren(data);
                 listener.onSuccess();
             }
-
             @Override
             public void onFailure(AsyncEventFailureReason reason) {
                 listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
             }
         };
         createUpdateMap(newUser, userKey, mapListener);
-
-
     }
 
-    private static void createUpdateMap(final User newUser, final String userKey,
-                                        final AsyncSingleValueEventListener<HashMap<String, Object>> listener) {
-
+    private static void createUpdateMap(final User newUser, final String userKey, final AsyncSingleValueEventListener<HashMap<String, Object>> listener) {
         final HashMap<String, Object> pathMap = new HashMap<>();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("service_users_lookup").child(userKey);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -162,7 +196,6 @@ public class DbUser extends DbItem<User> {
                 }
                 listener.onSuccess(pathMap);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
@@ -177,7 +210,5 @@ public class DbUser extends DbItem<User> {
     private static void createDeletionMap(String userKey, final AsyncValueEventListener<HashMap<String, Object>> listener){
 
     }
-
-
 
 }

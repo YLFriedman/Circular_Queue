@@ -15,7 +15,6 @@ import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
-import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class CategoryCreateActivity extends SignedInActivity {
@@ -39,8 +38,7 @@ public class CategoryCreateActivity extends SignedInActivity {
             return;
         }
 
-        final Category newCategory;
-        newCategory = new Category(categoryName);
+        final Category newCategory = new Category(categoryName);
 
         btn_create_category.setEnabled(false);
 

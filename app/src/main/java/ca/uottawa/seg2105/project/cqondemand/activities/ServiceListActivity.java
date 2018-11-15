@@ -44,11 +44,8 @@ public class ServiceListActivity extends SignedInActivity {
         recycler_list.setHasFixedSize(true);
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         TextView txt_category_name = findViewById(R.id.txt_category_name);
-        Intent intent = getIntent();
-        String categoryName = intent.getStringExtra("category_name");
         currentCategory = State.getState().getCurrentCategory();
         State.getState().setCurrentCategory(null);
-        if (null == currentCategory && null != categoryName) { currentCategory = new Category(categoryName); }
         AsyncValueEventListener<Service> listener = new AsyncValueEventListener<Service>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Service> data) {
@@ -68,7 +65,7 @@ public class ServiceListActivity extends SignedInActivity {
         };
         if (null != currentCategory) {
             txt_category_name.setText(String.format(Locale.CANADA, getString(R.string.category_title_template), currentCategory.getName()));
-            dbListener = DbService.getServicesLive(currentCategory.getName(), listener);
+            dbListener = DbService.getServicesByCategoryLive(currentCategory, listener);
         } else {
             txt_category_name.setVisibility(View.GONE);
             findViewById(R.id.divider_category_name).setVisibility(View.GONE);
@@ -110,16 +107,14 @@ public class ServiceListActivity extends SignedInActivity {
         if (currentCategory != null) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.delete_category)
-                    .setMessage(String.format(getString(R.string.delete_confirm_dialog_template), currentCategory.getName(), getString(R.string.category)))
+                    .setMessage(String.format(getString(R.string.delete_confirm_dialog_template), currentCategory.getName(), getString(R.string.category).toLowerCase()))
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            DbService.getServices(currentCategory.getName(), new AsyncValueEventListener<Service>() {
+                            DbService.getServicesByCategory(currentCategory, new AsyncValueEventListener<Service>() {
                                 @Override
                                 public void onSuccess(@NonNull ArrayList<Service> data) {
-                                    if (null == data) {
-                                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_db_error), currentCategory.getName()), Toast.LENGTH_LONG).show();
-                                    } else if (data.size() > 0) {
+                                    if (data.size() > 0) {
                                         Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_delete_has_services_error), currentCategory.getName()), Toast.LENGTH_LONG).show();
                                     } else {
                                         DbCategory.deleteCategory(currentCategory, new AsyncActionEventListener() {

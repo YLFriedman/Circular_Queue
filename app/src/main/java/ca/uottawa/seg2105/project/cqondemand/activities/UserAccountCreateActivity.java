@@ -171,8 +171,9 @@ public class UserAccountCreateActivity extends AppCompatActivity {
             return false;
         }
 
-        if (!FieldValidation.usernameIsValid(username)) {
+        if (!FieldValidation.usernameIsValid(username) || FieldValidation.usernameIsReserved(username)) {
             if (username.isEmpty()) { field_username.setError(getString(R.string.empty_username_error)); }
+            else if (FieldValidation.usernameIsReserved(username)) { field_username.setError(getString(R.string.banned_username_msg)); }
             else { field_username.setError(getString(R.string.invalid_username_msg)); }
             field_username.requestFocus();
             field_username.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
@@ -311,7 +312,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
 
     public void onCreateClick(View view) {
 
-        if (!fields_1AreValid() || !fields_2AreValid()) { return; }
+        if (!fields_1AreValid() || (userType.equals("Service Provider") && !fields_2AreValid())) { return; }
 
         User newUser = new User(firstName, lastName, username, email, User.parseType(userType), password);
 
@@ -333,6 +334,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
                     case ALREADY_EXISTS:
                         field_username.setError(getString(R.string.username_already_taken));
                         field_username.requestFocus();
+                        field_username.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
                         break;
                     default:
                         // Some other kind of error

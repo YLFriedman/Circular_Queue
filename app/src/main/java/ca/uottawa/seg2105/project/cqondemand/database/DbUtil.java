@@ -1,5 +1,6 @@
 package ca.uottawa.seg2105.project.cqondemand.database;
 
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -11,7 +12,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import ca.uottawa.seg2105.project.cqondemand.domain.Address;
+import ca.uottawa.seg2105.project.cqondemand.domain.Availability;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
@@ -29,17 +33,20 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 public class DbUtil {
 
+    private static final HashMap<DataType, DatabaseReference> references = new HashMap<DataType, DatabaseReference>();
     /**
      * Enum for differentiating between different object types
      */
     enum DataType {
-        USER, SERVICE, CATEGORY, USER_SERVICES, SERVICE_USERS;
+        USER, SERVICE, CATEGORY, AVAILABILITY, ADDRESS, USER_SERVICES, SERVICE_USERS;
         @NonNull
         public String toString() {
             switch (this) {
                 case USER: return "users";
                 case SERVICE: return "services";
                 case CATEGORY: return "categories";
+                case AVAILABILITY: return "availabilities";
+                case ADDRESS: return "address"; // Not a top-level node
                 case USER_SERVICES: return "user_services";
                 case SERVICE_USERS: return "service_users";
                 default: return this.name();
@@ -59,34 +66,8 @@ public class DbUtil {
         if (object instanceof User) { return new DbUser((User) object); }
         if (object instanceof Service) { return new DbService((Service) object); }
         if (object instanceof Category) { return new DbCategory((Category) object); }
-        throw new IllegalArgumentException("Unsupported type.");
-    }
-
-    /**
-     * Returns the datatype of a given domain object. Accepts objects of type Service, User, and Category.
-     * Throws an IllegalArgumentException if passed any other type of object.
-     * @param object
-     * @return
-     */
-    @NonNull
-    private static DataType getType(@NonNull Object object) {
-        if (object instanceof User) { return DataType.USER; }
-        if (object instanceof Service) { return DataType.SERVICE; }
-        if (object instanceof Category) { return DataType.CATEGORY; }
-        throw new IllegalArgumentException("Unsupported type.");
-    }
-
-    /**
-     * Method for obtaining the database key for a specific object. Accepts objects of type Service, User, and Category.
-     * Throws an IllegalArgumentException if passed any other type of object.
-     * @param object The object whose key you want
-     * @return A string representation of the database key
-     */
-    @NonNull
-    public static String getKey(@NonNull Object object) {
-        if (object instanceof User) { return new DbUser((User) object).generateKey(); }
-        if (object instanceof Service) { return new DbService((Service) object).generateKey(); }
-        if (object instanceof Category) { return new DbCategory((Category) object).generateKey(); }
+        if (object instanceof Availability) { return new DbAvailability((Availability) object); }
+        if (object instanceof Address) { return new DbAddress((Address) object); }
         throw new IllegalArgumentException("Unsupported type.");
     }
 
@@ -102,8 +83,26 @@ public class DbUtil {
             case USER: return DbUser.class;
             case SERVICE: return DbService.class;
             case CATEGORY: return DbCategory.class;
+            case AVAILABILITY: return DbAvailability.class;
+            case ADDRESS: return DbAddress.class;
             default: throw new UnsupportedOperationException("The type is unsupported by this method.");
         }
+    }
+
+    /**
+     * Returns the datatype of a given domain object. Accepts objects of type Service, User, and Category.
+     * Throws an IllegalArgumentException if passed any other type of object.
+     * @param object
+     * @return
+     */
+    @NonNull
+    private static DataType getType(@NonNull Object object) {
+        if (object instanceof User) { return DataType.USER; }
+        if (object instanceof Service) { return DataType.SERVICE; }
+        if (object instanceof Category) { return DataType.CATEGORY; }
+        if (object instanceof Availability) { return DataType.AVAILABILITY; }
+        if (object instanceof Address) { return DataType.ADDRESS; }
+        throw new IllegalArgumentException("Unsupported type.");
     }
 
     /**
@@ -114,34 +113,26 @@ public class DbUtil {
      */
     @NonNull
     private static DatabaseReference getRef(@NonNull DataType type) {
-        return FirebaseDatabase.getInstance().getReference().child(type.toString());
+        DatabaseReference ref = references.get(type);
+        if (null == ref) {
+            ref = FirebaseDatabase.getInstance().getReference().child(type.toString());
+            references.put(type, ref);
+        }
+        return ref;
     }
-
-    /**
-     * Method for returning a database-ready key from a specific String
-     * @param uniqueID the String representation of a uniqueID
-     * @return A sanitized, database-ready String version of the input key
-     */
-    @NonNull
-    public static String getSanitizedKey(@NonNull String uniqueID) {
-        uniqueID = uniqueID.toLowerCase();
-        uniqueID = uniqueID.replaceAll("[\\s]", "_");
-        uniqueID = uniqueID.replaceAll("[^a-z0-9_]", "_");
-        return uniqueID;
-    }
-
 
     @SuppressWarnings("unchecked")
     static <T> void getItem(@NonNull final DataType type, @NonNull String key, @NonNull final AsyncSingleValueEventListener<T> listener) {
-        getRef(type).child(getSanitizedKey(key)).addListenerForSingleValueEvent(new ValueEventListener() {
+        getRef(type).child(key).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists()) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
                     listener.onFailure(AsyncEventFailureReason.DOES_NOT_EXIST);
                 } else {
                     try {
-                        DbItem<T> dbItem = (DbItem<T>) dataSnapshot.getValue(getDbClassObj(type));
-                        if (null != dbItem) {
+                        DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(type));
+                        if (null != dbItem && null != snapshot.getKey()) {
+                            dbItem.storeKey(snapshot.getKey());
                             T domainObjItem = dbItem.toDomainObj();
                             listener.onSuccess(domainObjItem);
                         } else {
@@ -182,7 +173,8 @@ public class DbUtil {
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
                     try {
                         DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(type));
-                        if (null != dbItem) {
+                        if (null != dbItem && null != snapshot.getKey()) {
+                            dbItem.storeKey(snapshot.getKey());
                             T domainObjItem = dbItem.toDomainObj();
                             returnValue.add(domainObjItem);
                         }
@@ -239,7 +231,8 @@ public class DbUtil {
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
                     try {
                         DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(type));
-                        if (null != dbItem) {
+                        if (null != dbItem && null != snapshot.getKey()) {
+                            dbItem.storeKey(snapshot.getKey());
                             T domainObjItem = dbItem.toDomainObj();
                             returnValue.add(domainObjItem);
                         }
@@ -255,12 +248,11 @@ public class DbUtil {
                 listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
             }
         };
-        DatabaseReference ref = getRef(type);
         if (singleEvent) {
             query.addListenerForSingleValueEvent(dataConversionListener);
-            return new DbListener<ValueEventListener>(ref, null);
+            return new DbListener<ValueEventListener>(query.getRef(), null);
         } else {
-            return new DbListener<ValueEventListener>(ref, query.addValueEventListener(dataConversionListener));
+            return new DbListener<ValueEventListener>(query.getRef(), query.addValueEventListener(dataConversionListener));
         }
     }
 
@@ -277,10 +269,10 @@ public class DbUtil {
                             T domainObjItem = dbItem.toDomainObj();
                             returnValue.add(domainObjItem);
                         }
-                    } catch (IllegalArgumentException e) {
-                    } catch (InvalidDataException e) {
-                    } catch (ClassCastException e) {
                     }
+                    catch (IllegalArgumentException e) { }
+                    catch (InvalidDataException e) { }
+                    catch (ClassCastException e) { }
                 }
                 listener.onSuccess(returnValue);
             }
@@ -295,7 +287,8 @@ public class DbUtil {
     static <T> void deleteItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(item);
         final DbItem<?> dbItem = objectToDbItem(item);
-        getRef(type).child(dbItem.generateKey()).removeValue(new DatabaseReference.CompletionListener() {
+        if (null == dbItem.retrieveKey() || dbItem.retrieveKey().isEmpty()) { throw new IllegalArgumentException("An item key is required. Unable to delete from the database without the key."); }
+        getRef(type).child(dbItem.retrieveKey()).removeValue(new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                 if (null != listener) {
@@ -309,28 +302,16 @@ public class DbUtil {
     static <T> void createItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(item);
         final DbItem<?> dbItem = objectToDbItem(item);
-        final String key = dbItem.generateKey();
-        getItem(type, key, new AsyncSingleValueEventListener<T>() {
+        final DatabaseReference pushRef = getRef(type).push();
+        String key = pushRef.getKey();
+        if (null == key) { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
+        dbItem.storeKey(pushRef.getKey());
+        pushRef.setValue(dbItem, new DatabaseReference.CompletionListener() {
             @Override
-            public void onSuccess(@NonNull T item) {
-                //Failure condition, Item already exists in db
-                if (null != listener) { listener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS); }
-            }
-            @Override
-            public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                //Success condition, item can be safely created;
-                if (reason == AsyncEventFailureReason.DOES_NOT_EXIST) {
-                    getRef(type).child(key).setValue(dbItem, new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                            if (null != listener) {
-                                if (null == databaseError) { listener.onSuccess(); }
-                                else { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
-                            }
-                        }
-                    });
-                } else {
-                    if (null != listener) { listener.onFailure(reason); }
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                if (null != listener) {
+                    if (null == databaseError) { listener.onSuccess(); }
+                    else { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
                 }
             }
         });
@@ -339,13 +320,11 @@ public class DbUtil {
     static <T> void updateItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(item);
         final DbItem<?> dbItem = objectToDbItem(item);
-        final String key = dbItem.generateKey();
-        getItem(type, key, new AsyncSingleValueEventListener<T>() {
+        getItem(type, dbItem.retrieveKey(), new AsyncSingleValueEventListener<T>() {
             @Override
             public void onSuccess(@NonNull T item) {
                 // Success condition: Item exists in database and can be updated
-                DatabaseReference ref = getRef(type);
-                ref.child(key).setValue(dbItem, new DatabaseReference.CompletionListener() {
+                getRef(type).child(dbItem.retrieveKey()).setValue(dbItem, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                         if (null != listener) {
@@ -359,38 +338,6 @@ public class DbUtil {
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 // Failure condition: cannot update an item that doesn't currently exist in the db
                 if (null != listener) { listener.onFailure(reason); }
-            }
-        });
-    }
-
-    static <T> void updateItem(@NonNull final T oldItem, @NonNull final T newItem, @Nullable final AsyncActionEventListener listener) {
-        final DataType type = getType(oldItem);
-        final DataType newType = getType(newItem);
-        if (type != newType) { throw new IllegalArgumentException("The items must be of the same type."); }
-        final DbItem<?> dbItem = objectToDbItem(newItem);
-        final String key = dbItem.generateKey();
-        getItem(type, key, new AsyncSingleValueEventListener<T>() {
-            @Override
-            public void onSuccess(@NonNull T item) {
-                // Error condition: The new item already exists
-                if (null != listener) { listener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS); }
-            }
-            @Override
-            public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                if (AsyncEventFailureReason.DOES_NOT_EXIST == reason) {
-                    deleteItem(oldItem, new AsyncActionEventListener() {
-                        @Override
-                        public void onSuccess() {
-                            createItem(newItem, listener);
-                        }
-                        @Override
-                        public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                            if (null != listener) { listener.onFailure(reason); }
-                        }
-                    });
-                } else if (null != listener) {
-                    listener.onFailure(reason);
-                }
             }
         });
     }

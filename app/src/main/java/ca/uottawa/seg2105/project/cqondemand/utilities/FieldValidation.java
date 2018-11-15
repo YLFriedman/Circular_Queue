@@ -1,9 +1,11 @@
 package ca.uottawa.seg2105.project.cqondemand.utilities;
 
+import android.support.annotation.NonNull;
+
 public class FieldValidation {
 
-    private static final String ILLEGAL_USERNAME_CHARS_REGEX = ".*[^a-zA-Z0-9_].*";
-    public static final String ILLEGAL_USERNAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z 0-9 _";
+    private static final String ILLEGAL_USERNAME_CHARS_REGEX = ".*[^a-zA-Z0-9_.-].*";
+    public static final String ILLEGAL_USERNAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z 0-9 _ . -";
 
     private static final String ILLEGAL_STREET_CHARS_REGEX = "[a-zA-Z]+";
     private static final String ILLEGAL_POSTAL_CODE_REGEX = "^(?!.*[DFIOQU])[A-VXY][0-9][A-Z] ?[0-9][A-Z][0-9]$";
@@ -14,6 +16,7 @@ public class FieldValidation {
 
     public static final int PASSWORD_MIN_LENGTH = 6;
     private static final String[] ILLEGAL_PASSWORDS = { "password" };
+    private static final String[] RESERVED_USERNAMES = { "admin" };
     public enum PasswordValidationResult { VALID, EMPTY, TOO_SHORT, CONFIRM_MISMATCH, ILLEGAL_PASSWORD, CONTAINS_USERNAME }
 
     private static final String ILLEGAL_OBJECT_NAME_CHARS_REGEX = ".*[^'a-zA-Z -].*";
@@ -30,9 +33,14 @@ public class FieldValidation {
         return !name.matches(ILLEGAL_OBJECT_NAME_CHARS_REGEX);
     }
 
+    public static boolean usernameIsReserved(String username) {
+        return FieldValidation.contains(RESERVED_USERNAMES, username);
+    }
+
     public static boolean usernameIsValid(String username) {
         if (null == username || username.isEmpty()) { return false; }
-        return !username.matches(ILLEGAL_USERNAME_CHARS_REGEX);
+        if (username.matches(ILLEGAL_USERNAME_CHARS_REGEX)) { return false; }
+        return true;
     }
 
     public static boolean nameIsValid(String name) {
@@ -79,11 +87,15 @@ public class FieldValidation {
         if (null != username && username.equals("admin") && password.equals("admin")) { return PasswordValidationResult.VALID; }
         if (password.length() < PASSWORD_MIN_LENGTH) { return PasswordValidationResult.TOO_SHORT; }
         if (null != username && password.toLowerCase().contains(username.toLowerCase())) { return PasswordValidationResult.CONTAINS_USERNAME; }
-        for (String illegalPW: ILLEGAL_PASSWORDS) {
-            if (password.toLowerCase().equals(illegalPW)) { return PasswordValidationResult.ILLEGAL_PASSWORD; }
-        }
+        if (FieldValidation.contains(ILLEGAL_PASSWORDS, password)) { return PasswordValidationResult.ILLEGAL_PASSWORD; }
         if (!password.equals(confirmPassword)) { return PasswordValidationResult.CONFIRM_MISMATCH; }
         return PasswordValidationResult.VALID;
     }
 
+    private static boolean contains(@NonNull String[] list, @NonNull String value) {
+        for (String item: list) {
+            if (value.toLowerCase().equals(item)) { return true; }
+        }
+        return false;
+    }
 }

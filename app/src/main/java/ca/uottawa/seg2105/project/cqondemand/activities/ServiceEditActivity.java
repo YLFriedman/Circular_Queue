@@ -71,31 +71,26 @@ public class ServiceEditActivity extends SignedInActivity {
     }
 
     private void loadSpinnerData(ArrayList<Category> data) {
+        data.add(0, new Category(getString(R.string.category_select)));
         // Check if there was already a selection made
-        Object currentSelectedCategory = spinner_categories.getSelectedItem();
-        if (null != currentSelectedCategory && !currentSelectedCategory.toString().equals(getString(R.string.category_list_select))) {
-            categoryName = currentSelectedCategory.toString();
+        Object currentSelection = spinner_categories.getSelectedItem();
+        if (null != currentSelection && !currentSelection.toString().equals(getString(R.string.category_list_select))) {
+            categoryName = currentSelection.toString();
         }
-        // Convert the categories list to a string list of category names to be passed to the spinner's adapter
-        List<String> names = new ArrayList<String>();
-        names.add(getString(R.string.category_list_select));
-        for (Category category: data) { names.add(category.getName()); }
         // Create the adapter and pass it to the spinner
-        final ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item_title, names);
+        final ArrayAdapter<Category> dataAdapter = new ArrayAdapter<Category>(getApplicationContext(), R.layout.spinner_item_title, data);
         spinner_categories.setAdapter(dataAdapter);
         // Set the spinner to be the previously selected or initial category
-        if (null == categoryName) {
+        if (null != categoryName) { spinner_categories.setSelection(dataAdapter.getPosition(new Category(categoryName))); }
+        else {
             // If no category exists, attempt to get one from the currentService object
             currentService.getCategory(new AsyncSingleValueEventListener<Category>() {
                 @Override
-                public void onSuccess(@NonNull Category item) {
-                    categoryName = item.getName();
-                    spinner_categories.setSelection(dataAdapter.getPosition(categoryName));
-                }
+                public void onSuccess(@NonNull Category item) { spinner_categories.setSelection(dataAdapter.getPosition(item)); }
                 @Override
                 public void onFailure(@NonNull AsyncEventFailureReason reason) { }
             });
-        } else { spinner_categories.setSelection(dataAdapter.getPosition(categoryName)); }
+        }
     }
 
     public void onSaveService(View view) {
@@ -106,11 +101,11 @@ public class ServiceEditActivity extends SignedInActivity {
         final String rate = field_rate.getText().toString().trim();
         int rateNum = 0;
 
-        categoryName = spinner_categories.getSelectedItem().toString();
+        final Category category = (Category) spinner_categories.getSelectedItem();
         EditText field_spinner_categories_error = findViewById(R.id.field_spinner_categories_error);
 
         // Check valid category selection
-        if (categoryName.equals(getString(R.string.category_select))) {
+        if (category.getName().equals(getString(R.string.category_select))) {
             ((TextView)spinner_categories.getSelectedView()).setError(getString(R.string.category_selection_error));
             field_spinner_categories_error.setError(getString(R.string.category_selection_error));
             field_spinner_categories_error.requestFocus();
@@ -149,13 +144,19 @@ public class ServiceEditActivity extends SignedInActivity {
             return;
         }
 
+        if (name.equals(currentService.getName()) && currentService.getRate() == rateNum && category.getKey().equals(currentService.getCategoryID())) {
+            Toast.makeText(getApplicationContext(), String.format(getString(R.string.no_changes_made_error_tempalte), getString(R.string.service).toLowerCase()), Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         final Service newService;
-        newService = new Service(name, rateNum, new Category(categoryName));
+        newService = new Service(currentService.getKey(), name, rateNum, category.getKey());
 
         final Button btn_save_service = findViewById(R.id.btn_save_service);
         btn_save_service.setEnabled(false);
 
-        DbService.updateService(currentService, newService, new AsyncActionEventListener() {
+        DbService.updateService(newService, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 State.getState().setCurrentService(newService);

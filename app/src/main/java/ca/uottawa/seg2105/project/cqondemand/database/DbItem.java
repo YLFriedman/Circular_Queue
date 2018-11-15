@@ -2,10 +2,24 @@ package ca.uottawa.seg2105.project.cqondemand.database;
 
 import android.support.annotation.NonNull;
 
-public abstract class DbItem<T> {
+abstract class DbItem<T> {
 
-    public abstract @NonNull T toDomainObj();
+    private String key;
 
-    public abstract @NonNull String generateKey();
+    DbItem() { }
+
+    DbItem(String key) {
+        this.key = key;
+    }
+
+    abstract @NonNull T toDomainObj();
+
+    void storeKey(@NonNull String key) {
+        this.key = key;
+    }
+
+    String retrieveKey() {
+        return key;
+    }
 
 }

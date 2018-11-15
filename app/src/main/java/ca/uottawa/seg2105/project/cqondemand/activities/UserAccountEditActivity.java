@@ -54,13 +54,6 @@ public class UserAccountEditActivity extends SignedInActivity {
         final String username = field_username.getText().toString().trim();
         final String email = field_email.getText().toString().trim();
 
-        if (firstName.equals(currentUser.getFirstName()) && lastName.equals(currentUser.getLastName())
-                && username.equals(currentUser.getUsername()) && email.equals(currentUser.getEmail())) {
-            Toast.makeText(getApplicationContext(), R.string.no_changes_made_error, Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-
         if (!FieldValidation.usernameIsValid(username)) {
             if (username.isEmpty()) { field_username.setError(getString(R.string.empty_username_error)); }
             else { field_username.setError(getString(R.string.invalid_username_msg)); }
@@ -93,12 +86,19 @@ public class UserAccountEditActivity extends SignedInActivity {
             return;
         }
 
+        if (firstName.equals(currentUser.getFirstName()) && lastName.equals(currentUser.getLastName())
+                && username.equals(currentUser.getUsername()) && email.equals(currentUser.getEmail())) {
+            Toast.makeText(getApplicationContext(), String.format(getString(R.string.no_changes_made_error_tempalte), getString(R.string.service).toLowerCase()), Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         final User updatedUser;
         final Button btn_save_user = findViewById(R.id.btn_save_user);
         btn_save_user.setEnabled(false);
-        updatedUser = new User(firstName, lastName, username, email, currentUser.getType(), currentUser.getPassword());
+        updatedUser = new User(currentUser.getKey(), firstName, lastName, username, email, currentUser.getType(), currentUser.getPassword());
 
-        DbUser.updateUser(currentUser, updatedUser, new AsyncActionEventListener() {
+        DbUser.updateUser(updatedUser, new AsyncActionEventListener() {
             public void onSuccess() {
                 State.getState().setCurrentUser(updatedUser);
                 Toast.makeText(getApplicationContext(), R.string.account_update_success, Toast.LENGTH_LONG).show();
@@ -106,6 +106,7 @@ public class UserAccountEditActivity extends SignedInActivity {
             }
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 switch (reason) {
+                    case NOT_UNIQUE:
                     case ALREADY_EXISTS:
                         btn_save_user.setEnabled(true);
                         field_username.setError(getString(R.string.username_already_taken));

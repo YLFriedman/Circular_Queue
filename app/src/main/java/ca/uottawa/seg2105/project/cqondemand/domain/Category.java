@@ -1,11 +1,14 @@
 package ca.uottawa.seg2105.project.cqondemand.domain;
 
+import android.support.annotation.NonNull;
+
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 public class Category {
 
-    private String name;
+    protected String key;
+    protected String name;
 
     /**
      *Constructor for the Category object
@@ -13,11 +16,23 @@ public class Category {
      * @param name the string that corresponds to this category
      * @paran services the services that will be associated with this category
      */
-    public Category(String name) {
+    public Category(@NonNull String name) {
         if (!FieldValidation.categoryNameIsValid(name)) {
             throw new InvalidDataException("Invalid Category Name. " + FieldValidation.ILLEGAL_CATEGORY_NAME_CHARS_MSG);
         }
         this.name = name;
+    }
+
+    public Category(@NonNull String key, @NonNull String name) {
+        if (!FieldValidation.categoryNameIsValid(name)) {
+            throw new InvalidDataException("Invalid Category Name. " + FieldValidation.ILLEGAL_CATEGORY_NAME_CHARS_MSG);
+        }
+        this.key = key;
+        this.name = name;
+    }
+
+    public String getKey() {
+        return key;
     }
 
     /**
@@ -29,8 +44,22 @@ public class Category {
         return name;
     }
 
-    public boolean equals(Category other) {
-        return null != other && name.equals(other.name);
+    public String getUniqueName() {
+        return getUniqueName(name);
+    }
+
+    public static String getUniqueName(@NonNull String name) {
+        String uniqueName = name.toLowerCase();
+        uniqueName = uniqueName.replaceAll("[^a-z0-9]+", "_");
+        return uniqueName;
+    }
+
+    @Override
+    public boolean equals(Object otherObj) {
+        if (!(otherObj instanceof Category)) { return false; }
+        Category other = (Category) otherObj;
+        if (null != key && null != other.key) { return key.equals(other.key); }
+        return null != getUniqueName() && getUniqueName().equals(other.getUniqueName());
     }
 
     public String toString() {
