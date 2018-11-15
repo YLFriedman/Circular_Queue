@@ -144,6 +144,7 @@
     <string name="account_update_success">Account updated successfully!</string>
     <string name="account_update_db_error">Unable to update your account at this time due to a database error. Please try again later.</string>
     <string name="account_update_generic_error">Unable to update your account at this time. Please try again later.</string>
+    <string name="bttn_test_update">Test Service Update</string>
     <string-array name="account_types">
         <item>Homeowner</item>
         <item>Service Provider</item>

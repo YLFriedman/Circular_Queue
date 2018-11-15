@@ -89,7 +89,15 @@
                 android:onClick="onCreateAdminAccountClick"
                 android:text="@string/create_admin_account"
                 android:visibility="gone"
-                tools:layout_editor_absoluteY="173dp" />
+                tools:layout_editor_absoluteY="173dp"
+                tools:visibility="gone" />
+
+            <Button
+                android:id="@+id/btnn_test_update"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onUpdateServiceTestClick"
+                android:text="@string/bttn_test_update" />
 
             <LinearLayout
                 android:id="@+id/linearLayout2"
