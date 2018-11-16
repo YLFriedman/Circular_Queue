@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 public class AvailabilityFunctionTest {
     @Test
     public void validate_ConstructorNoKey() {
-        Availability testAvailability = new Availability(Availability.parseDay("Sunday"), 12, 15);
+        Availability testAvailability = new Availability(Availability.parseDay("SUNDAY"), 12, 15);
         assertEquals("Service getter Failed - day", Availability.Day.SUNDAY, testAvailability.getDay());
         assertEquals("Service getter Failed - startTime", 12, testAvailability.getStartTime());
         assertEquals("Service getter Failed - endTime", 15, testAvailability.getEndTime());
@@ -23,8 +23,8 @@ public class AvailabilityFunctionTest {
     @Test
     public void validate_ConstructorKey() {
         Availability testAvailability = new Availability("111", Availability.parseDay("SUNDAY"), 12, 15);
-        assertEquals("Service getter Failed - key", "111", testAvailability.getKey());
-        assertEquals("Service getter Failed - day", Availability.Day.SUNDAY, testAvailability.getDay());
+        assertEquals("Service getter Failed - key", Availability.Day.SUNDAY, testAvailability.getKey());
+        assertEquals("Service getter Failed - day", "SUNDAY", testAvailability.getDay());
         assertEquals("Service getter Failed - startTime", 12, testAvailability.getStartTime());
         assertEquals("Service getter Failed - endTime", 15, testAvailability.getEndTime());
     }
