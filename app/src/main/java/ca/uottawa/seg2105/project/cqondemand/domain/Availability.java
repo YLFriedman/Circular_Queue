@@ -61,8 +61,14 @@ public class Availability {
         return endTime;
     }
 
-    public boolean equals(Availability other) {
-        return day == other.day && startTime == other.startTime && endTime == other.endTime;
+    @Override
+    public boolean equals(Object otherObj) {
+        if (!(otherObj instanceof Availability)) { return false; }
+        if (this == otherObj) { return true; }
+        Availability other = (Availability) otherObj;
+        if (null != key && null != other.key) { return key.equals(other.key); }
+        if ((null == day) != (null == other.day) || (null != day && !day.equals(other.day))) { return false; }
+        return startTime == other.startTime && endTime == other.endTime;
     }
 
     public static Availability.Day parseDay(@NonNull String input) {

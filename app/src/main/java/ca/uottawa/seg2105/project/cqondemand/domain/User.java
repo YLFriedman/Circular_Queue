@@ -182,6 +182,7 @@ public class User {
     @Override
     public boolean equals(Object otherObj) {
         if (!(otherObj instanceof User)) { return false; }
+        if (this == otherObj) { return true; }
         User other = (User) otherObj;
         if (null != key && null != other.key) { return key.equals(other.key); }
         return null != getUniqueName() && getUniqueName().equals(other.getUniqueName());
