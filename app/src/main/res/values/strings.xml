@@ -206,6 +206,11 @@
     <string name="thursday_title_xs">T</string>
     <string name="friday_title_xs">F</string>
     <string name="saturday_title_xs">S</string>
+    <string name="help">Help</string>
+    <string name="clear_avail">Clear Availabilities</string>
+    <string name="clear">Clear</string>
+    <string name="reset_to_last_saved">Reset to Last Saved</string>
+    <string name="reset">Reset</string>
     <string-array name="empty_category_spinner">
         <item>Select Category</item>
     </string-array>
