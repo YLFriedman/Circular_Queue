@@ -115,6 +115,7 @@ public class Service {
     @Override
     public boolean equals(Object otherObj) {
         if (!(otherObj instanceof Service)) { return false; }
+        if (this == otherObj) { return true; }
         Service other = (Service) otherObj;
         if (null != key && null != other.key) { return key.equals(other.key); }
         return null != getUniqueName() && getUniqueName().equals(other.getUniqueName());
