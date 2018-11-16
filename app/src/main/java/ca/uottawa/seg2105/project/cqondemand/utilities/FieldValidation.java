@@ -1,6 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand.utilities;
 
 import android.support.annotation.NonNull;
+import android.util.Patterns;
 
 public class FieldValidation {
 
@@ -50,7 +51,7 @@ public class FieldValidation {
 
     public static boolean emailIsValid(CharSequence email) {
         if (null == email || email.toString().isEmpty()) { return false; }
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     public static boolean phoneIsValid(CharSequence phone) {

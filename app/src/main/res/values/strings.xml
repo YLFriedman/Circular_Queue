@@ -197,6 +197,15 @@
     <string name="time_11">11:00</string>
     <string name="time_12">12:00</string>
     <string name="my_availability">My Availability</string>
+    <string name="time_noon">Noon</string>
+    <string name="availability">Availability</string>
+    <string name="sunday_title_xs">S</string>
+    <string name="monday_title_xs">M</string>
+    <string name="tuesday_title_xs">T</string>
+    <string name="wednesday_title_xs">W</string>
+    <string name="thursday_title_xs">T</string>
+    <string name="friday_title_xs">F</string>
+    <string name="saturday_title_xs">S</string>
     <string-array name="empty_category_spinner">
         <item>Select Category</item>
     </string-array>

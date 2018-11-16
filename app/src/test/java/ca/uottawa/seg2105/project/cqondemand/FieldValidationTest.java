@@ -1,5 +1,6 @@
 package ca.uottawa.seg2105.project.cqondemand;
 
+
 import org.junit.Test;
 
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
@@ -7,16 +8,27 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation.PasswordValidationResult;
 import static ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation.usernameIsValid;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 public class FieldValidationTest {
 
+    /*@Test
+    public void email_validation() {
+        assertEquals("usernameIsValid failed - empty string",false, FieldValidation.emailIsValid(""));
+        assertEquals("usernameIsValid failed - good address",true, FieldValidation.emailIsValid("david@uottawa.ca"));
+        assertEquals("usernameIsValid failed - missing TLD",false, FieldValidation.emailIsValid("david@uottawa"));
+    }*/
 
     @Test
     public void username_validation() {
-        assertEquals("usernameIsValid failed - empty string",false, usernameIsValid(""));
-        assertEquals("usernameIsValid failed - invalid character: ;",false, usernameIsValid("cq;on;demand"));
-        assertEquals("usernameIsValid failed - invalid characters: {}",false, usernameIsValid("cq{on}demand"));
-        assertEquals("usernameIsValid failed - valid username",true, usernameIsValid("cq_on_demand"));
+        assertFalse("usernameIsValid failed - empty string", FieldValidation.usernameIsValid(""));
+        assertFalse("usernameIsValid failed - invalid character: ;", FieldValidation.usernameIsValid("cq;on;demand"));
+        assertFalse("usernameIsValid failed - invalid characters: {}", FieldValidation.usernameIsValid("cq{on}demand"));
+        assertTrue("usernameIsValid failed - valid username", FieldValidation.usernameIsValid("cq_on_demand"));
     }
 
     @Test
@@ -31,7 +43,7 @@ public class FieldValidationTest {
     }
 
     @Test
-    public void name_validation() {
+    public void person_name_validation() {
         // Illegal Name Characters: 0-9 < > ] [ } { \ / ! @ # $ % ^ & * _ + = ) ( : ;
         assertEquals("nameIsValid failed - empty string",false, FieldValidation.nameIsValid(""));
         assertEquals("nameIsValid failed - number",false, FieldValidation.nameIsValid("Ethan4"));
