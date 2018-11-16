@@ -61,8 +61,14 @@ public class Availability {
         return endTime;
     }
 
-    public boolean equals(Availability other) {
-        return day == other.day && startTime == other.startTime && endTime == other.endTime;
+    @Override
+    public boolean equals(Object otherObj) {
+        if (!(otherObj instanceof Availability)) { return false; }
+        if (this == otherObj) { return true; }
+        Availability other = (Availability) otherObj;
+        if (null != key && null != other.key) { return key.equals(other.key); }
+        if ((null == day) != (null == other.day) || (null != day && !day.equals(other.day))) { return false; }
+        return startTime == other.startTime && endTime == other.endTime;
     }
 
     public static Availability.Day parseDay(@NonNull String input) {
@@ -106,21 +112,28 @@ public class Availability {
         int start = -1;
         int end = -1;
         boolean found = false;
-        for (int day = 0; day < 7; day++) {
+        for (int day = 0; day < 7; day++) { // Check each day
             if (timeslots[day].length != 24) { throw new IllegalArgumentException("Invalid input array.  Must be 7 x 24: boolean[7][24]"); }
-            for (int time = 0; time < 24; time++) {
-                if (timeslots[day][time]) {
-                    if (!found) {
+            for (int time = 0; time < 24; time++) { // Check each timeslot in each day
+                if (timeslots[day][time]) { // If a timeslot is true it is considered to be an availability
+                    if (!found) { // If we are not in an availability range, start a range
                         found = true;
                         start = end = time;
-                    } else {
+                    } else { // If we are already in a range, increase the end time of the range
                         end++;
-                    } // TODO: create availability it spans to the end of the day
-                } else if (found) {
+                    }
+                } else if (found) { // If the timeslot is false and we were in a range, this indicates the end of the range
+                    // End the range, set the end time and create the availability
                     found = false;
                     end++;
                     output.add(new Availability(parseDay(day), start, end));
                 }
+            }
+            // If we are at the end of the day and we are in a range, end the range and create the availability
+            if (found) {
+                found = false;
+                end++;
+                output.add(new Availability(parseDay(day), start, end));
             }
         }
         return output;

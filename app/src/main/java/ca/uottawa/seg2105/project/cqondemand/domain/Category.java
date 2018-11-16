@@ -57,6 +57,7 @@ public class Category {
     @Override
     public boolean equals(Object otherObj) {
         if (!(otherObj instanceof Category)) { return false; }
+        if (this == otherObj) { return true; }
         Category other = (Category) otherObj;
         if (null != key && null != other.key) { return key.equals(other.key); }
         return null != getUniqueName() && getUniqueName().equals(other.getUniqueName());

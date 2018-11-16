@@ -63,4 +63,18 @@ public class Address {
         return key != null && key.equals(other.key);
     }
 
+    @Override
+    public boolean equals(Object otherObj) {
+        if (!(otherObj instanceof Address)) { return false; }
+        if (this == otherObj) { return true; }
+        Address other = (Address) otherObj;
+        if (null != key && null != other.key) { return key.equals(other.key); }
+        if ((null == unit)       != (null == other.unit)       || (null != unit       && !unit.equals(other.unit))) { return false; }
+        if ((null == street)     != (null == other.street)     || (null != street     && !street.equals(other.street))) { return false; }
+        if ((null == city)       != (null == other.city)       || (null != city       && !city.equals(other.city))) { return false; }
+        if ((null == country)    != (null == other.country)    || (null != country    && !country.equals(other.country))) { return false; }
+        if ((null == postalCode) != (null == other.postalCode) || (null != postalCode && !postalCode.equals(other.postalCode))) { return false; }
+        return streetNumber == other.streetNumber;
+    }
+
 }
