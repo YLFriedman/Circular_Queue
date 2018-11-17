@@ -9,6 +9,7 @@ public class FieldValidation {
     public static final String ILLEGAL_USERNAME_CHARS_MSG = "Only the following characters are allowed: a-z A-Z 0-9 _ . -";
 
     private static final String ILLEGAL_STREET_CHARS_REGEX = "[a-zA-Z]+";
+    public static final String ILLEGAL_UNIT_CHARS_REGEX = "[a-zA-Z0-9]";
     private static final String ILLEGAL_POSTAL_CODE_REGEX = "^(?!.*[DFIOQU])[A-VXY][0-9][A-Z] ?[0-9][A-Z][0-9]$";
 
     // Illegal Name Characters: 0-9 < > ] [ } { \ / ! @ # $ % ^ & * _ + = ) (
@@ -49,6 +50,18 @@ public class FieldValidation {
         return !name.matches(ILLEGAL_PERSON_NAME_CHARS_REGEX);
     }
 
+    public static boolean streetNameIsValid(String name) {
+        return nameIsValid(name);
+    }
+
+    public static boolean cityNameIsValid(String name) {
+        return nameIsValid(name);
+    }
+
+    public static boolean countryNameIsValid(String name) {
+        return nameIsValid(name);
+    }
+
     public static boolean emailIsValid(CharSequence email) {
         if (null == email || email.toString().isEmpty()) { return false; }
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
@@ -76,6 +89,11 @@ public class FieldValidation {
     public static boolean letterNameIsValid(String street) {
         if (null == street || street.isEmpty()) { return false; }
         return street.matches(ILLEGAL_STREET_CHARS_REGEX);
+    }
+
+    public static boolean unitNameIsValid(String unit){
+        if (null == unit || unit.isEmpty()) { return false; }
+        return unit.matches(ILLEGAL_UNIT_CHARS_REGEX);
     }
 
     public static boolean postalCodeIsValid(CharSequence zip){

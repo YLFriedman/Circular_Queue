@@ -1,12 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand;
 
 import org.junit.Test;
-
-import java.util.ArrayList;
-
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
-import ca.uottawa.seg2105.project.cqondemand.domain.User;
-
 import static org.junit.Assert.assertEquals;
 
 public class ServiceFunctionTest {
@@ -18,7 +13,5 @@ public class ServiceFunctionTest {
         assertEquals("Service getter Failed - rate", 250, testService.getRate());
         assertEquals("Service getter Failed - categoryID", "category_test", testService.getCategoryID());
     }
-
-
 
 }

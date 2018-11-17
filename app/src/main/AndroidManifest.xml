@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.UserAccountCreateActivity"
+            android:name=".activities.SignUpActivity"
             android:exported="true"
             android:label="@string/title_activity_create_account"
             android:screenOrientation="portrait" />

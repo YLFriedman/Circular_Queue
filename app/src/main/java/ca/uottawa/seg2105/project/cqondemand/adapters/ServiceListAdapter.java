@@ -21,19 +21,22 @@ import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 
 public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.ViewHolder> {
 
+    private boolean pickerMode;
     private Context context;
     private ArrayList<Service> data;
     private View.OnClickListener clickListener;
 
-    public ServiceListAdapter(Context context, ArrayList<Service> data) {
+    public ServiceListAdapter(Context context, ArrayList<Service> data, boolean pickerMode) {
         this.context = context;
         this.data = data;
+        this.pickerMode = pickerMode;
     }
 
-    public ServiceListAdapter(Context context, ArrayList<Service> data, View.OnClickListener clickListener) {
+    public ServiceListAdapter(Context context, ArrayList<Service> data, boolean pickerMode, View.OnClickListener clickListener) {
         this.context = context;
         this.data = data;
         this.clickListener = clickListener;
+        this.pickerMode = pickerMode;
     }
 
     @NonNull
@@ -57,7 +60,8 @@ public class ServiceListAdapter extends RecyclerView.Adapter<ServiceListAdapter.
                 viewHolder.txt_subtitle.setText(String.format(Locale.CANADA, context.getString(R.string.service_rate_template), item.getRate()));
             }
         }
-        viewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_med_30);
+        if (pickerMode) { viewHolder.img_nav.setImageResource(R.drawable.ic_add_med_30); }
+        else { viewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_med_30); }
     }
 
     @Override
