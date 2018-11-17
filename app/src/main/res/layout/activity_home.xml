@@ -38,6 +38,15 @@
                         android:onClick="onMyAvailabilityClick"
                         android:text="@string/my_availability" />
 
+                    <Button
+                        android:id="@+id/btn_my_services"
+                        style="@style/panel_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableTop="@drawable/ic_bell_light_75"
+                        android:onClick="onMyAvailabilityClick"
+                        android:text="@string/my_services" />
+
                 </TableRow>
 
                 <TableRow
