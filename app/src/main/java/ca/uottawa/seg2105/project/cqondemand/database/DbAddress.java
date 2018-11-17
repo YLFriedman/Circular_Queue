@@ -28,9 +28,9 @@ public class DbAddress extends DbItem<Address> {
         postal_code = item.getPostalCode();
     }
 
-    DbAddress(Map<Object, Object> map){
+    DbAddress(Map<String, Object> map){
         unit = (String) map.get("unit");
-        street_number = (Integer) map.get("street_number");
+        street_number = ((Long) map.get("street_number")).intValue();
         street = (String) map.get("street");
         city = (String) map.get("city");
         country = (String) map.get("country");
@@ -40,8 +40,8 @@ public class DbAddress extends DbItem<Address> {
     @NonNull
     public Address toDomainObj() { return new Address(unit, street_number, street, city, country, postal_code); }
 
-    public Map<Object, Object> toMap(){
-        Map<Object, Object> map = new HashMap<>();
+    public Map<String, Object> toMap(){
+        Map<String, Object> map = new HashMap<>();
         map.put("unit", unit);
         map.put("street_number", street_number);
         map.put("street", street);

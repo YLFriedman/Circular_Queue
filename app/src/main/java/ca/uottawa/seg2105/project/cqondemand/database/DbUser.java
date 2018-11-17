@@ -34,7 +34,7 @@ public class DbUser extends DbItem<User> {
     public String email;
     public String password;
     public String type;
-    public Map<Object, Object> address;
+    public Map<String, Object> address;
     public boolean licensed;
     public String phone_number;
     public String company_name;
