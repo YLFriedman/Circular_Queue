@@ -50,7 +50,7 @@ public class DbUtil {
             }
         }
         @NonNull
-        public Class getDbItemClass(){
+        public Class getDbItemClass() {
             switch (this) {
                 case USER: return DbUser.class;
                 case SERVICE: return DbService.class;

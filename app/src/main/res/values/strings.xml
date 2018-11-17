@@ -148,7 +148,6 @@
     <string name="account_update_success">Account updated successfully!</string>
     <string name="account_update_db_error">Unable to update your account at this time due to a database error. Please try again later.</string>
     <string name="account_update_generic_error">Unable to update your account at this time. Please try again later.</string>
-
     <string name="bttn_test_update">Test Service Update</string>
     <string name="delete_confirm_dialog_template">Are you sure you want to delete the \'%s\' %s?\nThis CANNOT be undone!</string>
     <string name="invalid_company_name_error">Please use only letters, numbers or underscores for your company name!</string>
@@ -167,9 +166,13 @@
     <string name="empty_postal_code_error">A postal code is required!</string>
     <string name="invalid_postal_code_error">Please use canadian postal code format! (A1C D2F)</string>
     <string name="field_invalid_template">%s is invalid!</string>
-    <string-array name="account_types">
-        <item>Homeowner</item>
-        <item>Service Provider</item>
+    <string name="please_select_type">Please select a type.</string>
+    <string name="please_select_province_territory">Please select a province or territory.</string>
+    <string-array name="temp_string_array">
+        <item>Item 1</item>
+        <item>Item 2</item>
+        <item>Item 3</item>
+        <item>Item 4</item>
     </string-array>
     <string name="category_list_select">Select Category</string>
     <string name="next">Next</string>
@@ -179,7 +182,7 @@
     <string name="unit">Unit</string>
     <string name="number">Number</string>
     <string name="street">Street</string>
-    <string name="postal">Postal</string>
+    <string name="postal">Postal Code</string>
     <string name="city">City</string>
     <string name="country">Country</string>
     <string name="time_00">00:00</string>
@@ -214,6 +217,8 @@
     <string name="add_service">Add Service</string>
     <string name="pick_service">Pick a Service</string>
     <string name="add">Add</string>
+    <string name="canada">Canada</string>
+    <string name="province_territory">Province / Territory</string>
     <string-array name="empty_category_spinner">
         <item>Select Category</item>
     </string-array>

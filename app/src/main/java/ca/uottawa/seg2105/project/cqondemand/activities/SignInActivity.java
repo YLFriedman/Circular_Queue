@@ -139,7 +139,7 @@ public class SignInActivity extends AppCompatActivity {
      * @param view the create account button which was clicked
      */
     public void onCreateAccountClick(View view)  {
-        Intent intent = new Intent(getApplicationContext(), UserAccountCreateActivity.class);
+        Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
         intent.putExtra("username", field_username.getText().toString());
         startActivityForResult(intent,0);
     }
@@ -175,7 +175,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     public void onUpdateServiceTestClick(View view){
-        Address address = new Address("45", 2456, "asd", "sdfas", "asdads", "adads");
+        Address address = new Address("4B", 2456, "street", "city", "province", "country", "postal");
         Availability monday = new Availability(Availability.Day.MONDAY, 9, 17);
         Availability sunday = new Availability(Availability.Day.SUNDAY, 9, 18);
         ArrayList<Availability> listyBoy = new ArrayList<>();

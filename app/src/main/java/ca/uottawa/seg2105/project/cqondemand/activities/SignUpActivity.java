@@ -25,7 +25,7 @@ import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 
-public class UserAccountCreateActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity {
 
     private enum Screen { FIELDS_1, FIELDS_2 }
 
@@ -38,6 +38,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
     protected EditText field_password;
     protected EditText field_password_confirm;
     protected Spinner spinner_user_type;
+    protected EditText field_user_type_error;
     protected EditText field_company_name;
     protected Switch switch_licensed;
     protected EditText field_phone;
@@ -46,6 +47,8 @@ public class UserAccountCreateActivity extends AppCompatActivity {
     protected EditText field_street_name;
     protected EditText field_city;
     protected EditText field_country;
+    protected Spinner spinner_province;
+    protected EditText field_province_error;
     protected EditText field_postal;
 
     protected LinearLayout fields_1;
@@ -67,6 +70,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
     protected String streetNumber;
     protected String streetName;
     protected String city;
+    protected String province;
     protected String country;
     protected String postalCode;
 
@@ -74,15 +78,16 @@ public class UserAccountCreateActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_account_create);
+        setContentView(R.layout.activity_sign_up);
         // Screen 1
+        spinner_user_type = findViewById(R.id.spinner_user_type);
+        field_user_type_error = findViewById(R.id.field_user_type_error);
         field_username = findViewById(R.id.field_username);
         field_first_name = findViewById(R.id.field_first_name);
         field_last_name = findViewById(R.id.field_last_name);
         field_email = findViewById(R.id.field_email);
         field_password = findViewById(R.id.field_password);
         field_password_confirm = findViewById(R.id.field_password_confirm);
-        spinner_user_type = findViewById(R.id.spinner_user_type);
         // Screen 2
         field_company_name = findViewById(R.id.field_company_name);
         switch_licensed = findViewById(R.id.switch_licensed);
@@ -92,6 +97,8 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         field_street_name = findViewById(R.id.field_street_name);
         field_city = findViewById(R.id.field_city);
         field_country = findViewById(R.id.field_country);
+        spinner_province = findViewById(R.id.spinner_province);
+        field_province_error = findViewById(R.id.field_province_error);
         field_postal = findViewById(R.id.field_postal);
         // Screen Groups and buttons
         fields_1 = findViewById(R.id.fields_1);
@@ -105,7 +112,6 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         Intent intent = getIntent();
         field_username.setText(intent.getStringExtra("username"));
         // Configure the user type selection spinner
-        Spinner spinner_user_type = findViewById(R.id.spinner_user_type);
         spinner_user_type.setAdapter(new ArrayAdapter<User.Types>(getApplicationContext(), R.layout.spinner_item_title, new User.Types[]{ User.Types.HOMEOWNER, User.Types.SERVICE_PROVIDER }));
         spinner_user_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -116,6 +122,10 @@ public class UserAccountCreateActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> parent) { }
         });
+        // Configure the province selection spinner
+        String[] provinces = { "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador", "Northwest Territories",
+                "Nova Scotia", "Nunavut", "Ontario", "Prince Edward Island", "Quebec", "Saskatchewan", "Yukon" };
+        spinner_province.setAdapter(new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item_title, provinces));
     }
 
     @Override
@@ -162,10 +172,9 @@ public class UserAccountCreateActivity extends AppCompatActivity {
 
         // Check valid spinner selection
         if (null == userType) {
-            EditText field_spinner_user_type_error = findViewById(R.id.field_spinner_user_type_error);
-            ((TextView)spinner_user_type.getSelectedView()).setError("Please select a type!");
-            field_spinner_user_type_error.setError("Please select a type!");
-            field_spinner_user_type_error.requestFocus();
+            ((TextView)spinner_user_type.getSelectedView()).setError(getString(R.string.please_select_type));
+            field_user_type_error.setError(getString(R.string.please_select_type));
+            field_user_type_error.requestFocus();
             spinner_user_type.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return false;
         }
@@ -236,6 +245,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         streetNumber = field_street_number.getText().toString().trim();
         streetName = field_street_name.getText().toString().trim();
         city = field_city.getText().toString().trim();
+        province = spinner_province.getSelectedItem().toString();
         country = field_country.getText().toString().trim();
         postalCode = field_postal.getText().toString().trim();
 
@@ -286,6 +296,15 @@ public class UserAccountCreateActivity extends AppCompatActivity {
             return false;
         }
 
+        // Check valid province spinner selection
+        if (null == province) {
+            ((TextView)spinner_province.getSelectedView()).setError(getString(R.string.please_select_province_territory));
+            field_province_error.setError(getString(R.string.please_select_province_territory));
+            field_province_error.requestFocus();
+            spinner_province.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
+            return false;
+        }
+
         if (!FieldValidation.countryNameIsValid(country)) {
             if (country.isEmpty()) { field_country.setError(getString(R.string.empty_country_name_error)); }
             else { field_country.setError(getString(R.string.invalid_country_name_error)); }
@@ -311,7 +330,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
 
         User newUser = null;
         if (User.Types.SERVICE_PROVIDER == userType) {
-            Address address = new Address(unit, Integer.parseInt(streetNumber), streetName, city, country, postalCode);
+            Address address = new Address(unit, Integer.parseInt(streetNumber), streetName, city, province, country, postalCode);
             newUser = new ServiceProvider(firstName, lastName, username, email, password, companyName, licensed, phoneNumber, address);
         } else {
             newUser = new User(firstName, lastName, username, email, userType, password);

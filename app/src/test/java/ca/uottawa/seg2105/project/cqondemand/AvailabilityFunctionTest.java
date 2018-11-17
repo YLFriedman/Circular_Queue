@@ -1,16 +1,11 @@
 package ca.uottawa.seg2105.project.cqondemand;
 
-import android.support.annotation.NonNull;
-
 import org.junit.Test;
-
-import java.util.ArrayList;
-
 import ca.uottawa.seg2105.project.cqondemand.domain.Availability;
-
 import static org.junit.Assert.assertEquals;
 
 public class AvailabilityFunctionTest {
+
     @Test
     public void validate_ConstructorNoKey() {
         Availability testAvailability = new Availability(Availability.parseDay("SUNDAY"), 12, 15);
@@ -49,4 +44,5 @@ public class AvailabilityFunctionTest {
         assertEquals("Day validation failed - Int_Day", Availability.Day.FRIDAY, Availability.parseDay(5));
         assertEquals("Day validation failed - Int_Day", Availability.Day.SATURDAY, Availability.parseDay(6));
     }
+
 }

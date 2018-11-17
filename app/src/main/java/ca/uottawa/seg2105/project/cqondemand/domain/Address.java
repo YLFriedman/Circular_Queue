@@ -4,21 +4,21 @@ import android.support.annotation.NonNull;
 
 public class Address {
 
-
     protected String unit;
     protected int streetNumber;
     protected String street;
     protected String city;
     protected String country;
-    // TODO: Implement province
+    protected String province;
     protected String postalCode;
 
-    public Address(@NonNull String unit, @NonNull int streetNumber, @NonNull String street, @NonNull String city, @NonNull String country, @NonNull String postalCode) {
+    public Address(@NonNull String unit, @NonNull int streetNumber, @NonNull String street, @NonNull String city, @NonNull String province, @NonNull String country, @NonNull String postalCode) {
         this.unit = unit;
         this.streetNumber = streetNumber;
         this.street = street;
         this.city = city;
         this.country = country;
+        this.province = province;
         this.postalCode = postalCode;
     }
 
@@ -42,6 +42,10 @@ public class Address {
         return country;
     }
 
+    public String getProvince() {
+        return province;
+    }
+
     public String getPostalCode() {
         return postalCode;
     }
@@ -55,6 +59,7 @@ public class Address {
         if ((null == street)     != (null == other.street)     || (null != street     && !street.equals(other.street))) { return false; }
         if ((null == city)       != (null == other.city)       || (null != city       && !city.equals(other.city))) { return false; }
         if ((null == country)    != (null == other.country)    || (null != country    && !country.equals(other.country))) { return false; }
+        if ((null == province)   != (null == other.province)   || (null != province   && !country.equals(other.province))) { return false; }
         if ((null == postalCode) != (null == other.postalCode) || (null != postalCode && !postalCode.equals(other.postalCode))) { return false; }
         return streetNumber == other.streetNumber;
     }

@@ -3,7 +3,6 @@ package ca.uottawa.seg2105.project.cqondemand;
 
 import org.junit.Test;
 
-import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation.PasswordValidationResult;
 import static ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation.usernameIsValid;
@@ -15,6 +14,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 public class FieldValidationTest {
+
+    public String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public String numbers = "1234567890";
+    public String stdSpecialChars = "<>,./?;:/\"|[]{}`~=_+@#$%^&*()\\";
 
     /*@Test
     public void email_validation() {
@@ -45,61 +48,55 @@ public class FieldValidationTest {
     @Test
     public void person_name_validation() {
         // Illegal Name Characters: 0-9 < > ] [ } { \ / ! @ # $ % ^ & * _ + = ) ( : ;
-        assertEquals("nameIsValid failed - empty string",false, FieldValidation.nameIsValid(""));
-        assertEquals("nameIsValid failed - number",false, FieldValidation.nameIsValid("Ethan4"));
-        assertEquals("nameIsValid failed - character: <",false, FieldValidation.nameIsValid("Jam<s"));
-        assertEquals("nameIsValid failed - character: >",false, FieldValidation.nameIsValid("Samu>l"));
-        assertEquals("nameIsValid failed - character: ]",false, FieldValidation.nameIsValid("Bru]e"));
-        assertEquals("nameIsValid failed - character: [",false, FieldValidation.nameIsValid("S[mon"));
-        assertEquals("nameIsValid failed - character: }",false, FieldValidation.nameIsValid("Ash}ey"));
-        assertEquals("nameIsValid failed - character: {",false, FieldValidation.nameIsValid("{arl"));
-        assertEquals("nameIsValid failed - character: \\",false, FieldValidation.nameIsValid("\\iam"));
-        assertEquals("nameIsValid failed - character: /",false, FieldValidation.nameIsValid("/vana"));
-        assertEquals("nameIsValid failed - character: !",false, FieldValidation.nameIsValid("Exc!aim"));
-        assertEquals("nameIsValid failed - character: @",false, FieldValidation.nameIsValid("A@ron"));
-        assertEquals("nameIsValid failed - character: #",false, FieldValidation.nameIsValid("S#a"));
-        assertEquals("nameIsValid failed - character: $",false, FieldValidation.nameIsValid("Bill$"));
-        assertEquals("nameIsValid failed - character: %",false, FieldValidation.nameIsValid("Pet%r"));
-        assertEquals("nameIsValid failed - character: ^",false, FieldValidation.nameIsValid("Ush^e"));
-        assertEquals("nameIsValid failed - character: &",false, FieldValidation.nameIsValid("&mmoy"));
-        assertEquals("nameIsValid failed - character: *",false, FieldValidation.nameIsValid("Steph*nie"));
-        assertEquals("nameIsValid failed - character: _",false, FieldValidation.nameIsValid("Pau_"));
-        assertEquals("nameIsValid failed - character: +",false, FieldValidation.nameIsValid("+heresa"));
-        assertEquals("nameIsValid failed - character: =",false, FieldValidation.nameIsValid("Elizab=th"));
-        assertEquals("nameIsValid failed - character: )",false, FieldValidation.nameIsValid("Mad)son"));
-        assertEquals("nameIsValid failed - character: (",false, FieldValidation.nameIsValid("(raig"));
-        assertEquals("nameIsValid failed - character: :",false, FieldValidation.nameIsValid(":sabelle"));
-        assertEquals("nameIsValid failed - character: ;",false, FieldValidation.nameIsValid("Sabr;na"));
-        assertEquals("nameIsValid failed - valid name: ",true, FieldValidation.nameIsValid("D' Amico"));
-        assertEquals("nameIsValid failed - valid name2: ",true, FieldValidation.nameIsValid("My-Dashed-Name"));
+        assertFalse("nameIsValid failed - empty string", FieldValidation.nameIsValid(""));
+        assertFalse("nameIsValid failed - number", FieldValidation.nameIsValid("Ethan4"));
+        assertFalse("nameIsValid failed - character: <", FieldValidation.nameIsValid("Jam<s"));
+        assertFalse("nameIsValid failed - character: >", FieldValidation.nameIsValid("Samu>l"));
+        assertFalse("nameIsValid failed - character: ]", FieldValidation.nameIsValid("Bru]e"));
+        assertFalse("nameIsValid failed - character: [", FieldValidation.nameIsValid("S[mon"));
+        assertFalse("nameIsValid failed - character: }", FieldValidation.nameIsValid("Ash}ey"));
+        assertFalse("nameIsValid failed - character: {", FieldValidation.nameIsValid("{arl"));
+        assertFalse("nameIsValid failed - character: \\", FieldValidation.nameIsValid("\\iam"));
+        assertFalse("nameIsValid failed - character: /", FieldValidation.nameIsValid("/vana"));
+        assertFalse("nameIsValid failed - character: !", FieldValidation.nameIsValid("Exc!aim"));
+        assertFalse("nameIsValid failed - character: @", FieldValidation.nameIsValid("A@ron"));
+        assertFalse("nameIsValid failed - character: #", FieldValidation.nameIsValid("S#a"));
+        assertFalse("nameIsValid failed - character: $", FieldValidation.nameIsValid("Bill$"));
+        assertFalse("nameIsValid failed - character: %", FieldValidation.nameIsValid("Pet%r"));
+        assertFalse("nameIsValid failed - character: ^", FieldValidation.nameIsValid("Ush^e"));
+        assertFalse("nameIsValid failed - character: &", FieldValidation.nameIsValid("&mmoy"));
+        assertFalse("nameIsValid failed - character: *", FieldValidation.nameIsValid("Steph*nie"));
+        assertFalse("nameIsValid failed - character: _", FieldValidation.nameIsValid("Pau_"));
+        assertFalse("nameIsValid failed - character: +", FieldValidation.nameIsValid("+heresa"));
+        assertFalse("nameIsValid failed - character: =", FieldValidation.nameIsValid("Elizab=th"));
+        assertFalse("nameIsValid failed - character: )", FieldValidation.nameIsValid("Mad)son"));
+        assertFalse("nameIsValid failed - character: (", FieldValidation.nameIsValid("(raig"));
+        assertFalse("nameIsValid failed - character: :", FieldValidation.nameIsValid(":sabelle"));
+        assertFalse("nameIsValid failed - character: ;", FieldValidation.nameIsValid("Sabr;na"));
+        assertTrue("nameIsValid failed - valid name: '", FieldValidation.nameIsValid("D' Amico"));
+        assertTrue("nameIsValid failed - valid name2: -", FieldValidation.nameIsValid("My-Dashed-Name"));
     }
 
     @Test
-    public void service_Name_Validation(){
-        assertEquals("name validation failed - apostrophe returns invalid", true, FieldValidation.serviceNameIsValid("'"));
-        assertEquals("name validation failed - space returns invalid", true, FieldValidation.serviceNameIsValid(" ") );
-        assertEquals("name validation failed - alphabet return invalid", true,
-                FieldValidation.serviceNameIsValid("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"));
-        assertEquals("name validation failed - exclamation mark returned valid", false, FieldValidation.serviceNameIsValid("hudi!"));
-        assertEquals("name validation failed - numbers return valid", false, FieldValidation.serviceNameIsValid("1234567890"));
-        assertEquals("name validation failed - tab return valid", false, FieldValidation.serviceNameIsValid("\t"));
-        assertEquals("name validation failed - symbols return valid", false,
-                FieldValidation.serviceNameIsValid("<>,./?;:/\"|[]{}`~=_+@#$%^&*()\\"));
+    public void service_Name_Validation() {
+        assertTrue("name validation failed - apostrophe returns invalid", FieldValidation.serviceNameIsValid("'"));
+        assertTrue("name validation failed - space returns invalid", FieldValidation.serviceNameIsValid(" ") );
+        assertTrue("name validation failed - alphabet return invalid", FieldValidation.serviceNameIsValid(alphabet));
+        assertFalse("name validation failed - exclamation mark returned valid", FieldValidation.serviceNameIsValid("hudi!"));
+        assertFalse("name validation failed - numbers return valid", FieldValidation.serviceNameIsValid(numbers));
+        assertFalse("name validation failed - tab return valid", FieldValidation.serviceNameIsValid("\t"));
+        assertFalse("name validation failed - symbols return valid", FieldValidation.serviceNameIsValid(stdSpecialChars));
     }
-
 
     @Test
-    public void category_Name_Validation(){
-        assertEquals("name validation failed - apostrophe returns invalid", true, FieldValidation.categoryNameIsValid("'"));
-        assertEquals("name validation failed - space returns invalid", true, FieldValidation.categoryNameIsValid(" ") );
-        assertEquals("name validation failed - alphabet return invalid", true,
-                FieldValidation.serviceNameIsValid("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"));
-        assertEquals("name validation failed - exclamation mark returned valid", false, FieldValidation.categoryNameIsValid("hudi!"));
-        assertEquals("name validation failed - numbers return valid", false, FieldValidation.categoryNameIsValid("1234567890"));
-        assertEquals("name validation failed - tab return valid", false, FieldValidation.categoryNameIsValid("\t"));
-        assertEquals("name validation failed - symbols return valid", false,
-                FieldValidation.serviceNameIsValid("<>,./?;:/\"|[]{}`~=_+@#$%^&*()\\"));
+    public void category_Name_Validation() {
+        assertTrue("name validation failed - apostrophe returns invalid", FieldValidation.categoryNameIsValid("'"));
+        assertTrue("name validation failed - space returns invalid", FieldValidation.categoryNameIsValid(" ") );
+        assertTrue("name validation failed - alphabet return invalid", FieldValidation.serviceNameIsValid(alphabet));
+        assertFalse("name validation failed - exclamation mark returned valid", FieldValidation.categoryNameIsValid("hudi!"));
+        assertFalse("name validation failed - numbers return valid", FieldValidation.categoryNameIsValid(numbers));
+        assertFalse("name validation failed - tab return valid", FieldValidation.categoryNameIsValid("\t"));
+        assertFalse("name validation failed - symbols return valid", FieldValidation.serviceNameIsValid(stdSpecialChars));
     }
-
 
 }
