@@ -16,7 +16,6 @@ public class DbAddress extends DbItem<Address> {
     public DbAddress() {}
 
     DbAddress(Address item) {
-        super(item.getKey());
         unit = item.getUnit();
         street_number = item.getStreetNumber();
         street = item.getStreet();
@@ -26,6 +25,6 @@ public class DbAddress extends DbItem<Address> {
     }
 
     @NonNull
-    public Address toDomainObj() { return new Address(retrieveKey(), unit, street_number, street, city, country, postal_code); }
+    public Address toDomainObj() { return new Address(unit, street_number, street, city, country, postal_code); }
 
 }

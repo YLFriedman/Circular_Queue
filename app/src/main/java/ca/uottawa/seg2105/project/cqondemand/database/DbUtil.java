@@ -1,6 +1,5 @@
 package ca.uottawa.seg2105.project.cqondemand.database;
 
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -33,12 +32,12 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 public class DbUtil {
 
-    private static final HashMap<DataType, DatabaseReference> references = new HashMap<DataType, DatabaseReference>();
+    protected static final HashMap<DataType, DatabaseReference> references = new HashMap<DataType, DatabaseReference>();
     /**
      * Enum for differentiating between different object types
      */
     enum DataType {
-        USER, SERVICE, CATEGORY, AVAILABILITY, ADDRESS, USER_SERVICES, SERVICE_USERS;
+        USER, SERVICE, CATEGORY, AVAILABILITY, ADDRESS;
         @NonNull
         public String toString() {
             switch (this) {
@@ -47,9 +46,18 @@ public class DbUtil {
                 case CATEGORY: return "categories";
                 case AVAILABILITY: return "availabilities";
                 case ADDRESS: return "address"; // Not a top-level node
-                case USER_SERVICES: return "user_services";
-                case SERVICE_USERS: return "service_users";
                 default: return this.name();
+            }
+        }
+        @NonNull
+        public Class getDbItemClass(){
+            switch (this) {
+                case USER: return DbUser.class;
+                case SERVICE: return DbService.class;
+                case CATEGORY: return DbCategory.class;
+                case AVAILABILITY: return DbAvailability.class;
+                case ADDRESS: return DbAddress.class;
+                default: throw new UnsupportedOperationException("The type is unsupported by this method.");
             }
         }
     }
@@ -62,7 +70,7 @@ public class DbUtil {
      * @return A DbItem adaptation of the input object
      */
     @NonNull
-    private static DbItem<?> objectToDbItem(@NonNull Object object) {
+    protected static DbItem<?> objectToDbItem(@NonNull Object object) {
         if (object instanceof User) { return new DbUser((User) object); }
         if (object instanceof Service) { return new DbService((Service) object); }
         if (object instanceof Category) { return new DbCategory((Category) object); }
@@ -72,31 +80,13 @@ public class DbUtil {
     }
 
     /**
-     * Method for returning the class of a specific type of object
-     *
-     * @param type the type of object whose class you want
-     * @return the class of the specified datatype
-     */
-    @NonNull
-    private static Class getDbClassObj(@NonNull DataType type) {
-        switch (type) {
-            case USER: return DbUser.class;
-            case SERVICE: return DbService.class;
-            case CATEGORY: return DbCategory.class;
-            case AVAILABILITY: return DbAvailability.class;
-            case ADDRESS: return DbAddress.class;
-            default: throw new UnsupportedOperationException("The type is unsupported by this method.");
-        }
-    }
-
-    /**
      * Returns the datatype of a given domain object. Accepts objects of type Service, User, and Category.
      * Throws an IllegalArgumentException if passed any other type of object.
      * @param object
      * @return
      */
     @NonNull
-    private static DataType getType(@NonNull Object object) {
+    protected static DataType getType(@NonNull Object object) {
         if (object instanceof User) { return DataType.USER; }
         if (object instanceof Service) { return DataType.SERVICE; }
         if (object instanceof Category) { return DataType.CATEGORY; }
@@ -112,7 +102,7 @@ public class DbUtil {
      * @return A DatabaseReference pointing to the node which corresponds to the input type
      */
     @NonNull
-    private static DatabaseReference getRef(@NonNull DataType type) {
+    protected static DatabaseReference getRef(@NonNull DataType type) {
         DatabaseReference ref = references.get(type);
         if (null == ref) {
             ref = FirebaseDatabase.getInstance().getReference().child(type.toString());
@@ -130,7 +120,7 @@ public class DbUtil {
                     listener.onFailure(AsyncEventFailureReason.DOES_NOT_EXIST);
                 } else {
                     try {
-                        DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(type));
+                        DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(type.getDbItemClass());
                         if (null != dbItem && null != snapshot.getKey()) {
                             dbItem.storeKey(snapshot.getKey());
                             T domainObjItem = dbItem.toDomainObj();
@@ -138,11 +128,11 @@ public class DbUtil {
                         } else {
                             listener.onFailure(AsyncEventFailureReason.INVALID_DATA);
                         }
-                    } catch (IllegalArgumentException e) {
+                    } catch (IllegalArgumentException ignored) {
                         listener.onFailure(AsyncEventFailureReason.INVALID_DATA);
-                    } catch (InvalidDataException e) {
+                    } catch (InvalidDataException ignored) {
                         listener.onFailure(AsyncEventFailureReason.INVALID_DATA);
-                    } catch (ClassCastException e) {
+                    } catch (ClassCastException ignored) {
                         listener.onFailure(AsyncEventFailureReason.INVALID_DATA);
                     }
                 }
@@ -164,7 +154,7 @@ public class DbUtil {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> DbListener<ValueEventListener> getItems(@NonNull final DataType type, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
+    protected static <T> DbListener<ValueEventListener> getItems(@NonNull final DataType type, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
         ValueEventListener dataConversionListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -172,16 +162,16 @@ public class DbUtil {
                 ArrayList<T> returnValue = new ArrayList<T>(size > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) size);
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
                     try {
-                        DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(type));
+                        DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(type.getDbItemClass());
                         if (null != dbItem && null != snapshot.getKey()) {
                             dbItem.storeKey(snapshot.getKey());
                             T domainObjItem = dbItem.toDomainObj();
                             returnValue.add(domainObjItem);
                         }
                     }
-                    catch (IllegalArgumentException e) { }
-                    catch (InvalidDataException e) { }
-                    catch (ClassCastException e) { }
+                    catch (IllegalArgumentException ignored) { }
+                    catch (InvalidDataException ignored) { }
+                    catch (ClassCastException ignored) { }
                 }
                 listener.onSuccess(returnValue);
             }
@@ -222,7 +212,7 @@ public class DbUtil {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> DbListener<ValueEventListener> getItems(@NonNull final DataType type, @NonNull Query query, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
+    protected static <T> DbListener<ValueEventListener> getItems(@NonNull final DataType type, @NonNull Query query, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
         ValueEventListener dataConversionListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -230,16 +220,16 @@ public class DbUtil {
                 ArrayList<T> returnValue = new ArrayList<T>(size > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) size);
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
                     try {
-                        DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(type));
+                        DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(type.getDbItemClass());
                         if (null != dbItem && null != snapshot.getKey()) {
                             dbItem.storeKey(snapshot.getKey());
                             T domainObjItem = dbItem.toDomainObj();
                             returnValue.add(domainObjItem);
                         }
                     }
-                    catch (IllegalArgumentException e) { }
-                    catch (InvalidDataException e) { }
-                    catch (ClassCastException e) { }
+                    catch (IllegalArgumentException ignored) { }
+                    catch (InvalidDataException ignored) { }
+                    catch (ClassCastException ignored) { }
                 }
                 listener.onSuccess(returnValue);
             }
@@ -254,34 +244,6 @@ public class DbUtil {
         } else {
             return new DbListener<ValueEventListener>(query.getRef(), query.addValueEventListener(dataConversionListener));
         }
-    }
-
-    public static <T> void getItemsRelational(final DataType relationType, final DataType returnType, String childKey, final AsyncValueEventListener<T> listener) {
-        getRef(relationType).child(childKey).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                long size = dataSnapshot.getChildrenCount();
-                ArrayList<T> returnValue = new ArrayList<T>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    try {
-                        DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(returnType));
-                        if (null != dbItem) {
-                            T domainObjItem = dbItem.toDomainObj();
-                            returnValue.add(domainObjItem);
-                        }
-                    }
-                    catch (IllegalArgumentException e) { }
-                    catch (InvalidDataException e) { }
-                    catch (ClassCastException e) { }
-                }
-                listener.onSuccess(returnValue);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
-            }
-        });
     }
 
     static <T> void deleteItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {

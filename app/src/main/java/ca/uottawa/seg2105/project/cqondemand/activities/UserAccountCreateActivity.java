@@ -17,6 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
+import ca.uottawa.seg2105.project.cqondemand.domain.Address;
+import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.R;
@@ -237,7 +239,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         country = field_country.getText().toString().trim();
         postalCode = field_postal.getText().toString().trim();
 
-        if (!FieldValidation.usernameIsValid(companyName)) {
+        if (!FieldValidation.nameIsValid(companyName)) {
             if (companyName.isEmpty()) { field_company_name.setError(getString(R.string.empty_company_name_error)); }
             else { field_company_name.setError(getString(R.string.invalid_company_name_error)); }
             field_company_name.requestFocus();
@@ -253,7 +255,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
             return false;
         }
 
-        if (!FieldValidation.unitIsValid(unit)) {
+        if (!FieldValidation.unitNameIsValid(unit)) {
             field_unit.setError(getString(R.string.unit_error));
             field_unit.requestFocus();
             field_unit.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
@@ -268,7 +270,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
             return false;
         }
 
-        if (!FieldValidation.letterNameIsValid(streetName)) {
+        if (!FieldValidation.streetNameIsValid(streetName)) {
             if (streetName.isEmpty()) { field_street_name.setError(getString(R.string.empty_street_name_error)); }
             else { field_street_name.setError(getString(R.string.invalid_street_name_error)); }
             field_street_name.requestFocus();
@@ -276,7 +278,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
             return false;
         }
 
-        if (!FieldValidation.letterNameIsValid(city)) {
+        if (!FieldValidation.cityNameIsValid(city)) {
             if (city.isEmpty()) { field_city.setError(getString(R.string.empty_city_name_error)); }
             else { field_city.setError(getString(R.string.invalid_city_name_error)); }
             field_city.requestFocus();
@@ -284,7 +286,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
             return false;
         }
 
-        if (!FieldValidation.letterNameIsValid(country)) {
+        if (!FieldValidation.countryNameIsValid(country)) {
             if (country.isEmpty()) { field_country.setError(getString(R.string.empty_country_name_error)); }
             else { field_country.setError(getString(R.string.invalid_country_name_error)); }
             field_country.requestFocus();
@@ -307,7 +309,13 @@ public class UserAccountCreateActivity extends AppCompatActivity {
 
         if (!fields_1AreValid() || (User.Types.SERVICE_PROVIDER == userType && !fields_2AreValid())) { return; }
 
-        User newUser = new User(firstName, lastName, username, email, userType, password);
+        User newUser = null;
+        if (User.Types.SERVICE_PROVIDER == userType) {
+            Address address = new Address(unit, Integer.parseInt(streetNumber), streetName, city, country, postalCode);
+            newUser = new ServiceProvider(firstName, lastName, username, email, password, companyName, licensed, phoneNumber, address);
+        } else {
+            newUser = new User(firstName, lastName, username, email, userType, password);
+        }
 
         btn_create_account.setEnabled(false);
 

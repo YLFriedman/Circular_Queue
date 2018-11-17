@@ -92,13 +92,6 @@
                 tools:layout_editor_absoluteY="173dp"
                 tools:visibility="gone" />
 
-            <Button
-                android:id="@+id/btnn_test_update"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="onUpdateServiceTestClick"
-                android:text="@string/bttn_test_update" />
-
             <LinearLayout
                 android:id="@+id/linearLayout2"
                 android:layout_width="match_parent"
@@ -134,6 +127,14 @@
                 android:layout_marginTop="32dp"
                 android:onClick="onCreateTestAccountClick"
                 android:text="@string/create_test"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btnn_test_update"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onUpdateServiceTestClick"
+                android:text="@string/bttn_test_update"
                 android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
