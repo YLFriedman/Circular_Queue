@@ -12,9 +12,13 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import ca.uottawa.seg2105.project.cqondemand.database.DbAvailability;
 import ca.uottawa.seg2105.project.cqondemand.database.DbService;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
+import ca.uottawa.seg2105.project.cqondemand.domain.Address;
+import ca.uottawa.seg2105.project.cqondemand.domain.Availability;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
+import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
@@ -169,6 +173,29 @@ public class SignInActivity extends AppCompatActivity {
             public void onSuccess() { }
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) { }
+        });
+    }
+
+    public void onUpdateServiceTestClick(View view){
+        Address address = new Address("45", 2456, "asd", "sdfas", "asdads", "adads");
+        Availability monday = new Availability(Availability.Day.MONDAY, 9, 17);
+        Availability sunday = new Availability(Availability.Day.SUNDAY, 9, 18);
+        ArrayList<Availability> listyBoy = new ArrayList<>();
+        listyBoy.add(monday);
+        listyBoy.add(sunday);
+
+        ServiceProvider provides = new ServiceProvider("-LRTteBm1Bvhh8KMiGd_", "daddy", "please", "spankme", "bad@boy.com",
+                "cqpass", "Spaces Allowed", true, "6132453125", address);
+        DbAvailability.getAvailabilities(provides, new AsyncValueEventListener<Availability>() {
+            @Override
+            public void onSuccess(@NonNull ArrayList<Availability> data) {
+                Toast.makeText(getApplicationContext(), data.get(0).getDay().toString(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+
+            }
         });
     }
 

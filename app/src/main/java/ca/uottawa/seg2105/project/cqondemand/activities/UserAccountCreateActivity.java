@@ -262,7 +262,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
             return false;
         }
 
-        if (!FieldValidation.unitIsValid(unit)) {
+        if (!FieldValidation.unitNameIsValid(unit)) {
             field_unit.setError(getString(R.string.unit_error));
             field_unit.requestFocus();
             field_unit.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
