@@ -49,4 +49,19 @@ public class AvailabilityFunctionTest {
         assertEquals("Day validation failed - Int_Day", Availability.Day.FRIDAY, Availability.parseDay(5));
         assertEquals("Day validation failed - Int_Day", Availability.Day.SATURDAY, Availability.parseDay(6));
     }
+
+    @Test
+    public void validate_Equals(){
+        Availability testAvailability1 = new Availability("111", Availability.parseDay("SUNDAY"), 12, 15);
+        Availability testAvailability2 = new Availability("111", Availability.parseDay("TUESDAY"), 13, 14);
+        Availability testAvailability3 = new Availability("210", Availability.parseDay("SUNDAY"), 12, 15);
+        Availability testAvailability4 = new Availability("300", Availability.parseDay("FRIDAY"), 11, 16);
+        Availability testAvailability5 = new Availability( Availability.parseDay("SUNDAY"), 12, 15);
+        assertEquals("Equals validation failed - Same Object", true, testAvailability1.equals(testAvailability1));
+        assertEquals("Equals validation failed - Same Key", true, testAvailability1.equals(testAvailability2));
+        assertEquals("Equals validation failed - Same Key", true, testAvailability1.equals(testAvailability4));
+        assertEquals("Equals validation failed - Same values except key", true, testAvailability1.equals(testAvailability3));
+        assertEquals("Equals validation failed - Different Values", false, testAvailability1.equals(testAvailability4));
+        assertEquals("Equals validation failed - Different Objects", false, testAvailability1.equals("Hello"));
+    }
 }
