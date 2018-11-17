@@ -129,13 +129,14 @@ public class DbService extends DbItem<Service> {
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                DbService updatedService = new DbService(service);
                 for (DataSnapshot child: dataSnapshot.getChildren()) {
-                    DbService updatedService = new DbService(service);
+
                     String userKey = child.getKey();
                     String path = String.format("user_services/%s/%s", userKey, serviceKey);
                     pathMap.put(path, updatedService);
                 }
-                pathMap.put(String.format("services/%s", serviceKey),service);
+                pathMap.put(String.format("services/%s", serviceKey), updatedService);
                 DbUtilRelational.multiPathUpdate(pathMap, listener);
             }
             @Override
