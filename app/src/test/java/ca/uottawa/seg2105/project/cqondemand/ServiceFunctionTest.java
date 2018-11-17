@@ -38,9 +38,9 @@ public class ServiceFunctionTest {
         assertTrue("Equals Service validation failed - Same Object", testService1.equals(testService1));
         assertTrue("Equals Service validation failed - Same Object Values", testService1.equals(testService2));
         assertTrue("Equals Service validation failed - Same Key", testService3.equals(testService4));
+        assertTrue("Equals Service validation failed - Different Values (No Key)", testService3.equals(testService7));
         assertTrue("Equals Service validation failed - Different Key", testService3.equals(testService5));
         assertFalse("Equals Service validation failed - Different Key Different Values", testService3.equals(testService6));
-        assertFalse("Equals Service validation failed - Different Values (No Key)", testService3.equals(testService7));
         assertFalse("Equals Service validation failed - Different Objects", testService3.equals("Hello"));
 
     }
