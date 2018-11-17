@@ -16,7 +16,6 @@ public class DbAddress extends DbItem<Address> {
     public DbAddress() {}
 
     DbAddress(Address item) {
-        super(item.getKey());
         unit = item.getUnit();
         street_number = (long) item.getStreetNumber();
         street = item.getStreet();

@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 public class Address {
 
-    protected String key;
+
     protected String unit;
     protected int streetNumber;
     protected String street;
@@ -19,12 +19,6 @@ public class Address {
         this.city = city;
         this.country = country;
         this.postalCode = postalCode;
-    }
-
-
-
-    public String getKey() {
-        return key;
     }
 
     public String getUnit() {
@@ -49,10 +43,6 @@ public class Address {
 
     public String getPostalCode() {
         return postalCode;
-    }
-
-    public boolean equals(Address other) {
-        return key != null && key.equals(other.key);
     }
 
     @Override
