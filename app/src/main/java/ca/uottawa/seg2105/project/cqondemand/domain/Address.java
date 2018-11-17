@@ -12,6 +12,10 @@ public class Address {
     protected String province;
     protected String postalCode;
 
+    public static final String[] PROVINCES = { "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador", "Northwest Territories",
+            "Nova Scotia", "Nunavut", "Ontario", "Prince Edward Island", "Quebec", "Saskatchewan", "Yukon" };
+    protected static final String[] PROVINCES_SHORT = { "AB", "BC", "MB", "NB", "NL", "NT", "NS", "NU", "ON", "PE", "QC", "SK", "YT" };
+
     public Address(@NonNull String unit, @NonNull int streetNumber, @NonNull String street, @NonNull String city, @NonNull String province, @NonNull String country, @NonNull String postalCode) {
         this.unit = unit.toUpperCase();
         this.streetNumber = streetNumber;
@@ -63,6 +67,25 @@ public class Address {
         if ((null == province)   != (null == other.province)   || (null != province   && !country.equals(other.province))) { return false; }
         if ((null == postalCode) != (null == other.postalCode) || (null != postalCode && !postalCode.equals(other.postalCode))) { return false; }
         return streetNumber == other.streetNumber;
+    }
+
+    @Override
+    public String toString() {
+        String output = "";
+        if (!unit.isEmpty()) { output += unit + "-"; }
+        output += streetNumber + " " + street;
+        output += "\n" + city + " " + getShortProvince() + " " + postalCode;
+        return output;
+    }
+
+    public String getShortProvince() {
+        String compare = province.toLowerCase();
+        for (int i = 0; i < PROVINCES.length; i++) {
+            if (PROVINCES[i].toLowerCase().equals(compare)) {
+                return PROVINCES_SHORT[i];
+            }
+        }
+        return province;
     }
 
 }

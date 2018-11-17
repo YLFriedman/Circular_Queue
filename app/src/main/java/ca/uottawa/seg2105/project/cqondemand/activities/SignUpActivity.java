@@ -15,6 +15,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import ca.uottawa.seg2105.project.cqondemand.adapters.SpinnerAdapter;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.domain.Address;
@@ -75,7 +78,6 @@ public class SignUpActivity extends AppCompatActivity {
     protected String country;
     protected String postalCode;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,8 +127,8 @@ public class SignUpActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) { }
         });
         // Configure the province selection spinner
-        String[] provinces = { null, "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador", "Northwest Territories",
-                "Nova Scotia", "Nunavut", "Ontario", "Prince Edward Island", "Quebec", "Saskatchewan", "Yukon" };
+        ArrayList<String> provinces = new ArrayList<String>(Arrays.asList(Address.PROVINCES));
+        provinces.add(0, null);
         spinner_province.setAdapter(new SpinnerAdapter<String>(getApplicationContext(), R.layout.spinner_item_title, getString(R.string.select_province), provinces));
 
         testMode();

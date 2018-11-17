@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.util.List;
+
 import ca.uottawa.seg2105.project.cqondemand.R;
 
 public class SpinnerAdapter<T> extends ArrayAdapter<T> {
@@ -31,13 +33,26 @@ public class SpinnerAdapter<T> extends ArrayAdapter<T> {
         mResource = mDropDownResource = resource;
     }
 
+    public SpinnerAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<T> objects) {
+        super(context, resource, objects);
+        mContext = context;
+        mDropDownInflater = mInflater = LayoutInflater.from(context);
+        mResource = mDropDownResource = resource;
+    }
+
     public SpinnerAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull String emptyItemText, @NonNull T[] objects) {
         this(context, resource, objects);
         this.emptyItemText = emptyItemText;
     }
+
+    public SpinnerAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull String emptyItemText, @NonNull List<T> objects) {
+        this(context, resource, objects);
+        this.emptyItemText = emptyItemText;
+    }
+
     @Override
     public boolean isEnabled(int position) {
-        return position != 0;
+        return null != getItem(position);
     }
 
     @Override
