@@ -15,7 +15,7 @@ public class ServiceProvider extends User {
     protected Address address;
 
     public ServiceProvider(@NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull String pass,
-                           @NonNull String companyName, @NonNull boolean licenced, @NonNull String phoneNumber, @NonNull Address address) {
+                           @NonNull String companyName, boolean licenced, @NonNull String phoneNumber, @NonNull Address address) {
 
         super(firstName, lastName, username, email, Types.SERVICE_PROVIDER, pass);
 
@@ -39,7 +39,7 @@ public class ServiceProvider extends User {
      * @param address
      */
     public ServiceProvider(@NonNull String key, @NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull String pass,
-                           @NonNull String companyName, @NonNull boolean licenced, @NonNull String phoneNumber, @NonNull Address address) {
+                           @NonNull String companyName, boolean licenced, @NonNull String phoneNumber, @NonNull Address address) {
 
         super(key, firstName, lastName, username, email, Types.SERVICE_PROVIDER, pass);
 

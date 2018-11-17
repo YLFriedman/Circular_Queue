@@ -35,7 +35,6 @@
                 style="@style/input_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
                 android:ems="10"
                 android:hint="@string/username"
                 android:inputType="text" />
@@ -45,6 +44,7 @@
                 style="@style/input_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="@string/first_name" />
 
             <EditText
@@ -52,7 +52,6 @@
                 style="@style/input_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
                 android:ems="10"
                 android:hint="@string/first_name"
                 android:inputType="textPersonName" />
@@ -62,6 +61,7 @@
                 style="@style/input_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="@string/last_name" />
 
             <EditText
@@ -69,7 +69,6 @@
                 style="@style/input_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
                 android:ems="10"
                 android:hint="@string/last_name"
                 android:inputType="textPersonName" />
@@ -79,6 +78,7 @@
                 style="@style/input_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="@string/email" />
 
             <EditText
@@ -96,22 +96,36 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
+                <TextView
+                    android:id="@+id/txt_title_company"
+                    style="@style/input_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/company_name" />
+
                 <EditText
                     android:id="@+id/field_company_name"
                     style="@style/input_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
                     android:ems="10"
                     android:hint="@string/company_name"
                     android:inputType="textPersonName" />
+
+                <TextView
+                    android:id="@+id/txt_title_phone"
+                    style="@style/input_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/phone_number" />
 
                 <EditText
                     android:id="@+id/field_phone"
                     style="@style/input_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
                     android:ems="10"
                     android:hint="@string/phone_number"
                     android:inputType="phone" />
@@ -121,7 +135,7 @@
                     style="@style/input_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginBottom="16dp"
                     android:text="@string/licensed" />
 
                 <TextView
@@ -129,35 +143,72 @@
                     style="@style/input_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:text="@string/address" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginTop="4dp"
                     android:orientation="horizontal">
 
-                    <EditText
-                        android:id="@+id/field_unit"
-                        style="@style/input_field"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="5dp"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:ems="10"
-                        android:hint="@string/unit"
-                        android:inputType="text|textNoSuggestions" />
+                        android:orientation="vertical">
 
-                    <EditText
-                        android:id="@+id/field_street_number"
-                        style="@style/input_field"
+                        <TextView
+                            android:id="@+id/txt_title_unit"
+                            style="@style/input_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/unit" />
+
+                        <EditText
+                            android:id="@+id/field_unit"
+                            style="@style/input_field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:ems="10"
+                            android:hint="@string/unit"
+                            android:inputType="text|textNoSuggestions" />
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="5dp"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:ems="10"
-                        android:hint="@string/number"
-                        android:inputType="number" />
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/txt_title_address3"
+                            style="@style/input_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/number" />
+
+                        <EditText
+                            android:id="@+id/field_street_number"
+                            style="@style/input_field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:ems="10"
+                            android:hint="@string/number"
+                            android:inputType="number" />
+                    </LinearLayout>
+
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/txt_title_street_name"
+                    style="@style/input_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/street" />
 
                 <EditText
                     android:id="@+id/field_street_name"
@@ -168,6 +219,14 @@
                     android:ems="10"
                     android:hint="@string/street"
                     android:inputType="text|textNoSuggestions" />
+
+                <TextView
+                    android:id="@+id/txt_title_city"
+                    style="@style/input_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/city" />
 
                 <EditText
                     android:id="@+id/field_city"
@@ -201,30 +260,43 @@
                     android:layout_height="1dp"
                     android:layout_gravity="right"
                     android:layout_marginRight="54dp"
-                    android:layout_marginBottom="5dp"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:inputType="text"
                     android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/txt_title_country"
+                    style="@style/input_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/country" />
 
                 <EditText
                     android:id="@+id/field_country"
                     style="@style/input_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
                     android:ems="10"
                     android:enabled="false"
                     android:hint="@string/country"
                     android:inputType="text|textNoSuggestions"
                     android:text="@string/canada" />
 
+                <TextView
+                    android:id="@+id/txt_title_postal_code"
+                    style="@style/input_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/postal" />
+
                 <EditText
                     android:id="@+id/field_postal"
                     style="@style/input_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
                     android:ems="10"
                     android:hint="@string/postal"
                     android:inputType="text|textNoSuggestions" />

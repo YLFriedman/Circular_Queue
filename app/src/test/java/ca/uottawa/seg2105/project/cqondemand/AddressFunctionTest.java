@@ -1,9 +1,11 @@
 package ca.uottawa.seg2105.project.cqondemand;
 
 import org.junit.Test;
+
 import ca.uottawa.seg2105.project.cqondemand.domain.Address;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class AddressFunctionTest {
 
@@ -17,6 +19,15 @@ public class AddressFunctionTest {
         assertEquals("Service getter Failed - city", "Ontario", testAddress.getProvince());
         assertEquals("Service getter Failed - country", "Canada", testAddress.getCountry());
         assertEquals("Service getter Failed - postalCode", "K0A 1A0", testAddress.getPostalCode());
+    }
+
+    @Test
+    public void validate_equals() {
+        Address testAddress = new Address("2a", 12, "Bullvue", "Ottawa", "Ontario", "Canada", "K0A1A0");
+        Address testAddress2 = new Address("2a", 12, "Bullvue", "Ottawa", "Ontario", "Canada", "K0A1A0");
+        assertTrue("Address Equals Failed - same object", testAddress.equals(testAddress));
+        assertTrue("Address Equals Failed - same values", testAddress.equals(testAddress2));
+
     }
 
 }

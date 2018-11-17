@@ -64,7 +64,7 @@ public class Address {
         if ((null == street)     != (null == other.street)     || (null != street     && !street.equals(other.street))) { return false; }
         if ((null == city)       != (null == other.city)       || (null != city       && !city.equals(other.city))) { return false; }
         if ((null == country)    != (null == other.country)    || (null != country    && !country.equals(other.country))) { return false; }
-        if ((null == province)   != (null == other.province)   || (null != province   && !country.equals(other.province))) { return false; }
+        if ((null == province)   != (null == other.province)   || (null != province   && !province.equals(other.province))) { return false; }
         if ((null == postalCode) != (null == other.postalCode) || (null != postalCode && !postalCode.equals(other.postalCode))) { return false; }
         return streetNumber == other.streetNumber;
     }
