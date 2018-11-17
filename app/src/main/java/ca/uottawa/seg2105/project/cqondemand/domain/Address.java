@@ -10,6 +10,7 @@ public class Address {
     protected String street;
     protected String city;
     protected String country;
+    // TODO: Implement province
     protected String postalCode;
 
     public Address(@NonNull String unit, @NonNull int streetNumber, @NonNull String street, @NonNull String city, @NonNull String country, @NonNull String postalCode) {

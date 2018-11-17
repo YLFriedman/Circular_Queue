@@ -5,32 +5,13 @@
         android:id="@+id/grp_service_controls"
         android:checkableBehavior="single">
         <item
-            android:id="@+id/menu_item_service_create"
+            android:id="@+id/menu_item_service_add"
             android:checkable="false"
             android:checked="false"
             android:icon="@drawable/ic_add_light_24"
-            android:title="@string/create_service"
-            android:titleCondensed="@string/new_service"
+            android:title="@string/add_service"
+            android:titleCondensed="@string/add"
             app:showAsAction="ifRoom" />
-    </group>
-    <group
-        android:id="@+id/grp_category_controls"
-        android:checkableBehavior="single">
-        <item
-            android:id="@+id/menu_item_category_create"
-            android:checkable="false"
-            android:checked="false"
-            android:icon="@drawable/ic_add_light_24"
-            android:title="@string/create_category"
-            android:titleCondensed="@string/new_category"
-            app:showAsAction="never" />
-        <item
-            android:id="@+id/menu_item_category_delete"
-            android:checkable="false"
-            android:checked="false"
-            android:icon="@drawable/ic_add_light_24"
-            android:title="@string/delete_category"
-            android:titleCondensed="@string/delete" />
     </group>
 
 </menu>

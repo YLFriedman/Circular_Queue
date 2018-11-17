@@ -171,7 +171,6 @@
         <item>Homeowner</item>
         <item>Service Provider</item>
     </string-array>
-
     <string name="category_list_select">Select Category</string>
     <string name="next">Next</string>
     <string name="phone_number">Phone Number</string>
@@ -212,6 +211,9 @@
     <string name="reset_to_last_saved">Reset to Last Saved</string>
     <string name="reset">Reset</string>
     <string name="my_services">My Services</string>
+    <string name="add_service">Add Service</string>
+    <string name="pick_service">Pick a Service</string>
+    <string name="add">Add</string>
     <string-array name="empty_category_spinner">
         <item>Select Category</item>
     </string-array>

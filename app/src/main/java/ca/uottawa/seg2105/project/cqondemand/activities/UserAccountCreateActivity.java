@@ -57,7 +57,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
     protected String email;
     protected String password;
     protected String passwordConfirm;
-    protected String userType;
+    protected User.Types userType;
     protected String companyName;
     protected boolean licensed;
     protected String phoneNumber;
@@ -104,15 +104,12 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         field_username.setText(intent.getStringExtra("username"));
         // Configure the user type selection spinner
         Spinner spinner_user_type = findViewById(R.id.spinner_user_type);
-        spinner_user_type.setAdapter(new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item_title, new String[]{ "Homeowner", "Service Provider" }));
+        spinner_user_type.setAdapter(new ArrayAdapter<User.Types>(getApplicationContext(), R.layout.spinner_item_title, new User.Types[]{ User.Types.HOMEOWNER, User.Types.SERVICE_PROVIDER }));
         spinner_user_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (0 == position) {
-                    setScreen(Screen.FIELDS_1, true);
-                } else {
-                    setScreen(Screen.FIELDS_1, false);
-                }
+                if (0 == position) { setScreen(Screen.FIELDS_1, true); }
+                else { setScreen(Screen.FIELDS_1, false); }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) { }
@@ -159,10 +156,10 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         email = field_email.getText().toString().trim();
         password = field_password.getText().toString();
         passwordConfirm = field_password_confirm.getText().toString();
-        userType = spinner_user_type.getSelectedItem().toString();
+        userType = (User.Types) spinner_user_type.getSelectedItem();
 
         // Check valid spinner selection
-        if (userType.isEmpty()) {
+        if (null == userType) {
             EditText field_spinner_user_type_error = findViewById(R.id.field_spinner_user_type_error);
             ((TextView)spinner_user_type.getSelectedView()).setError("Please select a type!");
             field_spinner_user_type_error.setError("Please select a type!");
@@ -233,11 +230,7 @@ public class UserAccountCreateActivity extends AppCompatActivity {
         companyName = field_company_name.getText().toString().trim();
         licensed = switch_licensed.isChecked();
         phoneNumber = field_phone.getText().toString().trim();
-
         unit = field_unit.getText().toString().trim();
-        if (null == unit)
-            unit = "0";
-
         streetNumber = field_street_number.getText().toString().trim();
         streetName = field_street_name.getText().toString().trim();
         city = field_city.getText().toString().trim();
@@ -312,9 +305,9 @@ public class UserAccountCreateActivity extends AppCompatActivity {
 
     public void onCreateClick(View view) {
 
-        if (!fields_1AreValid() || (userType.equals("Service Provider") && !fields_2AreValid())) { return; }
+        if (!fields_1AreValid() || (User.Types.SERVICE_PROVIDER == userType && !fields_2AreValid())) { return; }
 
-        User newUser = new User(firstName, lastName, username, email, User.parseType(userType), password);
+        User newUser = new User(firstName, lastName, username, email, userType, password);
 
         btn_create_account.setEnabled(false);
 

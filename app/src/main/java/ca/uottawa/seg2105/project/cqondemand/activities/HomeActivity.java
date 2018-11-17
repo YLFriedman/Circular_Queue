@@ -17,6 +17,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 public class HomeActivity extends AppCompatActivity {
 
     protected TableRow btns_admin_1;
+    protected TableRow btns_service_provider_1;
 
     /*
      * Fills in layout for UserHome activity
@@ -27,6 +28,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         btns_admin_1 = findViewById(R.id.btns_admin_1);
+        btns_service_provider_1 = findViewById(R.id.btns_service_provider_1);
     }
 
     @Override
@@ -36,21 +38,21 @@ public class HomeActivity extends AppCompatActivity {
         if (null == user) {
             onSignOutClick(null);
         } else {
-            // Hide all admin button rows for non-admin users
-            if (!user.isAdmin()) { btns_admin_1.setVisibility(View.GONE); }
+            // Hide all non-shared admin button rows
+            btns_admin_1.setVisibility(View.GONE);
+            btns_service_provider_1.setVisibility(View.GONE);
 
             // Enable the relevant button rows
-            /*switch (user.getType()) {
+            switch (user.getType()) {
                 case ADMIN:
-                    //btns_admin_1.setVisibility(View.VISIBLE);
+                    btns_admin_1.setVisibility(View.VISIBLE);
                     break;
                 case HOMEOWNER:
-                    //btns_admin_1.setVisibility(View.VISIBLE);
                     break;
                 case SERVICE_PROVIDER:
-                    //btns_admin_1.setVisibility(View.VISIBLE);
+                    btns_service_provider_1.setVisibility(View.VISIBLE);
                     break;
-            }*/
+            }
         }
     }
 
@@ -70,6 +72,7 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(new Intent(getApplicationContext(), AvailabilityWeekViewActivity.class));
     }
     public void onMyServicesClick(View view) {
+        State.getState().setCurrentUser(State.getState().getSignedInUser());
         startActivity(new Intent(getApplicationContext(), ServiceListActivity.class));
     }
 

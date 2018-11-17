@@ -42,7 +42,7 @@ public class CategoryListActivity extends SignedInActivity {
                     public void onClick(final View view) {
                         State.getState().setCurrentCategory((Category) view.getTag());
                         Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
-                        startActivity(intent);
+                        startActivityForResult(intent, 0);
                     }
                 }));
             }
@@ -85,6 +85,13 @@ public class CategoryListActivity extends SignedInActivity {
             case R.id.menu_item_service_create: onCreateServiceClick(); return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (RESULT_OK == resultCode && intent.getBooleanExtra("finish", false)) {
+           finish();
+        }
     }
 
 }
