@@ -7,6 +7,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class AvailabilityFunctionTest {
+    
     @Test
     public void validate_ConstructorNoKey() {
         Availability testAvailability = new Availability(Availability.parseDay("SUNDAY"), 12, 15);
@@ -25,7 +26,7 @@ public class AvailabilityFunctionTest {
     }
 
     @Test
-    public void validate_ParseDayString(){
+    public void validate_ParseDayString() {
         assertEquals("Day validation failed - String_of_letters_Day", Availability.Day.SUNDAY, Availability.parseDay("sunDay"));
         assertEquals("Day validation failed - String_of_letters_Day", Availability.Day.MONDAY, Availability.parseDay("MONDay"));
         assertEquals("Day validation failed - String_of_letters_Day", Availability.Day.TUESDAY, Availability.parseDay("TuesDay"));
@@ -36,7 +37,7 @@ public class AvailabilityFunctionTest {
     }
 
     @Test
-    public void validate_ParseDayInt(){
+    public void validate_ParseDayInt() {
         assertEquals("Day validation failed - Int_Day", Availability.Day.SUNDAY, Availability.parseDay(0));
         assertEquals("Day validation failed - Int_Day", Availability.Day.MONDAY, Availability.parseDay(1));
         assertEquals("Day validation failed - Int_Day", Availability.Day.TUESDAY, Availability.parseDay(2));
@@ -47,7 +48,7 @@ public class AvailabilityFunctionTest {
     }
 
     @Test
-    public void validate_Equals(){
+    public void validate_Equals() {
         Availability testAvailability1 = new Availability("111", Availability.Day.SUNDAY, 12, 15);
         Availability testAvailability2 = new Availability("111", Availability.Day.TUESDAY, 13, 14);
         Availability testAvailability3 = new Availability("210", Availability.Day.SUNDAY, 12, 15);
@@ -64,4 +65,5 @@ public class AvailabilityFunctionTest {
         assertFalse("Equals validation failed - Different Values (No Keys)", testAvailability6.equals(testAvailability7));
         assertFalse("Equals validation failed - Different Objects", testAvailability1.equals("Hello"));
     }
+
 }
