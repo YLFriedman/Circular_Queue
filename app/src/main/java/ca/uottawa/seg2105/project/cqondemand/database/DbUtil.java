@@ -33,7 +33,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 public class DbUtil {
 
-    private static final HashMap<DataType, DatabaseReference> references = new HashMap<DataType, DatabaseReference>();
+    protected static final HashMap<DataType, DatabaseReference> references = new HashMap<DataType, DatabaseReference>();
     /**
      * Enum for differentiating between different object types
      */
@@ -62,7 +62,7 @@ public class DbUtil {
      * @return A DbItem adaptation of the input object
      */
     @NonNull
-    private static DbItem<?> objectToDbItem(@NonNull Object object) {
+    protected static DbItem<?> objectToDbItem(@NonNull Object object) {
         if (object instanceof User) { return new DbUser((User) object); }
         if (object instanceof Service) { return new DbService((Service) object); }
         if (object instanceof Category) { return new DbCategory((Category) object); }
@@ -78,9 +78,11 @@ public class DbUtil {
      * @return the class of the specified datatype
      */
     @NonNull
-    private static Class getDbClassObj(@NonNull DataType type) {
+    protected static Class getDbClassObj(@NonNull DataType type) {
         switch (type) {
+            case SERVICE_USERS:
             case USER: return DbUser.class;
+            case USER_SERVICES:
             case SERVICE: return DbService.class;
             case CATEGORY: return DbCategory.class;
             case AVAILABILITY: return DbAvailability.class;
@@ -96,7 +98,7 @@ public class DbUtil {
      * @return
      */
     @NonNull
-    private static DataType getType(@NonNull Object object) {
+    protected static DataType getType(@NonNull Object object) {
         if (object instanceof User) { return DataType.USER; }
         if (object instanceof Service) { return DataType.SERVICE; }
         if (object instanceof Category) { return DataType.CATEGORY; }
@@ -112,7 +114,7 @@ public class DbUtil {
      * @return A DatabaseReference pointing to the node which corresponds to the input type
      */
     @NonNull
-    private static DatabaseReference getRef(@NonNull DataType type) {
+    protected static DatabaseReference getRef(@NonNull DataType type) {
         DatabaseReference ref = references.get(type);
         if (null == ref) {
             ref = FirebaseDatabase.getInstance().getReference().child(type.toString());
@@ -164,7 +166,7 @@ public class DbUtil {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> DbListener<ValueEventListener> getItems(@NonNull final DataType type, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
+    protected static <T> DbListener<ValueEventListener> getItems(@NonNull final DataType type, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
         ValueEventListener dataConversionListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -222,7 +224,7 @@ public class DbUtil {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> DbListener<ValueEventListener> getItems(@NonNull final DataType type, @NonNull Query query, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
+    protected static <T> DbListener<ValueEventListener> getItems(@NonNull final DataType type, @NonNull Query query, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
         ValueEventListener dataConversionListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -256,15 +258,17 @@ public class DbUtil {
         }
     }
 
-    public static <T> void getItemsRelational(final DataType relationType, final DataType returnType, String childKey, final AsyncValueEventListener<T> listener) {
+    public static <T> void getItemsRelational(final DataType relationType, String childKey, final AsyncValueEventListener<T> listener) {
         getRef(relationType).child(childKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 long size = dataSnapshot.getChildrenCount();
                 ArrayList<T> returnValue = new ArrayList<T>();
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     try {
-                        DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(returnType));
+
+                        DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(getDbClassObj(relationType));
                         if (null != dbItem) {
                             T domainObjItem = dbItem.toDomainObj();
                             returnValue.add(domainObjItem);

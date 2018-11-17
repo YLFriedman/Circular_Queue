@@ -11,13 +11,18 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
+import ca.uottawa.seg2105.project.cqondemand.domain.Address;
+import ca.uottawa.seg2105.project.cqondemand.domain.Service;
+import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class DbUser extends DbItem<User> {
@@ -29,6 +34,10 @@ public class DbUser extends DbItem<User> {
     public String email;
     public String password;
     public String type;
+    public Map<Object, Object> address;
+    public boolean licensed;
+    public String phone_number;
+    public String company_name;
 
     public DbUser() {}
 
@@ -41,10 +50,23 @@ public class DbUser extends DbItem<User> {
         email = item.getEmail();
         password = item.getPassword();
         type = item.getType().toString();
+        if(item instanceof ServiceProvider){
+            ServiceProvider provider = (ServiceProvider) item;
+            address = new DbAddress(provider.getAddress()).toMap();
+            company_name = provider.getCompanyName();
+            phone_number = provider.getPhoneNumber();
+            licensed = provider.isLicensed();
+        }
     }
 
     @NonNull
-    public User toDomainObj() { return new User(retrieveKey(), first_name, last_name, username, email, User.parseType(type), password); }
+    public User toDomainObj() {
+        if(User.parseType(type) == User.Types.SERVICE_PROVIDER){
+            Address addressItem = new DbAddress(address).toDomainObj();
+            return new ServiceProvider(retrieveKey(), first_name, last_name, username, email, password,
+                    company_name, licensed, phone_number, addressItem);
+        }
+        return new User(retrieveKey(), first_name, last_name, username, email, User.parseType(type), password); }
 
     public static void createUser(@NonNull final User user, @Nullable final AsyncActionEventListener listener) {
         getUserByUsername(user.getUsername(), new AsyncSingleValueEventListener<User>() {
@@ -161,9 +183,7 @@ public class DbUser extends DbItem<User> {
         });
     }
 
-    public static void getProvidersByService(String serviceID, @NonNull AsyncValueEventListener<User> listener){
-        DbUtil.getItemsRelational(DbUtil.DataType.SERVICE_USERS, DbUtil.DataType.USER, serviceID, listener);
-    }
+
 
     public static void updateProviderRelational(final User newUser, final String userKey, final AsyncActionEventListener listener){
         AsyncSingleValueEventListener<HashMap<String, Object>> mapListener = new AsyncSingleValueEventListener<HashMap<String, Object>>() {
@@ -230,7 +250,7 @@ public class DbUser extends DbItem<User> {
                 for(DataSnapshot child : dataSnapshot.getChildren()) {
                     String serviceKey = child.getKey();
                     String serviceUsersPath = String.format("service_users/%s/%s", serviceKey, userKey);
-                    String lookupPath = String.format("user_service_lookup/%s/%s", serviceKey, userKey);
+                    String lookupPath = String.format("user_services_lookup/%s/%s", serviceKey, userKey);
                     pathMap.put(serviceUsersPath, null);
                     pathMap.put(lookupPath, null);
                 }
@@ -249,6 +269,14 @@ public class DbUser extends DbItem<User> {
                 listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
             }
         });
+    }
+
+    public static void getServicesProvided(@NonNull ServiceProvider provider, @NonNull AsyncValueEventListener<Service> listener){
+        if(provider.getKey() == null || provider.getKey().isEmpty()){
+            throw new InvalidDataException("Null or Empty Key");
+        }
+
+        DbUtil.getItemsRelational(DbUtil.DataType.USER_SERVICES, provider.getKey(), listener);
     }
 
 }

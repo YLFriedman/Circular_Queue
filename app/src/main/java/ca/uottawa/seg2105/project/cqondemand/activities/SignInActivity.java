@@ -172,18 +172,6 @@ public class SignInActivity extends AppCompatActivity {
         });
     }
 
-    public void onUpdateServiceTestClick(View view){
-        DbService.deleteServiceRelational("service_delete", new AsyncActionEventListener() {
-            @Override
-            public void onSuccess() {
 
-            }
-
-            @Override
-            public void onFailure(@NonNull AsyncEventFailureReason reason) {
-
-            }
-        });
-    }
 
 }

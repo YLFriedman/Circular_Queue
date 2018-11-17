@@ -19,6 +19,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 public class DbService extends DbItem<Service> {
 
@@ -64,13 +65,13 @@ public class DbService extends DbItem<Service> {
             @Override
             public void onSuccess(@NonNull Service item) {
                 // Success Condition: The only service with this name is the service being updated
-                if (service.getKey().equals(item.getKey())) { DbUtil.updateItem(service, listener); }
+                if (service.getKey().equals(item.getKey())) { multiPathUpdate(service, listener); }
                 else if (null != listener) { listener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS); }
             }
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 // Success Condition: Name is not in use
-                if (AsyncEventFailureReason.DOES_NOT_EXIST == reason) { DbUtil.updateItem(service, listener); }
+                if (AsyncEventFailureReason.DOES_NOT_EXIST == reason) { multiPathUpdate(service, listener); }
                 else if (null != listener) { listener.onFailure(reason); }
             }
         });
@@ -78,7 +79,7 @@ public class DbService extends DbItem<Service> {
 
     public static void deleteService(@NonNull Service service, @Nullable AsyncActionEventListener listener) {
         if (null == service.getKey() || service.getKey().isEmpty()) { throw new IllegalArgumentException("A service object with a key is required. Unable to delete from the database without the key."); }
-        DbUtil.deleteItem(service, listener);
+        deleteServiceRelational(service, listener);
     }
 
     public static void getService(@NonNull String key, @NonNull AsyncSingleValueEventListener<Service> listener) {
@@ -112,40 +113,29 @@ public class DbService extends DbItem<Service> {
     }
 
 
-    public static void getServicesByProvider(String providerID, @NonNull final AsyncValueEventListener<Service> listener) {
-        DbUtil.getItemsRelational(DbUtil.DataType.USER_SERVICES, DbUtil.DataType.SERVICE, providerID, listener);
+    public static void getProvidersByService(@NonNull Service service, @NonNull final AsyncValueEventListener<Service> listener) {
+        if(service.getKey() == null || service.getKey().isEmpty()){
+            throw new InvalidDataException("Null or Empty Key");
+        }
+        DbUtil.getItemsRelational(DbUtil.DataType.SERVICE_USERS, service.getKey(), listener);
     }
 
-    public static void updateServiceRelational(final Service newService, final String serviceKey, final AsyncActionEventListener listener){
-        AsyncSingleValueEventListener<HashMap<String, Object>> mapListener = new AsyncSingleValueEventListener<HashMap<String, Object>>() {
-            @Override
-            public void onSuccess(HashMap<String, Object> data) {
-                DbService updatedService = new DbService(newService);
-                data.put(String.format("services/%s", serviceKey), updatedService);
-                FirebaseDatabase.getInstance().getReference().updateChildren(data);
-                listener.onSuccess();
-            }
-            @Override
-            public void onFailure(AsyncEventFailureReason reason) {
-                listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
-            }
-        };
-        createUpdateMap(newService, serviceKey, mapListener);
-    }
 
-    private static void createUpdateMap(final Service newService, final String serviceKey, final AsyncSingleValueEventListener<HashMap<String, Object>> listener) {
+
+    private static void multiPathUpdate(final Service service, final AsyncActionEventListener listener) {
         final HashMap<String, Object> pathMap = new HashMap<>();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("user_service_lookup").child(serviceKey);
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("user_service_lookup").child(service.getKey());
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot child : dataSnapshot.getChildren()){
-                    DbService updatedService = new DbService(newService);
+                    DbService updatedService = new DbService(service);
                     String userKey = child.getKey();
-                    String path = String.format("user_services/%s/%s", userKey, serviceKey);
+                    String path = String.format("user_services/%s/%s", userKey, service.getKey());
                     pathMap.put(path, updatedService);
                 }
-                listener.onSuccess(pathMap);
+                pathMap.put(String.format("services/%s", service.getKey()),service);
+                DbUtilRelational.multiPathUpdate(pathMap, listener);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -175,22 +165,10 @@ public class DbService extends DbItem<Service> {
         });
     }
 
-    public static void deleteServiceRelational(final String serviceKey, final AsyncActionEventListener listener){
-        AsyncSingleValueEventListener<HashMap<String, Object>> mapListener = new AsyncSingleValueEventListener<HashMap<String, Object>>() {
-            @Override
-            public void onSuccess(@NonNull HashMap<String, Object> item) {
-                FirebaseDatabase.getInstance().getReference().updateChildren(item);
-                listener.onSuccess();
-            }
-            @Override
-            public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                listener.onFailure(reason);
-            }
-        };
-        createDeletionMap(serviceKey, mapListener);
-    }
 
-    private static void createDeletionMap(final String serviceKey, final AsyncSingleValueEventListener<HashMap<String, Object>> listener){
+
+    private static void deleteServiceRelational(Service service, final AsyncActionEventListener listener){
+        final String serviceKey = service.getKey();
         final HashMap<String, Object> pathMap = new HashMap<>();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("user_service_lookup").child(serviceKey);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -209,7 +187,7 @@ public class DbService extends DbItem<Service> {
                 pathMap.put(serviceUsersPath, null);
                 pathMap.put(lookupPathPrimary, null);
                 pathMap.put(serviceMainPath, null);
-                listener.onSuccess(pathMap);
+                DbUtilRelational.multiPathUpdate(pathMap, listener);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {

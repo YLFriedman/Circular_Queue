@@ -49,6 +49,18 @@ public class FieldValidation {
         return !name.matches(ILLEGAL_PERSON_NAME_CHARS_REGEX);
     }
 
+    public static boolean streetNameIsValid(String name) {
+        return nameIsValid(name);
+    }
+
+    public static boolean cityNameIsValid(String name) {
+        return nameIsValid(name);
+    }
+
+    public static boolean countryNameIsValid(String name) {
+        return nameIsValid(name);
+    }
+
     public static boolean emailIsValid(CharSequence email) {
         if (null == email || email.toString().isEmpty()) { return false; }
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
