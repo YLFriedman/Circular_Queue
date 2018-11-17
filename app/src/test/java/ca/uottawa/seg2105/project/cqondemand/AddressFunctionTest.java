@@ -25,7 +25,7 @@ public class AddressFunctionTest {
 
     @Test
     public void validate_ConstructorKey() {
-        Address testAddress = new Address("111","2A", 12, "Bullvue", "Ottawa", "Canada", "K0A1A0");
+        Address testAddress = new Address("111",234, "A Street", "Bullvue", "Canada", "K0A1A0");
         assertEquals("Service getter Failed - unit", "111", testAddress.getKey());
         assertEquals("Service getter Failed - unit", "2A", testAddress.getUnit());
         assertEquals("Service getter Failed - streetNumber", 12, testAddress.getStreetNumber());
