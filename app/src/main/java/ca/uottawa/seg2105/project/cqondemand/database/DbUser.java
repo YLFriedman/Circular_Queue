@@ -36,6 +36,7 @@ public class DbUser extends DbItem<User> {
     public boolean licensed;
     public String phone_number;
     public String company_name;
+    public String description;
 
     public DbUser() {}
 
@@ -54,6 +55,7 @@ public class DbUser extends DbItem<User> {
             company_name = provider.getCompanyName();
             phone_number = provider.getPhoneNumber();
             licensed = provider.isLicensed();
+            description = provider.getDescription();
         }
     }
 
@@ -61,7 +63,7 @@ public class DbUser extends DbItem<User> {
     public User toDomainObj() {
         if (User.parseType(type) == User.Types.SERVICE_PROVIDER) {
             if (null == address) { throw new IllegalArgumentException("The address cannot be null"); }
-            return new ServiceProvider(retrieveKey(), first_name, last_name, username, email, password, company_name, licensed, phone_number, address.toDomainObj());
+            return new ServiceProvider(retrieveKey(), first_name, last_name, username, email, password, company_name, licensed, phone_number, address.toDomainObj(), description);
         }
         return new User(retrieveKey(), first_name, last_name, username, email, User.parseType(type), password);
     }

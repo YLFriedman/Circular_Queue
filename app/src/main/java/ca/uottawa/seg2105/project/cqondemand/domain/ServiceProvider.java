@@ -1,6 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand.domain;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 
@@ -14,8 +15,10 @@ public class ServiceProvider extends User {
 
     protected Address address;
 
+    protected String description;
+
     public ServiceProvider(@NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull String pass,
-                           @NonNull String companyName, boolean licenced, @NonNull String phoneNumber, @NonNull Address address) {
+                           @NonNull String companyName, boolean licenced, @NonNull String phoneNumber, @NonNull Address address, String description) {
 
         super(firstName, lastName, username, email, Types.SERVICE_PROVIDER, pass);
 
@@ -23,6 +26,7 @@ public class ServiceProvider extends User {
         this.licensed = licenced;
         this.phoneNumber = phoneNumber;
         this.address = address;
+        this.description = description;
     }
 
     /**
@@ -39,7 +43,7 @@ public class ServiceProvider extends User {
      * @param address
      */
     public ServiceProvider(@NonNull String key, @NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull String pass,
-                           @NonNull String companyName, boolean licenced, @NonNull String phoneNumber, @NonNull Address address) {
+                           @NonNull String companyName, boolean licenced, @NonNull String phoneNumber, @NonNull Address address, @Nullable String description) {
 
         super(key, firstName, lastName, username, email, Types.SERVICE_PROVIDER, pass);
 
@@ -47,6 +51,7 @@ public class ServiceProvider extends User {
         this.licensed = licenced;
         this.phoneNumber = phoneNumber;
         this.address = address;
+        this.description = description;
     }
 
 
@@ -61,5 +66,9 @@ public class ServiceProvider extends User {
      * @return Address object at index 0 of address array list
      */
     public Address getAddress(){ return address; }
+
+    public String getDescription(){
+        return description;
+    }
 
 }

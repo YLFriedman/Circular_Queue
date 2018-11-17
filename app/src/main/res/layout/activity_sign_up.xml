@@ -146,6 +146,14 @@
                     android:hint="@string/phone_number"
                     android:inputType="phone" />
 
+                <EditText
+                    android:id="@+id/field_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/description"
+                    android:inputType="textPersonName" />
+
                 <Switch
                     android:id="@+id/switch_licensed"
                     style="@style/input_field"
