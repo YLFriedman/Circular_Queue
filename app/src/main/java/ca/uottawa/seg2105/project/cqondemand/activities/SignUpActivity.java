@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -16,6 +15,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import ca.uottawa.seg2105.project.cqondemand.adapters.SpinnerAdapter;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.domain.Address;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
@@ -68,6 +68,7 @@ public class SignUpActivity extends AppCompatActivity {
     protected String phoneNumber;
     protected String unit;
     protected String streetNumber;
+    protected int streetNumberInt;
     protected String streetName;
     protected String city;
     protected String province;
@@ -112,20 +113,23 @@ public class SignUpActivity extends AppCompatActivity {
         Intent intent = getIntent();
         field_username.setText(intent.getStringExtra("username"));
         // Configure the user type selection spinner
-        spinner_user_type.setAdapter(new ArrayAdapter<User.Types>(getApplicationContext(), R.layout.spinner_item_title, new User.Types[]{ User.Types.HOMEOWNER, User.Types.SERVICE_PROVIDER }));
+        User.Types[] userTypes = new User.Types[]{ null, User.Types.HOMEOWNER, User.Types.SERVICE_PROVIDER };
+        spinner_user_type.setAdapter(new SpinnerAdapter<User.Types>(getApplicationContext(), R.layout.spinner_item_title, getString(R.string.select_account_type), userTypes));
         spinner_user_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (0 == position) { setScreen(Screen.FIELDS_1, true); }
-                else { setScreen(Screen.FIELDS_1, false); }
+                if (parent.getItemAtPosition(position) == User.Types.SERVICE_PROVIDER) { setScreen(Screen.FIELDS_1, false); }
+                else { setScreen(Screen.FIELDS_1, true); }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) { }
         });
         // Configure the province selection spinner
-        String[] provinces = { "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador", "Northwest Territories",
+        String[] provinces = { null, "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador", "Northwest Territories",
                 "Nova Scotia", "Nunavut", "Ontario", "Prince Edward Island", "Quebec", "Saskatchewan", "Yukon" };
-        spinner_province.setAdapter(new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item_title, provinces));
+        spinner_province.setAdapter(new SpinnerAdapter<String>(getApplicationContext(), R.layout.spinner_item_title, getString(R.string.select_province), provinces));
+
+        testMode();
     }
 
     @Override
@@ -188,7 +192,7 @@ public class SignUpActivity extends AppCompatActivity {
             return false;
         }
 
-        if (!FieldValidation.nameIsValid(firstName)) {
+        if (!FieldValidation.personNameIsValid(firstName)) {
             if (username.isEmpty()) { field_first_name.setError(getString(R.string.empty_first_name_error)); }
             else { field_first_name.setError(getString(R.string.invalid_first_name_error)); }
             field_first_name.requestFocus();
@@ -196,7 +200,7 @@ public class SignUpActivity extends AppCompatActivity {
             return false;
         }
 
-        if (!FieldValidation.nameIsValid(lastName)) {
+        if (!FieldValidation.personNameIsValid(lastName)) {
             if (username.isEmpty()) { field_last_name.setError(getString(R.string.empty_last_name_error)); }
             else { field_last_name.setError(getString(R.string.invalid_last_name_error)); }
             field_last_name.requestFocus();
@@ -245,13 +249,13 @@ public class SignUpActivity extends AppCompatActivity {
         streetNumber = field_street_number.getText().toString().trim();
         streetName = field_street_name.getText().toString().trim();
         city = field_city.getText().toString().trim();
-        province = spinner_province.getSelectedItem().toString();
+        province = spinner_province.getSelectedItem() == null ? "" : spinner_province.getSelectedItem().toString();
         country = field_country.getText().toString().trim();
-        postalCode = field_postal.getText().toString().trim();
+        postalCode = field_postal.getText().toString().trim().toUpperCase();
 
-        if (!FieldValidation.nameIsValid(companyName)) {
+        if (!FieldValidation.companyNameIsValid(companyName)) {
             if (companyName.isEmpty()) { field_company_name.setError(getString(R.string.empty_company_name_error)); }
-            else { field_company_name.setError(getString(R.string.invalid_company_name_error)); }
+            else { field_company_name.setError(String.format(getString(R.string.chars_allowed_template), FieldValidation.COMPANY_NAME_CHARS)); }
             field_company_name.requestFocus();
             field_company_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return false;
@@ -265,16 +269,23 @@ public class SignUpActivity extends AppCompatActivity {
             return false;
         }
 
-        if (!FieldValidation.unitNameIsValid(unit)) {
-            field_unit.setError(getString(R.string.unit_error));
+        if (!FieldValidation.unitIsValid(unit)) {
+            field_unit.setError(String.format(getString(R.string.chars_allowed_template), FieldValidation.ADDRESS_UNIT_CHARS));
             field_unit.requestFocus();
             field_unit.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return false;
         }
 
-        if (!FieldValidation.numberIsValid(streetNumber)) {
-            if (streetNumber.isEmpty()) { field_street_number.setError(getString(R.string.empty_street_number_error)); }
-            else { field_street_number.setError(getString(R.string.invalid_street_number_error)); }
+        if (streetNumber.isEmpty()) {
+            field_street_number.setError(getString(R.string.empty_street_number_error));
+            field_street_number.requestFocus();
+            field_street_number.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
+            return false;
+        }
+        try {
+            streetNumberInt = Integer.parseInt(streetNumber);
+        } catch (NumberFormatException e) {
+            field_street_number.setError(getString(R.string.invalid_street_number_error));
             field_street_number.requestFocus();
             field_street_number.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return false;
@@ -282,7 +293,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         if (!FieldValidation.streetNameIsValid(streetName)) {
             if (streetName.isEmpty()) { field_street_name.setError(getString(R.string.empty_street_name_error)); }
-            else { field_street_name.setError(getString(R.string.invalid_street_name_error)); }
+            else { field_street_name.setError(String.format(getString(R.string.chars_allowed_template), FieldValidation.STREET_NAME_CHARS)); }
             field_street_name.requestFocus();
             field_street_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return false;
@@ -290,14 +301,14 @@ public class SignUpActivity extends AppCompatActivity {
 
         if (!FieldValidation.cityNameIsValid(city)) {
             if (city.isEmpty()) { field_city.setError(getString(R.string.empty_city_name_error)); }
-            else { field_city.setError(getString(R.string.invalid_city_name_error)); }
+            else { field_city.setError(String.format(getString(R.string.chars_allowed_template), FieldValidation.CITY_NAME_CHARS)); }
             field_city.requestFocus();
             field_city.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return false;
         }
 
         // Check valid province spinner selection
-        if (null == province) {
+        if (province.isEmpty()) {
             ((TextView)spinner_province.getSelectedView()).setError(getString(R.string.please_select_province_territory));
             field_province_error.setError(getString(R.string.please_select_province_territory));
             field_province_error.requestFocus();
@@ -307,7 +318,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         if (!FieldValidation.countryNameIsValid(country)) {
             if (country.isEmpty()) { field_country.setError(getString(R.string.empty_country_name_error)); }
-            else { field_country.setError(getString(R.string.invalid_country_name_error)); }
+            else { field_country.setError(String.format(getString(R.string.chars_allowed_template), FieldValidation.COUNTRY_NAME_CHARS)); }
             field_country.requestFocus();
             field_country.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return false;
@@ -330,7 +341,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         User newUser = null;
         if (User.Types.SERVICE_PROVIDER == userType) {
-            Address address = new Address(unit, Integer.parseInt(streetNumber), streetName, city, province, country, postalCode);
+            Address address = new Address(unit, streetNumberInt, streetName, city, province, country, postalCode);
             newUser = new ServiceProvider(firstName, lastName, username, email, password, companyName, licensed, phoneNumber, address);
         } else {
             newUser = new User(firstName, lastName, username, email, userType, password);
@@ -370,6 +381,21 @@ public class SignUpActivity extends AppCompatActivity {
         if (fields_1AreValid()) {
             setScreen(Screen.FIELDS_2, true);
         }
+    }
+
+    private void testMode() {
+        field_username.setText("test");
+        field_first_name.setText("Test");
+        field_last_name.setText("User");
+        field_email.setText("test@email.com");
+        field_password.setText("cqpass");
+        field_password_confirm.setText("cqpass");
+    }
+
+    public void onTestlick(View view) {
+        String province = spinner_province.getSelectedItem() == null ? "null" : spinner_province.getSelectedItem().toString();
+        String userType = spinner_user_type.getSelectedItem() == null ? "null" : spinner_user_type.getSelectedItem().toString();
+        Toast.makeText(getApplicationContext(), "userType: " + userType + "\nprovince: " + province, Toast.LENGTH_LONG).show();
     }
 
 }

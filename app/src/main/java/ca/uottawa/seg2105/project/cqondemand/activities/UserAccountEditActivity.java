@@ -62,7 +62,7 @@ public class UserAccountEditActivity extends SignedInActivity {
             return;
         }
 
-        if (!FieldValidation.nameIsValid(firstName)) {
+        if (!FieldValidation.personNameIsValid(firstName)) {
             if (username.isEmpty()) { field_first_name.setError(getString(R.string.empty_first_name_error)); }
             else { field_first_name.setError(getString(R.string.invalid_first_name_error)); }
             field_first_name.requestFocus();
@@ -70,7 +70,7 @@ public class UserAccountEditActivity extends SignedInActivity {
             return;
         }
 
-        if (!FieldValidation.nameIsValid(lastName)) {
+        if (!FieldValidation.personNameIsValid(lastName)) {
             if (username.isEmpty()) { field_last_name.setError(getString(R.string.empty_last_name_error)); }
             else { field_last_name.setError(getString(R.string.invalid_last_name_error)); }
             field_last_name.requestFocus();

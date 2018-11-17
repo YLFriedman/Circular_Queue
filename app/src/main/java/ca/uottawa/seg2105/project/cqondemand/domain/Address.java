@@ -19,7 +19,7 @@ public class Address {
         this.city = city;
         this.country = country;
         this.province = province;
-        this.postalCode = postalCode;
+        this.postalCode = postalCode.length() == 7 ? postalCode : postalCode.substring(0, 3) + " " + postalCode.substring(4);
     }
 
     public String getUnit() {

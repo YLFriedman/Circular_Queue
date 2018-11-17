@@ -1,11 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand.domain;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
-import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
-import ca.uottawa.seg2105.project.cqondemand.database.DbUtil;
-import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation.PasswordValidationResult;
@@ -55,17 +51,17 @@ public class User {
      * @param username The Username (Used as a unique identifier)
      * @param email The user's email address
      * @param type The type of the account
-     * @param pass The user's password
+     * @param password The user's password
      */
-    public User(@NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull Types type, @NonNull String pass) {
+    public User(@NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull Types type, @NonNull String password) {
         if (!FieldValidation.usernameIsValid(username)) { throw new InvalidDataException("Invalid username. " +
-                FieldValidation.ILLEGAL_USERNAME_CHARS_MSG); }
-        PasswordValidationResult passwordValRes = FieldValidation.validatePassword(username, pass, pass);
+                FieldValidation.ILLEGAL_USERNAME_CHARS); }
+        PasswordValidationResult passwordValRes = FieldValidation.validatePassword(username, password, password);
         if (PasswordValidationResult.VALID != passwordValRes) {
             throw new InvalidDataException("Invalid password. " + passwordValRes.toString());
         }
-        if (!FieldValidation.nameIsValid(firstName)) { throw new InvalidDataException("Invalid First Name. ");  }
-        if (!FieldValidation.nameIsValid(lastName)) { throw new InvalidDataException("Invalid Last Name. ");  }
+        if (!FieldValidation.personNameIsValid(firstName)) { throw new InvalidDataException("Invalid First Name. ");  }
+        if (!FieldValidation.personNameIsValid(lastName)) { throw new InvalidDataException("Invalid Last Name. ");  }
         if (!FieldValidation.emailIsValid(email)) { throw new InvalidDataException("Invalid Email Address. ");  }
 
         this.firstName = firstName;
@@ -73,27 +69,12 @@ public class User {
         this.username = username;
         this.email = email;
         this.type = type;
-        this.password = pass;
+        this.password = password;
     }
 
-    public User(@NonNull String key, @NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull Types type, @NonNull String pass) {
-        if (!FieldValidation.usernameIsValid(username)) { throw new InvalidDataException("Invalid username. " +
-                FieldValidation.ILLEGAL_USERNAME_CHARS_MSG); }
-        PasswordValidationResult passwordValRes = FieldValidation.validatePassword(username, pass, pass);
-        if (PasswordValidationResult.VALID != passwordValRes) {
-            throw new InvalidDataException("Invalid password. " + passwordValRes.toString());
-        }
-        if (!FieldValidation.nameIsValid(firstName)) { throw new InvalidDataException("Invalid First Name. ");  }
-        if (!FieldValidation.nameIsValid(lastName)) { throw new InvalidDataException("Invalid Last Name. ");  }
-        if (!FieldValidation.emailIsValid(email)) { throw new InvalidDataException("Invalid Email Address. ");  }
-
+    public User(@NonNull String key, @NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull Types type, @NonNull String password) {
+        this(firstName, lastName, username, email, type, password);
         this.key = key;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.username = username;
-        this.email = email;
-        this.type = type;
-        this.password = pass;
     }
 
     public String getKey() {

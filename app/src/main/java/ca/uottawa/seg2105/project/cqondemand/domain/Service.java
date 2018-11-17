@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
-import ca.uottawa.seg2105.project.cqondemand.database.DbUtil;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
@@ -28,7 +27,7 @@ public class Service {
      */
     public Service(@NonNull String name, int rate, @NonNull String categoryID) {
         if (!FieldValidation.serviceNameIsValid(name)) { throw new InvalidDataException("Invalid service name. " +
-                FieldValidation.ILLEGAL_SERVICE_NAME_CHARS_MSG); }
+                FieldValidation.SERVICE_NAME_CHARS); }
         if (rate < 0) { throw new InvalidDataException("Rate cannot be negative. "); }
         this.name = name;
         this.rate = rate;
@@ -37,7 +36,7 @@ public class Service {
 
     public Service(@NonNull String key, @NonNull String name, int rate, @NonNull String categoryID) {
         if (!FieldValidation.serviceNameIsValid(name)) { throw new InvalidDataException("Invalid service name. " +
-                FieldValidation.ILLEGAL_SERVICE_NAME_CHARS_MSG); }
+                FieldValidation.SERVICE_NAME_CHARS); }
         if (rate < 0) { throw new InvalidDataException("Rate cannot be negative. "); }
         this.key = key;
         this.name = name;

@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation.PasswordValidationResult;
-import static ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation.usernameIsValid;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -48,37 +48,37 @@ public class FieldValidationTest {
     @Test
     public void person_name_validation() {
         // Illegal Name Characters: 0-9 < > ] [ } { \ / ! @ # $ % ^ & * _ + = ) ( : ;
-        assertFalse("nameIsValid failed - empty string", FieldValidation.nameIsValid(""));
-        assertFalse("nameIsValid failed - number", FieldValidation.nameIsValid("Ethan4"));
-        assertFalse("nameIsValid failed - character: <", FieldValidation.nameIsValid("Jam<s"));
-        assertFalse("nameIsValid failed - character: >", FieldValidation.nameIsValid("Samu>l"));
-        assertFalse("nameIsValid failed - character: ]", FieldValidation.nameIsValid("Bru]e"));
-        assertFalse("nameIsValid failed - character: [", FieldValidation.nameIsValid("S[mon"));
-        assertFalse("nameIsValid failed - character: }", FieldValidation.nameIsValid("Ash}ey"));
-        assertFalse("nameIsValid failed - character: {", FieldValidation.nameIsValid("{arl"));
-        assertFalse("nameIsValid failed - character: \\", FieldValidation.nameIsValid("\\iam"));
-        assertFalse("nameIsValid failed - character: /", FieldValidation.nameIsValid("/vana"));
-        assertFalse("nameIsValid failed - character: !", FieldValidation.nameIsValid("Exc!aim"));
-        assertFalse("nameIsValid failed - character: @", FieldValidation.nameIsValid("A@ron"));
-        assertFalse("nameIsValid failed - character: #", FieldValidation.nameIsValid("S#a"));
-        assertFalse("nameIsValid failed - character: $", FieldValidation.nameIsValid("Bill$"));
-        assertFalse("nameIsValid failed - character: %", FieldValidation.nameIsValid("Pet%r"));
-        assertFalse("nameIsValid failed - character: ^", FieldValidation.nameIsValid("Ush^e"));
-        assertFalse("nameIsValid failed - character: &", FieldValidation.nameIsValid("&mmoy"));
-        assertFalse("nameIsValid failed - character: *", FieldValidation.nameIsValid("Steph*nie"));
-        assertFalse("nameIsValid failed - character: _", FieldValidation.nameIsValid("Pau_"));
-        assertFalse("nameIsValid failed - character: +", FieldValidation.nameIsValid("+heresa"));
-        assertFalse("nameIsValid failed - character: =", FieldValidation.nameIsValid("Elizab=th"));
-        assertFalse("nameIsValid failed - character: )", FieldValidation.nameIsValid("Mad)son"));
-        assertFalse("nameIsValid failed - character: (", FieldValidation.nameIsValid("(raig"));
-        assertFalse("nameIsValid failed - character: :", FieldValidation.nameIsValid(":sabelle"));
-        assertFalse("nameIsValid failed - character: ;", FieldValidation.nameIsValid("Sabr;na"));
-        assertTrue("nameIsValid failed - valid name: '", FieldValidation.nameIsValid("D' Amico"));
-        assertTrue("nameIsValid failed - valid name2: -", FieldValidation.nameIsValid("My-Dashed-Name"));
+        assertFalse("personNameIsValid failed - empty string", FieldValidation.personNameIsValid(""));
+        assertFalse("personNameIsValid failed - number", FieldValidation.personNameIsValid("Ethan4"));
+        assertFalse("personNameIsValid failed - character: <", FieldValidation.personNameIsValid("Jam<s"));
+        assertFalse("personNameIsValid failed - character: >", FieldValidation.personNameIsValid("Samu>l"));
+        assertFalse("personNameIsValid failed - character: ]", FieldValidation.personNameIsValid("Bru]e"));
+        assertFalse("personNameIsValid failed - character: [", FieldValidation.personNameIsValid("S[mon"));
+        assertFalse("personNameIsValid failed - character: }", FieldValidation.personNameIsValid("Ash}ey"));
+        assertFalse("personNameIsValid failed - character: {", FieldValidation.personNameIsValid("{arl"));
+        assertFalse("personNameIsValid failed - character: \\", FieldValidation.personNameIsValid("\\iam"));
+        assertFalse("personNameIsValid failed - character: /", FieldValidation.personNameIsValid("/vana"));
+        assertFalse("personNameIsValid failed - character: !", FieldValidation.personNameIsValid("Exc!aim"));
+        assertFalse("personNameIsValid failed - character: @", FieldValidation.personNameIsValid("A@ron"));
+        assertFalse("personNameIsValid failed - character: #", FieldValidation.personNameIsValid("S#a"));
+        assertFalse("personNameIsValid failed - character: $", FieldValidation.personNameIsValid("Bill$"));
+        assertFalse("personNameIsValid failed - character: %", FieldValidation.personNameIsValid("Pet%r"));
+        assertFalse("personNameIsValid failed - character: ^", FieldValidation.personNameIsValid("Ush^e"));
+        assertFalse("personNameIsValid failed - character: &", FieldValidation.personNameIsValid("&mmoy"));
+        assertFalse("personNameIsValid failed - character: *", FieldValidation.personNameIsValid("Steph*nie"));
+        assertFalse("personNameIsValid failed - character: _", FieldValidation.personNameIsValid("Pau_"));
+        assertFalse("personNameIsValid failed - character: +", FieldValidation.personNameIsValid("+heresa"));
+        assertFalse("personNameIsValid failed - character: =", FieldValidation.personNameIsValid("Elizab=th"));
+        assertFalse("personNameIsValid failed - character: )", FieldValidation.personNameIsValid("Mad)son"));
+        assertFalse("personNameIsValid failed - character: (", FieldValidation.personNameIsValid("(raig"));
+        assertFalse("personNameIsValid failed - character: :", FieldValidation.personNameIsValid(":sabelle"));
+        assertFalse("personNameIsValid failed - character: ;", FieldValidation.personNameIsValid("Sabr;na"));
+        assertTrue("personNameIsValid failed - valid name: '", FieldValidation.personNameIsValid("D' Amico"));
+        assertTrue("personNameIsValid failed - valid name2: -", FieldValidation.personNameIsValid("My-Dashed-Name"));
     }
 
     @Test
-    public void service_Name_Validation() {
+    public void service_name_validation() {
         assertTrue("name validation failed - apostrophe returns invalid", FieldValidation.serviceNameIsValid("'"));
         assertTrue("name validation failed - space returns invalid", FieldValidation.serviceNameIsValid(" ") );
         assertTrue("name validation failed - alphabet return invalid", FieldValidation.serviceNameIsValid(alphabet));
@@ -89,7 +89,7 @@ public class FieldValidationTest {
     }
 
     @Test
-    public void category_Name_Validation() {
+    public void category_name_validation() {
         assertTrue("name validation failed - apostrophe returns invalid", FieldValidation.categoryNameIsValid("'"));
         assertTrue("name validation failed - space returns invalid", FieldValidation.categoryNameIsValid(" ") );
         assertTrue("name validation failed - alphabet return invalid", FieldValidation.serviceNameIsValid(alphabet));
@@ -97,6 +97,26 @@ public class FieldValidationTest {
         assertFalse("name validation failed - numbers return valid", FieldValidation.categoryNameIsValid(numbers));
         assertFalse("name validation failed - tab return valid", FieldValidation.categoryNameIsValid("\t"));
         assertFalse("name validation failed - symbols return valid", FieldValidation.serviceNameIsValid(stdSpecialChars));
+    }
+
+    @Test
+    public void address_unit_validation() {
+        assertTrue("address unit validation failed - empty", FieldValidation.unitIsValid(""));
+        assertTrue("address unit validation failed - numbers", FieldValidation.unitIsValid(numbers));
+        assertTrue("address unit validation failed - alphabet", FieldValidation.unitIsValid(alphabet));
+        assertFalse("address unit validation failed - stdSpecialChars", FieldValidation.unitIsValid(stdSpecialChars));
+    }
+
+    @Test
+    public void postal_code_validation() {
+        assertFalse("address unit validation failed - empty", FieldValidation.postalCodeIsValid(""));
+        assertFalse("address unit validation failed - lower case", FieldValidation.postalCodeIsValid("k1s 2F5"));
+        assertFalse("address unit validation failed - Illegal Characters: DFI", FieldValidation.postalCodeIsValid("D1F 2I2"));
+        assertFalse("address unit validation failed - Illegal Characters: DFI", FieldValidation.postalCodeIsValid("D1F 2I2"));
+        assertFalse("address unit validation failed - Start with W", FieldValidation.postalCodeIsValid("W1A 2A2"));
+        assertFalse("address unit validation failed - Start with Z", FieldValidation.postalCodeIsValid("Z1A 2A2"));
+        assertTrue("address unit validation failed - valid", FieldValidation.postalCodeIsValid("K1S 2L5"));
+        assertTrue("address unit validation failed - valid", FieldValidation.postalCodeIsValid("K1S2L5"));
     }
 
 }

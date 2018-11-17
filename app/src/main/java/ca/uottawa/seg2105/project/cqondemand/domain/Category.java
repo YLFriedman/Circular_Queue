@@ -18,14 +18,14 @@ public class Category {
      */
     public Category(@NonNull String name) {
         if (!FieldValidation.categoryNameIsValid(name)) {
-            throw new InvalidDataException("Invalid Category Name. " + FieldValidation.ILLEGAL_CATEGORY_NAME_CHARS_MSG);
+            throw new InvalidDataException("Invalid Category Name. " + FieldValidation.CATEGORY_NAME_CHARS);
         }
         this.name = name;
     }
 
     public Category(@NonNull String key, @NonNull String name) {
         if (!FieldValidation.categoryNameIsValid(name)) {
-            throw new InvalidDataException("Invalid Category Name. " + FieldValidation.ILLEGAL_CATEGORY_NAME_CHARS_MSG);
+            throw new InvalidDataException("Invalid Category Name. " + FieldValidation.CATEGORY_NAME_CHARS);
         }
         this.key = key;
         this.name = name;
