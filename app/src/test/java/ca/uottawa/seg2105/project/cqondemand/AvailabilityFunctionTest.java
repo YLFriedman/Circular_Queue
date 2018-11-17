@@ -1,14 +1,10 @@
 package ca.uottawa.seg2105.project.cqondemand;
 
-import android.support.annotation.NonNull;
-
 import org.junit.Test;
-
-import java.util.ArrayList;
-
 import ca.uottawa.seg2105.project.cqondemand.domain.Availability;
-
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class AvailabilityFunctionTest {
     @Test
@@ -52,16 +48,20 @@ public class AvailabilityFunctionTest {
 
     @Test
     public void validate_Equals(){
-        Availability testAvailability1 = new Availability("111", Availability.parseDay("SUNDAY"), 12, 15);
-        Availability testAvailability2 = new Availability("111", Availability.parseDay("TUESDAY"), 13, 14);
-        Availability testAvailability3 = new Availability("210", Availability.parseDay("SUNDAY"), 12, 15);
-        Availability testAvailability4 = new Availability("300", Availability.parseDay("FRIDAY"), 11, 16);
-        Availability testAvailability5 = new Availability( Availability.parseDay("SUNDAY"), 12, 15);
-        assertEquals("Equals validation failed - Same Object", true, testAvailability1.equals(testAvailability1));
-        assertEquals("Equals validation failed - Same Key", true, testAvailability1.equals(testAvailability2));
-        assertEquals("Equals validation failed - Same Key", true, testAvailability1.equals(testAvailability4));
-        assertEquals("Equals validation failed - Same values except key", true, testAvailability1.equals(testAvailability3));
-        assertEquals("Equals validation failed - Different Values", false, testAvailability1.equals(testAvailability4));
-        assertEquals("Equals validation failed - Different Objects", false, testAvailability1.equals("Hello"));
+        Availability testAvailability1 = new Availability("111", Availability.Day.SUNDAY, 12, 15);
+        Availability testAvailability2 = new Availability("111", Availability.Day.TUESDAY, 13, 14);
+        Availability testAvailability3 = new Availability("210", Availability.Day.SUNDAY, 12, 15);
+        Availability testAvailability4 = new Availability("300", Availability.Day.FRIDAY, 11, 16);
+        Availability testAvailability5 = new Availability( Availability.Day.SUNDAY, 12, 15);
+        Availability testAvailability6 = new Availability( Availability.Day.SUNDAY, 12, 15);
+        Availability testAvailability7 = new Availability( Availability.Day.SUNDAY, 15, 16);
+        assertTrue("Equals validation failed - Same Object", testAvailability1.equals(testAvailability1));
+        assertTrue("Equals validation failed - Same Key", testAvailability1.equals(testAvailability2));
+        assertFalse("Equals validation failed - Different Key", testAvailability1.equals(testAvailability4));
+        assertFalse("Equals validation failed - Same values except key", testAvailability1.equals(testAvailability3));
+        assertTrue("Equals validation failed - Same values (No Keys)", testAvailability5.equals(testAvailability6));
+        assertFalse("Equals validation failed - Different Values", testAvailability1.equals(testAvailability4));
+        assertFalse("Equals validation failed - Different Values (No Keys)", testAvailability6.equals(testAvailability7));
+        assertFalse("Equals validation failed - Different Objects", testAvailability1.equals("Hello"));
     }
 }

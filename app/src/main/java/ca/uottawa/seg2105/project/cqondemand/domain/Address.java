@@ -13,13 +13,14 @@ public class Address {
     protected String postalCode;
 
     public Address(@NonNull String unit, @NonNull int streetNumber, @NonNull String street, @NonNull String city, @NonNull String province, @NonNull String country, @NonNull String postalCode) {
-        this.unit = unit;
+        this.unit = unit.toUpperCase();
         this.streetNumber = streetNumber;
         this.street = street;
         this.city = city;
         this.country = country;
         this.province = province;
-        this.postalCode = postalCode.length() == 7 ? postalCode : postalCode.substring(0, 3) + " " + postalCode.substring(4);
+        this.postalCode = postalCode.length() == 7 ? postalCode : (postalCode.substring(0, 3) + " " + postalCode.substring(3));
+        this.postalCode.toUpperCase();
     }
 
     public String getUnit() {
