@@ -7,7 +7,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class AvailabilityFunctionTest {
-    
+
     @Test
     public void validate_ConstructorNoKey() {
         Availability testAvailability = new Availability(Availability.parseDay("SUNDAY"), 12, 15);

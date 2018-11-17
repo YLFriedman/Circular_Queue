@@ -90,6 +90,147 @@
                 android:hint="@string/email"
                 android:inputType="textEmailAddress" />
 
+            <LinearLayout
+                android:id="@+id/fields_2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/field_company_name"
+                    style="@style/input_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:ems="10"
+                    android:hint="@string/company_name"
+                    android:inputType="textPersonName" />
+
+                <EditText
+                    android:id="@+id/field_phone"
+                    style="@style/input_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:ems="10"
+                    android:hint="@string/phone_number"
+                    android:inputType="phone" />
+
+                <Switch
+                    android:id="@+id/switch_licensed"
+                    style="@style/input_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:text="@string/licensed" />
+
+                <TextView
+                    android:id="@+id/txt_title_address"
+                    style="@style/input_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/address" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/field_unit"
+                        style="@style/input_field"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:hint="@string/unit"
+                        android:inputType="text|textNoSuggestions" />
+
+                    <EditText
+                        android:id="@+id/field_street_number"
+                        style="@style/input_field"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:hint="@string/number"
+                        android:inputType="number" />
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/field_street_name"
+                    style="@style/input_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:ems="10"
+                    android:hint="@string/street"
+                    android:inputType="text|textNoSuggestions" />
+
+                <EditText
+                    android:id="@+id/field_city"
+                    style="@style/input_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:ems="10"
+                    android:hint="@string/city"
+                    android:inputType="text|textNoSuggestions" />
+
+                <TextView
+                    android:id="@+id/txt_title_province"
+                    style="@style/input_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/province_territory"
+                    android:textColor="@color/text_secondary_dark" />
+
+                <Spinner
+                    android:id="@+id/spinner_province"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/temp_string_array"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/field_province_error"
+                    android:layout_width="1dp"
+                    android:layout_height="1dp"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="54dp"
+                    android:layout_marginBottom="5dp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:inputType="text"
+                    android:visibility="visible" />
+
+                <EditText
+                    android:id="@+id/field_country"
+                    style="@style/input_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:ems="10"
+                    android:enabled="false"
+                    android:hint="@string/country"
+                    android:inputType="text|textNoSuggestions"
+                    android:text="@string/canada" />
+
+                <EditText
+                    android:id="@+id/field_postal"
+                    style="@style/input_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:ems="10"
+                    android:hint="@string/postal"
+                    android:inputType="text|textNoSuggestions" />
+
+            </LinearLayout>
+
             <Button
                 android:id="@+id/btn_save_user"
                 android:layout_width="match_parent"

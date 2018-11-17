@@ -7,10 +7,13 @@ import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
+import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.R;
@@ -23,6 +26,11 @@ public class UserAccountViewActivity extends SignedInActivity {
     protected TextView txt_username;
     protected TextView txt_full_name;
     protected TextView txt_email;
+    protected TextView txt_company_name;
+    protected TextView txt_phone;
+    protected TextView txt_licensed;
+    protected TextView txt_address;
+    protected LinearLayout service_provider_info;
     protected User currentUser;
 
     @Override
@@ -34,6 +42,11 @@ public class UserAccountViewActivity extends SignedInActivity {
         txt_username = findViewById(R.id.txt_username);
         txt_full_name = findViewById(R.id.txt_full_name);
         txt_email = findViewById(R.id.txt_email);
+        service_provider_info = findViewById(R.id.service_provider_info);
+        txt_company_name = findViewById(R.id.txt_company_name);
+        txt_phone = findViewById(R.id.txt_phone);
+        txt_licensed = findViewById(R.id.txt_licensed);
+        txt_address = findViewById(R.id.txt_address);
     }
 
     @Override
@@ -53,6 +66,7 @@ public class UserAccountViewActivity extends SignedInActivity {
     }
 
     private void setupFields() {
+        service_provider_info.setVisibility(View.GONE);
         if (null == currentUser) {
             txt_account_type.setText("");
             txt_username.setText("");
@@ -63,6 +77,14 @@ public class UserAccountViewActivity extends SignedInActivity {
             txt_username.setText(currentUser.getUsername());
             txt_full_name.setText(String.format(getString(R.string.full_name_template), currentUser.getFirstName(), currentUser.getLastName()));
             txt_email.setText(currentUser.getEmail());
+            if (currentUser instanceof ServiceProvider) {
+                ServiceProvider provider = (ServiceProvider) currentUser;
+                service_provider_info.setVisibility(View.VISIBLE);
+                txt_company_name.setText(provider.getCompanyName());
+                txt_phone.setText(provider.getPhoneNumber());
+                txt_licensed.setText(provider.isLicensed() ? getText(R.string.yes) : getText(R.string.no));
+                txt_address.setText(provider.getAddress().toString());
+            }
         }
     }
 
