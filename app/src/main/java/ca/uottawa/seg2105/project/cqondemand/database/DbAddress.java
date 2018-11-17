@@ -2,15 +2,12 @@ package ca.uottawa.seg2105.project.cqondemand.database;
 
 import android.support.annotation.NonNull;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import ca.uottawa.seg2105.project.cqondemand.domain.Address;
 
 public class DbAddress extends DbItem<Address> {
 
     public String unit;
-    public int street_number;
+    public Long street_number;
     public String street;
     public String city;
     public String country;
@@ -21,34 +18,14 @@ public class DbAddress extends DbItem<Address> {
     DbAddress(Address item) {
         super(item.getKey());
         unit = item.getUnit();
-        street_number = item.getStreetNumber();
+        street_number = (long) item.getStreetNumber();
         street = item.getStreet();
         city = item.getCity();
         country = item.getCountry();
         postal_code = item.getPostalCode();
     }
 
-    DbAddress(Map<String, Object> map){
-        unit = (String) map.get("unit");
-        street_number = ((Long) map.get("street_number")).intValue();
-        street = (String) map.get("street");
-        city = (String) map.get("city");
-        country = (String) map.get("country");
-        postal_code = (String) map.get("postal_code");
-    }
-
     @NonNull
-    public Address toDomainObj() { return new Address(unit, street_number, street, city, country, postal_code); }
-
-    public Map<String, Object> toMap(){
-        Map<String, Object> map = new HashMap<>();
-        map.put("unit", unit);
-        map.put("street_number", street_number);
-        map.put("street", street);
-        map.put("city", city);
-        map.put("country", country);
-        map.put("postal_code", postal_code);
-        return map;
-    }
+    public Address toDomainObj() { return new Address(unit, street_number.intValue(), street, city, country, postal_code); }
 
 }
