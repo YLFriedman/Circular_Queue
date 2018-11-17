@@ -59,7 +59,7 @@ public class AvailabilityFunctionTest {
         Availability testAvailability5 = new Availability( Availability.parseDay("SUNDAY"), 12, 15);
         assertEquals("Equals validation failed - Same Object", true, testAvailability1.equals(testAvailability1));
         assertEquals("Equals validation failed - Same Key", true, testAvailability1.equals(testAvailability2));
-        assertEquals("Equals validation failed - Same Key", true, testAvailability1.equals(testAvailability4));
+        assertEquals("Equals validation failed - No Key", true, testAvailability1.equals(testAvailability5));
         assertEquals("Equals validation failed - Same values except key", true, testAvailability1.equals(testAvailability3));
         assertEquals("Equals validation failed - Different Values", false, testAvailability1.equals(testAvailability4));
         assertEquals("Equals validation failed - Different Objects", false, testAvailability1.equals("Hello"));
