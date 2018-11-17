@@ -26,11 +26,11 @@ public class CategoryFunctionTest {
     public void validate_Equals() {
         Category testCategory1 = new Category("Name");
         Category testCategory2 = new Category("Name");
-        Category testCategory3 = new Category("Name2");
-        Category testCategory4 = new Category("000", "Name3");
+        Category testCategory3 = new Category("NameA");
+        Category testCategory4 = new Category("000", "NameB");
         Category testCategory5 = new Category("111", "Name");
         Category testCategory6 = new Category("111", "Name");
-        Category testCategory7 = new Category("111", "Name2");
+        Category testCategory7 = new Category("111", "NameC");
 
         assertTrue("Equals validation failed - Same Object", testCategory1.equals(testCategory1));
         assertTrue("Equals validation failed - Same Object", testCategory1.equals(testCategory2));
