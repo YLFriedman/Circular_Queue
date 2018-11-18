@@ -46,7 +46,7 @@ public class ServiceListActivity extends SignedInActivity {
     protected User currentUser;
     protected ServiceProvider currentProvider;
     protected DbListenerHandle<?> dbListenerHandle;
-    int icon;
+    int itemActionIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,15 +67,15 @@ public class ServiceListActivity extends SignedInActivity {
         currentUser = State.getState().getCurrentUser();
         State.getState().setCurrentUser(null);
         ActionBar actionBar = getSupportActionBar();
-        // Set the default item icon
-        icon = R.drawable.ic_chevron_right_med_30;
+        // Set the default item itemActionIcon
+        itemActionIcon = R.drawable.ic_chevron_right_med_30;
         // Determine and initialize the mode
         if (currentUser instanceof ServiceProvider) {
             currentProvider = (ServiceProvider) currentUser;
             if (State.getState().getSignedInUser().equals(currentUser)) {
                 mode = Mode.REMOVE_PROVIDER_SERVICES;
                 if (null != actionBar) { actionBar.setTitle(getString(R.string.my_services)); }
-                icon = R.drawable.ic_remove_circle_outline_med_30;
+                itemActionIcon = R.drawable.ic_remove_circle_outline_med_30;
             } else {
                 mode = Mode.LIST_PROVIDER_SERVICES;
             }
@@ -85,7 +85,7 @@ public class ServiceListActivity extends SignedInActivity {
         } else if (State.getState().getSignedInUser() instanceof ServiceProvider) {
             currentProvider = (ServiceProvider) State.getState().getSignedInUser();
             mode = Mode.ADD_PROVIDER_SERVICES;
-            icon = R.drawable.ic_add_med_30;
+            itemActionIcon = R.drawable.ic_add_med_30;
             useCategory = null != currentCategory;
             if (null != actionBar) { actionBar.setTitle(getString(R.string.select_a_service)); }
         }  else {
@@ -96,7 +96,7 @@ public class ServiceListActivity extends SignedInActivity {
         AsyncValueEventListener<Service> listener = new AsyncValueEventListener<Service>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Service> data) {
-                service_list_adapter = new ServiceListAdapter(getApplicationContext(), data, icon, getItemClickListener());
+                service_list_adapter = new ServiceListAdapter(getApplicationContext(), data, itemActionIcon, getItemClickListener());
                 recycler_list.setAdapter(service_list_adapter);
             }
             @Override

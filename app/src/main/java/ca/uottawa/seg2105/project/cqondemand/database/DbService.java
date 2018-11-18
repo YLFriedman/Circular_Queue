@@ -107,12 +107,12 @@ public class DbService extends DbItem<Service> {
     }
 
     public static void getServicesByCategory(@NonNull Category category, @NonNull AsyncValueEventListener<Service> listener) {
-        DbUtil.getItems(DbUtil.DataType.SERVICE, "category_id", category.getKey(), listener);
+        DbUtil.getItems(DbUtil.DataType.SERVICE, "category_key", category.getKey(), listener);
     }
 
     @NonNull
     public static DbListenerHandle<?> getServicesByCategoryLive(@NonNull Category category, @NonNull final AsyncValueEventListener<Service> listener) {
-        return DbUtil.getItemsLive(DbUtil.DataType.SERVICE, "category_id", category.getKey(), listener);
+        return DbUtil.getItemsLive(DbUtil.DataType.SERVICE, "category_key", category.getKey(), listener);
     }
 
     public static void getProvidersByService(@NonNull Service service, @NonNull AsyncValueEventListener<Service> listener) {
