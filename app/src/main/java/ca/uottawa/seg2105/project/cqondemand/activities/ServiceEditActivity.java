@@ -12,12 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
-import ca.uottawa.seg2105.project.cqondemand.database.DbListener;
+import ca.uottawa.seg2105.project.cqondemand.database.DbListenerHandle;
 import ca.uottawa.seg2105.project.cqondemand.database.DbService;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
@@ -26,7 +25,6 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
-import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class ServiceEditActivity extends SignedInActivity {
@@ -34,7 +32,7 @@ public class ServiceEditActivity extends SignedInActivity {
     protected Spinner spinner_categories;
     protected String categoryName;
     protected Service currentService;
-    protected DbListener<?> dbListener;
+    protected DbListenerHandle<?> dbListenerHandle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +46,7 @@ public class ServiceEditActivity extends SignedInActivity {
         if (null != currentService) {
             field_service_name.setText(currentService.getName());
             field_rate.setText(String.valueOf(currentService.getRate()));
-            dbListener = DbCategory.getCategoriesLive(new AsyncValueEventListener<Category>() {
+            dbListenerHandle = DbCategory.getCategoriesLive(new AsyncValueEventListener<Category>() {
                 @Override
                 public void onSuccess(@NonNull ArrayList<Category> data) {
                     loadSpinnerData(data);
@@ -67,7 +65,7 @@ public class ServiceEditActivity extends SignedInActivity {
     public void onDestroy() {
         super.onDestroy();
         // Cleanup the data listener for the services list
-        if (null != dbListener) { dbListener.removeListener(); }
+        if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
     }
 
     private void loadSpinnerData(ArrayList<Category> data) {
@@ -144,7 +142,7 @@ public class ServiceEditActivity extends SignedInActivity {
             return;
         }
 
-        if (name.equals(currentService.getName()) && currentService.getRate() == rateNum && category.getKey().equals(currentService.getCategoryID())) {
+        if (name.equals(currentService.getName()) && currentService.getRate() == rateNum && category.getKey().equals(currentService.getCategoryKey())) {
             Toast.makeText(getApplicationContext(), String.format(getString(R.string.no_changes_made_error_tempalte), getString(R.string.service).toLowerCase()), Toast.LENGTH_SHORT).show();
             finish();
             return;

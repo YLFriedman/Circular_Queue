@@ -1,12 +1,9 @@
 package ca.uottawa.seg2105.project.cqondemand.adapters;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

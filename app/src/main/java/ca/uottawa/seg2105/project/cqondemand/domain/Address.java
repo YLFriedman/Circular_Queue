@@ -2,6 +2,9 @@ package ca.uottawa.seg2105.project.cqondemand.domain;
 
 import android.support.annotation.NonNull;
 
+import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
+import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
+
 public class Address {
 
     protected String unit;
@@ -12,11 +15,18 @@ public class Address {
     protected String province;
     protected String postalCode;
 
-    public static final String[] PROVINCES = { "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador", "Northwest Territories",
-            "Nova Scotia", "Nunavut", "Ontario", "Prince Edward Island", "Quebec", "Saskatchewan", "Yukon" };
     protected static final String[] PROVINCES_SHORT = { "AB", "BC", "MB", "NB", "NL", "NT", "NS", "NU", "ON", "PE", "QC", "SK", "YT" };
+    public static final String[] PROVINCES = { "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador", "Northwest Territories",
+                                                "Nova Scotia", "Nunavut", "Ontario", "Prince Edward Island", "Quebec", "Saskatchewan", "Yukon" };
 
     public Address(@NonNull String unit, @NonNull int streetNumber, @NonNull String street, @NonNull String city, @NonNull String province, @NonNull String country, @NonNull String postalCode) {
+        if (!FieldValidation.unitIsValid(unit)) { throw new InvalidDataException("Invalid unit. Legal characters: " + FieldValidation.ADDRESS_UNIT_CHARS); }
+        if (!FieldValidation.streetNumberIsValid(streetNumber)) { throw new InvalidDataException("Invalid streetNumber. Must be greater than 0. "); }
+        if (!FieldValidation.streetNameIsValid(street)) { throw new InvalidDataException("Invalid street. Legal characters: " + FieldValidation.STREET_NAME_CHARS); }
+        if (!FieldValidation.cityNameIsValid(city)) { throw new InvalidDataException("Invalid city. Legal characters: " + FieldValidation.CITY_NAME_CHARS); }
+        if (!FieldValidation.provinceNameIsValid(province)) { throw new InvalidDataException("Invalid province. Legal characters: " + FieldValidation.PROVINCE_NAME_CHARS); }
+        if (!FieldValidation.countryNameIsValid(country)) { throw new InvalidDataException("Invalid country. Legal characters: " + FieldValidation.COUNTRY_NAME_CHARS); }
+        if (!FieldValidation.postalCodeIsValid(postalCode)) { throw new InvalidDataException("Invalid postalCode. User Canadian format."); }
         this.unit = unit.toUpperCase();
         this.streetNumber = streetNumber;
         this.street = street;

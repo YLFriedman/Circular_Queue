@@ -20,9 +20,10 @@ import java.util.Locale;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.adapters.ServiceListAdapter;
 import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
-import ca.uottawa.seg2105.project.cqondemand.database.DbListener;
+import ca.uottawa.seg2105.project.cqondemand.database.DbListenerHandle;
 import ca.uottawa.seg2105.project.cqondemand.database.DbService;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
+import ca.uottawa.seg2105.project.cqondemand.database.DbUtilRelational;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
@@ -34,7 +35,7 @@ import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class ServiceListActivity extends SignedInActivity {
 
-    protected enum Mode { STANDARD, MANAGE_SERVICES, PICK_PROVIDER_SERVICES, EDIT_PROVIDER_SERVICES, VIEW_PROVIDER_SERVICES }
+    protected enum Mode { LIST_SERVICES, MANAGE_SERVICES, ADD_PROVIDER_SERVICES, REMOVE_PROVIDER_SERVICES, LIST_PROVIDER_SERVICES }
     protected Mode mode;
     protected boolean useCategory;
     TextView txt_sub_title;
@@ -44,12 +45,14 @@ public class ServiceListActivity extends SignedInActivity {
     protected Category currentCategory;
     protected User currentUser;
     protected ServiceProvider currentProvider;
-    protected DbListener<?> dbListener;
+    protected DbListenerHandle<?> dbListenerHandle;
+    int icon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_list);
+        if (null == State.getState().getSignedInUser()) { return; }
         txt_sub_title = findViewById(R.id.txt_sub_title);
         divider_txt_sub_title = findViewById(R.id.divider_txt_sub_title);
         recycler_list = findViewById(R.id.recycler_list);
@@ -64,56 +67,36 @@ public class ServiceListActivity extends SignedInActivity {
         currentUser = State.getState().getCurrentUser();
         State.getState().setCurrentUser(null);
         ActionBar actionBar = getSupportActionBar();
+        // Set the default item icon
+        icon = R.drawable.ic_chevron_right_med_30;
         // Determine and initialize the mode
-        if (null != currentUser && currentUser instanceof ServiceProvider) {
+        if (currentUser instanceof ServiceProvider) {
             currentProvider = (ServiceProvider) currentUser;
             if (State.getState().getSignedInUser().equals(currentUser)) {
-                mode = Mode.EDIT_PROVIDER_SERVICES;
+                mode = Mode.REMOVE_PROVIDER_SERVICES;
                 if (null != actionBar) { actionBar.setTitle(getString(R.string.my_services)); }
+                icon = R.drawable.ic_remove_circle_outline_med_30;
             } else {
-                mode = Mode.VIEW_PROVIDER_SERVICES;
+                mode = Mode.LIST_PROVIDER_SERVICES;
             }
         } else if (State.getState().getSignedInUser().isAdmin()) {
             mode = Mode.MANAGE_SERVICES;
             useCategory = null != currentCategory;
         } else if (State.getState().getSignedInUser() instanceof ServiceProvider) {
             currentProvider = (ServiceProvider) State.getState().getSignedInUser();
-            mode = Mode.PICK_PROVIDER_SERVICES;
+            mode = Mode.ADD_PROVIDER_SERVICES;
+            icon = R.drawable.ic_add_med_30;
             useCategory = null != currentCategory;
-            if (null != actionBar) { actionBar.setTitle(getString(R.string.pick_service)); }
+            if (null != actionBar) { actionBar.setTitle(getString(R.string.select_a_service)); }
         }  else {
-            mode = Mode.STANDARD;
+            mode = Mode.LIST_SERVICES;
             useCategory = null != currentCategory;
         }
 
         AsyncValueEventListener<Service> listener = new AsyncValueEventListener<Service>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Service> data) {
-                service_list_adapter = new ServiceListAdapter(getApplicationContext(), data, Mode.PICK_PROVIDER_SERVICES == mode, new View.OnClickListener() {
-                    public void onClick(final View view) {
-                        final Service service = (Service) view.getTag();
-                        if (Mode.PICK_PROVIDER_SERVICES == mode) {
-                            DbService.relateToProvider(service, currentProvider, new AsyncActionEventListener() {
-                                @Override
-                                public void onSuccess() {
-                                    Toast.makeText(getApplicationContext(), String.format(getString(R.string.service_added_to_provider_success_template), service.getName()), Toast.LENGTH_LONG).show();
-                                    Intent intent = new Intent();
-                                    intent.putExtra("finish", true);
-                                    setResult(RESULT_OK, intent);
-                                    finish();
-                                }
-                                @Override
-                                public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                                    Toast.makeText(getApplicationContext(), String.format(getString(R.string.service_added_to_provider_fail_template), service.getName()), Toast.LENGTH_LONG).show();
-                                }
-                            });
-                        } else {
-                            State.getState().setCurrentService(service);
-                            Intent intent = new Intent(getApplicationContext(), ServiceViewActivity.class);
-                            startActivity(intent);
-                        }
-                    }
-                });
+                service_list_adapter = new ServiceListAdapter(getApplicationContext(), data, icon, getItemClickListener());
                 recycler_list.setAdapter(service_list_adapter);
             }
             @Override
@@ -122,13 +105,20 @@ public class ServiceListActivity extends SignedInActivity {
             }
         };
 
-        if (Mode.EDIT_PROVIDER_SERVICES == mode || Mode.VIEW_PROVIDER_SERVICES == mode) {
-            dbListener = DbUser.getServicesProvidedLive(currentProvider, listener);
-        } else if (useCategory) {
-            setSubTitle(String.format(Locale.CANADA, getString(R.string.category_title_template), currentCategory.getName()));
-            dbListener = DbService.getServicesByCategoryLive(currentCategory, listener);
-        } else {
-            dbListener = DbService.getServicesLive(listener);
+        // Decide which database request to make
+        switch (mode) {
+            case LIST_PROVIDER_SERVICES:
+            case REMOVE_PROVIDER_SERVICES: dbListenerHandle = DbUser.getServicesProvidedLive(currentProvider, listener); break;
+            case ADD_PROVIDER_SERVICES:
+            case MANAGE_SERVICES:
+            case LIST_SERVICES:
+            default:
+                if (useCategory) {
+                    setSubTitle(String.format(Locale.CANADA, getString(R.string.category_title_template), currentCategory.getName()));
+                    dbListenerHandle = DbService.getServicesByCategoryLive(currentCategory, listener);
+                } else {
+                    dbListenerHandle = DbService.getServicesLive(listener);
+                }
         }
     }
 
@@ -136,7 +126,7 @@ public class ServiceListActivity extends SignedInActivity {
     public void onDestroy() {
         super.onDestroy();
         // Cleanup the data listener for the services list
-        if (null != dbListener) { dbListener.removeListener(); }
+        if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
     }
 
     private void setSubTitle(@NonNull String subTitle) {
@@ -151,11 +141,67 @@ public class ServiceListActivity extends SignedInActivity {
             getMenuInflater().inflate(R.menu.service_list_manage_options, menu);
             if (!useCategory) { menu.setGroupVisible(R.id.grp_category_controls, false); }
             return true;
-        } else if (Mode.EDIT_PROVIDER_SERVICES == mode) {
+        } else if (Mode.REMOVE_PROVIDER_SERVICES == mode) {
             getMenuInflater().inflate(R.menu.service_list_options, menu);
             return true;
         }
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private View.OnClickListener getItemClickListener() {
+        if (Mode.ADD_PROVIDER_SERVICES == mode) {
+            return new View.OnClickListener() {
+                public void onClick(final View view) {
+                    final Service service = (Service) view.getTag();
+                    DbUtilRelational.linkServiceAndProvider(service, currentProvider, new AsyncActionEventListener() {
+                        @Override
+                        public void onSuccess() {
+                            Toast.makeText(getApplicationContext(), String.format(getString(R.string.service_added_to_provider_success_template), service.getName()), Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent();
+                            intent.putExtra("finish", true);
+                            setResult(RESULT_OK, intent);
+                            finish();
+                        }
+                        @Override
+                        public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                            Toast.makeText(getApplicationContext(), String.format(getString(R.string.service_added_to_provider_fail_template), service.getName()), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            };
+        } else if (Mode.REMOVE_PROVIDER_SERVICES == mode) {
+            return new View.OnClickListener() {
+                public void onClick(final View view) {
+                    final Service service = (Service) view.getTag();
+                    new AlertDialog.Builder(ServiceListActivity.this)
+                            .setTitle(R.string.remove_service)
+                            .setMessage(String.format(getString(R.string.remove_confirm_dialog_template), service.getName(), getString(R.string.service).toLowerCase()))
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(R.string.remove, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    DbUtilRelational.unlinkServiceAndProvider(service, currentProvider, new AsyncActionEventListener() {
+                                        @Override
+                                        public void onSuccess() { Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_LONG).show(); }
+                                        @Override
+                                        public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                                            Toast.makeText(getApplicationContext(), String.format(getString(R.string.item_remove_db_error_template), service.getName(), getString(R.string.service).toLowerCase()), Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                }
+                            })
+                            .setNegativeButton(R.string.cancel, null).show();
+                }
+            };
+        } else {
+            return new View.OnClickListener() {
+                public void onClick(final View view) {
+                    final Service service = (Service) view.getTag();
+                    State.getState().setCurrentService(service);
+                    Intent intent = new Intent(getApplicationContext(), ServiceViewActivity.class);
+                    startActivity(intent);
+                }
+            };
+        }
     }
 
     @Override

@@ -13,14 +13,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
-import ca.uottawa.seg2105.project.cqondemand.database.DbListener;
+import ca.uottawa.seg2105.project.cqondemand.database.DbListenerHandle;
 import ca.uottawa.seg2105.project.cqondemand.database.DbService;
-import ca.uottawa.seg2105.project.cqondemand.database.DbUtil;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
@@ -33,7 +31,7 @@ public class ServiceCreateActivity extends SignedInActivity {
 
     protected Spinner spinner_categories;
     protected String categoryName;
-    protected DbListener<?> dbListener;
+    protected DbListenerHandle<?> dbListenerHandle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +42,7 @@ public class ServiceCreateActivity extends SignedInActivity {
         categoryName = intent.getStringExtra("category_name");
         spinner_categories = findViewById(R.id.spinner_categories);
 
-        dbListener = DbCategory.getCategoriesLive(new AsyncValueEventListener<Category>() {
+        dbListenerHandle = DbCategory.getCategoriesLive(new AsyncValueEventListener<Category>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Category> data) {
                 loadSpinnerData(data);
@@ -60,7 +58,7 @@ public class ServiceCreateActivity extends SignedInActivity {
     public void onDestroy() {
         super.onDestroy();
         // Cleanup the data listener for the services list
-        if (null != dbListener) { dbListener.removeListener(); }
+        if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
     }
 
     private void loadSpinnerData(ArrayList<Category> data) {

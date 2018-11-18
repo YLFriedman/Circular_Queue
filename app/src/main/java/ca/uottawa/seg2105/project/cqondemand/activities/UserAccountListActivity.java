@@ -2,17 +2,15 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import ca.uottawa.seg2105.project.cqondemand.database.DbListener;
+import ca.uottawa.seg2105.project.cqondemand.database.DbListenerHandle;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
@@ -24,7 +22,7 @@ import ca.uottawa.seg2105.project.cqondemand.adapters.UserListAdapter;
 public class UserAccountListActivity extends SignedInActivity {
 
     protected RecyclerView recycler_list;
-    protected DbListener<?> dbListener;
+    protected DbListenerHandle<?> dbListenerHandle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +32,7 @@ public class UserAccountListActivity extends SignedInActivity {
         if (!State.getState().getSignedInUser().isAdmin()) { finish(); }
         recycler_list.setHasFixedSize(true);
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        dbListener = DbUser.getUsersLive(new AsyncValueEventListener<User>() {
+        dbListenerHandle = DbUser.getUsersLive(new AsyncValueEventListener<User>() {
             @Override
             public void onSuccess(@NonNull ArrayList<User> data) {
                 //user_list_adapter.notifyItemRangeRemoved(0, user_list_adapter.getItemCount());
@@ -58,7 +56,7 @@ public class UserAccountListActivity extends SignedInActivity {
     public void onDestroy() {
         super.onDestroy();
         // Cleanup the data listener for the users list
-        if (null != dbListener) { dbListener.removeListener(); }
+        if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
     }
 
 }

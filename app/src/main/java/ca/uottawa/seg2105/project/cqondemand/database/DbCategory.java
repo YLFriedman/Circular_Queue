@@ -90,7 +90,7 @@ public class DbCategory extends DbItem<Category> {
     }
 
     @NonNull
-    public static DbListener<?> getCategoriesLive(@NonNull final AsyncValueEventListener<Category> listener) {
+    public static DbListenerHandle<?> getCategoriesLive(@NonNull final AsyncValueEventListener<Category> listener) {
         return DbUtil.getItemsLive(DbUtil.DataType.CATEGORY, listener);
     }
 

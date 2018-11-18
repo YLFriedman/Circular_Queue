@@ -113,9 +113,10 @@ public class UserAccountEditActivity extends SignedInActivity {
         String username = field_username.getText().toString().trim();
         String email = field_email.getText().toString().trim();
 
-        if (!FieldValidation.usernameIsValid(username)) {
+        if (!FieldValidation.usernameIsValid(username) || FieldValidation.usernameIsReserved(username)) {
             if (username.isEmpty()) { field_username.setError(getString(R.string.empty_username_error)); }
-            else { field_username.setError(getString(R.string.invalid_username_msg)); }
+            else if (FieldValidation.usernameIsReserved(username)) { field_username.setError(getString(R.string.banned_username_msg)); }
+            else { field_username.setError(String.format(getString(R.string.chars_allowed_template), FieldValidation.USERNAME_CHARS)); }
             field_username.requestFocus();
             field_username.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
@@ -123,7 +124,7 @@ public class UserAccountEditActivity extends SignedInActivity {
 
         if (!FieldValidation.personNameIsValid(firstName)) {
             if (username.isEmpty()) { field_first_name.setError(getString(R.string.empty_first_name_error)); }
-            else { field_first_name.setError(getString(R.string.invalid_first_name_error)); }
+            else { field_first_name.setError(String.format(getString(R.string.chars_not_allowed_template), FieldValidation.ILLEGAL_PERSON_NAME_CHARS)); }
             field_first_name.requestFocus();
             field_first_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
@@ -131,7 +132,7 @@ public class UserAccountEditActivity extends SignedInActivity {
 
         if (!FieldValidation.personNameIsValid(lastName)) {
             if (username.isEmpty()) { field_last_name.setError(getString(R.string.empty_last_name_error)); }
-            else { field_last_name.setError(getString(R.string.invalid_last_name_error)); }
+            else { field_last_name.setError(String.format(getString(R.string.chars_not_allowed_template), FieldValidation.ILLEGAL_PERSON_NAME_CHARS)); }
             field_last_name.requestFocus();
             field_last_name.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
             return;
@@ -194,6 +195,12 @@ public class UserAccountEditActivity extends SignedInActivity {
             try {
                 streetNumberInt = Integer.parseInt(streetNumber);
             } catch (NumberFormatException e) {
+                field_street_number.setError(getString(R.string.invalid_street_number_error));
+                field_street_number.requestFocus();
+                field_street_number.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
+                return;
+            }
+            if (!FieldValidation.streetNumberIsValid(streetNumberInt)) {
                 field_street_number.setError(getString(R.string.invalid_street_number_error));
                 field_street_number.requestFocus();
                 field_street_number.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));

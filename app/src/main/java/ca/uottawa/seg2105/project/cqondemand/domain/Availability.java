@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import java.util.LinkedList;
 import java.util.List;
 
+import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
+
 public class Availability {
 
     public enum Day {
@@ -31,7 +33,11 @@ public class Availability {
     protected int startTime;
     protected int endTime;
 
-    public Availability(@NonNull Day day, int startTime, int endTime) {
+    public Availability(Day day, int startTime, int endTime) {
+        if (null == day) { throw new InvalidDataException("A day is required"); }
+        if (startTime < 0 || startTime > 23) { throw new InvalidDataException("Invalid startTime. Must be between 0 and 23 (midnight and 11 pm). "); }
+        if (endTime < 1 || endTime > 24) { throw new InvalidDataException("Invalid endTime. Must be between 1 and 24 (1 am and midnight). "); }
+        if (startTime >= endTime) { throw new InvalidDataException("Invalid startTime / endTime. The endTime must be greater than the startTime. "); }
         this.day = day;
         this.startTime = startTime;
         this.endTime = endTime;

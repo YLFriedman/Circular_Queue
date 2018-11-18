@@ -15,33 +15,28 @@ public class Service {
     protected String key;
     protected String name;
     protected int rate;
-    protected String categoryID;
+    protected String categoryKey;
     protected Category category;
-    protected ArrayList<String> serviceProviderIDs;
 
     /**
      * Constructor for a new service Object
      * @param name the name of this Service
-     * @param categoryID The category that this service falls under
+     * @param categoryKey The category that this service falls under
      * @param rate The rate per hour that this service costs
      */
-    public Service(@NonNull String name, int rate, @NonNull String categoryID) {
-        if (!FieldValidation.serviceNameIsValid(name)) { throw new InvalidDataException("Invalid service name. " +
-                FieldValidation.SERVICE_NAME_CHARS); }
+    public Service(@NonNull String name, int rate, @NonNull String categoryKey) {
+        if (!FieldValidation.serviceNameIsValid(name)) { throw new InvalidDataException("Invalid service name. " + FieldValidation.SERVICE_NAME_CHARS); }
         if (rate < 0) { throw new InvalidDataException("Rate cannot be negative. "); }
+        if (null == categoryKey || categoryKey.isEmpty()) { throw new InvalidDataException("The categoryKey cannot be null or empty."); }
         this.name = name;
         this.rate = rate;
-        this.categoryID = categoryID;
+        this.categoryKey = categoryKey;
     }
 
-    public Service(@NonNull String key, @NonNull String name, int rate, @NonNull String categoryID) {
-        if (!FieldValidation.serviceNameIsValid(name)) { throw new InvalidDataException("Invalid service name. " +
-                FieldValidation.SERVICE_NAME_CHARS); }
-        if (rate < 0) { throw new InvalidDataException("Rate cannot be negative. "); }
+    public Service(@NonNull String key, @NonNull String name, int rate, @NonNull String categoryKey) {
+        this(name, rate, categoryKey);
+        if (null == key || key.isEmpty()) { throw new InvalidDataException("The key cannot be null or empty."); }
         this.key = key;
-        this.name = name;
-        this.rate = rate;
-        this.categoryID = categoryID;
     }
 
     public String getKey() {
@@ -49,29 +44,19 @@ public class Service {
     }
 
     /**
-     *Returns an ArrayList of all the service providers that provide this service
-     *
-     * @return an ArrayList of the service providers that provide this service
-     */
-
-    public ArrayList<String> getServiceProviderIDs() {
-        return this.serviceProviderIDs;
-    }
-
-    /**
      *Returns the category associated with this service
      *
      * @return the associated category
      */
-    public String getCategoryID(){
-        return this.categoryID;
+    public String getCategoryKey(){
+        return this.categoryKey;
     }
 
     public void getCategory(final AsyncSingleValueEventListener<Category> listener) {
         if (null != category) {
             listener.onSuccess(category);
         } else {
-            DbCategory.getCategory(categoryID, new AsyncSingleValueEventListener<Category>() {
+            DbCategory.getCategory(categoryKey, new AsyncSingleValueEventListener<Category>() {
                 @Override
                 public void onSuccess(@NonNull Category item) {
                     category = item;

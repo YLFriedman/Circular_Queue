@@ -54,16 +54,12 @@ public class User {
      * @param password The user's password
      */
     public User(@NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull Type type, @NonNull String password) {
-        if (!FieldValidation.usernameIsValid(username)) { throw new InvalidDataException("Invalid username. " +
-                FieldValidation.ILLEGAL_USERNAME_CHARS); }
+        if (!FieldValidation.usernameIsValid(username)) { throw new InvalidDataException("Invalid username. " + FieldValidation.USERNAME_CHARS); }
         PasswordValidationResult passwordValRes = FieldValidation.validatePassword(username, password, password);
-        if (PasswordValidationResult.VALID != passwordValRes) {
-            throw new InvalidDataException("Invalid password. " + passwordValRes.toString());
-        }
+        if (PasswordValidationResult.VALID != passwordValRes) { throw new InvalidDataException("Invalid password. " + passwordValRes.toString()); }
         if (!FieldValidation.personNameIsValid(firstName)) { throw new InvalidDataException("Invalid First Name. ");  }
         if (!FieldValidation.personNameIsValid(lastName)) { throw new InvalidDataException("Invalid Last Name. ");  }
-        if (!FieldValidation.emailIsValid(email)) { throw new InvalidDataException("Invalid Email Address. ");  }
-
+        if (null != email && !email.equals("{@TEST}") && !FieldValidation.emailIsValid(email)) { throw new InvalidDataException("Invalid Email Address. ");  }
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -74,6 +70,7 @@ public class User {
 
     public User(@NonNull String key, @NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull Type type, @NonNull String password) {
         this(firstName, lastName, username, email, type, password);
+        if (null == key || key.isEmpty()) { throw new InvalidDataException("The key cannot be null or empty."); }
         this.key = key;
     }
 

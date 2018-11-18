@@ -11,22 +11,19 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
-import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
-import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 public class DbService extends DbItem<Service> {
 
     public String unique_name;
     public String name;
-    public String category_id;
+    public String category_key;
     public int rate;
 
     public DbService() {}
@@ -36,11 +33,11 @@ public class DbService extends DbItem<Service> {
         unique_name = item.getUniqueName();
         name = item.getName();
         rate = item.getRate();
-        category_id = item.getCategoryID();
+        category_key = item.getCategoryKey();
     }
 
     @NonNull
-    public Service toDomainObj() { return new Service(retrieveKey(), name, rate, category_id); }
+    public Service toDomainObj() { return new Service(retrieveKey(), name, rate, category_key); }
 
     public static void createService(@NonNull final Service service, @Nullable final AsyncActionEventListener listener) {
         getServiceByName(service.getName(), new AsyncSingleValueEventListener<Service>() {
@@ -105,7 +102,7 @@ public class DbService extends DbItem<Service> {
     }
 
     @NonNull
-    public static DbListener<?> getServicesLive(@NonNull final AsyncValueEventListener<Service> listener) {
+    public static DbListenerHandle<?> getServicesLive(@NonNull final AsyncValueEventListener<Service> listener) {
         return DbUtil.getItemsLive(DbUtil.DataType.SERVICE, listener);
     }
 
@@ -114,13 +111,18 @@ public class DbService extends DbItem<Service> {
     }
 
     @NonNull
-    public static DbListener<?> getServicesByCategoryLive(@NonNull Category category, @NonNull final AsyncValueEventListener<Service> listener) {
+    public static DbListenerHandle<?> getServicesByCategoryLive(@NonNull Category category, @NonNull final AsyncValueEventListener<Service> listener) {
         return DbUtil.getItemsLive(DbUtil.DataType.SERVICE, "category_id", category.getKey(), listener);
     }
 
-    public static void getProvidersByService(@NonNull Service service, @NonNull final AsyncValueEventListener<Service> listener) {
+    public static void getProvidersByService(@NonNull Service service, @NonNull AsyncValueEventListener<Service> listener) {
         if (service.getKey() == null || service.getKey().isEmpty()) { throw new IllegalArgumentException("A service object with a key is required. Unable to query the database without the key."); }
         DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.SERVICE_USERS, service.getKey(), listener);
+    }
+
+    public static DbListenerHandle<ValueEventListener> getProvidersByServiceLive(@NonNull Service service, @NonNull final AsyncValueEventListener<Service> listener) {
+        if (service.getKey() == null || service.getKey().isEmpty()) { throw new IllegalArgumentException("A service object with a key is required. Unable to query the database without the key."); }
+        return DbUtilRelational.getItemsRelationalLive(DbUtilRelational.RelationType.SERVICE_USERS, service.getKey(), listener);
     }
 
     private static void multiPathUpdate(@NonNull final Service service, @Nullable final AsyncActionEventListener listener) {
@@ -132,7 +134,6 @@ public class DbService extends DbItem<Service> {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 DbService updatedService = new DbService(service);
                 for (DataSnapshot child: dataSnapshot.getChildren()) {
-
                     String userKey = child.getKey();
                     String path = String.format("%s/%s/%s", DbUtilRelational.RelationType.USER_SERVICES, userKey, serviceKey);
                     pathMap.put(path, updatedService);
@@ -145,26 +146,6 @@ public class DbService extends DbItem<Service> {
                 if (null != listener) { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
             }
         });
-    }
-
-    private static Map<String,Object> createServiceProviderWithServiceMap(@NonNull String userKey, @Nullable DbUser userDb, @NonNull String serviceKey, @Nullable DbService serviceDb) {
-        HashMap<String, Object> pathMap = new HashMap<String, Object>();
-        String path = "%s/%s/%s";
-        pathMap.put(String.format(path, DbUtilRelational.RelationType.USER_SERVICES, userKey, serviceKey), serviceDb);
-        pathMap.put(String.format(path, DbUtilRelational.LookupType.USER_SERVICES, serviceKey, userKey), serviceDb == null ? null : true);
-        pathMap.put(String.format(path, DbUtilRelational.RelationType.SERVICE_USERS, serviceKey, userKey), userDb);
-        pathMap.put(String.format(path, DbUtilRelational.LookupType.SERVICE_USERS, userKey, serviceKey), userDb == null ? null : true);
-        return pathMap;
-    }
-
-    public static void relateToProvider(@NonNull Service service, @NonNull User user, @Nullable final AsyncActionEventListener listener) {
-        Map<String,Object> pathMap = createServiceProviderWithServiceMap(user.getKey(), new DbUser(user), service.getKey(), new DbService(service));
-        DbUtilRelational.multiPathUpdate(pathMap, listener);
-    }
-
-    public static void endRelationWithProvider(@NonNull Service service, @NonNull User user, @Nullable final AsyncActionEventListener listener) {
-        Map<String,Object> pathMap = createServiceProviderWithServiceMap(user.getKey(), null, service.getKey(), null);
-        DbUtilRelational.multiPathUpdate(pathMap, listener);
     }
 
     private static void deleteServiceRelational(Service service, final AsyncActionEventListener listener) {

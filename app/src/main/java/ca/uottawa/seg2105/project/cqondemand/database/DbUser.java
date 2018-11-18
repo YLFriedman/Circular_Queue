@@ -5,8 +5,6 @@ import android.support.annotation.Nullable;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -142,7 +140,7 @@ public class DbUser extends DbItem<User> {
     }
 
     @NonNull
-    public static DbListener<?> getUsersLive(@NonNull final AsyncValueEventListener<User> listener) {
+    public static DbListenerHandle<?> getUsersLive(@NonNull final AsyncValueEventListener<User> listener) {
         return DbUtil.getItemsLive(DbUtil.DataType.USER, listener);
     }
 
@@ -182,27 +180,26 @@ public class DbUser extends DbItem<User> {
         });
     }
 
-    public static void updateUserRelational(final User user, final AsyncActionEventListener listener) {
+    public static void updateUserRelational(@NonNull final User user, @Nullable final AsyncActionEventListener listener) {
         final String userKey = user.getKey();
-        final HashMap<String, Object> pathMap = new HashMap<String, Object>();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("service_users_lookup").child(userKey);
         final DbUser updatedUser = new DbUser(user);
-        String primaryPath = String.format("users/%s", userKey);
-        pathMap.put(primaryPath, updatedUser);
+        final HashMap<String, Object> pathMap = new HashMap<String, Object>();
+        // Add the primary path to the map
+        pathMap.put(String.format("%s/%s", DbUtil.DataType.USER, userKey), updatedUser);
         if (user instanceof  ServiceProvider) {
-            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            DbUtilRelational.LookupType.SERVICE_USERS.getRef().child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    for (DataSnapshot child: dataSnapshot.getChildren()) {
                         String serviceKey = child.getKey();
-                        String path = String.format("service_users/%s/%s", serviceKey, userKey);
+                        String path = String.format("%s/%s/%s", DbUtilRelational.RelationType.SERVICE_USERS, serviceKey, userKey);
                         pathMap.put(path, updatedUser);
                     }
                     DbUtilRelational.multiPathUpdate(pathMap, listener);
                 }
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                    listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
+                    if (null != listener) { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
                 }
             });
         } else {
@@ -210,31 +207,31 @@ public class DbUser extends DbItem<User> {
         }
     }
 
-    public static void deleteUserRelational(User user, final AsyncActionEventListener listener) {
+    public static void deleteUserRelational(@NonNull User user, @Nullable final AsyncActionEventListener listener) {
         final String userKey = user.getKey();
         final HashMap<String, Object> pathMap = new HashMap<>();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("service_users_lookup").child(userKey);
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        final String path2 = "%s/%s";
+        final String path3 = "%s/%s/%s";
+        // Add the primary path to the map
+        pathMap.put(String.format(path2, DbUtil.DataType.USER, userKey), null);
+        // Get the paths for the users linked to services
+        DbUtilRelational.LookupType.SERVICE_USERS.getRef().child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot child : dataSnapshot.getChildren()) {
+                for (DataSnapshot child: dataSnapshot.getChildren()) {
+                    // Add the paths for each service that the user is nested under
                     String serviceKey = child.getKey();
-                    String serviceUsersPath = String.format("service_users/%s/%s", serviceKey, userKey);
-                    String lookupPath = String.format("user_services_lookup/%s/%s", serviceKey, userKey);
-                    pathMap.put(serviceUsersPath, null);
-                    pathMap.put(lookupPath, null);
+                    pathMap.put(String.format(path3, DbUtilRelational.RelationType.SERVICE_USERS, serviceKey, userKey), null);
+                    pathMap.put(String.format(path3, DbUtilRelational.LookupType.USER_SERVICES, serviceKey, userKey), null);
                 }
-                String userServicesPath = String.format("user_services/%s", userKey);
-                String lookupPathPrimary = String.format("service_users_lookup/%s", userKey);
-                String mainPath = String.format("users/%s", userKey);
-                pathMap.put(userServicesPath, null);
-                pathMap.put(lookupPathPrimary, null);
-                pathMap.put(mainPath, null);
+                // Add the path for the list of services assigned to the user
+                pathMap.put(String.format(path2, DbUtilRelational.RelationType.USER_SERVICES, userKey), null);
+                pathMap.put(String.format(path2, DbUtilRelational.LookupType.SERVICE_USERS, userKey), null);
                 DbUtilRelational.multiPathUpdate(pathMap, listener);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
+                if (null != listener) { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
             }
         });
     }
@@ -247,7 +244,7 @@ public class DbUser extends DbItem<User> {
     }
 
     @NonNull
-    public static DbListener<?> getServicesProvidedLive(@NonNull ServiceProvider provider, @NonNull AsyncValueEventListener<Service> listener) {
+    public static DbListenerHandle<?> getServicesProvidedLive(@NonNull ServiceProvider provider, @NonNull AsyncValueEventListener<Service> listener) {
         if (provider.getKey() == null || provider.getKey().isEmpty()) {
             throw new IllegalArgumentException("A service provider object with a key is required. Unable to query the database without the key.");
         }

@@ -7,12 +7,12 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-public class DbListener<T> {
+public class DbListenerHandle<T> {
 
     private DatabaseReference reference;
     private T listener;
 
-    public DbListener(@NonNull DatabaseReference reference, @Nullable T listener) {
+    public DbListenerHandle(@NonNull DatabaseReference reference, @Nullable T listener) {
         this.reference = reference;
         this.listener = listener;
     }

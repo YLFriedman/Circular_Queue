@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.adapters.CategoryListAdapter;
 import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
-import ca.uottawa.seg2105.project.cqondemand.database.DbListener;
+import ca.uottawa.seg2105.project.cqondemand.database.DbListenerHandle;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
@@ -25,7 +25,7 @@ import ca.uottawa.seg2105.project.cqondemand.domain.User;
 public class CategoryListActivity extends SignedInActivity {
 
     protected RecyclerView recycler_list;
-    protected DbListener<?> dbListener;
+    protected DbListenerHandle<?> dbListenerHandle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +34,7 @@ public class CategoryListActivity extends SignedInActivity {
         recycler_list = findViewById(R.id.recycler_list);
         recycler_list.setHasFixedSize(true);
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        dbListener = DbCategory.getCategoriesLive(new AsyncValueEventListener<Category>() {
+        dbListenerHandle = DbCategory.getCategoriesLive(new AsyncValueEventListener<Category>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Category> data) {
                 recycler_list.setAdapter(new CategoryListAdapter(getApplicationContext(), data, new View.OnClickListener() {
@@ -56,7 +56,7 @@ public class CategoryListActivity extends SignedInActivity {
     public void onDestroy() {
         super.onDestroy();
         // Cleanup the data listener for the categories list
-        if (null != dbListener) { dbListener.removeListener(); }
+        if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
     }
 
     public void onCreateCategoryClick() {

@@ -17,18 +17,14 @@ public class Category {
      * @paran services the services that will be associated with this category
      */
     public Category(@NonNull String name) {
-        if (!FieldValidation.categoryNameIsValid(name)) {
-            throw new InvalidDataException("Invalid Category Name. " + FieldValidation.CATEGORY_NAME_CHARS);
-        }
+        if (!FieldValidation.categoryNameIsValid(name)) { throw new InvalidDataException("Invalid Category Name. " + FieldValidation.CATEGORY_NAME_CHARS); }
         this.name = name;
     }
 
     public Category(@NonNull String key, @NonNull String name) {
-        if (!FieldValidation.categoryNameIsValid(name)) {
-            throw new InvalidDataException("Invalid Category Name. " + FieldValidation.CATEGORY_NAME_CHARS);
-        }
+        this(name);
+        if (null == key || key.isEmpty()) { throw new InvalidDataException("The key cannot be null or empty."); }
         this.key = key;
-        this.name = name;
     }
 
     public String getKey() {

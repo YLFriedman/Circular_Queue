@@ -1,6 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand.utilities;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Patterns;
 
 public class FieldValidation {
@@ -9,7 +10,7 @@ public class FieldValidation {
     public static final String LETTER_OR_SPACE_CHARS = "a-z A-Z space";
 
     private static final String ILLEGAL_USERNAME_REGEX = ".*[^a-zA-Z0-9_.-].*";
-    public static final String ILLEGAL_USERNAME_CHARS = "a-z A-Z 0-9 _ . -";
+    public static final String USERNAME_CHARS = "a-z A-Z 0-9 _ . -";
 
     private static final String ILLEGAL_COMPANY_NAME_REGEX = ".*[^'\\p{L} &+.-].*";
     public static final String COMPANY_NAME_CHARS = "a-z A-Z - ' & + . space";
@@ -45,7 +46,8 @@ public class FieldValidation {
         return !name.matches(ILLEGAL_OBJECT_NAME_REGEX);
     }
 
-    private static boolean contains(@NonNull String[] list, @NonNull String value) {
+    private static boolean contains(@NonNull String[] list, @Nullable String value) {
+        if (null == value) { return false; }
         for (String item: list) { if (value.toLowerCase().equals(item)) { return true; } }
         return false;
     }
@@ -117,19 +119,23 @@ public class FieldValidation {
     }
 
     public static boolean streetNameIsValid(String name) {
-        return name.matches(STREET_NAME_REGEX);
+        return null != name && name.matches(STREET_NAME_REGEX);
+    }
+
+    public static boolean streetNumberIsValid(int num) {
+        return num > 0;
     }
 
     public static boolean cityNameIsValid(String name) {
-        return name.matches(LETTER_OR_SPACE_REGEX);
+        return null != name && name.matches(LETTER_OR_SPACE_REGEX);
     }
 
     public static boolean provinceNameIsValid(String name) {
-        return name.matches(LETTER_OR_SPACE_REGEX);
+        return null != name && name.matches(LETTER_OR_SPACE_REGEX);
     }
 
     public static boolean countryNameIsValid(String name) {
-        return name.matches(LETTER_OR_SPACE_REGEX);
+        return null != name && name.matches(LETTER_OR_SPACE_REGEX);
     }
 
     public static boolean postalCodeIsValid(String postalCode){
