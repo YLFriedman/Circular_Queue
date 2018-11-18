@@ -45,6 +45,7 @@ public class SignUpActivity extends AppCompatActivity {
     protected EditText field_company_name;
     protected Switch switch_licensed;
     protected EditText field_phone;
+    protected EditText field_description;
     protected EditText field_unit;
     protected EditText field_street_number;
     protected EditText field_street_name;
@@ -53,7 +54,6 @@ public class SignUpActivity extends AppCompatActivity {
     protected Spinner spinner_province;
     protected EditText field_province_error;
     protected EditText field_postal;
-    protected EditText field_description;
 
     protected LinearLayout fields_1;
     protected LinearLayout fields_2;
@@ -134,7 +134,7 @@ public class SignUpActivity extends AppCompatActivity {
         provinces.add(0, null);
         spinner_province.setAdapter(new SpinnerAdapter<String>(getApplicationContext(), R.layout.spinner_item_title, getString(R.string.select_province), provinces));
 
-        testMode();
+        //testMode();
     }
 
     @Override
@@ -250,6 +250,8 @@ public class SignUpActivity extends AppCompatActivity {
         companyName = field_company_name.getText().toString().trim();
         licensed = switch_licensed.isChecked();
         phoneNumber = field_phone.getText().toString().trim();
+        description = field_description.getText().toString().trim();
+        if (description.isEmpty())  { description = null; }
         unit = field_unit.getText().toString().trim();
         streetNumber = field_street_number.getText().toString().trim();
         streetName = field_street_name.getText().toString().trim();
@@ -257,8 +259,6 @@ public class SignUpActivity extends AppCompatActivity {
         province = spinner_province.getSelectedItem() == null ? "" : spinner_province.getSelectedItem().toString();
         country = field_country.getText().toString().trim();
         postalCode = field_postal.getText().toString().trim().toUpperCase();
-        description = field_description.getText().toString().trim();
-
 
         if (!FieldValidation.companyNameIsValid(companyName)) {
             if (companyName.isEmpty()) { field_company_name.setError(getString(R.string.empty_company_name_error)); }
@@ -370,6 +370,7 @@ public class SignUpActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), R.string.account_create_db_error, Toast.LENGTH_LONG).show();
                         break;
                     case ALREADY_EXISTS:
+                        if (Screen.FIELDS_2 == screen) { setScreen(Screen.FIELDS_1, false); }
                         field_username.setError(getString(R.string.username_already_taken));
                         field_username.requestFocus();
                         field_username.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));

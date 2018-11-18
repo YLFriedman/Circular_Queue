@@ -28,6 +28,7 @@ public class UserAccountViewActivity extends SignedInActivity {
     protected TextView txt_email;
     protected TextView txt_company_name;
     protected TextView txt_phone;
+    protected TextView txt_description;
     protected TextView txt_licensed;
     protected TextView txt_address;
     protected LinearLayout service_provider_info;
@@ -45,6 +46,7 @@ public class UserAccountViewActivity extends SignedInActivity {
         service_provider_info = findViewById(R.id.service_provider_info);
         txt_company_name = findViewById(R.id.txt_company_name);
         txt_phone = findViewById(R.id.txt_phone);
+        txt_description = findViewById(R.id.txt_description);
         txt_licensed = findViewById(R.id.txt_licensed);
         txt_address = findViewById(R.id.txt_address);
     }
@@ -82,6 +84,7 @@ public class UserAccountViewActivity extends SignedInActivity {
                 service_provider_info.setVisibility(View.VISIBLE);
                 txt_company_name.setText(provider.getCompanyName());
                 txt_phone.setText(provider.getPhoneNumber());
+                txt_description.setText(provider.getDescription());
                 txt_licensed.setText(provider.isLicensed() ? getText(R.string.yes) : getText(R.string.no));
                 txt_address.setText(provider.getAddress().toString());
             }

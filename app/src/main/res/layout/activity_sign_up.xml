@@ -76,7 +76,7 @@
                     android:layout_marginBottom="5dp"
                     android:ems="10"
                     android:hint="@string/first_name"
-                    android:inputType="textPersonName" />
+                    android:inputType="textNoSuggestions|textPersonName" />
 
                 <EditText
                     android:id="@+id/field_last_name"
@@ -86,7 +86,7 @@
                     android:layout_marginBottom="5dp"
                     android:ems="10"
                     android:hint="@string/last_name"
-                    android:inputType="textPersonName" />
+                    android:inputType="textNoSuggestions|textPersonName" />
 
                 <EditText
                     android:id="@+id/field_email"
@@ -96,7 +96,7 @@
                     android:layout_marginBottom="5dp"
                     android:ems="10"
                     android:hint="@string/email"
-                    android:inputType="textEmailAddress" />
+                    android:inputType="textNoSuggestions|textEmailAddress" />
 
                 <EditText
                     android:id="@+id/field_password"
@@ -106,7 +106,7 @@
                     android:layout_marginBottom="5dp"
                     android:ems="10"
                     android:hint="@string/password"
-                    android:inputType="textPassword" />
+                    android:inputType="textNoSuggestions|textPassword" />
 
                 <EditText
                     android:id="@+id/field_password_confirm"
@@ -116,7 +116,7 @@
                     android:layout_marginBottom="5dp"
                     android:ems="10"
                     android:hint="@string/password_confirm"
-                    android:inputType="textPassword" />
+                    android:inputType="textNoSuggestions|textPassword" />
 
             </LinearLayout>
 
@@ -132,9 +132,25 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
-                    android:ems="10"
                     android:hint="@string/company_name"
-                    android:inputType="textPersonName" />
+                    android:inputType="textNoSuggestions" />
+
+                <EditText
+                    android:id="@+id/field_description"
+                    style="@style/input_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:hint="@string/description_optional"
+                    android:inputType="textMultiLine|textNoSuggestions" />
+
+                <Switch
+                    android:id="@+id/switch_licensed"
+                    style="@style/input_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:text="@string/licensed" />
 
                 <EditText
                     android:id="@+id/field_phone"
@@ -144,23 +160,7 @@
                     android:layout_marginBottom="5dp"
                     android:ems="10"
                     android:hint="@string/phone_number"
-                    android:inputType="phone" />
-
-                <EditText
-                    android:id="@+id/field_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="@string/description"
-                    android:inputType="textPersonName" />
-
-                <Switch
-                    android:id="@+id/switch_licensed"
-                    style="@style/input_field"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:text="@string/licensed" />
+                    android:inputType="textNoSuggestions|phone" />
 
                 <TextView
                     android:id="@+id/txt_title_address"
@@ -194,7 +194,7 @@
                         android:layout_weight="1"
                         android:ems="10"
                         android:hint="@string/number"
-                        android:inputType="number" />
+                        android:inputType="textNoSuggestions|number" />
                 </LinearLayout>
 
                 <EditText
@@ -262,7 +262,6 @@
                     style="@style/input_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
                     android:ems="10"
                     android:hint="@string/postal"
                     android:inputType="text|textNoSuggestions" />

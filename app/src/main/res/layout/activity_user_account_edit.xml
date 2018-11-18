@@ -35,9 +35,8 @@
                 style="@style/input_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
                 android:hint="@string/username"
-                android:inputType="text" />
+                android:inputType="text|textNoSuggestions" />
 
             <TextView
                 android:id="@+id/txt_title_first_name"
@@ -52,9 +51,8 @@
                 style="@style/input_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
                 android:hint="@string/first_name"
-                android:inputType="textPersonName" />
+                android:inputType="textNoSuggestions|textPersonName" />
 
             <TextView
                 android:id="@+id/txt_title_last_name"
@@ -69,9 +67,8 @@
                 style="@style/input_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
                 android:hint="@string/last_name"
-                android:inputType="textPersonName" />
+                android:inputType="textNoSuggestions|textPersonName" />
 
             <TextView
                 android:id="@+id/txt_title_email"
@@ -88,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="@string/email"
-                android:inputType="textEmailAddress" />
+                android:inputType="textNoSuggestions|textEmailAddress" />
 
             <LinearLayout
                 android:id="@+id/fields_2"
@@ -109,9 +106,31 @@
                     style="@style/input_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ems="10"
                     android:hint="@string/company_name"
-                    android:inputType="textPersonName" />
+                    android:inputType="text|textNoSuggestions" />
+
+                <TextView
+                    android:id="@+id/txt_title_description"
+                    style="@style/input_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/description_optional" />
+
+                <EditText
+                    android:id="@+id/field_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/description"
+                    android:inputType="textMultiLine|textNoSuggestions" />
+
+                <Switch
+                    android:id="@+id/switch_licensed"
+                    style="@style/input_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/licensed" />
 
                 <TextView
                     android:id="@+id/txt_title_phone"
@@ -126,33 +145,8 @@
                     style="@style/input_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ems="10"
                     android:hint="@string/phone_number"
-                    android:inputType="phone" />
-
-                <TextView
-                    android:id="@+id/txt_title_description"
-                    style="@style/input_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/description" />
-
-                <EditText
-                    android:id="@+id/field_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="@string/description"
-                    android:inputType="textPersonName" />
-
-                <Switch
-                    android:id="@+id/switch_licensed"
-                    style="@style/input_field"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:text="@string/licensed" />
+                    android:inputType="textNoSuggestions|phone" />
 
                 <TextView
                     android:id="@+id/txt_title_address"
@@ -186,8 +180,6 @@
                             style="@style/input_field"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
-                            android:ems="10"
                             android:hint="@string/unit"
                             android:inputType="text|textNoSuggestions" />
                     </LinearLayout>
@@ -210,10 +202,9 @@
                             style="@style/input_field"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="5dp"
                             android:ems="10"
                             android:hint="@string/number"
-                            android:inputType="number" />
+                            android:inputType="textNoSuggestions|number" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -231,7 +222,6 @@
                     style="@style/input_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
                     android:ems="10"
                     android:hint="@string/street"
                     android:inputType="text|textNoSuggestions" />
@@ -249,7 +239,6 @@
                     style="@style/input_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
                     android:ems="10"
                     android:hint="@string/city"
                     android:inputType="text|textNoSuggestions" />
@@ -259,6 +248,7 @@
                     style="@style/input_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:text="@string/province_territory"
                     android:textColor="@color/text_secondary_dark" />
 

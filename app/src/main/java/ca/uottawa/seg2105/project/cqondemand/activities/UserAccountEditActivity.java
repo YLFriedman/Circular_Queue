@@ -58,7 +58,6 @@ public class UserAccountEditActivity extends SignedInActivity {
         field_email = findViewById(R.id.field_email);
         fields_2 = findViewById(R.id.fields_2);
 
-
         currentUser = State.getState().getCurrentUser();
         State.getState().setCurrentUser(null);
         if (null != currentUser) {
@@ -153,6 +152,7 @@ public class UserAccountEditActivity extends SignedInActivity {
             String companyName = field_company_name.getText().toString().trim();
             boolean licensed = switch_licensed.isChecked();
             String phoneNumber = field_phone.getText().toString().trim();
+            String description = field_description.getText().toString().trim();
             String unit = field_unit.getText().toString().trim();
             String streetNumber = field_street_number.getText().toString().trim();
             int streetNumberInt;
@@ -161,7 +161,6 @@ public class UserAccountEditActivity extends SignedInActivity {
             String province = spinner_province.getSelectedItem().toString();
             String country = field_country.getText().toString().trim();
             String postalCode = field_postal.getText().toString().trim();
-            String description = field_description.getText().toString().trim();
 
             if (!FieldValidation.companyNameIsValid(companyName)) {
                 if (companyName.isEmpty()) { field_company_name.setError(getString(R.string.empty_company_name_error)); }
