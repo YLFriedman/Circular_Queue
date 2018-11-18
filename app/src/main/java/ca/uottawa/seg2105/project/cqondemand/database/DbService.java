@@ -148,12 +148,25 @@ public class DbService extends DbItem<Service> {
 
     public static void relateToProvider(@NonNull Service service, @NonNull User user, @Nullable final AsyncActionEventListener listener) {
         final HashMap<String, Object> pathMap = new HashMap<>();
+        String serviceKey = service.getKey();
+        String userKey = user.getKey();
         DbService serviceDB = new DbService(service);
         DbUser userDB = new DbUser(user);
-        pathMap.put(String.format("user_services/%s/%s", userDB.retrieveKey(), serviceDB.retrieveKey()), serviceDB);
-        pathMap.put(String.format("service_users/%s/%s", serviceDB.retrieveKey(), userDB.retrieveKey()), userDB);
-        pathMap.put(String.format("user_service_lookup/%s/%s", serviceDB.retrieveKey(), userDB.retrieveKey()), true);
-        pathMap.put(String.format("service_users_lookup/%s/%s", userDB.retrieveKey(), serviceDB.retrieveKey()), true);
+        pathMap.put(String.format("user_services/%s/%s", userKey, serviceKey), serviceDB);
+        pathMap.put(String.format("service_users/%s/%s", serviceKey, userKey), userDB);
+        pathMap.put(String.format("user_service_lookup/%s/%s", serviceKey, userKey), true);
+        pathMap.put(String.format("service_users_lookup/%s/%s", userKey, serviceKey), true);
+        DbUtilRelational.multiPathUpdate(pathMap, listener);
+    }
+
+    public static void endRelationWithProvider(@NonNull Service service, @NonNull User user, @NonNull final AsyncActionEventListener listener){
+        String serviceKey = service.getKey();
+        String userKey = user.getKey();
+        HashMap<String, Object> pathMap = new HashMap<>();
+        pathMap.put(String.format("user_services/%s/%s", userKey, serviceKey), null);
+        pathMap.put(String.format("service_users/%s/%s", serviceKey, userKey), null);
+        pathMap.put(String.format("user_service_lookup/%s/%s", serviceKey, userKey), null);
+        pathMap.put(String.format("service_users_lookup/%s/%s", userKey, serviceKey), null);
         DbUtilRelational.multiPathUpdate(pathMap, listener);
     }
 

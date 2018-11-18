@@ -4,6 +4,7 @@
     <string name="app_name">CQ On Demand</string>
     <string name="title_activity_sign_in">CQ On Demand - v0.2.1 (DEV)</string>
     <string name="title_activity_home">Home</string>
+    //This is a comment
     <string name="title_activity_create_account">Sign Up</string>
     <string name="title_activity_user_account_view">Account Details</string>
     <string name="title_activity_user_account_edit">Edit Account Details</string>

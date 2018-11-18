@@ -45,6 +45,7 @@ public class UserAccountEditActivity extends SignedInActivity {
     protected Spinner spinner_province;
     protected EditText field_province_error;
     protected EditText field_postal;
+    protected EditText field_description;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,6 +159,7 @@ public class UserAccountEditActivity extends SignedInActivity {
             String province = spinner_province.getSelectedItem().toString();
             String country = field_country.getText().toString().trim();
             String postalCode = field_postal.getText().toString().trim();
+            String description = field_description.getText().toString().trim();
 
             if (!FieldValidation.companyNameIsValid(companyName)) {
                 if (companyName.isEmpty()) { field_company_name.setError(getString(R.string.empty_company_name_error)); }
@@ -243,13 +245,17 @@ public class UserAccountEditActivity extends SignedInActivity {
             if (firstName.equals(currentUser.getFirstName()) && lastName.equals(currentUser.getLastName())
                     && username.equals(currentUser.getUsername()) && email.equals(currentUser.getEmail())
                     && provider.getAddress().equals(address) && companyName.equals(provider.getCompanyName())
-                    && licensed == provider.isLicensed() && phoneNumber.equals(provider.getPhoneNumber()) ) {
+                    && licensed == provider.isLicensed() && phoneNumber.equals(provider.getPhoneNumber())
+                    && description.equals(provider.getDescription())) {
                 Toast.makeText(getApplicationContext(), String.format(getString(R.string.no_changes_made_error_tempalte), getString(R.string.service).toLowerCase()), Toast.LENGTH_SHORT).show();
                 finish();
                 return;
             }
 
-            newUser = new ServiceProvider(currentUser.getKey(), firstName, lastName, username, email, currentUser.getPassword(), companyName, licensed, phoneNumber, address);
+            if(description.isEmpty()){
+                description = null;
+            }
+            newUser = new ServiceProvider(currentUser.getKey(), firstName, lastName, username, email, currentUser.getPassword(), companyName, licensed, phoneNumber, address, description);
 
         } else {
 
@@ -259,6 +265,7 @@ public class UserAccountEditActivity extends SignedInActivity {
                 finish();
                 return;
             }
+
             newUser = new User(currentUser.getKey(), firstName, lastName, username, email, currentUser.getType(), currentUser.getPassword());
 
         }
