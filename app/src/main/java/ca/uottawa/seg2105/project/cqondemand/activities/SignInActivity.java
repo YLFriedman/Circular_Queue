@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import ca.uottawa.seg2105.project.cqondemand.database.DbAvailability;
 import ca.uottawa.seg2105.project.cqondemand.database.DbService;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.domain.Address;
@@ -23,7 +22,6 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.R;
-import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
@@ -147,7 +145,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     public void onCreateAdminAccountClick(View view) {
-        User user = new User("Admin", "User", "admin", "yfrie071@uottawa.ca", User.Types.ADMIN, "admin");
+        User user = new User("Admin", "User", "admin", "yfrie071@uottawa.ca", User.Type.ADMIN, "admin");
         DbUser.createUser(user, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
@@ -167,7 +165,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     public void onCreateTestAccountClick(View view) {
-        User user = new User("Test", "User", "test", "test@test.test", User.Types.SERVICE_PROVIDER, "cqpass");
+        User user = new User("Test", "User", "test", "test@test.test", User.Type.SERVICE_PROVIDER, "cqpass");
         DbUser.createUser(user, new AsyncActionEventListener() {
             @Override
             public void onSuccess() { }
@@ -187,7 +185,7 @@ public class SignInActivity extends AppCompatActivity {
         ServiceProvider provides = new ServiceProvider("-LRTteBm1Bvhh8KMiGd_", "daddy", "please", "DONOTspankme", "bad@boy.com",
                 "cqpass", "Spaces Allowed", true, "6132453125", address, null);
         System.out.println("OUTPUT");
-        User user = new User("-LRYCsBuPG8E1gmy6otV", "Test", "Homeowner", "Hope", "thisworks@mail.com", User.Types.HOMEOWNER, "cqpass");
+        User user = new User("-LRYCsBuPG8E1gmy6otV", "Test", "Homeowner", "Hope", "thisworks@mail.com", User.Type.HOMEOWNER, "cqpass");
         Service service = new Service("-LRNf10QyYaAtg9kx3dR", "Super Nutty", 201, "-LRNeyae0rFs4YqwqiVs");
         DbService.updateService(service, new AsyncActionEventListener() {
             @Override

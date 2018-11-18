@@ -20,7 +20,7 @@ public class State {
 
     }
 
-    // Access the single state object
+    // Access the single cellState object
     @NonNull
     public static State getState() {
         if (null == state) { state = new State(); }

@@ -20,7 +20,6 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
-import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class DbUser extends DbItem<User> {
@@ -61,7 +60,7 @@ public class DbUser extends DbItem<User> {
 
     @NonNull
     public User toDomainObj() {
-        if (User.parseType(type) == User.Types.SERVICE_PROVIDER) {
+        if (User.parseType(type) == User.Type.SERVICE_PROVIDER) {
             if (null == address) { throw new IllegalArgumentException("The address cannot be null"); }
             return new ServiceProvider(retrieveKey(), first_name, last_name, username, email, password, company_name, licensed, phone_number, address.toDomainObj(), description);
         }

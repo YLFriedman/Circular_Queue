@@ -2,36 +2,43 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.database.DbAvailability;
 import ca.uottawa.seg2105.project.cqondemand.domain.Availability;
+import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
+import ca.uottawa.seg2105.project.cqondemand.domain.User;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class AvailabilityWeekViewActivity extends SignedInActivity {
 
-    private static List<Availability> availabilities;
+    //private static List<Availability> availabilities;
 
-    private enum State { DEFAULT, AVAILABLE, BOOKED, UNAVAILABLE }
+    private enum CellState { DEFAULT, AVAILABLE, BOOKED, UNAVAILABLE }
     private class Cell {
         String[] dayNames = new String[] { "sun", "mon", "tue", "wed", "thu", "fri", "sat" };
         String[] timeNames = new String[] { "00", "01", "02", "03", "04", "05", "06", "07", "08", "09" };
         public int day;
         public int time;
-        public State state;
-        public Cell() { state = State.DEFAULT; }
-        public Cell(int day, int time) { this.day = day; this.time = time; state = State.DEFAULT; }
-        public Cell(int day, int time, State state) { this.day = day; this.time = time; this.state = state; }
+        public CellState cellState;
+        public Cell() { cellState = CellState.DEFAULT; }
+        public Cell(int day, int time) { this.day = day; this.time = time; cellState = CellState.DEFAULT; }
+        public Cell(int day, int time, CellState cellState) { this.day = day; this.time = time; this.cellState = cellState; }
         public String getCellName() { return "cell_" + dayNames[day] + "_" + ((time < 10) ? timeNames[time] : time); }
     }
 
     View[][] cellViews;
     Cell[][] cells;
+    protected User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,16 +60,15 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
             }
         }
 
-        if (availabilities != null) {
-            setAvailabilities(Availability.toArrays(availabilities));
+        currentUser = State.getState().getSignedInUser();
+
+        if (currentUser instanceof ServiceProvider) {
+            onResetClick();
+        } else {
+            // TODO: Toast message on fail
+            finish();
         }
 
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        availabilities = Availability.toList(getAvailabilities());
     }
 
     @Override
@@ -84,9 +90,22 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
     private void setAvailabilities(@NonNull boolean[][] availabilities) {
         for (int day = 0; day < 7; day++) {
             for (int time = 0; time < 24; time++) {
-                setCell(day, time, availabilities[day][time] ? State.AVAILABLE : State.DEFAULT);
+                setCell(day, time, availabilities[day][time] ? CellState.AVAILABLE : CellState.DEFAULT);
             }
         }
+    }
+
+    public void onSaveClick(View view) {
+        DbAvailability.setAvailabilities((ServiceProvider) currentUser, Availability.toList(getAvailabilities()), new AsyncActionEventListener() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(getApplicationContext(), getString(R.string.availability_saved_successfully), Toast.LENGTH_LONG).show();
+            }
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                Toast.makeText(getApplicationContext(), getString(R.string.availability_save_failed), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void onHelpClick() {
@@ -94,35 +113,42 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
     }
 
     private void onClearClick() {
-        setAllCells(State.DEFAULT);
+        setAllCells(CellState.DEFAULT);
     }
 
     private void onResetClick() {
-        if (availabilities != null) {
-            setAvailabilities(Availability.toArrays(availabilities));
-        }
+        DbAvailability.getAvailabilities((ServiceProvider) currentUser, new AsyncValueEventListener<Availability>() {
+            @Override
+            public void onSuccess(@NonNull ArrayList<Availability> data) {
+                setAvailabilities(Availability.toArrays(data));
+            }
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                Toast.makeText(getApplicationContext(), getString(R.string.availability_load_failed), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private boolean[][] getAvailabilities() {
         boolean[][] availabilities = new boolean[7][24];
         for (int day = 0; day < 7; day++) {
             for (int time = 0; time < 24; time++) {
-                availabilities[day][time] = (State.AVAILABLE == cells[day][time].state);
+                availabilities[day][time] = (CellState.AVAILABLE == cells[day][time].cellState);
             }
         }
         return availabilities;
     }
 
-    private void setAllCells(@NonNull State state) {
+    private void setAllCells(@NonNull CellState cellState) {
         for (int day = 0; day < 7; day++) {
             for (int time = 0; time < 24; time++) {
-                setCell(day, time, state);
+                setCell(day, time, cellState);
             }
         }
     }
 
     private void updateCellView(int day, int time) {
-        switch (cells[day][time].state) {
+        switch (cells[day][time].cellState) {
             case AVAILABLE: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_available); break;
             case UNAVAILABLE: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_default); break;
             case BOOKED: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_booked); break;
@@ -131,8 +157,8 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
         }
     }
 
-    private void setCell(int day, int time, State state) {
-        cells[day][time].state = state;
+    private void setCell(int day, int time, CellState cellState) {
+        cells[day][time].cellState = cellState;
         updateCellView(day, time);
     }
 
@@ -147,10 +173,10 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
 
     public void toggleAvailability(int day, int time) {
         Cell cell = cells[day][time];
-        if (State.DEFAULT != cell.state) {
-            setCell(cell.day, cell.time, State.DEFAULT);
+        if (CellState.DEFAULT != cell.cellState) {
+            setCell(cell.day, cell.time, CellState.DEFAULT);
         } else {
-            setCell(cell.day, cell.time, State.AVAILABLE);
+            setCell(cell.day, cell.time, CellState.AVAILABLE);
         }
     }
 
@@ -160,12 +186,11 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
             if (view.getTag() instanceof Cell) { cell = (Cell) view.getTag(); }
             else { return false; }
 
-            if (State.DEFAULT != cell.state) {
-                setCell(cell.day, cell.time, State.DEFAULT);
+            if (CellState.DEFAULT != cell.cellState) {
+                setCell(cell.day, cell.time, CellState.DEFAULT);
             } else {
-                setCell(cell.day, cell.time, State.BOOKED);
+                setCell(cell.day, cell.time, CellState.BOOKED);
             }
-
             return true;
         }
     }

@@ -24,12 +24,12 @@ public class User {
 
     protected String password;
 
-    protected final Types type;
+    protected final Type type;
 
     /**
      * A simple enum for distinguishing different types of user accounts
      */
-    public enum Types {
+    public enum Type {
         ADMIN, HOMEOWNER, SERVICE_PROVIDER;
         @NonNull
         public String toString() {
@@ -53,7 +53,7 @@ public class User {
      * @param type The type of the account
      * @param password The user's password
      */
-    public User(@NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull Types type, @NonNull String password) {
+    public User(@NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull Type type, @NonNull String password) {
         if (!FieldValidation.usernameIsValid(username)) { throw new InvalidDataException("Invalid username. " +
                 FieldValidation.ILLEGAL_USERNAME_CHARS); }
         PasswordValidationResult passwordValRes = FieldValidation.validatePassword(username, password, password);
@@ -72,7 +72,7 @@ public class User {
         this.password = password;
     }
 
-    public User(@NonNull String key, @NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull Types type, @NonNull String password) {
+    public User(@NonNull String key, @NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull Type type, @NonNull String password) {
         this(firstName, lastName, username, email, type, password);
         this.key = key;
     }
@@ -125,7 +125,7 @@ public class User {
      * Getter for the user's type
      * @return the user's type
      */
-    public Types getType() {
+    public Type getType() {
         return type;
     }
 
@@ -140,7 +140,7 @@ public class User {
     }
 
     public boolean isAdmin() {
-        return type == Types.ADMIN;
+        return type == Type.ADMIN;
     }
 
     /**
@@ -150,12 +150,12 @@ public class User {
      * @param input the String representation of a Type you wish to convert
      * @return The user type that is associated to the given string
      */
-    public static User.Types parseType(String input) {
+    public static Type parseType(String input) {
         if (null == input) { throw new IllegalArgumentException("'null' is not a valid user type. "); }
         switch (input) {
-            case "Homeowner": return User.Types.HOMEOWNER;
-            case "Service Provider": return User.Types.SERVICE_PROVIDER;
-            case "Admin": return User.Types.ADMIN;
+            case "Homeowner": return Type.HOMEOWNER;
+            case "Service Provider": return Type.SERVICE_PROVIDER;
+            case "Admin": return Type.ADMIN;
             default: throw new IllegalArgumentException("'" + input + "' is not a valid user type. ");
         }
     }
