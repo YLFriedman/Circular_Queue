@@ -18,8 +18,7 @@ public class AvailabilityFunctionTest {
 
     @Test
     public void validate_ConstructorKey() {
-        Availability testAvailability = new Availability("111", Availability.parseDay("SUNDAY"), 12, 15);
-        assertEquals("Service getter Failed - key", "111", testAvailability.getKey());
+        Availability testAvailability = new Availability(Availability.parseDay("SUNDAY"), 12, 15);
         assertEquals("Service getter Failed - day", Availability.Day.SUNDAY, testAvailability.getDay());
         assertEquals("Service getter Failed - startTime", 12, testAvailability.getStartTime());
         assertEquals("Service getter Failed - endTime", 15, testAvailability.getEndTime());
@@ -49,21 +48,17 @@ public class AvailabilityFunctionTest {
 
     @Test
     public void validate_Equals() {
-        Availability testAvailability1 = new Availability("111", Availability.Day.SUNDAY, 12, 15);
-        Availability testAvailability2 = new Availability("111", Availability.Day.TUESDAY, 13, 14);
-        Availability testAvailability3 = new Availability("210", Availability.Day.SUNDAY, 12, 15);
-        Availability testAvailability4 = new Availability("300", Availability.Day.FRIDAY, 11, 16);
-        Availability testAvailability5 = new Availability( Availability.Day.SUNDAY, 12, 15);
-        Availability testAvailability6 = new Availability( Availability.Day.SUNDAY, 12, 15);
-        Availability testAvailability7 = new Availability( Availability.Day.SUNDAY, 15, 16);
+        Availability testAvailability1 = new Availability(Availability.Day.SUNDAY, 12, 15);
+        Availability testAvailability2 = new Availability(Availability.Day.SUNDAY, 12, 15);
+        Availability testAvailability3 = new Availability(Availability.Day.MONDAY, 12, 15);
+        Availability testAvailability4 = new Availability(Availability.Day.SUNDAY, 15, 15);
+        Availability testAvailability5 = new Availability(Availability.Day.SUNDAY, 12, 18);
         assertTrue("Equals validation failed - Same Object", testAvailability1.equals(testAvailability1));
-        assertTrue("Equals validation failed - Same Key", testAvailability1.equals(testAvailability2));
-        assertFalse("Equals validation failed - Different Key", testAvailability1.equals(testAvailability4));
-        assertFalse("Equals validation failed - Same values except key", testAvailability1.equals(testAvailability3));
-        assertTrue("Equals validation failed - Same values (No Keys)", testAvailability5.equals(testAvailability6));
-        assertFalse("Equals validation failed - Different Values", testAvailability1.equals(testAvailability4));
-        assertFalse("Equals validation failed - Different Values (No Keys)", testAvailability6.equals(testAvailability7));
-        assertFalse("Equals validation failed - Different Objects", testAvailability1.equals("Hello"));
+        assertFalse("Equals validation failed - Different Object Type", testAvailability1.equals("Hello"));
+        assertTrue("Equals validation failed - Same values", testAvailability1.equals(testAvailability2));
+        assertFalse("Equals validation failed - Different Day", testAvailability1.equals(testAvailability3));
+        assertFalse("Equals validation failed - Different Start Time", testAvailability1.equals(testAvailability4));
+        assertFalse("Equals validation failed - Different End Time", testAvailability1.equals(testAvailability5));
     }
 
 }

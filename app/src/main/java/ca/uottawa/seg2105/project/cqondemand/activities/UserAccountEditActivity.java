@@ -37,6 +37,7 @@ public class UserAccountEditActivity extends SignedInActivity {
     protected EditText field_company_name;
     protected Switch switch_licensed;
     protected EditText field_phone;
+    protected EditText field_description;
     protected EditText field_unit;
     protected EditText field_street_number;
     protected EditText field_street_name;
@@ -45,7 +46,6 @@ public class UserAccountEditActivity extends SignedInActivity {
     protected Spinner spinner_province;
     protected EditText field_province_error;
     protected EditText field_postal;
-    protected EditText field_description;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +72,7 @@ public class UserAccountEditActivity extends SignedInActivity {
                 field_company_name = findViewById(R.id.field_company_name);
                 switch_licensed = findViewById(R.id.switch_licensed);
                 field_phone = findViewById(R.id.field_phone);
+                field_description = findViewById(R.id.field_description);
                 field_unit = findViewById(R.id.field_unit);
                 field_street_number = findViewById(R.id.field_street_number);
                 field_street_name = findViewById(R.id.field_street_name);
@@ -89,6 +90,7 @@ public class UserAccountEditActivity extends SignedInActivity {
                 field_company_name.setText(provider.getCompanyName(), TextView.BufferType.EDITABLE);
                 switch_licensed.setChecked(provider.isLicensed());
                 field_phone.setText(provider.getPhoneNumber(), TextView.BufferType.EDITABLE);
+                field_description.setText(provider.getDescription(), TextView.BufferType.EDITABLE);
                 field_unit.setText(address.getUnit(), TextView.BufferType.EDITABLE);
                 field_street_number.setText(String.valueOf(address.getStreetNumber()), TextView.BufferType.EDITABLE);
                 field_street_name.setText(address.getStreet(), TextView.BufferType.EDITABLE);
