@@ -27,38 +27,35 @@ public class DbAvailability extends DbItem<Availability> {
     public DbAvailability() {}
 
     DbAvailability(Availability item) {
-        super(item.getKey());
-        storeKey(item.getKey());
         this.day = item.getDay().toString();
         this.start_time = item.getStartTime();
         this.end_time = item.getEndTime();
     }
 
     @NonNull
-    public Availability toDomainObj() { return new Availability(retrieveKey(), Availability.parseDay(day), start_time, end_time); }
+    public Availability toDomainObj() { return new Availability(Availability.parseDay(day), start_time, end_time); }
 
     public static void setAvailabilities(@NonNull ServiceProvider provider, @NonNull List<Availability> items, @Nullable final AsyncActionEventListener listener) {
         if (null == provider.getKey() || provider.getKey().isEmpty()) { throw new IllegalArgumentException("A service provider object with a key is required. Unable to update the database without the key."); }
         ArrayList<DbAvailability> dbItems = new ArrayList<>();
         String serviceProviderKey = provider.getKey();
         for (Availability item: items) { dbItems.add(new DbAvailability(item)); }
-        DbUtil.getRef(DbUtil.DataType.AVAILABILITY).child(serviceProviderKey).setValue(dbItems, new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                    if (null != listener) {
-                        if (null == databaseError) { listener.onSuccess(); }
-                        else { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
-                    }
+        DbUtil.DataType.AVAILABILITY.getRef().child(serviceProviderKey).setValue(dbItems, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                if (null != listener) {
+                    if (null == databaseError) { listener.onSuccess(); }
+                    else { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
                 }
             }
-        );
+        });
     }
 
     @SuppressWarnings("unchecked")
     public static void getAvailabilities(@NonNull ServiceProvider provider, @NonNull final AsyncValueEventListener<Availability> listener) {
         if (null == provider.getKey() || provider.getKey().isEmpty()) { throw new IllegalArgumentException("A service provider object with a key is required. Unable to query the database without the key."); }
         final ArrayList<Availability> returnValue = new ArrayList<>();
-        DbUtil.getRef(DbUtil.DataType.AVAILABILITY).child(provider.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+        DbUtil.DataType.AVAILABILITY.getRef().child(provider.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot item: snapshot.getChildren()) {

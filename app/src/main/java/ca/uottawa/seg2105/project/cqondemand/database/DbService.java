@@ -11,6 +11,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
@@ -133,10 +134,10 @@ public class DbService extends DbItem<Service> {
                 for (DataSnapshot child: dataSnapshot.getChildren()) {
 
                     String userKey = child.getKey();
-                    String path = String.format("user_services/%s/%s", userKey, serviceKey);
+                    String path = String.format("%s/%s/%s", DbUtilRelational.RelationType.USER_SERVICES, userKey, serviceKey);
                     pathMap.put(path, updatedService);
                 }
-                pathMap.put(String.format("services/%s", serviceKey), updatedService);
+                pathMap.put(String.format("%s/%s", DbUtil.DataType.SERVICE, serviceKey), updatedService);
                 DbUtilRelational.multiPathUpdate(pathMap, listener);
             }
             @Override
@@ -146,45 +147,43 @@ public class DbService extends DbItem<Service> {
         });
     }
 
+    private static Map<String,Object> createServiceProviderWithServiceMap(@NonNull String userKey, @Nullable DbUser userDb, @NonNull String serviceKey, @Nullable DbService serviceDb) {
+        HashMap<String, Object> pathMap = new HashMap<String, Object>();
+        String path = "%s/%s/%s";
+        pathMap.put(String.format(path, DbUtilRelational.RelationType.USER_SERVICES, userKey, serviceKey), serviceDb);
+        pathMap.put(String.format(path, DbUtilRelational.LookupType.USER_SERVICES, serviceKey, userKey), serviceDb == null ? null : true);
+        pathMap.put(String.format(path, DbUtilRelational.RelationType.SERVICE_USERS, serviceKey, userKey), userDb);
+        pathMap.put(String.format(path, DbUtilRelational.LookupType.SERVICE_USERS, userKey, serviceKey), userDb == null ? null : true);
+        return pathMap;
+    }
+
     public static void relateToProvider(@NonNull Service service, @NonNull User user, @Nullable final AsyncActionEventListener listener) {
-        final HashMap<String, Object> pathMap = new HashMap<>();
-        String serviceKey = service.getKey();
-        String userKey = user.getKey();
-        DbService serviceDB = new DbService(service);
-        DbUser userDB = new DbUser(user);
-        pathMap.put(String.format("user_services/%s/%s", userKey, serviceKey), serviceDB);
-        pathMap.put(String.format("service_users/%s/%s", serviceKey, userKey), userDB);
-        pathMap.put(String.format("user_service_lookup/%s/%s", serviceKey, userKey), true);
-        pathMap.put(String.format("service_users_lookup/%s/%s", userKey, serviceKey), true);
+        Map<String,Object> pathMap = createServiceProviderWithServiceMap(user.getKey(), new DbUser(user), service.getKey(), new DbService(service));
         DbUtilRelational.multiPathUpdate(pathMap, listener);
     }
 
-    public static void endRelationWithProvider(@NonNull Service service, @NonNull User user, @NonNull final AsyncActionEventListener listener){
-        String serviceKey = service.getKey();
-        String userKey = user.getKey();
-        HashMap<String, Object> pathMap = new HashMap<>();
-        pathMap.put(String.format("user_services/%s/%s", userKey, serviceKey), null);
-        pathMap.put(String.format("service_users/%s/%s", serviceKey, userKey), null);
-        pathMap.put(String.format("user_service_lookup/%s/%s", serviceKey, userKey), null);
-        pathMap.put(String.format("service_users_lookup/%s/%s", userKey, serviceKey), null);
+    public static void endRelationWithProvider(@NonNull Service service, @NonNull User user, @Nullable final AsyncActionEventListener listener) {
+        Map<String,Object> pathMap = createServiceProviderWithServiceMap(user.getKey(), null, service.getKey(), null);
         DbUtilRelational.multiPathUpdate(pathMap, listener);
     }
 
-    private static void deleteServiceRelational(Service service, final AsyncActionEventListener listener){
+    private static void deleteServiceRelational(Service service, final AsyncActionEventListener listener) {
         final String serviceKey = service.getKey();
         final HashMap<String, Object> pathMap = new HashMap<>();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("user_service_lookup").child(serviceKey);
+        String path = "%s/%s";
+        pathMap.put(String.format(path, DbUtilRelational.RelationType.SERVICE_USERS, serviceKey), null);
+        pathMap.put(String.format(path, DbUtilRelational.LookupType.USER_SERVICES, serviceKey), null);
+        pathMap.put(String.format(path, DbUtil.DataType.SERVICE, serviceKey), null);
+        DatabaseReference ref = DbUtilRelational.LookupType.USER_SERVICES.getRef().child(serviceKey);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String path = "%s/%s/%s";
                 for (DataSnapshot child: dataSnapshot.getChildren()) {
                     String providerKey = child.getKey();
-                    pathMap.put(String.format("user_services/%s/%s", providerKey, serviceKey), null);
-                    pathMap.put(String.format("service_users_lookup/%s/%s", providerKey, serviceKey), null);
+                    pathMap.put(String.format(path, DbUtilRelational.RelationType.USER_SERVICES, providerKey, serviceKey), null);
+                    pathMap.put(String.format(path, DbUtilRelational.LookupType.SERVICE_USERS, providerKey, serviceKey), null);
                 }
-                pathMap.put(String.format("service_users/%s", serviceKey), null);
-                pathMap.put(String.format("user_service_lookup/%s", serviceKey), null);
-                pathMap.put(String.format("services/%s", serviceKey), null);
                 DbUtilRelational.multiPathUpdate(pathMap, listener);
             }
             @Override

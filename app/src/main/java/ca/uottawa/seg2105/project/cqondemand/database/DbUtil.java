@@ -32,7 +32,8 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 public class DbUtil {
 
-    protected static final HashMap<DataType, DatabaseReference> references = new HashMap<DataType, DatabaseReference>();
+    protected static final HashMap<String, DatabaseReference> references = new HashMap<String, DatabaseReference>();
+
     /**
      * Enum for differentiating between different object types
      */
@@ -59,6 +60,14 @@ public class DbUtil {
                 case ADDRESS: return DbAddress.class;
                 default: throw new UnsupportedOperationException("The type is unsupported by this method.");
             }
+        }
+        public DatabaseReference getRef() {
+            DatabaseReference ref = references.get(this.toString());
+            if (null == ref) {
+                ref = FirebaseDatabase.getInstance().getReference().child(this.toString());
+                references.put(this.toString(), ref);
+            }
+            return ref;
         }
     }
 
@@ -95,25 +104,9 @@ public class DbUtil {
         throw new IllegalArgumentException("Unsupported type.");
     }
 
-    /**
-     * Method for getting a specific DatabaseReference, based on the input type
-     *
-     * @param type the type of DbItem
-     * @return A DatabaseReference pointing to the node which corresponds to the input type
-     */
-    @NonNull
-    protected static DatabaseReference getRef(@NonNull DataType type) {
-        DatabaseReference ref = references.get(type);
-        if (null == ref) {
-            ref = FirebaseDatabase.getInstance().getReference().child(type.toString());
-            references.put(type, ref);
-        }
-        return ref;
-    }
-
     @SuppressWarnings("unchecked")
     static <T> void getItem(@NonNull final DataType type, @NonNull String key, @NonNull final AsyncSingleValueEventListener<T> listener) {
-        getRef(type).child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+        type.getRef().child(key).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
@@ -180,7 +173,7 @@ public class DbUtil {
                 listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
             }
         };
-        DatabaseReference ref = getRef(type);
+        DatabaseReference ref = type.getRef();
         if (singleEvent) {
             ref.addListenerForSingleValueEvent(dataConversionListener);
             return new DbListener<ValueEventListener>(ref, null);
@@ -190,24 +183,24 @@ public class DbUtil {
     }
 
     static <T> void getItems(@NonNull final DataType type, @NonNull String childKey, @NonNull String childValue, @NonNull final AsyncValueEventListener<T> listener) {
-        Query query = getRef(type).orderByChild(childKey).equalTo(childValue);
+        Query query = type.getRef().orderByChild(childKey).equalTo(childValue);
         getItems(type, query, listener, true);
     }
 
     static <T> void getItems(@NonNull final DataType type, @NonNull String childKey, int childValue, @NonNull final AsyncValueEventListener<T> listener) {
-        Query query = getRef(type).orderByChild(childKey).equalTo(childValue);
+        Query query = type.getRef().orderByChild(childKey).equalTo(childValue);
         getItems(type, query, listener, true);
     }
 
     @NonNull
     static <T> DbListener<ValueEventListener> getItemsLive(@NonNull final DataType type, @NonNull String childKey, @NonNull String childValue, @NonNull final AsyncValueEventListener<T> listener) {
-        Query query = getRef(type).orderByChild(childKey).equalTo(childValue);
+        Query query = type.getRef().orderByChild(childKey).equalTo(childValue);
         return getItems(type, query, listener, false);
     }
 
     @NonNull
     static <T> DbListener<ValueEventListener> getItemsLive(@NonNull final DataType type, @NonNull String childKey, int childValue, @NonNull final AsyncValueEventListener<T> listener) {
-        Query query = getRef(type).orderByChild(childKey).equalTo(childValue);
+        Query query = type.getRef().orderByChild(childKey).equalTo(childValue);
         return getItems(type, query, listener, false);
     }
 
@@ -250,7 +243,7 @@ public class DbUtil {
         final DataType type = getType(item);
         final DbItem<?> dbItem = objectToDbItem(item);
         if (null == dbItem.retrieveKey() || dbItem.retrieveKey().isEmpty()) { throw new IllegalArgumentException("An item key is required. Unable to delete from the database without the key."); }
-        getRef(type).child(dbItem.retrieveKey()).removeValue(new DatabaseReference.CompletionListener() {
+        type.getRef().child(dbItem.retrieveKey()).removeValue(new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                 if (null != listener) {
@@ -264,7 +257,7 @@ public class DbUtil {
     static <T> void createItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(item);
         final DbItem<?> dbItem = objectToDbItem(item);
-        final DatabaseReference pushRef = getRef(type).push();
+        final DatabaseReference pushRef = type.getRef().push();
         String key = pushRef.getKey();
         if (null == key) { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
         dbItem.storeKey(pushRef.getKey());
@@ -286,7 +279,7 @@ public class DbUtil {
             @Override
             public void onSuccess(@NonNull T item) {
                 // Success condition: Item exists in database and can be updated
-                getRef(type).child(dbItem.retrieveKey()).setValue(dbItem, new DatabaseReference.CompletionListener() {
+                type.getRef().child(dbItem.retrieveKey()).setValue(dbItem, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                         if (null != listener) {

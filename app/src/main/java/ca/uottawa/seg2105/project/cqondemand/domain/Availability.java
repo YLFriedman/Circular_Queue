@@ -27,7 +27,6 @@ public class Availability {
         }
     }
 
-    protected String key;
     protected Day day;
     protected int startTime;
     protected int endTime;
@@ -36,17 +35,6 @@ public class Availability {
         this.day = day;
         this.startTime = startTime;
         this.endTime = endTime;
-    }
-
-    public Availability(@NonNull String key, @NonNull Day day, int startTime, int endTime) {
-        this.key = key;
-        this.day = day;
-        this.startTime = startTime;
-        this.endTime = endTime;
-    }
-
-    public String getKey() {
-        return key;
     }
 
     public Day getDay() {
@@ -66,7 +54,6 @@ public class Availability {
         if (!(otherObj instanceof Availability)) { return false; }
         if (this == otherObj) { return true; }
         Availability other = (Availability) otherObj;
-        if (null != key && null != other.key) { return key.equals(other.key); }
         if ((null == day) != (null == other.day) || (null != day && !day.equals(other.day))) { return false; }
         return startTime == other.startTime && endTime == other.endTime;
     }

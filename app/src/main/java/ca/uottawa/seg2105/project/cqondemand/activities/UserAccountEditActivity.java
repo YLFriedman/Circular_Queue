@@ -252,9 +252,7 @@ public class UserAccountEditActivity extends SignedInActivity {
                 return;
             }
 
-            if(description.isEmpty()){
-                description = null;
-            }
+            if (description.isEmpty()) { description = null; }
             newUser = new ServiceProvider(currentUser.getKey(), firstName, lastName, username, email, currentUser.getPassword(), companyName, licensed, phoneNumber, address, description);
 
         } else {

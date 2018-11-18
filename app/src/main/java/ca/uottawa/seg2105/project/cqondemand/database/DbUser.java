@@ -184,22 +184,20 @@ public class DbUser extends DbItem<User> {
 
     public static void updateUserRelational(final User user, final AsyncActionEventListener listener) {
         final String userKey = user.getKey();
-        final HashMap<String, Object> pathMap = new HashMap<>();
+        final HashMap<String, Object> pathMap = new HashMap<String, Object>();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("service_users_lookup").child(userKey);
         final DbUser updatedUser = new DbUser(user);
         String primaryPath = String.format("users/%s", userKey);
         pathMap.put(primaryPath, updatedUser);
-        if(user instanceof  ServiceProvider){
+        if (user instanceof  ServiceProvider) {
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot child : dataSnapshot.getChildren()) {
-                            String serviceKey = child.getKey();
-                            String path = String.format("service_users/%s/%s", serviceKey, userKey);
-                            pathMap.put(path, updatedUser);
-                        }
-
-
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        String serviceKey = child.getKey();
+                        String path = String.format("service_users/%s/%s", serviceKey, userKey);
+                        pathMap.put(path, updatedUser);
+                    }
                     DbUtilRelational.multiPathUpdate(pathMap, listener);
                 }
                 @Override
@@ -207,13 +205,10 @@ public class DbUser extends DbItem<User> {
                     listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
                 }
             });
-        }
-        else{
+        } else {
             DbUtilRelational.multiPathUpdate(pathMap, listener);
         }
     }
-
-
 
     public static void deleteUserRelational(User user, final AsyncActionEventListener listener) {
         final String userKey = user.getKey();
@@ -243,8 +238,6 @@ public class DbUser extends DbItem<User> {
             }
         });
     }
-
-
 
     public static void getServicesProvided(@NonNull ServiceProvider provider, @NonNull AsyncValueEventListener<Service> listener) {
         if (provider.getKey() == null || provider.getKey().isEmpty()) {
