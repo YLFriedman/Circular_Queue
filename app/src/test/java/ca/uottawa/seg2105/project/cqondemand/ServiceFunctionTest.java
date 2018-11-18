@@ -14,7 +14,7 @@ public class ServiceFunctionTest {
         Service testService = new Service("Camera Installation", 250, "category_test");
         assertEquals("Service getter Failed - name", "Camera Installation", testService.getName());
         assertEquals("Service getter Failed - rate", 250, testService.getRate());
-        assertEquals("Service getter Failed - categoryID", "category_test", testService.getCategoryID());
+        assertEquals("Service getter Failed - categoryID", "category_test", testService.getCategoryKey());
     }
 
     @Test
@@ -23,7 +23,7 @@ public class ServiceFunctionTest {
         assertEquals("Service getter Failed - Key", "111", testService.getKey());
         assertEquals("Service getter Failed - name", "Camera Installation", testService.getName());
         assertEquals("Service getter Failed - rate", 250, testService.getRate());
-        assertEquals("Service getter Failed - categoryID", "category_test", testService.getCategoryID());
+        assertEquals("Service getter Failed - categoryID", "category_test", testService.getCategoryKey());
     }
 
     @Test
