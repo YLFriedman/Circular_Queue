@@ -9,6 +9,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ca.uottawa.seg2105.project.cqondemand.domain.Availability;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
@@ -36,7 +37,7 @@ public class DbAvailability extends DbItem<Availability> {
     @NonNull
     public Availability toDomainObj() { return new Availability(retrieveKey(), Availability.parseDay(day), start_time, end_time); }
 
-    public static void setAvailabilities(@NonNull ServiceProvider provider, @NonNull ArrayList<Availability> items, @Nullable final AsyncActionEventListener listener) {
+    public static void setAvailabilities(@NonNull ServiceProvider provider, @NonNull List<Availability> items, @Nullable final AsyncActionEventListener listener) {
         if (null == provider.getKey() || provider.getKey().isEmpty()) { throw new IllegalArgumentException("A service provider object with a key is required. Unable to update the database without the key."); }
         ArrayList<DbAvailability> dbItems = new ArrayList<>();
         String serviceProviderKey = provider.getKey();
@@ -60,11 +61,11 @@ public class DbAvailability extends DbItem<Availability> {
         DbUtil.getRef(DbUtil.DataType.AVAILABILITY).child(provider.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot snap: snapshot.getChildren()) {
+                for (DataSnapshot item: snapshot.getChildren()) {
                     try {
-                        DbItem<Availability> dbItem = (DbItem<Availability>) snapshot.getValue(DbUtil.DataType.AVAILABILITY.getDbItemClass());
-                        if (null != dbItem && null != snapshot.getKey()) {
-                            dbItem.storeKey(snapshot.getKey());
+                        DbItem<Availability> dbItem = (DbItem<Availability>) item.getValue(DbUtil.DataType.AVAILABILITY.getDbItemClass());
+                        if (null != dbItem && null != item.getKey()) {
+                            dbItem.storeKey(item.getKey());
                             Availability domainObjItem = dbItem.toDomainObj();
                             returnValue.add(domainObjItem);
                         }

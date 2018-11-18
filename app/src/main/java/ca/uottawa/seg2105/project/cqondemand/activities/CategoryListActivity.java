@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -71,7 +70,7 @@ public class CategoryListActivity extends SignedInActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         User user = State.getState().getSignedInUser();
-        if (null != user && user.getType() == User.Types.ADMIN) {
+        if (null != user && user.getType() == User.Type.ADMIN) {
             getMenuInflater().inflate(R.menu.category_list_options, menu);
             return true;
         }

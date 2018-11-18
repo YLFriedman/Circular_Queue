@@ -65,7 +65,7 @@ public class SignUpActivity extends AppCompatActivity {
     protected String email;
     protected String password;
     protected String passwordConfirm;
-    protected User.Types userType;
+    protected User.Type userType;
     protected String companyName;
     protected boolean licensed;
     protected String phoneNumber;
@@ -109,18 +109,18 @@ public class SignUpActivity extends AppCompatActivity {
         btn_create_account = findViewById(R.id.btn_create_account);
         btn_next = findViewById(R.id.btn_next);
 
-        // Setup initial state for UI elements
+        // Setup initial cellState for UI elements
         setScreen(Screen.FIELDS_1, true);
         // Get username from the sign in activity
         Intent intent = getIntent();
         field_username.setText(intent.getStringExtra("username"));
         // Configure the user type selection spinner
-        User.Types[] userTypes = new User.Types[]{ null, User.Types.HOMEOWNER, User.Types.SERVICE_PROVIDER };
-        spinner_user_type.setAdapter(new SpinnerAdapter<User.Types>(getApplicationContext(), R.layout.spinner_item_title, getString(R.string.select_account_type), userTypes));
+        User.Type[] userTypes = new User.Type[]{ null, User.Type.HOMEOWNER, User.Type.SERVICE_PROVIDER };
+        spinner_user_type.setAdapter(new SpinnerAdapter<User.Type>(getApplicationContext(), R.layout.spinner_item_title, getString(R.string.select_account_type), userTypes));
         spinner_user_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (parent.getItemAtPosition(position) == User.Types.SERVICE_PROVIDER) { setScreen(Screen.FIELDS_1, false); }
+                if (parent.getItemAtPosition(position) == User.Type.SERVICE_PROVIDER) { setScreen(Screen.FIELDS_1, false); }
                 else { setScreen(Screen.FIELDS_1, true); }
             }
             @Override
@@ -174,7 +174,7 @@ public class SignUpActivity extends AppCompatActivity {
         email = field_email.getText().toString().trim();
         password = field_password.getText().toString();
         passwordConfirm = field_password_confirm.getText().toString();
-        userType = (User.Types) spinner_user_type.getSelectedItem();
+        userType = (User.Type) spinner_user_type.getSelectedItem();
 
         // Check valid spinner selection
         if (null == userType) {
@@ -339,10 +339,10 @@ public class SignUpActivity extends AppCompatActivity {
 
     public void onCreateClick(View view) {
 
-        if (!fields_1AreValid() || (User.Types.SERVICE_PROVIDER == userType && !fields_2AreValid())) { return; }
+        if (!fields_1AreValid() || (User.Type.SERVICE_PROVIDER == userType && !fields_2AreValid())) { return; }
 
         User newUser = null;
-        if (User.Types.SERVICE_PROVIDER == userType) {
+        if (User.Type.SERVICE_PROVIDER == userType) {
             Address address = new Address(unit, streetNumberInt, streetName, city, province, country, postalCode);
             newUser = new ServiceProvider(firstName, lastName, username, email, password, companyName, licensed, phoneNumber, address);
         } else {

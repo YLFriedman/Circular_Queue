@@ -137,6 +137,9 @@
     <string name="category_delete_has_services_error">Unable to delete the \'%s\' category because it has services assigned to it. Please re-assign the services, then delete.</string>
     <string name="category_delete_success">The \'%s\' category has been successfully deleted.</string>
     <string name="service_details_db_error">There was an error getting the service details from the database. Please try again later.</string>
+    <string name="availability_save_failed">There was an error saving your availabilities. Please try again later.</string>
+    <string name="availability_saved_successfully">Your availabilities have been saved successfully. </string>
+    <string name="availability_load_failed">There was an error loading your availabilities. Please try again later.</string>
     <string name="current_service_empty">No service provided.</string>
     <string name="current_item_provided_template">No %s provided.</string>
     <string name="service_delete_success">The \'%s\' service has been successfully deleted.</string>

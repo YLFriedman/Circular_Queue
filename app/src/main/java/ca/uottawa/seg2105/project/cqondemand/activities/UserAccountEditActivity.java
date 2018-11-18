@@ -145,7 +145,7 @@ public class UserAccountEditActivity extends SignedInActivity {
 
         // Validate Service Provider fields
         User newUser = null;
-        if (User.Types.SERVICE_PROVIDER == currentUser.getType()) {
+        if (User.Type.SERVICE_PROVIDER == currentUser.getType()) {
             ServiceProvider provider = (ServiceProvider) currentUser;
             String companyName = field_company_name.getText().toString().trim();
             boolean licensed = switch_licensed.isChecked();

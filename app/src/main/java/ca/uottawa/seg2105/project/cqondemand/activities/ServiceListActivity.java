@@ -24,7 +24,6 @@ import ca.uottawa.seg2105.project.cqondemand.database.DbListener;
 import ca.uottawa.seg2105.project.cqondemand.database.DbService;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
-import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
@@ -63,7 +62,7 @@ public class ServiceListActivity extends SignedInActivity {
         State.getState().setCurrentUser(null);
         ActionBar actionBar = getSupportActionBar();
         // Determine and initialize the mode
-        if (null != currentUser && User.Types.SERVICE_PROVIDER == currentUser.getType()) {
+        if (null != currentUser && User.Type.SERVICE_PROVIDER == currentUser.getType()) {
             if (State.getState().getSignedInUser().equals(currentUser)) {
                 mode = Mode.EDIT_PROVIDER_SERVICES;
                 if (null != actionBar) { actionBar.setTitle(getString(R.string.my_services)); }
@@ -73,7 +72,7 @@ public class ServiceListActivity extends SignedInActivity {
         } else if (State.getState().getSignedInUser().isAdmin()) {
             mode = Mode.MANAGE_SERVICES;
             useCategory = null != currentCategory;
-        } else if (User.Types.SERVICE_PROVIDER == State.getState().getSignedInUser().getType()) {
+        } else if (User.Type.SERVICE_PROVIDER == State.getState().getSignedInUser().getType()) {
             mode = Mode.PICK_PROVIDER_SERVICES;
             useCategory = null != currentCategory;
             if (null != actionBar) { actionBar.setTitle(getString(R.string.pick_service)); }

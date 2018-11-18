@@ -2,8 +2,6 @@ package ca.uottawa.seg2105.project.cqondemand.domain;
 
 import android.support.annotation.NonNull;
 
-import java.util.ArrayList;
-
 public class ServiceProvider extends User {
 
     protected String companyName;
@@ -17,7 +15,7 @@ public class ServiceProvider extends User {
     public ServiceProvider(@NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull String pass,
                            @NonNull String companyName, boolean licenced, @NonNull String phoneNumber, @NonNull Address address) {
 
-        super(firstName, lastName, username, email, Types.SERVICE_PROVIDER, pass);
+        super(firstName, lastName, username, email, Type.SERVICE_PROVIDER, pass);
 
         this.companyName = companyName;
         this.licensed = licenced;
@@ -41,7 +39,7 @@ public class ServiceProvider extends User {
     public ServiceProvider(@NonNull String key, @NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull String pass,
                            @NonNull String companyName, boolean licenced, @NonNull String phoneNumber, @NonNull Address address) {
 
-        super(key, firstName, lastName, username, email, Types.SERVICE_PROVIDER, pass);
+        super(key, firstName, lastName, username, email, Type.SERVICE_PROVIDER, pass);
 
         this.companyName = companyName;
         this.licensed = licenced;
