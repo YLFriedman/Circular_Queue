@@ -69,9 +69,19 @@ public class DbUtilRelational extends DbUtil {
         }
     }
 
+    static <T> void getItemsRelational(@NonNull final RelationType relationType, @NonNull String childKey, @NonNull final AsyncValueEventListener<T> listener) {
+        getItemsRelational(relationType, childKey, listener, true);
+    }
+
+    @NonNull
+    static <T> DbListener<ValueEventListener> getItemsRelationalLive(@NonNull final RelationType relationType, @NonNull String childKey, @NonNull final AsyncValueEventListener<T> listener) {
+        return getItemsRelational(relationType, childKey, listener, false);
+    }
+
     @SuppressWarnings("unchecked")
-    public static <T> void getItemsRelational(@NonNull final RelationType relationType, @NonNull String childKey, @NonNull final AsyncValueEventListener<T> listener) {
-        relationType.getRef().child(childKey).addListenerForSingleValueEvent(new ValueEventListener() {
+    @NonNull
+    protected static <T> DbListener<ValueEventListener> getItemsRelational(@NonNull final RelationType relationType, @NonNull String childKey, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
+        ValueEventListener dataConversionListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<T> returnValue = new ArrayList<T>();
@@ -93,10 +103,17 @@ public class DbUtilRelational extends DbUtil {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
             }
-        });
+        };
+        DatabaseReference ref = relationType.getRef().child(childKey);
+        if (singleEvent) {
+            ref.addListenerForSingleValueEvent(dataConversionListener);
+            return new DbListener<ValueEventListener>(ref, null);
+        } else {
+            return new DbListener<ValueEventListener>(ref, ref.addValueEventListener(dataConversionListener));
+        }
     }
 
-    public static void multiPathUpdate(@NonNull Map<String,Object> pathMap, @Nullable final AsyncActionEventListener listener) {
+    static void multiPathUpdate(@NonNull Map<String,Object> pathMap, @Nullable final AsyncActionEventListener listener) {
         FirebaseDatabase.getInstance().getReference().updateChildren(pathMap, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {

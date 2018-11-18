@@ -246,4 +246,12 @@ public class DbUser extends DbItem<User> {
         DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.USER_SERVICES, provider.getKey(), listener);
     }
 
+    @NonNull
+    public static DbListener<?> getServicesProvidedLive(@NonNull ServiceProvider provider, @NonNull AsyncValueEventListener<Service> listener) {
+        if (provider.getKey() == null || provider.getKey().isEmpty()) {
+            throw new IllegalArgumentException("A service provider object with a key is required. Unable to query the database without the key.");
+        }
+        return DbUtilRelational.getItemsRelationalLive(DbUtilRelational.RelationType.USER_SERVICES, provider.getKey(), listener);
+    }
+
 }

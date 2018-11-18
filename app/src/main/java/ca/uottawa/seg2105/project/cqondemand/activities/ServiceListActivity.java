@@ -22,8 +22,10 @@ import ca.uottawa.seg2105.project.cqondemand.adapters.ServiceListAdapter;
 import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
 import ca.uottawa.seg2105.project.cqondemand.database.DbListener;
 import ca.uottawa.seg2105.project.cqondemand.database.DbService;
+import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
+import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
@@ -41,6 +43,7 @@ public class ServiceListActivity extends SignedInActivity {
     protected ServiceListAdapter service_list_adapter;
     protected Category currentCategory;
     protected User currentUser;
+    protected ServiceProvider currentProvider;
     protected DbListener<?> dbListener;
 
     @Override
@@ -62,7 +65,8 @@ public class ServiceListActivity extends SignedInActivity {
         State.getState().setCurrentUser(null);
         ActionBar actionBar = getSupportActionBar();
         // Determine and initialize the mode
-        if (null != currentUser && User.Type.SERVICE_PROVIDER == currentUser.getType()) {
+        if (null != currentUser && currentUser instanceof ServiceProvider) {
+            currentProvider = (ServiceProvider) currentUser;
             if (State.getState().getSignedInUser().equals(currentUser)) {
                 mode = Mode.EDIT_PROVIDER_SERVICES;
                 if (null != actionBar) { actionBar.setTitle(getString(R.string.my_services)); }
@@ -72,7 +76,8 @@ public class ServiceListActivity extends SignedInActivity {
         } else if (State.getState().getSignedInUser().isAdmin()) {
             mode = Mode.MANAGE_SERVICES;
             useCategory = null != currentCategory;
-        } else if (User.Type.SERVICE_PROVIDER == State.getState().getSignedInUser().getType()) {
+        } else if (State.getState().getSignedInUser() instanceof ServiceProvider) {
+            currentProvider = (ServiceProvider) State.getState().getSignedInUser();
             mode = Mode.PICK_PROVIDER_SERVICES;
             useCategory = null != currentCategory;
             if (null != actionBar) { actionBar.setTitle(getString(R.string.pick_service)); }
@@ -86,14 +91,24 @@ public class ServiceListActivity extends SignedInActivity {
             public void onSuccess(@NonNull ArrayList<Service> data) {
                 service_list_adapter = new ServiceListAdapter(getApplicationContext(), data, Mode.PICK_PROVIDER_SERVICES == mode, new View.OnClickListener() {
                     public void onClick(final View view) {
+                        final Service service = (Service) view.getTag();
                         if (Mode.PICK_PROVIDER_SERVICES == mode) {
-                            // TODO: Create relationship between service provider and service
-                            Intent intent = new Intent();
-                            intent.putExtra("finish", true);
-                            setResult(RESULT_OK, intent);
-                            finish();
+                            DbService.relateToProvider(service, currentProvider, new AsyncActionEventListener() {
+                                @Override
+                                public void onSuccess() {
+                                    Toast.makeText(getApplicationContext(), String.format(getString(R.string.service_added_to_provider_success_template), service.getName()), Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent();
+                                    intent.putExtra("finish", true);
+                                    setResult(RESULT_OK, intent);
+                                    finish();
+                                }
+                                @Override
+                                public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                                    Toast.makeText(getApplicationContext(), String.format(getString(R.string.service_added_to_provider_fail_template), service.getName()), Toast.LENGTH_LONG).show();
+                                }
+                            });
                         } else {
-                            State.getState().setCurrentService((Service) view.getTag());
+                            State.getState().setCurrentService(service);
                             Intent intent = new Intent(getApplicationContext(), ServiceViewActivity.class);
                             startActivity(intent);
                         }
@@ -108,8 +123,7 @@ public class ServiceListActivity extends SignedInActivity {
         };
 
         if (Mode.EDIT_PROVIDER_SERVICES == mode || Mode.VIEW_PROVIDER_SERVICES == mode) {
-            // TODO: Load the services for the specified provider (Loading all services for now)
-            dbListener = DbService.getServicesLive(listener);
+            dbListener = DbUser.getServicesProvidedLive(currentProvider, listener);
         } else if (useCategory) {
             setSubTitle(String.format(Locale.CANADA, getString(R.string.category_title_template), currentCategory.getName()));
             dbListener = DbService.getServicesByCategoryLive(currentCategory, listener);
