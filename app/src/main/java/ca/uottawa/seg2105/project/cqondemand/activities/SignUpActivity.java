@@ -53,6 +53,7 @@ public class SignUpActivity extends AppCompatActivity {
     protected Spinner spinner_province;
     protected EditText field_province_error;
     protected EditText field_postal;
+    protected EditText field_description;
 
     protected LinearLayout fields_1;
     protected LinearLayout fields_2;
@@ -69,6 +70,7 @@ public class SignUpActivity extends AppCompatActivity {
     protected String companyName;
     protected boolean licensed;
     protected String phoneNumber;
+    protected String description;
     protected String unit;
     protected String streetNumber;
     protected int streetNumberInt;
@@ -95,6 +97,7 @@ public class SignUpActivity extends AppCompatActivity {
         field_company_name = findViewById(R.id.field_company_name);
         switch_licensed = findViewById(R.id.switch_licensed);
         field_phone = findViewById(R.id.field_phone);
+        field_description = findViewById(R.id.field_description);
         field_unit = findViewById(R.id.field_unit);
         field_street_number = findViewById(R.id.field_street_number);
         field_street_name = findViewById(R.id.field_street_name);
@@ -254,6 +257,8 @@ public class SignUpActivity extends AppCompatActivity {
         province = spinner_province.getSelectedItem() == null ? "" : spinner_province.getSelectedItem().toString();
         country = field_country.getText().toString().trim();
         postalCode = field_postal.getText().toString().trim().toUpperCase();
+        description = field_description.getText().toString().trim();
+
 
         if (!FieldValidation.companyNameIsValid(companyName)) {
             if (companyName.isEmpty()) { field_company_name.setError(getString(R.string.empty_company_name_error)); }
@@ -344,7 +349,7 @@ public class SignUpActivity extends AppCompatActivity {
         User newUser = null;
         if (User.Type.SERVICE_PROVIDER == userType) {
             Address address = new Address(unit, streetNumberInt, streetName, city, province, country, postalCode);
-            newUser = new ServiceProvider(firstName, lastName, username, email, password, companyName, licensed, phoneNumber, address);
+            newUser = new ServiceProvider(firstName, lastName, username, email, password, companyName, licensed, phoneNumber, address, description);
         } else {
             newUser = new User(firstName, lastName, username, email, userType, password);
         }

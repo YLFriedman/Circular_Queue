@@ -227,6 +227,7 @@
     <string name="canada">Canada</string>
     <string name="province_territory">Province / Territory</string>
     <string name="placeholder"><![CDATA[<variable>]]></string>
+    <string name="description">Description (Optional)</string>
     <string-array name="empty_category_spinner">
         <item>Select Category</item>
     </string-array>
