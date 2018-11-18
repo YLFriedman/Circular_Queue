@@ -34,6 +34,8 @@
     <string name="cq_logo">Circular Queue Logo</string>
     <string name="save">Save</string>
     <string name="edit">Edit</string>
+    <string name="ok">OK</string>
+    <string name="close">Close</string>
     <string name="change_password">Change Passsword</string>
     <string name="delete_account">Delete Account</string>
     <string name="account_type">Account Type</string>
@@ -225,7 +227,7 @@
     <string name="help">Help</string>
     <string name="clear_avail">Clear Availabilities</string>
     <string name="clear">Clear</string>
-    <string name="reset_to_last_saved">Reset to Last Saved</string>
+    <string name="reset_to_last_saved">Restore Last Saved</string>
     <string name="reset">Reset</string>
     <string name="my_services">My Services</string>
     <string name="add_service">Add Service</string>
@@ -239,6 +241,12 @@
     <string name="placeholder"><![CDATA[<variable>]]></string>
     <string name="description_optional">Description (Optional)</string>
     <string name="description">Description</string>
+    <string name="legend">Legend</string>
+    <string name="unavailable">Unavailable</string>
+    <string name="available">Available</string>
+    <string name="tips">Tips</string>
+    <string name="avail_tip_1">- Tap on a timeslot to toggle it between available and unavailable.</string>
+    <string name="avail_tip_2">- Long press on a timeslot (below an available timeslot) to mark it and the timeslots above it as available.</string>
     <string-array name="empty_category_spinner">
         <item>Select Category</item>
     </string-array>

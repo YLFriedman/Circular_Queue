@@ -1,7 +1,9 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,15 +25,15 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
 
     //private static List<Availability> availabilities;
 
-    private enum CellState { DEFAULT, AVAILABLE, BOOKED, UNAVAILABLE }
+    private enum CellState { AVAILABLE, BOOKED, UNAVAILABLE }
     private class Cell {
         String[] dayNames = new String[] { "sun", "mon", "tue", "wed", "thu", "fri", "sat" };
         String[] timeNames = new String[] { "00", "01", "02", "03", "04", "05", "06", "07", "08", "09" };
         public int day;
         public int time;
         public CellState cellState;
-        public Cell() { cellState = CellState.DEFAULT; }
-        public Cell(int day, int time) { this.day = day; this.time = time; cellState = CellState.DEFAULT; }
+        public Cell() { cellState = CellState.UNAVAILABLE; }
+        public Cell(int day, int time) { this.day = day; this.time = time; cellState = CellState.UNAVAILABLE; }
         public Cell(int day, int time, CellState cellState) { this.day = day; this.time = time; this.cellState = cellState; }
         public String getCellName() { return "cell_" + dayNames[day] + "_" + ((time < 10) ? timeNames[time] : time); }
     }
@@ -90,7 +92,7 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
     private void setAvailabilities(@NonNull boolean[][] availabilities) {
         for (int day = 0; day < 7; day++) {
             for (int time = 0; time < 24; time++) {
-                setCell(day, time, availabilities[day][time] ? CellState.AVAILABLE : CellState.DEFAULT);
+                setCell(day, time, availabilities[day][time] ? CellState.AVAILABLE : CellState.UNAVAILABLE);
             }
         }
     }
@@ -110,10 +112,18 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
 
     private void onHelpClick() {
 
+        new AlertDialog.Builder(this)
+                //.setTitle(R.string.delete_category)
+                //.setIcon(android.R.drawable.ic_menu_help)
+                .setView(getLayoutInflater().inflate(R.layout.help_availabilities, null))
+                .setNegativeButton(R.string.ok, null).show();
+
+
+
     }
 
     private void onClearClick() {
-        setAllCells(CellState.DEFAULT);
+        setAllCells(CellState.UNAVAILABLE);
     }
 
     private void onResetClick() {
@@ -150,9 +160,8 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
     private void updateCellView(int day, int time) {
         switch (cells[day][time].cellState) {
             case AVAILABLE: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_available); break;
-            case UNAVAILABLE: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_default); break;
             case BOOKED: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_booked); break;
-            case DEFAULT:
+            case UNAVAILABLE:
             default: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_default);
         }
     }
@@ -173,8 +182,8 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
 
     public void toggleAvailability(int day, int time) {
         Cell cell = cells[day][time];
-        if (CellState.DEFAULT != cell.cellState) {
-            setCell(cell.day, cell.time, CellState.DEFAULT);
+        if (CellState.UNAVAILABLE != cell.cellState) {
+            setCell(cell.day, cell.time, CellState.UNAVAILABLE);
         } else {
             setCell(cell.day, cell.time, CellState.AVAILABLE);
         }
@@ -186,11 +195,15 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
             if (view.getTag() instanceof Cell) { cell = (Cell) view.getTag(); }
             else { return false; }
 
-            if (CellState.DEFAULT != cell.cellState) {
-                setCell(cell.day, cell.time, CellState.DEFAULT);
-            } else {
-                setCell(cell.day, cell.time, CellState.BOOKED);
+            if (CellState.UNAVAILABLE == cell.cellState) {
+                int time = cell.time;
+                int day = cell.day;
+                do {
+                    setCell(cell.day, time, CellState.AVAILABLE);
+                    time--;
+                } while (time >= 0 && CellState.UNAVAILABLE == cells[day][time].cellState);
             }
+
             return true;
         }
     }

@@ -139,7 +139,7 @@ public class ServiceListActivity extends SignedInActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         if (Mode.MANAGE_SERVICES == mode) {
             getMenuInflater().inflate(R.menu.service_list_manage_options, menu);
-            if (!useCategory) { menu.setGroupVisible(R.id.grp_category_controls, false); }
+            if (!useCategory) { menu.setGroupVisible(R.id.grp_category_delete_controls, false); }
             return true;
         } else if (Mode.REMOVE_PROVIDER_SERVICES == mode) {
             getMenuInflater().inflate(R.menu.service_list_options, menu);

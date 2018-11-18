@@ -24,6 +24,10 @@
             android:title="@string/create_category"
             android:titleCondensed="@string/new_category"
             app:showAsAction="never" />
+    </group>
+    <group
+        android:id="@+id/grp_category_delete_controls"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/menu_item_category_delete"
             android:checkable="false"
