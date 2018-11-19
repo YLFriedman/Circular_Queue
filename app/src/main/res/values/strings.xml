@@ -184,6 +184,7 @@
     <string name="please_select_province_territory">Please select a province or territory.</string>
     <string name="service_added_to_provider_success_template">The service \'%s\' has been added to your account.</string>
     <string name="service_added_to_provider_fail_template">There was an error when trying to add the service \'%s\' to your account. Please try again later.</string>
+    <string name="service_provider_required">A service provider is required to use this activity. </string>
     <string-array name="temp_string_array">
         <item>Item 1</item>
         <item>Item 2</item>
@@ -246,7 +247,8 @@
     <string name="available">Available</string>
     <string name="tips">Tips</string>
     <string name="avail_tip_1">- Tap on a timeslot to toggle it between available and unavailable.</string>
-    <string name="avail_tip_2">- Long press on a timeslot (below an available timeslot) to mark it and the timeslots above it as available.</string>
+    <string name="avail_tip_2">- Long press on an unavailable timeslot to mark it, and the timeslots above it (up to an available timeslot), as available.</string>
+    <string name="avail_tip_3">- Long press on an available timeslot to mark it, and the connected timeslots above and below it, as unavailable.</string>
     <string-array name="empty_category_spinner">
         <item>Select Category</item>
     </string-array>

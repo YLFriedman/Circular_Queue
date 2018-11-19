@@ -7,6 +7,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -23,8 +24,6 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class AvailabilityWeekViewActivity extends SignedInActivity {
 
-    //private static List<Availability> availabilities;
-
     private enum CellState { AVAILABLE, BOOKED, UNAVAILABLE }
     private class Cell {
         String[] dayNames = new String[] { "sun", "mon", "tue", "wed", "thu", "fri", "sat" };
@@ -38,8 +37,8 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
         public String getCellName() { return "cell_" + dayNames[day] + "_" + ((time < 10) ? timeNames[time] : time); }
     }
 
-    View[][] cellViews;
-    Cell[][] cells;
+    protected View[][] cellViews;
+    protected Cell[][] cells;
     protected User currentUser;
 
     @Override
@@ -67,7 +66,7 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
         if (currentUser instanceof ServiceProvider) {
             onResetClick();
         } else {
-            // TODO: Toast message on fail
+            Toast.makeText(getApplicationContext(), R.string.service_provider_required, Toast.LENGTH_LONG).show();
             finish();
         }
 
@@ -117,8 +116,6 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
                 //.setIcon(android.R.drawable.ic_menu_help)
                 .setView(getLayoutInflater().inflate(R.layout.help_availabilities, null))
                 .setNegativeButton(R.string.ok, null).show();
-
-
 
     }
 
@@ -175,9 +172,7 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
         Cell cell;
         if (view.getTag() instanceof Cell) { cell = (Cell) view.getTag(); }
         else { return; }
-
         toggleAvailability(cell.day, cell.time);
-
     }
 
     public void toggleAvailability(int day, int time) {
@@ -195,16 +190,53 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
             if (view.getTag() instanceof Cell) { cell = (Cell) view.getTag(); }
             else { return false; }
 
+            int time = cell.time;
+            int day = cell.day;
+
             if (CellState.UNAVAILABLE == cell.cellState) {
-                int time = cell.time;
-                int day = cell.day;
-                do {
-                    setCell(cell.day, time, CellState.AVAILABLE);
-                    time--;
-                } while (time >= 0 && CellState.UNAVAILABLE == cells[day][time].cellState);
+                do { setCell(day, time--, CellState.AVAILABLE); }
+                while (time >= 0 && CellState.UNAVAILABLE == cells[day][time].cellState);
+            } else if (CellState.AVAILABLE == cell.cellState) {
+                do { setCell(day, time--, CellState.UNAVAILABLE); }
+                while (time >= 0 && CellState.AVAILABLE == cells[day][time].cellState);
+                time = cell.time + 1;
+                while (time <= 23 && CellState.AVAILABLE == cells[day][time].cellState) {
+                    setCell(day, time++, CellState.UNAVAILABLE);
+                }
             }
 
             return true;
         }
     }
+
+    public void onZoomInClick(View view) {
+        setHeights(cellViews[0][0].getLayoutParams().height + dpToPx(8));
+    }
+
+    public void onZoomOutClick(View view) {
+        setHeights(cellViews[0][0].getLayoutParams().height - dpToPx(8));
+    }
+
+    private void setHeights(int height) {
+        if (height < dpToPx(20) || height > dpToPx(80)) { return; }
+        for (int day = 0; day < 7; day++) {
+            for (int time = 0; time < 24; time++) {
+                cellViews[day][time].getLayoutParams().height = height;
+                cellViews[day][time].requestLayout();
+            }
+        }
+        View txt_time;
+        LinearLayout col_times = findViewById(R.id.col_times);
+        for (int i = 0; i < col_times.getChildCount() - 1; i++) {
+            txt_time = col_times.getChildAt(i);
+            txt_time.getLayoutParams().height = height;
+            txt_time.requestLayout();
+        }
+    }
+
+    private int dpToPx(int dp) {
+        float density = getResources().getDisplayMetrics().density;
+        return Math.round((float) dp * density);
+    }
+
 }
