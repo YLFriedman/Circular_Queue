@@ -22,6 +22,7 @@ import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class UserAccountViewActivity extends SignedInActivity {
 
+    protected boolean itemClickEnabled = true;
     protected TextView txt_account_type;
     protected TextView txt_username;
     protected TextView txt_full_name;
@@ -65,6 +66,7 @@ public class UserAccountViewActivity extends SignedInActivity {
             currentUser = State.getState().getSignedInUser();
             setupFields();
         }
+        itemClickEnabled = true;
     }
 
     private void setupFields() {
@@ -115,16 +117,22 @@ public class UserAccountViewActivity extends SignedInActivity {
     }
 
     public void onEditAccountClick() {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         State.getState().setCurrentUser(currentUser);
         startActivity(new Intent(getApplicationContext(), UserAccountEditActivity.class));
     }
 
     public void onChangePasswordClick() {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         State.getState().setCurrentUser(currentUser);
         startActivity(new Intent(getApplicationContext(), UserAccountChangePasswordActivity.class));
     }
 
     public void onDeleteAccountClick() {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         if (null != currentUser) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.delete_account)
@@ -143,6 +151,10 @@ public class UserAccountViewActivity extends SignedInActivity {
                                 }
                             });
                         }
+                    })
+                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
                     })
                     .setNegativeButton(R.string.cancel, null).show();
         }

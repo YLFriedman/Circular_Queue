@@ -25,6 +25,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class ServiceViewActivity extends SignedInActivity {
 
+    protected boolean itemClickEnabled = true;
     protected TextView txt_name;
     protected TextView txt_rate;
     protected TextView txt_category;
@@ -103,18 +104,24 @@ public class ServiceViewActivity extends SignedInActivity {
     }
 
     public void onCreateServiceClick() {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ServiceCreateActivity.class);
         if (null != categoryName) { intent.putExtra("category_name", categoryName); }
         startActivity(intent);
     }
 
     public void onEditServiceClick() {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         State.getState().setCurrentService(currentService);
         Intent intent = new Intent(getApplicationContext(), ServiceEditActivity.class);
         startActivity(intent);
     }
 
     public void onDeleteServiceClick() {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         if (null != currentService) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.delete_service)
@@ -134,6 +141,10 @@ public class ServiceViewActivity extends SignedInActivity {
                                 }
                             });
                         }
+                    })
+                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
                     })
                     .setNegativeButton(R.string.cancel, null).show();
         }

@@ -16,6 +16,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class HomeActivity extends AppCompatActivity {
 
+    protected boolean itemClickEnabled = true;
     protected TableRow btns_admin_1;
     protected TableRow btns_service_provider_1;
 
@@ -26,7 +27,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
+        // Get references to the view items
         btns_admin_1 = findViewById(R.id.btns_admin_1);
         btns_service_provider_1 = findViewById(R.id.btns_service_provider_1);
     }
@@ -38,6 +39,7 @@ public class HomeActivity extends AppCompatActivity {
         if (null == user) {
             onSignOutClick(null);
         } else {
+            itemClickEnabled = true;
             // Hide all non-shared admin button rows
             btns_admin_1.setVisibility(View.GONE);
             btns_service_provider_1.setVisibility(View.GONE);
@@ -59,19 +61,27 @@ public class HomeActivity extends AppCompatActivity {
     // Admin Only Button Functions
 
     public void onServicesClick(View view) {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         startActivity(new Intent(getApplicationContext(), CategoryListActivity.class));
     }
 
     public void onUserListClick(View view) {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         startActivity(new Intent(getApplicationContext(), UserAccountListActivity.class));
     }
 
     // Service Provider Only Button Functions
 
     public void onMyAvailabilityClick(View view) {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         startActivity(new Intent(getApplicationContext(), AvailabilityWeekViewActivity.class));
     }
     public void onMyServicesClick(View view) {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         State.getState().setCurrentUser(State.getState().getSignedInUser());
         startActivity(new Intent(getApplicationContext(), ServiceListActivity.class));
     }
@@ -83,10 +93,14 @@ public class HomeActivity extends AppCompatActivity {
      * Displays Account Details
      */
     public void onMyAccountClick(View view) {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         startActivity(new Intent(getApplicationContext(), UserAccountViewActivity.class));
     }
 
     public void onSignOutClick(View view) {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         State.getState().setSignedInUser(null);
         startActivity(new Intent(getApplicationContext(), SignInActivity.class));
         finish();

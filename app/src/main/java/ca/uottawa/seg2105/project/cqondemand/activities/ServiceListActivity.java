@@ -36,6 +36,7 @@ import ca.uottawa.seg2105.project.cqondemand.domain.User;
 public class ServiceListActivity extends SignedInActivity {
 
     protected enum Mode { LIST_SERVICES, MANAGE_SERVICES, ADD_PROVIDER_SERVICES, REMOVE_PROVIDER_SERVICES, LIST_PROVIDER_SERVICES }
+    protected boolean itemClickEnabled = true;
     protected Mode mode;
     protected boolean useCategory;
     TextView txt_sub_title;
@@ -129,6 +130,12 @@ public class ServiceListActivity extends SignedInActivity {
         if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        itemClickEnabled = true;
+    }
+
     private void setSubTitle(@NonNull String subTitle) {
         txt_sub_title.setVisibility(View.VISIBLE);
         divider_txt_sub_title.setVisibility(View.VISIBLE);
@@ -152,6 +159,8 @@ public class ServiceListActivity extends SignedInActivity {
         if (Mode.ADD_PROVIDER_SERVICES == mode) {
             return new View.OnClickListener() {
                 public void onClick(final View view) {
+                    if (!itemClickEnabled) { return; }
+                    itemClickEnabled = false;
                     final Service service = (Service) view.getTag();
                     DbUtilRelational.linkServiceAndProvider(service, currentProvider, new AsyncActionEventListener() {
                         @Override
@@ -164,14 +173,18 @@ public class ServiceListActivity extends SignedInActivity {
                         }
                         @Override
                         public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                            itemClickEnabled = true;
                             Toast.makeText(getApplicationContext(), String.format(getString(R.string.service_added_to_provider_fail_template), service.getName()), Toast.LENGTH_LONG).show();
                         }
                     });
+
                 }
             };
         } else if (Mode.REMOVE_PROVIDER_SERVICES == mode) {
             return new View.OnClickListener() {
                 public void onClick(final View view) {
+                    if (!itemClickEnabled) { return; }
+                    itemClickEnabled = false;
                     final Service service = (Service) view.getTag();
                     new AlertDialog.Builder(ServiceListActivity.this)
                             .setTitle(R.string.remove_service)
@@ -181,7 +194,9 @@ public class ServiceListActivity extends SignedInActivity {
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     DbUtilRelational.unlinkServiceAndProvider(service, currentProvider, new AsyncActionEventListener() {
                                         @Override
-                                        public void onSuccess() { Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_LONG).show(); }
+                                        public void onSuccess() {
+                                            Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_LONG).show();
+                                        }
                                         @Override
                                         public void onFailure(@NonNull AsyncEventFailureReason reason) {
                                             Toast.makeText(getApplicationContext(), String.format(getString(R.string.item_remove_db_error_template), service.getName(), getString(R.string.service).toLowerCase()), Toast.LENGTH_LONG).show();
@@ -189,12 +204,18 @@ public class ServiceListActivity extends SignedInActivity {
                                     });
                                 }
                             })
+                            .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
+                            })
                             .setNegativeButton(R.string.cancel, null).show();
                 }
             };
         } else {
             return new View.OnClickListener() {
                 public void onClick(final View view) {
+                    if (!itemClickEnabled) { return; }
+                    itemClickEnabled = false;
                     final Service service = (Service) view.getTag();
                     State.getState().setCurrentService(service);
                     Intent intent = new Intent(getApplicationContext(), ServiceViewActivity.class);
@@ -216,20 +237,28 @@ public class ServiceListActivity extends SignedInActivity {
     }
 
     public void onAddServiceClick() {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         startActivity(new Intent(getApplicationContext(), CategoryListActivity.class));
     }
 
     public void onCreateCategoryClick() {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         startActivity(new Intent(getApplicationContext(), CategoryCreateActivity.class));
     }
 
     public void onCreateServiceClick() {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ServiceCreateActivity.class);
         if (null != currentCategory) { intent.putExtra("category_name", currentCategory.getName()); }
         startActivity(intent);
     }
 
     public void onDeleteCategoryClick() {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         if (useCategory) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.delete_category)
@@ -262,6 +291,10 @@ public class ServiceListActivity extends SignedInActivity {
                                 }
                             });
                         }
+                    })
+                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
                     })
                     .setNegativeButton(R.string.cancel, null).show();
         }

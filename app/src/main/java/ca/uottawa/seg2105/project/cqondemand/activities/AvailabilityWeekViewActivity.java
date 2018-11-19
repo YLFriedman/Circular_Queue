@@ -1,5 +1,6 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -23,7 +24,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class AvailabilityWeekViewActivity extends SignedInActivity {
 
-    private enum CellState { AVAILABLE, BOOKED, UNAVAILABLE }
+    private enum CellState { UNAVAILABLE, AVAILABLE, BOOKED, REQUESTED }
     private class Cell {
         String[] dayNames = new String[] { "sun", "mon", "tue", "wed", "thu", "fri", "sat" };
         String[] timeNames = new String[] { "00", "01", "02", "03", "04", "05", "06", "07", "08", "09" };
@@ -36,6 +37,7 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
         public String getCellName() { return "cell_" + dayNames[day] + "_" + ((time < 10) ? timeNames[time] : time); }
     }
 
+    protected boolean itemClickEnabled = true;
     protected View[][] cellViews;
     protected Cell[][] cells;
     protected User currentUser;
@@ -96,23 +98,34 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
     }
 
     public void onSaveClick(View view) {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         DbAvailability.setAvailabilities((ServiceProvider) currentUser, Availability.toList(getAvailabilities()), new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), getString(R.string.availability_saved_successfully), Toast.LENGTH_LONG).show();
+                itemClickEnabled = true;
             }
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), getString(R.string.availability_save_failed), Toast.LENGTH_LONG).show();
+                itemClickEnabled = true;
             }
         });
     }
 
     private void onHelpClick() {
 
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         new AlertDialog.Builder(this)
                 .setView(getLayoutInflater().inflate(R.layout.help_availabilities, null))
-                .setNegativeButton(R.string.ok, null).show();
+                .setNegativeButton(R.string.ok, null)
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
+                })
+                .show();
 
     }
 
@@ -121,14 +134,18 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
     }
 
     private void onResetClick() {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         DbAvailability.getAvailabilities((ServiceProvider) currentUser, new AsyncValueEventListener<Availability>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Availability> data) {
                 setAvailabilities(Availability.toArrays(data));
+                itemClickEnabled = true;
             }
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), getString(R.string.availability_load_failed), Toast.LENGTH_LONG).show();
+                itemClickEnabled = true;
             }
         });
     }
@@ -155,6 +172,7 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
         switch (cells[day][time].cellState) {
             case AVAILABLE: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_available); break;
             case BOOKED: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_booked); break;
+            case REQUESTED:
             case UNAVAILABLE:
             default: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_default);
         }
