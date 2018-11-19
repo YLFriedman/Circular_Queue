@@ -15,6 +15,7 @@
     <color name="icon_light">#f2f2f2</color>
     <color name="icon_medium">#8C8C8C</color>
     <color name="icon_dark">#000000</color>
+    <color name="dialog_red">#BB5555</color>
 
 
 </resources>

@@ -186,7 +186,7 @@ public class ServiceListActivity extends SignedInActivity {
                     if (!itemClickEnabled) { return; }
                     itemClickEnabled = false;
                     final Service service = (Service) view.getTag();
-                    new AlertDialog.Builder(ServiceListActivity.this)
+                    AlertDialog dialog = new AlertDialog.Builder(ServiceListActivity.this)
                             .setTitle(R.string.remove_service)
                             .setMessage(String.format(getString(R.string.remove_confirm_dialog_template), service.getName(), getString(R.string.service).toLowerCase()))
                             .setIcon(R.drawable.ic_report_red_30)
@@ -209,6 +209,8 @@ public class ServiceListActivity extends SignedInActivity {
                                 public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
                             })
                             .setNegativeButton(R.string.cancel, null).show();
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.text_primary_dark));
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.dialog_red));
                 }
             };
         } else {
@@ -260,7 +262,7 @@ public class ServiceListActivity extends SignedInActivity {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
         if (useCategory) {
-            new AlertDialog.Builder(this)
+            AlertDialog dialog = new AlertDialog.Builder(this)
                     .setTitle(R.string.delete_category)
                     .setMessage(String.format(getString(R.string.delete_confirm_dialog_template), currentCategory.getName(), getString(R.string.category).toLowerCase()))
                     .setIcon(R.drawable.ic_report_red_30)
@@ -297,6 +299,8 @@ public class ServiceListActivity extends SignedInActivity {
                         public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
                     })
                     .setNegativeButton(R.string.cancel, null).show();
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.text_primary_dark));
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.dialog_red));
         }
     }
 

@@ -123,7 +123,7 @@ public class ServiceViewActivity extends SignedInActivity {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
         if (null != currentService) {
-            new AlertDialog.Builder(this)
+            AlertDialog dialog = new AlertDialog.Builder(this)
                     .setTitle(R.string.delete_service)
                     .setMessage(String.format(getString(R.string.delete_confirm_dialog_template), currentService.getName(), getString(R.string.service).toLowerCase()))
                     .setIcon(R.drawable.ic_report_red_30)
@@ -147,6 +147,8 @@ public class ServiceViewActivity extends SignedInActivity {
                         public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
                     })
                     .setNegativeButton(R.string.cancel, null).show();
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.text_primary_dark));
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.dialog_red));
         }
     }
 

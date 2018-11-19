@@ -118,14 +118,15 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
 
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
-        new AlertDialog.Builder(this)
+        AlertDialog dialog = new AlertDialog.Builder(this)
                 .setView(getLayoutInflater().inflate(R.layout.help_availabilities, null))
-                .setNegativeButton(R.string.ok, null)
+                .setPositiveButton(R.string.ok, null)
                 .setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
                 })
                 .show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.dialog_red));
 
     }
 
