@@ -2,6 +2,7 @@ package ca.uottawa.seg2105.project.cqondemand.domain;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
@@ -10,8 +11,9 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventList
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
-public class Service {
+public class Service implements Serializable {
 
+    private static final long serialVersionUID = 1;
     protected String key;
     protected String name;
     protected int rate;

@@ -2,12 +2,13 @@ package ca.uottawa.seg2105.project.cqondemand.domain;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
-public class Availability {
+public class Availability implements Serializable {
 
     public enum Day {
         SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY;
@@ -29,6 +30,7 @@ public class Availability {
         }
     }
 
+    private static final long serialVersionUID = 1;
     protected Day day;
     protected int startTime;
     protected int endTime;

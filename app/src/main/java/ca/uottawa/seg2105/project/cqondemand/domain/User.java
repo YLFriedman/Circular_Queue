@@ -2,11 +2,15 @@ package ca.uottawa.seg2105.project.cqondemand.domain;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
+
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation.PasswordValidationResult;
 
-public class User {
+public class User implements Serializable {
+
+    private static final long serialVersionUID = 1;
 
     protected String key;
     /**

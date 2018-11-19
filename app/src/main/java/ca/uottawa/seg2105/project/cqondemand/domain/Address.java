@@ -2,11 +2,14 @@ package ca.uottawa.seg2105.project.cqondemand.domain;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
+
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
-public class Address {
+public class Address implements Serializable {
 
+    private static final long serialVersionUID = 1;
     protected String unit;
     protected int streetNumber;
     protected String street;

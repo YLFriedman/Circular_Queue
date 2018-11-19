@@ -3,10 +3,14 @@ package ca.uottawa.seg2105.project.cqondemand.domain;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.io.Serializable;
+
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
-public class ServiceProvider extends User {
+public class ServiceProvider extends User implements Serializable {
+
+    private static final long serialVersionUID = 1;
 
     protected String companyName;
 
