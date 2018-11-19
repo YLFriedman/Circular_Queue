@@ -1,6 +1,5 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -112,8 +111,6 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
     private void onHelpClick() {
 
         new AlertDialog.Builder(this)
-                //.setTitle(R.string.delete_category)
-                //.setIcon(android.R.drawable.ic_menu_help)
                 .setView(getLayoutInflater().inflate(R.layout.help_availabilities, null))
                 .setNegativeButton(R.string.ok, null).show();
 

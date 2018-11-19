@@ -129,7 +129,7 @@ public class UserAccountViewActivity extends SignedInActivity {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.delete_account)
                     .setMessage(String.format(getString(R.string.delete_confirm_dialog_template), currentUser.getUsername(), getString(R.string.account).toLowerCase()))
-                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setIcon(R.drawable.ic_report_red_30)
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             DbUser.deleteUser(currentUser, new AsyncActionEventListener() {
