@@ -135,7 +135,7 @@
                 android:layout_height="wrap_content"
                 android:onClick="onUpdateServiceTestClick"
                 android:text="@string/bttn_test_update"
-                android:visibility="visible" />
+                android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
 
