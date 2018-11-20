@@ -42,21 +42,21 @@ public class ServiceViewActivity extends SignedInActivity {
         txt_name.setText("");
         txt_rate.setText("");
         txt_category.setText("");
-    }
 
-    public void onResume() {
-        super.onResume();
-        if (isFinishing()) { return; }
-        if (null != State.getState().getCurrentService()) {
-            currentService = State.getState().getCurrentService();
-            State.getState().setCurrentService(null);
-            setupFields();
-        } else if (null != currentService) {
+        Intent intent = getIntent();
+        currentService = (Service) intent.getSerializableExtra("service");
+        if (null != currentService) {
             setupFields();
         }  else {
             Toast.makeText(getApplicationContext(), R.string.current_service_empty, Toast.LENGTH_LONG).show();
             finish();
         }
+    }
+
+    public void onResume() {
+        super.onResume();
+        if (isFinishing()) { return; }
+
     }
 
     private void setupFields() {

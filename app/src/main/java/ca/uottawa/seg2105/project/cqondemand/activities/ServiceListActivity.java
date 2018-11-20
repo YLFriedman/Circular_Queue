@@ -62,11 +62,11 @@ public class ServiceListActivity extends SignedInActivity {
         // Initialize the category components as hidden
         txt_sub_title.setVisibility(View.GONE);
         divider_txt_sub_title.setVisibility(View.GONE);
+        Intent intent = getIntent();
         // Get the current category and current user
-        currentCategory = State.getState().getCurrentCategory();
-        State.getState().setCurrentCategory(null);
-        currentUser = State.getState().getCurrentUser();
-        State.getState().setCurrentUser(null);
+        currentCategory = (Category) intent.getSerializableExtra("category");
+        currentUser = (User) intent.getSerializableExtra("user");
+        // Get the action bar
         ActionBar actionBar = getSupportActionBar();
         // Set the default item itemActionIcon
         itemActionIcon = R.drawable.ic_chevron_right_med_30;
@@ -218,9 +218,8 @@ public class ServiceListActivity extends SignedInActivity {
                 public void onClick(final View view) {
                     if (!itemClickEnabled) { return; }
                     itemClickEnabled = false;
-                    final Service service = (Service) view.getTag();
-                    State.getState().setCurrentService(service);
                     Intent intent = new Intent(getApplicationContext(), ServiceViewActivity.class);
+                    intent.putExtra("service", (Service) view.getTag());
                     startActivity(intent);
                 }
             };
@@ -254,7 +253,7 @@ public class ServiceListActivity extends SignedInActivity {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ServiceCreateActivity.class);
-        if (null != currentCategory) { intent.putExtra("category_name", currentCategory.getName()); }
+        if (null != currentCategory) { intent.putExtra("category", currentCategory); }
         startActivity(intent);
     }
 

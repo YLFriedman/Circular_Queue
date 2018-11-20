@@ -42,8 +42,8 @@ public class CategoryListActivity extends SignedInActivity {
                     public void onClick(final View view) {
                         if (!itemClickEnabled) { return; }
                         itemClickEnabled = false;
-                        State.getState().setCurrentCategory((Category) view.getTag());
                         Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
+                        intent.putExtra("category", (Category) view.getTag());
                         startActivityForResult(intent, 0);
                     }
                 }));

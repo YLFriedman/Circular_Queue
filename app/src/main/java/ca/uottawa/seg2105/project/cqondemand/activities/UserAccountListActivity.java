@@ -30,7 +30,9 @@ public class UserAccountListActivity extends SignedInActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_account_list);
         recycler_list = findViewById(R.id.recycler_list);
-        if (!State.getState().getSignedInUser().isAdmin()) { finish(); }
+        User signedInUser = State.getState().getSignedInUser();
+        if (null == signedInUser || !signedInUser.isAdmin()) { finish(); return; }
+
         recycler_list.setHasFixedSize(true);
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         dbListenerHandle = DbUser.getUsersLive(new AsyncValueEventListener<User>() {
@@ -41,8 +43,8 @@ public class UserAccountListActivity extends SignedInActivity {
                     public void onClick(final View view) {
                         if (!itemClickEnabled) { return; }
                         itemClickEnabled = false;
-                        State.getState().setCurrentUser((User) view.getTag());
                         Intent intent = new Intent(getApplicationContext(), UserAccountViewActivity.class);
+                        intent.putExtra("user", (User) view.getTag());
                         startActivity(intent);
                     }
                 }));
@@ -50,7 +52,6 @@ public class UserAccountListActivity extends SignedInActivity {
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), R.string.user_list_db_error, Toast.LENGTH_LONG).show();
-
             }
         });
     }

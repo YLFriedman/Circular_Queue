@@ -82,8 +82,9 @@ public class HomeActivity extends AppCompatActivity {
     public void onMyServicesClick(View view) {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
-        State.getState().setCurrentUser(State.getState().getSignedInUser());
-        startActivity(new Intent(getApplicationContext(), ServiceListActivity.class));
+        Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
+        intent.putExtra("user", (User) State.getState().getSignedInUser());
+        startActivity(intent);
     }
 
 
