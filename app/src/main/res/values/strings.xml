@@ -172,7 +172,7 @@
     <string name="empty_city_name_error">A city name is required!</string>
     <string name="empty_country_name_error">A country name is required!</string>
     <string name="empty_postal_code_error">A postal code is required!</string>
-    <string name="invalid_postal_code_error">Please use canadian postal code format! (A1C D2F)</string>
+    <string name="invalid_postal_code_error">Please use canadian postal code format! (A1B 2C3)</string>
     <string name="field_invalid_template">%s is invalid!</string>
     <string name="field_required_template">%s is requiured!</string>
     <string name="select_account_type">Select an Account Type</string>
