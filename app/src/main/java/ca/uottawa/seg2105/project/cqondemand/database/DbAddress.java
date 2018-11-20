@@ -16,7 +16,7 @@ public class DbAddress extends DbItem<Address> {
 
     public DbAddress() {}
 
-    DbAddress(Address item) {
+    public DbAddress(Address item) {
         unit = item.getUnit();
         street_number = item.getStreetNumber();
         street = item.getStreet();

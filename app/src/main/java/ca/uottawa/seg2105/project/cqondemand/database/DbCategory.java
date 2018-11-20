@@ -18,7 +18,7 @@ public class DbCategory extends DbItem<Category> {
 
     public DbCategory() {}
 
-    DbCategory(Category item) {
+    public DbCategory(Category item) {
         super(item.getKey());
         unique_name = item.getUniqueName();
         name = item.getName();

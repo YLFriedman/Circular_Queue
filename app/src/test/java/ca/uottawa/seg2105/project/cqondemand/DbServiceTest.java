@@ -12,14 +12,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class DbServiceTest {
-    @Test
-    public void validate_Constructor() {
-        DbService testDbService = new DbService(new Service("Camera Installation", 250, "category_test"));
-        Service testService = testDbService.toDomainObj();
-        assertEquals("Service getter Failed - name", "Camera Installation", testService.getName());
-        assertEquals("Service getter Failed - rate", 250, testService.getRate());
-        assertEquals("Service getter Failed - categoryID", "category_test", testService.getCategoryKey());
-    }
 
     @Test
     public void validate_ConstructorKey() {

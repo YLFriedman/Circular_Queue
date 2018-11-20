@@ -12,12 +12,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class DbCategoryTest {
-    @Test
-    public void validate_constructor() {
-        DbCategory testDbCategory = new DbCategory(new Category("Test Name"));
-        Category testCategory = testDbCategory.toDomainObj();
-        assertEquals("getter Failed - name", "Test Name", testCategory.getName());
-    }
 
     @Test
     public void validate_key_constructor() {
@@ -26,4 +20,5 @@ public class DbCategoryTest {
         assertEquals("getter Failed - key", "key", testCategory.getKey());
         assertEquals("getter Failed - name", "Test Name", testCategory.getName());
     }
+
 }

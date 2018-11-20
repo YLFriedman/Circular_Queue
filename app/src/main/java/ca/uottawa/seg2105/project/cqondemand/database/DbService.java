@@ -28,7 +28,7 @@ public class DbService extends DbItem<Service> {
 
     public DbService() {}
 
-    DbService(Service item) {
+    public DbService(Service item) {
         super(item.getKey());
         unique_name = item.getUniqueName();
         name = item.getName();

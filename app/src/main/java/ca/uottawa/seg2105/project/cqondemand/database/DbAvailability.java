@@ -26,7 +26,7 @@ public class DbAvailability extends DbItem<Availability> {
 
     public DbAvailability() {}
 
-    DbAvailability(Availability item) {
+    public DbAvailability(Availability item) {
         this.day = item.getDay().toString();
         this.start_time = item.getStartTime();
         this.end_time = item.getEndTime();

@@ -37,7 +37,7 @@ public class DbUser extends DbItem<User> {
 
     public DbUser() {}
 
-    DbUser(User item) {
+    public DbUser(User item) {
         super(item.getKey());
         unique_name = item.getUniqueName();
         first_name = item.getFirstName();
