@@ -50,6 +50,7 @@ public class CategoryCreateActivity extends SignedInActivity {
                 intent.putExtra("category", newCategory);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                finish();
             }
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
