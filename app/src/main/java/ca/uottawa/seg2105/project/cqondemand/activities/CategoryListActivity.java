@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
@@ -43,7 +44,7 @@ public class CategoryListActivity extends SignedInActivity {
                         if (!itemClickEnabled) { return; }
                         itemClickEnabled = false;
                         Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
-                        intent.putExtra("category", (Category) view.getTag());
+                        intent.putExtra("category", (Serializable) view.getTag());
                         startActivityForResult(intent, 0);
                     }
                 }));

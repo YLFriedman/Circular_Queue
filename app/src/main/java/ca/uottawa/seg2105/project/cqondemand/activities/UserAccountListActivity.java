@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.database.DbListenerHandle;
@@ -44,7 +45,7 @@ public class UserAccountListActivity extends SignedInActivity {
                         if (!itemClickEnabled) { return; }
                         itemClickEnabled = false;
                         Intent intent = new Intent(getApplicationContext(), UserAccountViewActivity.class);
-                        intent.putExtra("user", (User) view.getTag());
+                        intent.putExtra("user", (Serializable) view.getTag());
                         startActivity(intent);
                     }
                 }));

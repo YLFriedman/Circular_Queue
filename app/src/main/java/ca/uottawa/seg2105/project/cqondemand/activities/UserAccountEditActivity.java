@@ -286,7 +286,7 @@ public class UserAccountEditActivity extends SignedInActivity {
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), R.string.account_update_success, Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getApplicationContext(), UserAccountViewActivity.class);
-                intent.putExtra("user", (User) updatedUser);
+                intent.putExtra("user", updatedUser);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }

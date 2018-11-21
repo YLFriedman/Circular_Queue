@@ -46,11 +46,10 @@ public class CategoryCreateActivity extends SignedInActivity {
             @Override
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_create_success), newCategory.getName()), Toast.LENGTH_LONG).show();
-                State.getState().setCurrentCategory(newCategory);
                 Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
+                intent.putExtra("category", newCategory);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
-                finish();
             }
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {

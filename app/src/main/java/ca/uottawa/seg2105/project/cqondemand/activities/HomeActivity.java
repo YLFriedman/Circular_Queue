@@ -83,7 +83,7 @@ public class HomeActivity extends AppCompatActivity {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
-        intent.putExtra("user", (User) State.getState().getSignedInUser());
+        intent.putExtra("user", State.getState().getSignedInUser());
         startActivity(intent);
     }
 
