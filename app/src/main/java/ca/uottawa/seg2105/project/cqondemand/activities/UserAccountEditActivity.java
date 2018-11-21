@@ -1,5 +1,6 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.view.View;
@@ -58,8 +59,9 @@ public class UserAccountEditActivity extends SignedInActivity {
         field_email = findViewById(R.id.field_email);
         fields_2 = findViewById(R.id.fields_2);
 
-        currentUser = State.getState().getCurrentUser();
-        State.getState().setCurrentUser(null);
+        Intent intent = getIntent();
+        currentUser = (User) intent.getSerializableExtra("user");
+
         if (null != currentUser) {
             field_username.setText(currentUser.getUsername(), TextView.BufferType.EDITABLE);
             field_first_name.setText(currentUser.getFirstName(), TextView.BufferType.EDITABLE);
@@ -282,9 +284,11 @@ public class UserAccountEditActivity extends SignedInActivity {
 
         DbUser.updateUser(updatedUser, new AsyncActionEventListener() {
             public void onSuccess() {
-                State.getState().setCurrentUser(updatedUser);
                 Toast.makeText(getApplicationContext(), R.string.account_update_success, Toast.LENGTH_LONG).show();
-                finish();
+                Intent intent = new Intent(getApplicationContext(), UserAccountViewActivity.class);
+                intent.putExtra("user", updatedUser);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 switch (reason) {
@@ -308,4 +312,5 @@ public class UserAccountEditActivity extends SignedInActivity {
         });
 
     }
+
 }

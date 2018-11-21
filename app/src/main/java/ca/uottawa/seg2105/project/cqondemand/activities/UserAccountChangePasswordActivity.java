@@ -36,16 +36,16 @@ public class UserAccountChangePasswordActivity extends SignedInActivity {
         field_password = findViewById(R.id.field_password);
         field_password_confirm = findViewById(R.id.field_password_confirm);
         btn_save_password = findViewById(R.id.btn_save_password);
-
-        currentUser = State.getState().getCurrentUser();
-        State.getState().setCurrentUser(null);
+        // Get the user object from the intent
+        Intent intent = getIntent();
+        currentUser = (User) intent.getSerializableExtra("user");
         if (null == currentUser) {
             Toast.makeText(getApplicationContext(),  String.format(getString(R.string.current_item_provided_template), getString(R.string.account)), Toast.LENGTH_SHORT).show();
             finish();
         }
     }
 
-    public void onSavePasswordClick(View view){
+    public void onSavePasswordClick(View view) {
         final String oldPassword = field_password_old.getText().toString();
         final String password = field_password.getText().toString();
         final String passwordConfirm = field_password_confirm.getText().toString();
@@ -79,10 +79,12 @@ public class UserAccountChangePasswordActivity extends SignedInActivity {
 
         btn_save_password.setEnabled(false);
         DbUser.updatePassword(currentUser, password, new AsyncSingleValueEventListener<User>() {
-            public void onSuccess(@NonNull User item) {
-                State.getState().setCurrentUser(item);
+            public void onSuccess(@NonNull User updatedUser) {
                 Toast.makeText(getApplicationContext(), R.string.password_update_success, Toast.LENGTH_LONG).show();
-                finish();
+                Intent intent = new Intent(getApplicationContext(), UserAccountViewActivity.class);
+                intent.putExtra("user", updatedUser);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), R.string.password_update_db_error, Toast.LENGTH_LONG).show();

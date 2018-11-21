@@ -50,23 +50,29 @@ public class UserAccountViewActivity extends SignedInActivity {
         txt_description = findViewById(R.id.txt_description);
         txt_licensed = findViewById(R.id.txt_licensed);
         txt_address = findViewById(R.id.txt_address);
+
+        Intent intent = getIntent();
+        currentUser = (User) intent.getSerializableExtra("user");
+        if (null != currentUser) {
+            setupFields();
+        } else {
+            currentUser = State.getState().getSignedInUser();
+            setupFields();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
         if (isFinishing()) { return; }
-        if (null != State.getState().getCurrentUser()) {
-            currentUser = State.getState().getCurrentUser();
-            State.getState().setCurrentUser(null);
-            setupFields();
-        } else if (null != currentUser) {
-            setupFields();
-        } else {
-            currentUser = State.getState().getSignedInUser();
-            setupFields();
-        }
         itemClickEnabled = true;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        currentUser = (User) intent.getSerializableExtra("user");
+        if (null != currentUser) { setupFields(); }
     }
 
     private void setupFields() {
@@ -119,15 +125,17 @@ public class UserAccountViewActivity extends SignedInActivity {
     public void onEditAccountClick() {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
-        State.getState().setCurrentUser(currentUser);
-        startActivity(new Intent(getApplicationContext(), UserAccountEditActivity.class));
+        Intent intent = new Intent(getApplicationContext(), UserAccountEditActivity.class);
+        intent.putExtra("user", currentUser);
+        startActivity(intent);
     }
 
     public void onChangePasswordClick() {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
-        State.getState().setCurrentUser(currentUser);
-        startActivity(new Intent(getApplicationContext(), UserAccountChangePasswordActivity.class));
+        Intent intent = new Intent(getApplicationContext(), UserAccountChangePasswordActivity.class);
+        intent.putExtra("user", currentUser);
+        startActivity(intent);
     }
 
     public void onDeleteAccountClick() {

@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
@@ -42,8 +43,8 @@ public class CategoryListActivity extends SignedInActivity {
                     public void onClick(final View view) {
                         if (!itemClickEnabled) { return; }
                         itemClickEnabled = false;
-                        State.getState().setCurrentCategory((Category) view.getTag());
                         Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
+                        intent.putExtra("category", (Serializable) view.getTag());
                         startActivityForResult(intent, 0);
                     }
                 }));

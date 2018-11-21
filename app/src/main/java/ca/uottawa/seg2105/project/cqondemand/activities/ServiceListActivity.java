@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -62,11 +63,11 @@ public class ServiceListActivity extends SignedInActivity {
         // Initialize the category components as hidden
         txt_sub_title.setVisibility(View.GONE);
         divider_txt_sub_title.setVisibility(View.GONE);
+        Intent intent = getIntent();
         // Get the current category and current user
-        currentCategory = State.getState().getCurrentCategory();
-        State.getState().setCurrentCategory(null);
-        currentUser = State.getState().getCurrentUser();
-        State.getState().setCurrentUser(null);
+        currentCategory = (Category) intent.getSerializableExtra("category");
+        currentUser = (User) intent.getSerializableExtra("user");
+        // Get the action bar
         ActionBar actionBar = getSupportActionBar();
         // Set the default item itemActionIcon
         itemActionIcon = R.drawable.ic_chevron_right_med_30;
@@ -195,7 +196,7 @@ public class ServiceListActivity extends SignedInActivity {
                                     DbUtilRelational.unlinkServiceAndProvider(service, currentProvider, new AsyncActionEventListener() {
                                         @Override
                                         public void onSuccess() {
-                                            Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(getApplicationContext(), String.format(getString(R.string.service_removed_from_provider_success_template), service.getName()), Toast.LENGTH_LONG).show();
                                         }
                                         @Override
                                         public void onFailure(@NonNull AsyncEventFailureReason reason) {
@@ -218,9 +219,8 @@ public class ServiceListActivity extends SignedInActivity {
                 public void onClick(final View view) {
                     if (!itemClickEnabled) { return; }
                     itemClickEnabled = false;
-                    final Service service = (Service) view.getTag();
-                    State.getState().setCurrentService(service);
                     Intent intent = new Intent(getApplicationContext(), ServiceViewActivity.class);
+                    intent.putExtra("service", (Serializable) view.getTag());
                     startActivity(intent);
                 }
             };
@@ -233,12 +233,12 @@ public class ServiceListActivity extends SignedInActivity {
             case R.id.menu_item_category_create: onCreateCategoryClick(); return true;
             case R.id.menu_item_service_create: onCreateServiceClick(); return true;
             case R.id.menu_item_category_delete: onDeleteCategoryClick(); return true;
-            case R.id.menu_item_service_add: onAddServiceClick(); return true;
+            case R.id.menu_item_service_add: onLinkServiceToProviderClick(); return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void onAddServiceClick() {
+    public void onLinkServiceToProviderClick() {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
         startActivity(new Intent(getApplicationContext(), CategoryListActivity.class));
@@ -254,7 +254,7 @@ public class ServiceListActivity extends SignedInActivity {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ServiceCreateActivity.class);
-        if (null != currentCategory) { intent.putExtra("category_name", currentCategory.getName()); }
+        if (null != currentCategory) { intent.putExtra("category", currentCategory); }
         startActivity(intent);
     }
 

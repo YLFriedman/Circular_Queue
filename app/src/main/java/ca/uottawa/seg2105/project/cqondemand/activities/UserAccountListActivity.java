@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.database.DbListenerHandle;
@@ -30,7 +31,9 @@ public class UserAccountListActivity extends SignedInActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_account_list);
         recycler_list = findViewById(R.id.recycler_list);
-        if (!State.getState().getSignedInUser().isAdmin()) { finish(); }
+        User signedInUser = State.getState().getSignedInUser();
+        if (null == signedInUser || !signedInUser.isAdmin()) { finish(); return; }
+
         recycler_list.setHasFixedSize(true);
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         dbListenerHandle = DbUser.getUsersLive(new AsyncValueEventListener<User>() {
@@ -41,8 +44,8 @@ public class UserAccountListActivity extends SignedInActivity {
                     public void onClick(final View view) {
                         if (!itemClickEnabled) { return; }
                         itemClickEnabled = false;
-                        State.getState().setCurrentUser((User) view.getTag());
                         Intent intent = new Intent(getApplicationContext(), UserAccountViewActivity.class);
+                        intent.putExtra("user", (Serializable) view.getTag());
                         startActivity(intent);
                     }
                 }));
@@ -50,7 +53,6 @@ public class UserAccountListActivity extends SignedInActivity {
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), R.string.user_list_db_error, Toast.LENGTH_LONG).show();
-
             }
         });
     }

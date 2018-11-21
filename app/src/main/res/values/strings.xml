@@ -174,7 +174,7 @@
     <string name="empty_postal_code_error">A postal code is required!</string>
     <string name="invalid_postal_code_error">Please use canadian postal code format! (A1B 2C3)</string>
     <string name="field_invalid_template">%s is invalid!</string>
-    <string name="field_required_template">%s is requiured!</string>
+    <string name="field_required_template">%s is required!</string>
     <string name="select_account_type">Select an Account Type</string>
     <string name="select_province">Select a Province</string>
     <string name="please_select_type">Please select a type.</string>
@@ -182,6 +182,7 @@
     <string name="chars_not_allowed_template">The following characters are NOT allowed: %s</string>
     <string name="please_select_province_territory">Please select a province or territory.</string>
     <string name="service_added_to_provider_success_template">The service \'%s\' has been added to your account.</string>
+    <string name="service_removed_from_provider_success_template">The service \'%s\' has been removed from your account.</string>
     <string name="service_added_to_provider_fail_template">There was an error when trying to add the service \'%s\' to your account. Please try again later.</string>
     <string name="service_provider_required">A service provider is required to use this activity. </string>
     <string-array name="temp_string_array">
@@ -238,7 +239,7 @@
     <string name="no">No</string>
     <string name="canada">Canada</string>
     <string name="province_territory">Province / Territory</string>
-    <string name="placeholder"><![CDATA[<variable>]]></string>
+    <string name="placeholder">{variable}</string>
     <string name="description_optional">Description (Optional)</string>
     <string name="description">Description</string>
     <string name="legend">Legend</string>
