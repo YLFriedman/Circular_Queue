@@ -104,7 +104,8 @@ public class Service implements Serializable {
         if (this == otherObj) { return true; }
         Service other = (Service) otherObj;
         if (null != key && null != other.key) { return key.equals(other.key); }
-        return null != getUniqueName() && getUniqueName().equals(other.getUniqueName());
+        if ((null == categoryKey) != (null == other.categoryKey) || (null != categoryKey && !categoryKey.equals(other.categoryKey))) { return false; }
+        return null != getUniqueName() && getUniqueName().equals(other.getUniqueName()) && rate == other.rate;
     }
 
     public String toString() {

@@ -4,13 +4,17 @@ import org.junit.Test;
 
 import ca.uottawa.seg2105.project.cqondemand.database.DbAddress;
 import ca.uottawa.seg2105.project.cqondemand.domain.Address;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class DbAddressFunctionTest {
+
     @Test
     public void validate_Constructor() {
+
         DbAddress testDbAddress = new DbAddress(new Address("2a", 12, "Bullvue", "Ottawa", "Ontario", "Canada", "K0A1A0"));
         Address testAddress = testDbAddress.toDomainObj();
         assertEquals("Service getter Failed - unit", "2A", testAddress.getUnit());
@@ -20,6 +24,7 @@ public class DbAddressFunctionTest {
         assertEquals("Service getter Failed - city", "Ontario", testAddress.getProvince());
         assertEquals("Service getter Failed - country", "Canada", testAddress.getCountry());
         assertEquals("Service getter Failed - postalCode", "K0A 1A0", testAddress.getPostalCode());
+
     }
 
 }

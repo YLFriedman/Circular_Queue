@@ -76,4 +76,18 @@ public class ServiceProvider extends User implements Serializable {
         return description;
     }
 
+    @Override
+    public boolean equals(Object otherObj) {
+        if (!(otherObj instanceof ServiceProvider)) { return false; }
+        if (this == otherObj) { return true; }
+        ServiceProvider other = (ServiceProvider) otherObj;
+        if (null != key && null != other.key) { return key.equals(other.key); }
+        if (!super.equals(otherObj)) { return false; }
+        if ((null == companyName) != (null == other.companyName) || (null != companyName && !companyName.equals(other.companyName))) { return false; }
+        if ((null == phoneNumber)  != (null == other.phoneNumber)  || (null != phoneNumber  && !phoneNumber.equals(other.phoneNumber))) { return false; }
+        if ((null == address)     != (null == other.address)     || (null != address     && !address.equals(other.address))) { return false; }
+        if ((null == description)  != (null == other.description)  || (null != description  && !description.equals(other.description))) { return false; }
+        return licensed == other.licensed;
+    }
+
 }

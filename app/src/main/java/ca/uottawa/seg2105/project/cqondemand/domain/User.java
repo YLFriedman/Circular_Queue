@@ -167,6 +167,11 @@ public class User implements Serializable {
         if (this == otherObj) { return true; }
         User other = (User) otherObj;
         if (null != key && null != other.key) { return key.equals(other.key); }
+        if ((null == firstName) != (null == other.firstName) || (null != firstName && !firstName.equals(other.firstName))) { return false; }
+        if ((null == lastName)  != (null == other.lastName)  || (null != lastName  && !lastName.equals(other.lastName))) { return false; }
+        if ((null == email)     != (null == other.email)     || (null != email     && !email.equals(other.email))) { return false; }
+        if ((null == password)  != (null == other.password)  || (null != password  && !password.equals(other.password))) { return false; }
+        if ((null == type)      != (null == other.type)      || (null != type      && !type.equals(other.type))) { return false; }
         return null != getUniqueName() && getUniqueName().equals(other.getUniqueName());
     }
 
