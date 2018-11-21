@@ -166,6 +166,7 @@ public class ServiceEditActivity extends SignedInActivity {
                 intent.putExtra("category", category);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                finish();
             }
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {

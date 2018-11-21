@@ -289,6 +289,7 @@ public class UserAccountEditActivity extends SignedInActivity {
                 intent.putExtra("user", updatedUser);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                finish();
             }
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 switch (reason) {
