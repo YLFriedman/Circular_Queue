@@ -113,9 +113,21 @@ public class DbUser extends DbItem<User> {
         });
     }
 
-    public static void deleteUser(@NonNull User user, @Nullable AsyncActionEventListener listener) {
+    public static void deleteUser(final @NonNull User user, final @Nullable AsyncActionEventListener listener) {
         if (null == user.getKey() || user.getKey().isEmpty()) { throw new IllegalArgumentException("A user object with a key is required. Unable to delete from the database without the key."); }
-        deleteUserRelational(user, listener);
+        final AsyncActionEventListener loggedInUserUpdateListener = new AsyncActionEventListener() {
+            @Override
+            public void onSuccess() {
+                // If we are deleting the logged in user, remove the signed in user
+                if (user.equals(State.getState().getSignedInUser())) { State.getState().setSignedInUser(null); }
+                if (null != listener) { listener.onSuccess(); }
+            }
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                if (null != listener) { listener.onFailure(reason); }
+            }
+        };
+        deleteUserRelational(user, loggedInUserUpdateListener);
     }
 
     public static void getUser(@NonNull String key, @NonNull final AsyncSingleValueEventListener<User> listener) {

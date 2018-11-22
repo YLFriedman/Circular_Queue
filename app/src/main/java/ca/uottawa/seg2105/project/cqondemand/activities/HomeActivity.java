@@ -35,6 +35,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        itemClickEnabled = true;
         User user = State.getState().getSignedInUser();
         if (null == user) {
             onSignOutClick(null);

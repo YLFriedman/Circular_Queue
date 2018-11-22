@@ -151,7 +151,6 @@ public class UserAccountViewActivity extends SignedInActivity {
                             DbUser.deleteUser(currentUser, new AsyncActionEventListener() {
                                 public void onSuccess() {
                                     Toast.makeText(getApplicationContext(), String.format(getString(R.string.account_delete_success), currentUser.getUsername()), Toast.LENGTH_LONG).show();
-                                    if (currentUser.equals(State.getState().getSignedInUser())) { State.getState().setSignedInUser(null); }
                                     finish();
                                 }
                                 public void onFailure(@NonNull AsyncEventFailureReason reason) {
