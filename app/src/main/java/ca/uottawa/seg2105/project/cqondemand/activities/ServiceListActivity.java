@@ -54,7 +54,7 @@ public class ServiceListActivity extends SignedInActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_list);
-        if (null == State.getState().getSignedInUser()) { return; }
+        if (null == State.getInstance(getApplicationContext()).getSignedInUser()) { return; }
         txt_sub_title = findViewById(R.id.txt_sub_title);
         divider_txt_sub_title = findViewById(R.id.divider_txt_sub_title);
         recycler_list = findViewById(R.id.recycler_list);
@@ -74,18 +74,18 @@ public class ServiceListActivity extends SignedInActivity {
         // Determine and initialize the mode
         if (currentUser instanceof ServiceProvider) {
             currentProvider = (ServiceProvider) currentUser;
-            if (State.getState().getSignedInUser().equals(currentUser)) {
+            if (State.getInstance(getApplicationContext()).getSignedInUser().equals(currentUser)) {
                 mode = Mode.REMOVE_PROVIDER_SERVICES;
                 if (null != actionBar) { actionBar.setTitle(getString(R.string.my_services)); }
                 itemActionIcon = R.drawable.ic_remove_circle_outline_med_30;
             } else {
                 mode = Mode.LIST_PROVIDER_SERVICES;
             }
-        } else if (State.getState().getSignedInUser().isAdmin()) {
+        } else if (State.getInstance(getApplicationContext()).getSignedInUser().isAdmin()) {
             mode = Mode.MANAGE_SERVICES;
             useCategory = null != currentCategory;
-        } else if (State.getState().getSignedInUser() instanceof ServiceProvider) {
-            currentProvider = (ServiceProvider) State.getState().getSignedInUser();
+        } else if (State.getInstance(getApplicationContext()).getSignedInUser() instanceof ServiceProvider) {
+            currentProvider = (ServiceProvider) State.getInstance(getApplicationContext()).getSignedInUser();
             mode = Mode.ADD_PROVIDER_SERVICES;
             itemActionIcon = R.drawable.ic_add_med_30;
             useCategory = null != currentCategory;

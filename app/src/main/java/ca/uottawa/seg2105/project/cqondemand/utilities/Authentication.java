@@ -42,7 +42,7 @@ public class Authentication {
             public void onSuccess(@NonNull User user) {
                 try {
                     if (checkPassword(password, user.getPassword())) {
-                        State.getState().setSignedInUser(user);
+                        State.getInstance().setSignedInUser(user);
                         if (null != listener) { listener.onSuccess(); }
                     } else {
                         if (null != listener) { listener.onFailure(AsyncEventFailureReason.PASSWORD_MISMATCH); }

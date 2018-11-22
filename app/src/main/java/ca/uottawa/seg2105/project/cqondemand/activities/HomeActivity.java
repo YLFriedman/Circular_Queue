@@ -36,7 +36,7 @@ public class HomeActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         itemClickEnabled = true;
-        User user = State.getState().getSignedInUser();
+        User user = State.getInstance(getApplicationContext()).getSignedInUser();
         if (null == user) {
             onSignOutClick(null);
         } else {
@@ -84,7 +84,7 @@ public class HomeActivity extends AppCompatActivity {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
-        intent.putExtra("user", State.getState().getSignedInUser());
+        intent.putExtra("user", State.getInstance(getApplicationContext()).getSignedInUser());
         startActivity(intent);
     }
 
@@ -103,7 +103,7 @@ public class HomeActivity extends AppCompatActivity {
     public void onSignOutClick(View view) {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
-        State.getState().setSignedInUser(null);
+        State.getInstance(getApplicationContext()).setSignedInUser(null);
         startActivity(new Intent(getApplicationContext(), SignInActivity.class));
         finish();
     }

@@ -10,13 +10,13 @@ public abstract class SignedInActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if (null == State.getState().getSignedInUser()) {
+        if (null == State.getInstance(getApplicationContext()).getSignedInUser()) {
             signOut();
         }
     }
 
     protected void signOut() {
-        State.getState().setSignedInUser(null);
+        State.getInstance(getApplicationContext()).setSignedInUser(null);
         Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);

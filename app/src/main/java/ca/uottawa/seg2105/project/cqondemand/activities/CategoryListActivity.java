@@ -83,7 +83,7 @@ public class CategoryListActivity extends SignedInActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        User user = State.getState().getSignedInUser();
+        User user = State.getInstance(getApplicationContext()).getSignedInUser();
         if (null != user && user.getType() == User.Type.ADMIN) {
             getMenuInflater().inflate(R.menu.category_list_options, menu);
             return true;

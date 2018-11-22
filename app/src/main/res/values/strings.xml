@@ -2,6 +2,7 @@
     <string name="version">v0.3.2</string>
     <string name="environment">DEV</string>
     <string name="app_name">CQ On Demand</string>
+    <string name="title_activity_splash_screen">CQ On Demand</string>
     <string name="title_activity_sign_in">CQ On Demand - v0.3.2 (DEV)</string>
     <string name="title_activity_home">Home</string>
     <string name="title_activity_create_account">Sign Up</string>
@@ -252,4 +253,7 @@
     <string-array name="empty_category_spinner">
         <item>Select Category</item>
     </string-array>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="loading_">Loading...</string>
 </resources>

@@ -56,7 +56,7 @@ public class UserAccountViewActivity extends SignedInActivity {
         if (null != currentUser) {
             setupFields();
         } else {
-            currentUser = State.getState().getSignedInUser();
+            currentUser = State.getInstance(getApplicationContext()).getSignedInUser();
             setupFields();
         }
     }
@@ -101,12 +101,12 @@ public class UserAccountViewActivity extends SignedInActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        User user = State.getState().getSignedInUser();
+        User user = State.getInstance(getApplicationContext()).getSignedInUser();
         getMenuInflater().inflate(R.menu.user_options, menu);
         if (null != user && user.getType() == User.Type.ADMIN) {
             menu.setGroupVisible(R.id.grp_user_edit_controls, false);
         }
-        if (!State.getState().getSignedInUser().equals(currentUser)) {
+        if (!State.getInstance(getApplicationContext()).getSignedInUser().equals(currentUser)) {
             menu.setGroupVisible(R.id.grp_user_password_controls, false);
         }
         return true;

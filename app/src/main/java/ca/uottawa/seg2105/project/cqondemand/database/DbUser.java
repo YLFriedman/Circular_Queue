@@ -88,7 +88,7 @@ public class DbUser extends DbItem<User> {
             @Override
             public void onSuccess() {
                 // If we are updating the logged in user, replace the user object
-                if (user.equals(State.getState().getSignedInUser())) { State.getState().setSignedInUser(user); }
+                if (user.equals(State.getInstance().getSignedInUser())) { State.getInstance().setSignedInUser(user); }
                 if (null != listener) { listener.onSuccess(); }
             }
             @Override
@@ -119,7 +119,7 @@ public class DbUser extends DbItem<User> {
             @Override
             public void onSuccess() {
                 // If we are deleting the logged in user, remove the signed in user
-                if (user.equals(State.getState().getSignedInUser())) { State.getState().setSignedInUser(null); }
+                if (user.equals(State.getInstance().getSignedInUser())) { State.getInstance().setSignedInUser(null); }
                 if (null != listener) { listener.onSuccess(); }
             }
             @Override

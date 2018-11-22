@@ -17,5 +17,7 @@
     <color name="icon_dark">#000000</color>
     <color name="dialog_red">#BB5555</color>
 
+    <color name="black_overlay">#66000000</color>
+
 
 </resources>
