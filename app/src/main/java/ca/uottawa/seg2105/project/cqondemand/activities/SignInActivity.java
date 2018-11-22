@@ -152,7 +152,7 @@ public class SignInActivity extends AppCompatActivity {
     public void onCreateAdminAccountClick(View view) {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
-        User user = new User("Admin", "User", "admin", "yfrie071@uottawa.ca", User.Type.ADMIN, "admin");
+        User user = new User("Admin", "User", "admin", "yfrie071@uottawa.ca", User.Type.ADMIN, Authentication.genHash("admin"));
         DbUser.createUser(user, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
