@@ -80,6 +80,7 @@
     <string name="category">Category</string>
     <string name="service">Service</string>
     <string name="account">Account</string>
+    <string name="signing_in">Signing In...</string>
     <string name="user_account">User Account</string>
     <string name="service_rate_template">$%,d.00 / hour</string>
     <string name="zero_value_service">Free</string>

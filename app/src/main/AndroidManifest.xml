@@ -22,15 +22,16 @@
         <activity
             android:name=".activities.SignInActivity"
             android:label="@string/title_activity_sign_in"
+            android:exported="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.SignUpActivity"
-            android:exported="true"
             android:label="@string/title_activity_create_account"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.HomeActivity"
             android:label="@string/title_activity_home"
+            android:exported="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.UserAccountViewActivity"
