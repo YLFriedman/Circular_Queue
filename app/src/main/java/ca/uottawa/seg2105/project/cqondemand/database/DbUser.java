@@ -49,9 +49,9 @@ public class DbUser extends DbItem<User> {
         if (item instanceof ServiceProvider) {
             ServiceProvider provider = (ServiceProvider) item;
             address = new DbAddress(provider.getAddress());
-            company_name = provider.getCompanyName();
-            phone_number = provider.getPhoneNumber();
             licensed = provider.isLicensed();
+            phone_number = provider.getPhoneNumber();
+            company_name = provider.getCompanyName();
             description = provider.getDescription();
         }
     }
@@ -142,32 +142,6 @@ public class DbUser extends DbItem<User> {
     @NonNull
     public static DbListenerHandle<?> getUsersLive(@NonNull final AsyncValueEventListener<User> listener) {
         return DbUtil.getItemsLive(DbUtil.DataType.USER, listener);
-    }
-
-    /**
-     * Callback method for authenticating a given set of user credentials through the database. Fails
-     * if username does not exist or does not match store password value.
-     *
-     * @param username the username to be authenticated
-     * @param password the password to be authenticated
-     * @param listener the listener that will be informed if authentication was successful or not
-     */
-    public static void authenticate(@NonNull String username, @NonNull final String password, @Nullable final AsyncActionEventListener listener) {
-        getUserByUsername(username, new AsyncSingleValueEventListener<User>() {
-            @Override
-            public void onSuccess(@NonNull User user) {
-                if (user.getPassword().equals(password)) {
-                    State.getState().setSignedInUser(user);
-                    if (null != listener) { listener.onSuccess(); }
-                } else {
-                    if (null != listener) { listener.onFailure(AsyncEventFailureReason.PASSWORD_MISMATCH); }
-                }
-            }
-            @Override
-            public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                if (null != listener) { listener.onFailure(reason); }
-            }
-        });
     }
 
     public static void updatePassword(@NonNull User user, @NonNull String newPassword, @Nullable final AsyncSingleValueEventListener<User> listener) {

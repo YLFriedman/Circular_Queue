@@ -3,6 +3,7 @@ package ca.uottawa.seg2105.project.cqondemand;
 import org.junit.Test;
 
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
+import ca.uottawa.seg2105.project.cqondemand.utilities.Authentication;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 import static org.junit.Assert.*;
@@ -146,5 +147,21 @@ public class UserFunctionTest {
     }
 
 
+    @Test
+    public void hash_test() {
+
+        String password = "cqpass";
+        System.out.println("password: " + password);
+
+        String salt = Authentication.genSalt();
+        System.out.println("salt: " + salt);
+
+        String hashedPassword = Authentication.genHash(password, salt);
+        System.out.println("hashedPassword: " + hashedPassword);
+
+        boolean passed = Authentication.checkPassword(password, hashedPassword);
+        System.out.println("passed: " + (passed ? "Yes" : "No"));
+
+    }
 
 }

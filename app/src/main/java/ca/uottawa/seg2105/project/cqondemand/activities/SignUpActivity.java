@@ -26,6 +26,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
+import ca.uottawa.seg2105.project.cqondemand.utilities.Authentication;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -351,6 +352,8 @@ public class SignUpActivity extends AppCompatActivity {
     public void onCreateClick(View view) {
 
         if (!fields_1AreValid() || (User.Type.SERVICE_PROVIDER == userType && !fields_2AreValid())) { return; }
+
+        password =  Authentication.genHash(password);
 
         User newUser = null;
         if (User.Type.SERVICE_PROVIDER == userType) {

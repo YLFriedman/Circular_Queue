@@ -22,6 +22,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.utilities.Authentication;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
@@ -108,7 +109,7 @@ public class SignInActivity extends AppCompatActivity {
         } else {
             btn_sign_in.setEnabled(false);
             btn_sign_up.setEnabled(false);
-            DbUser.authenticate(field_username.getText().toString().trim(), field_password.getText().toString(), new AsyncActionEventListener() {
+            Authentication.authenticate(field_username.getText().toString().trim(), field_password.getText().toString(), new AsyncActionEventListener() {
                 @Override
                 public void onSuccess() {
                     btn_sign_in.setEnabled(true);
@@ -175,7 +176,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     public void onCreateTestAccountClick(View view) {
-        User user = new User("Test", "User", "test", "test@test.test", User.Type.HOMEOWNER, "cqpass");
+        User user = new User("Test", "User", "test", "test@test.test", User.Type.HOMEOWNER, Authentication.genHash("cqpass"));
         DbUser.createUser(user, new AsyncActionEventListener() {
             @Override
             public void onSuccess() { }
@@ -195,7 +196,7 @@ public class SignInActivity extends AppCompatActivity {
         ServiceProvider provides = new ServiceProvider("-LRTteBm1Bvhh8KMiGd_", "daddy", "please", "DONOTspankme", "bad@boy.com",
                 "cqpass", "Spaces Allowed", true, "6132453125", address, null);
         System.out.println("OUTPUT");
-        User user = new User("-LRYCsBuPG8E1gmy6otV", "Test", "Homeowner", "Hope", "thisworks@mail.com", User.Type.HOMEOWNER, "cqpass");
+        User user = new User("-LRYCsBuPG8E1gmy6otV", "Test", "Homeowner", "Hope", "thisworks@mail.com", User.Type.HOMEOWNER, Authentication.genHash("cqpass"));
         Service service = new Service("-LRNf10QyYaAtg9kx3dR", "Super Nutty", 201, "-LRNeyae0rFs4YqwqiVs");
         DbService.updateService(service, new AsyncActionEventListener() {
             @Override
