@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -16,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.adapters.SpinnerAdapter;
 import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
 import ca.uottawa.seg2105.project.cqondemand.database.DbListenerHandle;
 import ca.uottawa.seg2105.project.cqondemand.database.DbService;
@@ -72,14 +72,14 @@ public class ServiceEditActivity extends SignedInActivity {
     }
 
     private void loadSpinnerData(ArrayList<Category> data) {
-        data.add(0, new Category(getString(R.string.category_select)));
+        data.add(0, null);
         // Check if there was already a selection made
         Object currentSelection = spinner_categories.getSelectedItem();
         if (null != currentSelection && !currentSelection.toString().equals(getString(R.string.category_list_select))) {
             currentCategory = (Category) currentSelection;
         }
         // Create the adapter and pass it to the spinner
-        final ArrayAdapter<Category> dataAdapter = new ArrayAdapter<Category>(getApplicationContext(), R.layout.spinner_item_title, data);
+        final SpinnerAdapter<Category> dataAdapter = new SpinnerAdapter<Category>(getApplicationContext(), R.layout.spinner_item_title, getString(R.string.category_select), data);
         spinner_categories.setAdapter(dataAdapter);
         // Set the spinner to be the previously selected or initial category
         if (null != currentCategory) { spinner_categories.setSelection(dataAdapter.getPosition(currentCategory)); }
