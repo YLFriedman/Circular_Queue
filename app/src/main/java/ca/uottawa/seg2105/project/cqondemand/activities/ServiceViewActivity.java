@@ -91,7 +91,7 @@ public class ServiceViewActivity extends SignedInActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        User user = State.getInstance(getApplicationContext()).getSignedInUser();
+        User user = State.getInstance().getSignedInUser();
         if (null != user && user.isAdmin()) {
             getMenuInflater().inflate(R.menu.service_options, menu);
             menu.setGroupVisible(R.id.grp_category_controls, false);

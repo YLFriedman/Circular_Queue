@@ -65,13 +65,18 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if (null != State.getInstance(getApplicationContext()).getSignedInUser()) {
+        if (null != State.getInstance().getSignedInUser()) {
             Intent loginIntent = new Intent(getApplicationContext(), HomeActivity.class);
             startActivity(loginIntent);
             finish();
         } else {
             itemClickEnabled = true;
         }
+    }
+
+    @Override
+    public void onBackPressed () {
+        moveTaskToBack (false);
     }
 
     @Override

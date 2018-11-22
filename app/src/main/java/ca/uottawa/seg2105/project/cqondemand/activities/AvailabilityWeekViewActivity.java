@@ -62,7 +62,7 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
             }
         }
 
-        currentUser = State.getInstance(getApplicationContext()).getSignedInUser();
+        currentUser = State.getInstance().getSignedInUser();
 
         if (currentUser instanceof ServiceProvider) {
             onResetClick();

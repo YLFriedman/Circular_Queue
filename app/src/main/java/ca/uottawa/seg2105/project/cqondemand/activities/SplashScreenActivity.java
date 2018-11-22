@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -23,7 +22,6 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 public class SplashScreenActivity extends Activity {
 
     protected ProgressBar progress;
-    protected LinearLayout progressLL;
     protected TextView txt_sub_title;
     protected CountDownTimer timer;
 
@@ -35,37 +33,28 @@ public class SplashScreenActivity extends Activity {
         progress = (ProgressBar) findViewById(R.id.progress_loading);
         txt_sub_title = findViewById(R.id.txt_sub_title);
 
-
         // Get the state
-        final State state = State.getInstance(this);
+        final State state = State.getInstance(getApplicationContext());
 
         if (null != state.getSignedInUser()) {
-            timer = new CountDownTimer(2000, 100) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    progress.incrementProgressBy(5);
-                }
-                @Override
-                public void onFinish() {
-                    launchHomeScreen();
-                }
-            };
-            timer.start();
+            launchHomeScreen();
         } else if (null == state.getSignedInUserKey()) {
-            timer = new CountDownTimer(2000, 100) {
+            progress.setMax(100);
+            progress.setProgress(1);
+            timer = new CountDownTimer(2500, 25) {
                 @Override
                 public void onTick(long millisUntilFinished) {
-                    progress.incrementProgressBy(5);
+                    progress.incrementProgressBy(1);
                 }
                 @Override
                 public void onFinish() {
+                    progress.setProgress(100);
                     launchSignInScreen();
                 }
             };
             timer.start();
         } else {
             progress.setIndeterminate(true);
-
             txt_sub_title.setText(R.string.signing_in);
             DbUser.getUser(state.getSignedInUserKey(), new AsyncSingleValueEventListener<User>() {
                 @Override
@@ -82,15 +71,13 @@ public class SplashScreenActivity extends Activity {
 
     }
 
-    private void launchSignInScreen() {
-        //if (true) { return; }
+    protected void launchSignInScreen() {
         Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
         startActivity(intent);
         finish();
     }
 
-    private void launchHomeScreen() {
-        //if (true) { return; }
+    protected void launchHomeScreen() {
         Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
         startActivity(intent);
         finish();

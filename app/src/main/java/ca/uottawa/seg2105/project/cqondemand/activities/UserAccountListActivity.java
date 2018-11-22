@@ -31,7 +31,7 @@ public class UserAccountListActivity extends SignedInActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_account_list);
         recycler_list = findViewById(R.id.recycler_list);
-        User signedInUser = State.getInstance(getApplicationContext()).getSignedInUser();
+        User signedInUser = State.getInstance().getSignedInUser();
         if (null == signedInUser || !signedInUser.isAdmin()) { finish(); return; }
 
         recycler_list.setHasFixedSize(true);

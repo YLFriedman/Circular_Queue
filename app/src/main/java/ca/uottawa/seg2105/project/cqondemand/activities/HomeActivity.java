@@ -33,6 +33,11 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed () {
+        moveTaskToBack(false);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         itemClickEnabled = true;
@@ -84,7 +89,7 @@ public class HomeActivity extends AppCompatActivity {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
-        intent.putExtra("user", State.getInstance(getApplicationContext()).getSignedInUser());
+        intent.putExtra("user", State.getInstance().getSignedInUser());
         startActivity(intent);
     }
 
@@ -103,7 +108,7 @@ public class HomeActivity extends AppCompatActivity {
     public void onSignOutClick(View view) {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
-        State.getInstance(getApplicationContext()).setSignedInUser(null);
+        State.getInstance().setSignedInUser(null);
         startActivity(new Intent(getApplicationContext(), SignInActivity.class));
         finish();
     }
