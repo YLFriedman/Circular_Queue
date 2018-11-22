@@ -115,7 +115,7 @@ public class DbUtil {
                     try {
                         DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(type.getDbItemClass());
                         if (null != dbItem && null != snapshot.getKey()) {
-                            dbItem.storeKey(snapshot.getKey());
+                            dbItem.setKey(snapshot.getKey());
                             T domainObjItem = dbItem.toDomainObj();
                             listener.onSuccess(domainObjItem);
                         } else {
@@ -148,7 +148,7 @@ public class DbUtil {
                     try {
                         DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(type.getDbItemClass());
                         if (null != dbItem && null != snapshot.getKey()) {
-                            dbItem.storeKey(snapshot.getKey());
+                            dbItem.setKey(snapshot.getKey());
                             T domainObjItem = dbItem.toDomainObj();
                             returnValue.add(domainObjItem);
                         }
@@ -223,8 +223,8 @@ public class DbUtil {
     static <T> void deleteItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(item);
         final DbItem<?> dbItem = objectToDbItem(item);
-        if (null == dbItem.retrieveKey() || dbItem.retrieveKey().isEmpty()) { throw new IllegalArgumentException("An item key is required. Unable to delete from the database without the key."); }
-        type.getRef().child(dbItem.retrieveKey()).removeValue(new DatabaseReference.CompletionListener() {
+        if (null == dbItem.getKey() || dbItem.getKey().isEmpty()) { throw new IllegalArgumentException("An item key is required. Unable to delete from the database without the key."); }
+        type.getRef().child(dbItem.getKey()).removeValue(new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                 if (null != listener) {
@@ -241,7 +241,7 @@ public class DbUtil {
         final DatabaseReference pushRef = type.getRef().push();
         String key = pushRef.getKey();
         if (null == key) { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
-        dbItem.storeKey(pushRef.getKey());
+        dbItem.setKey(pushRef.getKey());
         pushRef.setValue(dbItem, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
@@ -256,11 +256,11 @@ public class DbUtil {
     static <T> void updateItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(item);
         final DbItem<?> dbItem = objectToDbItem(item);
-        getItem(type, dbItem.retrieveKey(), new AsyncSingleValueEventListener<T>() {
+        getItem(type, dbItem.getKey(), new AsyncSingleValueEventListener<T>() {
             @Override
             public void onSuccess(@NonNull T item) {
                 // Success condition: Item exists in database and can be updated
-                type.getRef().child(dbItem.retrieveKey()).setValue(dbItem, new DatabaseReference.CompletionListener() {
+                type.getRef().child(dbItem.getKey()).setValue(dbItem, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                         if (null != listener) {

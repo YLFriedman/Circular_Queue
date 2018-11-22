@@ -90,7 +90,7 @@ public class DbUtilRelational extends DbUtil {
                     try {
                         DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(relationType.getDbItemClass());
                         if (null != dbItem && null != snapshot.getKey()) {
-                            dbItem.storeKey(snapshot.getKey());
+                            dbItem.setKey(snapshot.getKey());
                             T domainObjItem = dbItem.toDomainObj();
                             returnValue.add(domainObjItem);
                         }

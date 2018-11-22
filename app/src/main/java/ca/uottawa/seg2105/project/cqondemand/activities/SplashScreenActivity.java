@@ -39,6 +39,7 @@ public class SplashScreenActivity extends Activity {
         if (null != state.getSignedInUser()) {
             launchHomeScreen();
         } else if (null == state.getSignedInUserKey()) {
+            
             progress.setMax(100);
             progress.setProgress(1);
             timer = new CountDownTimer(2500, 25) {

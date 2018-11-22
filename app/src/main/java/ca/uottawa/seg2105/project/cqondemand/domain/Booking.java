@@ -1,5 +1,6 @@
 package ca.uottawa.seg2105.project.cqondemand.domain;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.Date;
@@ -7,48 +8,80 @@ import java.util.Date;
 public class Booking {
 
 
-
+    protected String key;
+    protected Status status;
     protected Date startTime;
     protected Date endTime;
     protected Date dateCreated;
     protected Date dateCancelledOrApproved;
-    protected ServiceProvider provider;
-    protected User homeOwner;
     protected String cancelledReason;
-    protected Status status;
-    protected String homeOwnerKey;
+    protected ServiceProvider serviceProvider;
     protected String serviceProviderKey;
-    protected String bookingKey;
+    protected User homeowner;
+    protected String homeownerKey;
 
-    private enum Status{
+    public enum Status {
         CANCELLED, APPROVED, REQUESTED;
+        @Override
+        public String toString() {
+            switch (this) {
+                case CANCELLED: return "Canceled";
+                case APPROVED: return "Approved";
+                case REQUESTED: return "Requested";
+                default: throw new IllegalArgumentException("Invalid Status");
+            }
+        }
+        public static Status parse(String status) {
+            switch (status.toUpperCase()) {
+                case "CANCELLED": return Status.CANCELLED;
+                case "APPROVED": return Status.APPROVED;
+                case "REQUESTED": return Status.REQUESTED;
+                default: throw new IllegalArgumentException("Invalid Status");
+            }
+        }
     }
 
-    public Booking(Date startTime, Date endTime, Date dateCreated, @Nullable Date dateCancelledOrApproved, ServiceProvider provider,
-                   String homeOwnerKey, Status status, @Nullable String cancelledReason, String bookingKey) {
+    public Booking(@NonNull String key, Date startTime, Date endTime, Date dateCreated, @Nullable Date dateCancelledOrApproved, ServiceProvider provider,
+                   String homeownerKey, Status status, @Nullable String cancelledReason) {
         this.startTime = startTime;
         this.endTime = endTime;
-        this.provider = provider;
-        this.homeOwnerKey = homeOwnerKey;
+        this.serviceProvider = provider;
+        this.homeownerKey = homeownerKey;
         this.status = status;
         this.cancelledReason = cancelledReason;
-        this.bookingKey = bookingKey;
+        this.key = key;
         this.dateCreated = dateCreated;
         this.dateCancelledOrApproved = dateCancelledOrApproved;
     }
 
-    public Booking(Date startTime, Date endTime, Date dateCreated, @Nullable Date dateCancelledOrApproved, User homeOwner,
-                   String serviceProviderKey, Status status, @Nullable String cancelledReason, String bookingKey) {
+    public Booking(@NonNull String key, Date startTime, Date endTime, Date dateCreated, @Nullable Date dateCancelledOrApproved, User homeowner,
+                   String serviceProviderKey, Status status, @Nullable String cancelledReason) {
 
         this.startTime = startTime;
         this.endTime = endTime;
-        this.homeOwner = homeOwner;
+        this.homeowner = homeowner;
         this.serviceProviderKey = serviceProviderKey;
         this.status = status;
         this.cancelledReason = cancelledReason;
-        this.bookingKey = bookingKey;
+        this.key = key;
         this.dateCreated = dateCreated;
         this.dateCancelledOrApproved = dateCancelledOrApproved;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
     }
 
     public Date getDateCreated() {
@@ -59,28 +92,26 @@ public class Booking {
         return dateCancelledOrApproved;
     }
 
-    public ServiceProvider getProvider() {
-        return provider;
-    }
-
     public String getCancelledReason() {
         return cancelledReason;
     }
 
-    public Status getStatus() {
-        return status;
-    }
-
-    public String getHomeOwnerKey() {
-        return homeOwnerKey;
+    public ServiceProvider getServiceProvider() {
+        return serviceProvider;
     }
 
     public String getServiceProviderKey() {
         return serviceProviderKey;
     }
 
-    public String getBookingKey() {
-        return bookingKey;
+    public User getHomeowner() {
+        return homeowner;
     }
+
+    public String getHomeownerKey() {
+        return homeownerKey;
+    }
+
+
 
 }

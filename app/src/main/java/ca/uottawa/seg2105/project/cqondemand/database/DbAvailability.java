@@ -62,7 +62,7 @@ public class DbAvailability extends DbItem<Availability> {
                     try {
                         DbItem<Availability> dbItem = (DbItem<Availability>) item.getValue(DbUtil.DataType.AVAILABILITY.getDbItemClass());
                         if (null != dbItem && null != item.getKey()) {
-                            dbItem.storeKey(item.getKey());
+                            dbItem.setKey(item.getKey());
                             Availability domainObjItem = dbItem.toDomainObj();
                             returnValue.add(domainObjItem);
                         }

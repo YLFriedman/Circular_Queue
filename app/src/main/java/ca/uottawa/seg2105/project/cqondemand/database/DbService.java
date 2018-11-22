@@ -37,7 +37,7 @@ public class DbService extends DbItem<Service> {
     }
 
     @NonNull
-    public Service toDomainObj() { return new Service(retrieveKey(), name, rate, category_key); }
+    public Service toDomainObj() { return new Service(getKey(), name, rate, category_key); }
 
     public static void createService(@NonNull final Service service, @Nullable final AsyncActionEventListener listener) {
         getServiceByName(service.getName(), new AsyncSingleValueEventListener<Service>() {

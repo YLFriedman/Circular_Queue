@@ -25,7 +25,7 @@ public class DbCategory extends DbItem<Category> {
     }
 
     @NonNull
-    public Category toDomainObj() { return new Category(retrieveKey(), name); }
+    public Category toDomainObj() { return new Category(getKey(), name); }
 
     public static void createCategory(@NonNull final Category category, @Nullable final AsyncActionEventListener listener) {
         getCategoryByName(category.getName(), new AsyncSingleValueEventListener<Category>() {
