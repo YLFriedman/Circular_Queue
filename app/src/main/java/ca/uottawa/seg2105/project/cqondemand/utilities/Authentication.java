@@ -12,7 +12,7 @@ public class Authentication {
 
     protected static final int SALT_COMPLEXITY = 5;
 
-    public static String genSalt() {
+    protected static String genSalt() {
         return BCrypt.gensalt(SALT_COMPLEXITY);
     }
 
@@ -20,7 +20,7 @@ public class Authentication {
         return BCrypt.hashpw(password, genSalt());
     }
 
-    public static String genHash(@NonNull String password, @NonNull String salt) {
+    protected static String genHash(@NonNull String password, @NonNull String salt) {
         return BCrypt.hashpw(password, salt);
     }
 

@@ -284,15 +284,6 @@
                 android:onClick="onNextClick"
                 android:text="@string/next" />
 
-            <Button
-                android:id="@+id/btn_test"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:onClick="onTestlick"
-                android:text='"test"'
-                android:visibility="gone" />
-
         </LinearLayout>
 
     </ScrollView>

@@ -353,7 +353,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         if (!fields_1AreValid() || (User.Type.SERVICE_PROVIDER == userType && !fields_2AreValid())) { return; }
 
-        password =  Authentication.genHash(password);
+        password = Authentication.genHash(password);
 
         User newUser = null;
         if (User.Type.SERVICE_PROVIDER == userType) {
@@ -407,12 +407,6 @@ public class SignUpActivity extends AppCompatActivity {
         field_email.setText("test@email.com");
         field_password.setText("cqpass");
         field_password_confirm.setText("cqpass");
-    }
-
-    public void onTestlick(View view) {
-        String province = spinner_province.getSelectedItem() == null ? "null" : spinner_province.getSelectedItem().toString();
-        String userType = spinner_user_type.getSelectedItem() == null ? "null" : spinner_user_type.getSelectedItem().toString();
-        Toast.makeText(getApplicationContext(), "userType: " + userType + "\nprovince: " + province, Toast.LENGTH_LONG).show();
     }
 
 }

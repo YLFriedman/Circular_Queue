@@ -77,7 +77,6 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (RESULT_CANCELED == resultCode) {
-            //field_username.getText().clear();
             field_password.getText().clear();
             if (field_username.getText().toString().isEmpty()) {
                 field_username.requestFocus();
@@ -206,7 +205,5 @@ public class SignInActivity extends AppCompatActivity {
         });
 
     }
-
-
 
 }
