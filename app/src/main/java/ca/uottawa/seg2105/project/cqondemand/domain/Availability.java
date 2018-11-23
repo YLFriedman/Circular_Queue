@@ -28,6 +28,30 @@ public class Availability implements Serializable {
                 default: throw new IllegalArgumentException("'" + this.toString() + "' is not a valid day. ");
             }
         }
+        public static Day parse (int day) {
+            switch (day) {
+                case 0: return Day.SUNDAY;
+                case 1: return Day.MONDAY;
+                case 2: return Day.TUESDAY;
+                case 3: return Day.WEDNESDAY;
+                case 4: return Day.THURSDAY;
+                case 5: return Day.FRIDAY;
+                case 6: return Day.SATURDAY;
+                default: throw new IllegalArgumentException("'" + day + "' is not a valid day. ");
+            }
+        }
+        public static Day parse (String day) {
+            switch (day.toUpperCase()) {
+                case "SUNDAY": return Day.SUNDAY;
+                case "MONDAY": return Day.MONDAY;
+                case "TUESDAY": return Day.TUESDAY;
+                case "WEDNESDAY": return Day.WEDNESDAY;
+                case "THURSDAY": return Day.THURSDAY;
+                case "FRIDAY": return Day.FRIDAY;
+                case "SATURDAY": return Day.SATURDAY;
+                default: throw new IllegalArgumentException("'" + day + "' is not a valid day. ");
+            }
+        }
     }
 
     private static final long serialVersionUID = 1;
@@ -66,32 +90,6 @@ public class Availability implements Serializable {
         return startTime == other.startTime && endTime == other.endTime;
     }
 
-    public static Availability.Day parseDay(@NonNull String input) {
-        switch (input.toUpperCase()) {
-            case "SUNDAY": return Day.SUNDAY;
-            case "MONDAY": return Day.MONDAY;
-            case "TUESDAY": return Day.TUESDAY;
-            case "WEDNESDAY": return Day.WEDNESDAY;
-            case "THURSDAY": return Day.THURSDAY;
-            case "FRIDAY": return Day.FRIDAY;
-            case "SATURDAY": return Day.SATURDAY;
-            default: throw new IllegalArgumentException("'" + input + "' is not a valid day. ");
-        }
-    }
-
-    public static Availability.Day parseDay(@NonNull int input) {
-        switch (input) {
-            case 0: return Day.SUNDAY;
-            case 1: return Day.MONDAY;
-            case 2: return Day.TUESDAY;
-            case 3: return Day.WEDNESDAY;
-            case 4: return Day.THURSDAY;
-            case 5: return Day.FRIDAY;
-            case 6: return Day.SATURDAY;
-            default: throw new IllegalArgumentException("'" + input + "' is not a valid day. ");
-        }
-    }
-
     public static boolean[][] toArrays(@NonNull List<Availability> list) {
         boolean[][] output = new boolean[7][24];
         for (Availability item: list) {
@@ -121,14 +119,14 @@ public class Availability implements Serializable {
                     // End the range, set the end time and create the availability
                     found = false;
                     end++;
-                    output.add(new Availability(parseDay(day), start, end));
+                    output.add(new Availability(Day.parse(day), start, end));
                 }
             }
             // If we are at the end of the day and we are in a range, end the range and create the availability
             if (found) {
                 found = false;
                 end++;
-                output.add(new Availability(parseDay(day), start, end));
+                output.add(new Availability(Day.parse(day), start, end));
             }
         }
         return output;

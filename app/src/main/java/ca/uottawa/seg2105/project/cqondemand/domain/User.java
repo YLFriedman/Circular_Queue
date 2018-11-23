@@ -44,6 +44,14 @@ public class User implements Serializable {
                 default: return this.name();
             }
         }
+        public static Type parse(String status) {
+            switch (status.toUpperCase()) {
+                case "ADMIN": return Type.ADMIN;
+                case "HOMEOWNER": return Type.HOMEOWNER;
+                case "SERVICE PROVIDER": return Type.SERVICE_PROVIDER;
+                default: throw new IllegalArgumentException("Invalid User Type");
+            }
+        }
     }
 
     /**
@@ -142,23 +150,6 @@ public class User implements Serializable {
 
     public boolean isAdmin() {
         return type == Type.ADMIN;
-    }
-
-    /**
-     * A method for converting a string representation of a Type into a Type.
-     *
-     * @throws IllegalArgumentException if the input String is not a valid Type
-     * @param input the String representation of a Type you wish to convert
-     * @return The user type that is associated to the given string
-     */
-    public static Type parseType(String input) {
-        if (null == input) { throw new IllegalArgumentException("'null' is not a valid user type. "); }
-        switch (input) {
-            case "Homeowner": return Type.HOMEOWNER;
-            case "Service Provider": return Type.SERVICE_PROVIDER;
-            case "Admin": return Type.ADMIN;
-            default: throw new IllegalArgumentException("'" + input + "' is not a valid user type. ");
-        }
     }
 
     @Override

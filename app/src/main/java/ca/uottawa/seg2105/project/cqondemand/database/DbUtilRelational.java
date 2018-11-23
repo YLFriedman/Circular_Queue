@@ -41,12 +41,7 @@ public class DbUtilRelational extends DbUtil {
             }
         }
         public DatabaseReference getRef() {
-            DatabaseReference ref = references.get(this.toString());
-            if (null == ref) {
-                ref = FirebaseDatabase.getInstance().getReference().child(this.toString());
-                references.put(this.toString(), ref);
-            }
-            return ref;
+            return DbUtil.getRef(this.toString());
         }
     }
 
@@ -61,12 +56,7 @@ public class DbUtilRelational extends DbUtil {
             }
         }
         public DatabaseReference getRef() {
-            DatabaseReference ref = references.get(this.toString());
-            if (null == ref) {
-                ref = FirebaseDatabase.getInstance().getReference().child(this.toString());
-                references.put(this.toString(), ref);
-            }
-            return ref;
+            return DbUtil.getRef(this.toString());
         }
     }
 

@@ -12,9 +12,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class DbAvailabilityFunctionTest {
+
     @Test
     public void validate_Constructor() {
-        DbAvailability testDbAvailability = new DbAvailability(new Availability(Availability.parseDay("SUNDAY"), 12, 15));
+        DbAvailability testDbAvailability = new DbAvailability(new Availability(Availability.Day.parse("SUNDAY"), 12, 15));
         Availability testAvailability = testDbAvailability.toDomainObj();
         assertEquals("Availability getter Failed - day", Availability.Day.SUNDAY, testAvailability.getDay());
         assertEquals("Availability getter Failed - startTime", 12, testAvailability.getStartTime());
@@ -32,4 +33,5 @@ public class DbAvailabilityFunctionTest {
             fail("Availability Constructor Failed - End Time before Start Time");
         } catch (InvalidDataException ignore) {} catch (IllegalArgumentException ignore) {}
     }
+
 }

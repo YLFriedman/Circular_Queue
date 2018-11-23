@@ -58,11 +58,11 @@ public class DbUser extends DbItem<User> {
 
     @NonNull
     public User toDomainObj() {
-        if (User.parseType(type) == User.Type.SERVICE_PROVIDER) {
+        if (User.Type.parse(type) == User.Type.SERVICE_PROVIDER) {
             if (null == address) { throw new IllegalArgumentException("The address cannot be null"); }
             return new ServiceProvider(getKey(), first_name, last_name, username, email, password, company_name, licensed, phone_number, address.toDomainObj(), description);
         }
-        return new User(getKey(), first_name, last_name, username, email, User.parseType(type), password);
+        return new User(getKey(), first_name, last_name, username, email, User.Type.parse(type), password);
     }
 
     public static void createUser(@NonNull final User user, @Nullable final AsyncActionEventListener listener) {

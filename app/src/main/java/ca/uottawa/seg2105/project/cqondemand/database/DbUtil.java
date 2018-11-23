@@ -62,13 +62,17 @@ public class DbUtil {
             }
         }
         public DatabaseReference getRef() {
-            DatabaseReference ref = references.get(this.toString());
-            if (null == ref) {
-                ref = FirebaseDatabase.getInstance().getReference().child(this.toString());
-                references.put(this.toString(), ref);
-            }
-            return ref;
+            return DbUtil.getRef(this.toString());
         }
+    }
+
+    protected static DatabaseReference getRef(String refName) {
+        DatabaseReference ref = references.get(refName);
+        if (null == ref) {
+            ref = FirebaseDatabase.getInstance().getReference().child(refName);
+            references.put(refName, ref);
+        }
+        return ref;
     }
 
     /**

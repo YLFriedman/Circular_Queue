@@ -33,7 +33,7 @@ public class DbAvailability extends DbItem<Availability> {
     }
 
     @NonNull
-    public Availability toDomainObj() { return new Availability(Availability.parseDay(day), start_time, end_time); }
+    public Availability toDomainObj() { return new Availability(Availability.Day.parse(day), start_time, end_time); }
 
     public static void setAvailabilities(@NonNull ServiceProvider provider, @NonNull List<Availability> items, @Nullable final AsyncActionEventListener listener) {
         if (null == provider.getKey() || provider.getKey().isEmpty()) { throw new IllegalArgumentException("A service provider object with a key is required. Unable to update the database without the key."); }
