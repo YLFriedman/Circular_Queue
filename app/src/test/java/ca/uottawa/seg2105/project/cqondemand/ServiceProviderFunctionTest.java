@@ -56,7 +56,7 @@ public class ServiceProviderFunctionTest {
 
         // Test the creation of an object and its getters
         try {
-            ServiceProvider testServiceProvider = new ServiceProvider("key", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", testAddressA, "description");
+            ServiceProvider testServiceProvider = new ServiceProvider("key", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", testAddressA, "description", 0, 0, 0);
             assertEquals("ServiceProvider getter Failed - key", "key", testServiceProvider.getKey());
             assertEquals("ServiceProvider getter Failed - firstName", "firstName", testServiceProvider.getFirstName());
             assertEquals("ServiceProvider getter Failed - lastName", "lastName", testServiceProvider.getLastName());
@@ -76,11 +76,11 @@ public class ServiceProviderFunctionTest {
 
         // Make sure InvalidDataException is thrown for invalid data
         try {
-            new ServiceProvider("key", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyName!", true, "{@TEST}", testAddressA, "description");
+            new ServiceProvider("key", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyName!", true, "{@TEST}", testAddressA, "description", 0, 0, 0);
             fail("ServiceProvider Constructor Failed - Illegal companyName");
         } catch (InvalidDataException ignore) {}
         try {
-            new ServiceProvider("key", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", null, "description");
+            new ServiceProvider("key", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", null, "description", 0, 0, 0);
             fail("ServiceProvider Constructor Failed - Illegal address");
         } catch (InvalidDataException ignore) {}
 
@@ -95,13 +95,13 @@ public class ServiceProviderFunctionTest {
         ServiceProvider testServiceProvider1f = new ServiceProvider("firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", testAddressB, "description");
         ServiceProvider testServiceProvider1g = new ServiceProvider("firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", testAddressA, "descriptionDif");
 
-        ServiceProvider testServiceProvider2a = new ServiceProvider("key", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", testAddressA, "description");
-        ServiceProvider testServiceProvider2b = new ServiceProvider("key", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", testAddressA, "description");
-        ServiceProvider testServiceProvider2c = new ServiceProvider("key", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyNameDif", true, "{@TEST}", testAddressA, "description");
-        ServiceProvider testServiceProvider2d = new ServiceProvider("key", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", false, "{@TEST}", testAddressA, "description");
-        ServiceProvider testServiceProvider2f = new ServiceProvider("key", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", testAddressB, "description");
-        ServiceProvider testServiceProvider2g = new ServiceProvider("key", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", testAddressA, "descriptionDif");
-        ServiceProvider testServiceProvider2h = new ServiceProvider("keyDif", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", testAddressA, "descriptionDif");
+        ServiceProvider testServiceProvider2a = new ServiceProvider("key", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", testAddressA, "description", 0, 0, 0);
+        ServiceProvider testServiceProvider2b = new ServiceProvider("key", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", testAddressA, "description", 0, 0, 0);
+        ServiceProvider testServiceProvider2c = new ServiceProvider("key", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyNameDif", true, "{@TEST}", testAddressA, "description", 0, 0, 0);
+        ServiceProvider testServiceProvider2d = new ServiceProvider("key", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", false, "{@TEST}", testAddressA, "description", 0, 0, 0);
+        ServiceProvider testServiceProvider2f = new ServiceProvider("key", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", testAddressB, "description", 0, 0, 0);
+        ServiceProvider testServiceProvider2g = new ServiceProvider("key", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", testAddressA, "descriptionDif", 0, 0, 0);
+        ServiceProvider testServiceProvider2h = new ServiceProvider("keyDif", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", testAddressA, "descriptionDif", 0, 0, 0);
 
         assertFalse("ServiceProvider equals failed - Different Objects", testServiceProvider1a.equals("Hello"));
 
