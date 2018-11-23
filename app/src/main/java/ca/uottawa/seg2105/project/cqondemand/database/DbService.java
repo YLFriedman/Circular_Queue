@@ -14,6 +14,7 @@ import java.util.HashMap;
 
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
+import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
@@ -115,12 +116,12 @@ public class DbService extends DbItem<Service> {
         return DbUtil.getItemsLive(DbUtil.DataType.SERVICE, "category_key", category.getKey(), listener);
     }
 
-    public static void getProvidersByService(@NonNull Service service, @NonNull AsyncValueEventListener<Service> listener) {
+    public static void getProvidersByService(@NonNull Service service, @NonNull AsyncValueEventListener<ServiceProvider> listener) {
         if (service.getKey() == null || service.getKey().isEmpty()) { throw new IllegalArgumentException("A service object with a key is required. Unable to query the database without the key."); }
         DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.SERVICE_USERS, service.getKey(), listener);
     }
 
-    public static DbListenerHandle<ValueEventListener> getProvidersByServiceLive(@NonNull Service service, @NonNull final AsyncValueEventListener<Service> listener) {
+    public static DbListenerHandle<ValueEventListener> getProvidersByServiceLive(@NonNull Service service, @NonNull final AsyncValueEventListener<ServiceProvider> listener) {
         if (service.getKey() == null || service.getKey().isEmpty()) { throw new IllegalArgumentException("A service object with a key is required. Unable to query the database without the key."); }
         return DbUtilRelational.getItemsRelationalLive(DbUtilRelational.RelationType.SERVICE_USERS, service.getKey(), listener);
     }

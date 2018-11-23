@@ -36,7 +36,7 @@ import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class ServiceListActivity extends SignedInActivity {
 
-    protected enum Mode { LIST_SERVICES, MANAGE_SERVICES, ADD_PROVIDER_SERVICES, REMOVE_PROVIDER_SERVICES, LIST_PROVIDER_SERVICES }
+    protected enum Mode { LIST_SERVICES, MANAGE_SERVICES, ADD_PROVIDER_SERVICES, REMOVE_PROVIDER_SERVICES, LIST_PROVIDER_SERVICES, PICK_FOR_BOOKING }
     protected boolean itemClickEnabled = true;
     protected Mode mode;
     protected boolean useCategory;
@@ -54,7 +54,8 @@ public class ServiceListActivity extends SignedInActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_list);
-        if (null == State.getInstance().getSignedInUser()) { return; }
+        User signedInUser = State.getInstance().getSignedInUser();
+        if (null == signedInUser) { return; }
         txt_sub_title = findViewById(R.id.txt_sub_title);
         divider_txt_sub_title = findViewById(R.id.divider_txt_sub_title);
         recycler_list = findViewById(R.id.recycler_list);
@@ -74,25 +75,34 @@ public class ServiceListActivity extends SignedInActivity {
         // Determine and initialize the mode
         if (currentUser instanceof ServiceProvider) {
             currentProvider = (ServiceProvider) currentUser;
-            if (State.getInstance().getSignedInUser().equals(currentUser)) {
+            if (signedInUser.equals(currentUser)) {
                 mode = Mode.REMOVE_PROVIDER_SERVICES;
                 if (null != actionBar) { actionBar.setTitle(getString(R.string.my_services)); }
                 itemActionIcon = R.drawable.ic_remove_circle_outline_med_30;
             } else {
                 mode = Mode.LIST_PROVIDER_SERVICES;
             }
-        } else if (State.getInstance().getSignedInUser().isAdmin()) {
-            mode = Mode.MANAGE_SERVICES;
-            useCategory = null != currentCategory;
-        } else if (State.getInstance().getSignedInUser() instanceof ServiceProvider) {
-            currentProvider = (ServiceProvider) State.getInstance().getSignedInUser();
-            mode = Mode.ADD_PROVIDER_SERVICES;
-            itemActionIcon = R.drawable.ic_add_med_30;
-            useCategory = null != currentCategory;
-            if (null != actionBar) { actionBar.setTitle(getString(R.string.select_a_service)); }
-        }  else {
-            mode = Mode.LIST_SERVICES;
-            useCategory = null != currentCategory;
+        } else {
+            switch (signedInUser.getType()) {
+                case ADMIN:
+                    mode = Mode.MANAGE_SERVICES;
+                    useCategory = null != currentCategory;
+                    break;
+                case SERVICE_PROVIDER:
+                    currentProvider = (ServiceProvider) signedInUser;
+                    mode = Mode.ADD_PROVIDER_SERVICES;
+                    itemActionIcon = R.drawable.ic_add_med_30;
+                    useCategory = null != currentCategory;
+                    if (null != actionBar) { actionBar.setTitle(getString(R.string.select_a_service)); }
+                    break;
+                case HOMEOWNER:
+                    mode = Mode.PICK_FOR_BOOKING;
+                    useCategory = null != currentCategory;
+                    break;
+                default:
+                    mode = Mode.LIST_SERVICES;
+                    useCategory = null != currentCategory;
+            }
         }
 
         AsyncValueEventListener<Service> listener = new AsyncValueEventListener<Service>() {
@@ -114,6 +124,7 @@ public class ServiceListActivity extends SignedInActivity {
             case ADD_PROVIDER_SERVICES:
             case MANAGE_SERVICES:
             case LIST_SERVICES:
+            case PICK_FOR_BOOKING:
             default:
                 if (useCategory) {
                     setSubTitle(String.format(Locale.CANADA, getString(R.string.category_title_template), currentCategory.getName()));
@@ -212,6 +223,16 @@ public class ServiceListActivity extends SignedInActivity {
                             .setNegativeButton(R.string.cancel, null).show();
                     dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.text_primary_dark));
                     dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.dialog_red));
+                }
+            };
+        } else if (Mode.PICK_FOR_BOOKING == mode) {
+            return new View.OnClickListener() {
+                public void onClick(final View view) {
+                    if (!itemClickEnabled) { return; }
+                    itemClickEnabled = false;
+                    Intent intent = new Intent(getApplicationContext(), ServiceProviderPickerActivity.class);
+                    intent.putExtra("service", (Serializable) view.getTag());
+                    startActivity(intent);
                 }
             };
         } else {

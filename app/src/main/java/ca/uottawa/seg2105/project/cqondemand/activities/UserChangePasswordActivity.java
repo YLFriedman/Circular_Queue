@@ -2,7 +2,6 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -11,16 +10,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
-import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.Authentication;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
-import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
-public class UserAccountChangePasswordActivity extends SignedInActivity {
+public class UserChangePasswordActivity extends SignedInActivity {
 
     protected EditText field_password_old;
     protected EditText field_password;
@@ -31,7 +28,7 @@ public class UserAccountChangePasswordActivity extends SignedInActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_account_change_password);
+        setContentView(R.layout.activity_user_change_password);
         // Set references to the  UI objects
         field_password_old = findViewById(R.id.field_password_old);
         field_password = findViewById(R.id.field_password);
@@ -82,7 +79,7 @@ public class UserAccountChangePasswordActivity extends SignedInActivity {
         DbUser.updatePassword(currentUser, Authentication.genHash(password), new AsyncSingleValueEventListener<User>() {
             public void onSuccess(@NonNull User updatedUser) {
                 Toast.makeText(getApplicationContext(), R.string.password_update_success, Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(getApplicationContext(), UserAccountViewActivity.class);
+                Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
                 intent.putExtra("user", updatedUser);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);

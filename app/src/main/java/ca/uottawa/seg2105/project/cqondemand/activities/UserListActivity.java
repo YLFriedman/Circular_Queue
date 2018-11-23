@@ -20,7 +20,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.adapters.UserListAdapter;
 
-public class UserAccountListActivity extends SignedInActivity {
+public class UserListActivity extends SignedInActivity {
 
     protected boolean itemClickEnabled = true;
     protected RecyclerView recycler_list;
@@ -29,7 +29,7 @@ public class UserAccountListActivity extends SignedInActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_account_list);
+        setContentView(R.layout.activity_user_list);
         recycler_list = findViewById(R.id.recycler_list);
         User signedInUser = State.getInstance().getSignedInUser();
         if (null == signedInUser || !signedInUser.isAdmin()) { finish(); return; }
@@ -44,7 +44,7 @@ public class UserAccountListActivity extends SignedInActivity {
                     public void onClick(final View view) {
                         if (!itemClickEnabled) { return; }
                         itemClickEnabled = false;
-                        Intent intent = new Intent(getApplicationContext(), UserAccountViewActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
                         intent.putExtra("user", (Serializable) view.getTag());
                         startActivity(intent);
                     }

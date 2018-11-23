@@ -17,6 +17,8 @@
     <string name="title_activity_service_edit">Edit Service Details</string>
     <string name="title_activity_service_list">Services</string>
     <string name="title_activity_availability_week_view">Availabilities</string>
+    <string name="title_activity_booking_create">Create a Booking</string>
+    <string name="title_activity_service_provider_picker">Pick a Service Provider</string>
     <string name="btn_sign_in">Sign In</string>
     <string name="btn_sign_up">Sign Up</string>
     <string name="signature">Created by CircularQueue</string>
@@ -36,7 +38,7 @@
     <string name="edit">Edit</string>
     <string name="ok">OK</string>
     <string name="close">Close</string>
-    <string name="change_password">Change Passsword</string>
+    <string name="change_password">Change Password</string>
     <string name="delete_account">Delete Account</string>
     <string name="account_type">Account Type</string>
     <string name="delete">Delete</string>
@@ -127,6 +129,7 @@
     <string name="generic_account_create_error">Unable to create your account at this time. Please try again later.</string>
     <string name="no_changes_made_error_tempalte">No changes were made to the %s.</string>
     <string name="user_list_db_error">There was an error getting the users from the database. Please try again later.</string>
+    <string name="provider_list_db_error">There was an error getting the service providers from the database. Please try again later.</string>
     <string name="password_update_success">Password updated successfully!</string>
     <string name="password_update_db_error">Unable to update your password at this time due to a database error. Please try again later.</string>
     <string name="user_retrieval_db_error">Unable to retrieve the user \'%s\' from the database.</string>
@@ -186,7 +189,8 @@
     <string name="service_added_to_provider_success_template">The service \'%s\' has been added to your account.</string>
     <string name="service_removed_from_provider_success_template">The service \'%s\' has been removed from your account.</string>
     <string name="service_added_to_provider_fail_template">There was an error when trying to add the service \'%s\' to your account. Please try again later.</string>
-    <string name="service_provider_required">A service provider is required to use this activity. </string>
+    <string name="service_provider_required">A service provider is required. </string>
+    <string name="service_required">A service is required. </string>
     <string-array name="temp_string_array">
         <item>Item 1</item>
         <item>Item 2</item>
@@ -257,4 +261,7 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="loading_">Loading...</string>
+    <string name="my_bookings">My Bookings</string>
+    <string name="book_service">Book a Service</string>
+    <string name="no_providers_found">Sorry, no one is currently providing this service.  \nPlease press back to select a different service or check back later.</string>
 </resources>

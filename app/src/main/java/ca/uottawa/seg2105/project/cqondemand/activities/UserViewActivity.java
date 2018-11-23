@@ -20,7 +20,7 @@ import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
-public class UserAccountViewActivity extends SignedInActivity {
+public class UserViewActivity extends SignedInActivity {
 
     protected boolean itemClickEnabled = true;
     protected TextView txt_account_type;
@@ -38,7 +38,7 @@ public class UserAccountViewActivity extends SignedInActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_account_view);
+        setContentView(R.layout.activity_user_view);
         // Set references to the UI objects
         txt_account_type = findViewById(R.id.txt_account_type);
         txt_username = findViewById(R.id.txt_username);
@@ -125,7 +125,7 @@ public class UserAccountViewActivity extends SignedInActivity {
     public void onEditAccountClick() {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
-        Intent intent = new Intent(getApplicationContext(), UserAccountEditActivity.class);
+        Intent intent = new Intent(getApplicationContext(), UserEditActivity.class);
         intent.putExtra("user", currentUser);
         startActivity(intent);
     }
@@ -133,7 +133,7 @@ public class UserAccountViewActivity extends SignedInActivity {
     public void onChangePasswordClick() {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
-        Intent intent = new Intent(getApplicationContext(), UserAccountChangePasswordActivity.class);
+        Intent intent = new Intent(getApplicationContext(), UserChangePasswordActivity.class);
         intent.putExtra("user", currentUser);
         startActivity(intent);
     }

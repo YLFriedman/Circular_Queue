@@ -198,7 +198,7 @@ public class SignInActivity extends AppCompatActivity {
         listyBoy.add(sunday);
 
         ServiceProvider provides = new ServiceProvider("-LRTteBm1Bvhh8KMiGd_", "daddy", "please", "DONOTspankme", "bad@boy.com",
-                "cqpass", "Spaces Allowed", true, "6132453125", address, null);
+                "cqpass", "Spaces Allowed", true, "6132453125", address, null, 0, 0, 0);
         System.out.println("OUTPUT");
         User user = new User("-LRYCsBuPG8E1gmy6otV", "Test", "Homeowner", "Hope", "thisworks@mail.com", User.Type.HOMEOWNER, Authentication.genHash("cqpass"));
         Service service = new Service("-LRNf10QyYaAtg9kx3dR", "Super Nutty", 201, "-LRNeyae0rFs4YqwqiVs");

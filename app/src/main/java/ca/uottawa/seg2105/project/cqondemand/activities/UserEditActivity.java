@@ -24,10 +24,9 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
-import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
-public class UserAccountEditActivity extends SignedInActivity {
+public class UserEditActivity extends SignedInActivity {
 
     protected User currentUser;
     protected EditText field_username;
@@ -51,7 +50,7 @@ public class UserAccountEditActivity extends SignedInActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_account_edit);
+        setContentView(R.layout.activity_user_edit);
         // Set references to the  UI objects
         field_username = findViewById(R.id.field_username);
         field_first_name = findViewById(R.id.field_first_name);
@@ -150,7 +149,7 @@ public class UserAccountEditActivity extends SignedInActivity {
 
         // Validate Service Provider fields
         User newUser = null;
-        if (User.Type.SERVICE_PROVIDER == currentUser.getType()) {
+        if (currentUser instanceof ServiceProvider) {
             ServiceProvider provider = (ServiceProvider) currentUser;
             String companyName = field_company_name.getText().toString().trim();
             boolean licensed = switch_licensed.isChecked();
@@ -263,7 +262,8 @@ public class UserAccountEditActivity extends SignedInActivity {
             }
 
             if (description.isEmpty()) { description = null; }
-            newUser = new ServiceProvider(currentUser.getKey(), firstName, lastName, username, email, currentUser.getPassword(), companyName, licensed, phoneNumber, address, description);
+            newUser = new ServiceProvider(currentUser.getKey(), firstName, lastName, username, email, currentUser.getPassword(),
+                    companyName, licensed, phoneNumber, address, description, provider.getRating(), provider.getRunningRatingTotal(), provider.getNumRatings());
 
         } else {
 
@@ -285,7 +285,7 @@ public class UserAccountEditActivity extends SignedInActivity {
         DbUser.updateUser(updatedUser, new AsyncActionEventListener() {
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), R.string.account_update_success, Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(getApplicationContext(), UserAccountViewActivity.class);
+                Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
                 intent.putExtra("user", updatedUser);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);

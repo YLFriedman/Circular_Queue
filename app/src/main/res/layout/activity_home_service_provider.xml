@@ -32,39 +32,19 @@
                     android:layout_height="match_parent">
 
                     <Button
-                        android:id="@+id/btn_availability"
+                        android:id="@+id/btn_sp_availability"
                         style="@style/panel_button"
                         android:drawableTop="@drawable/ic_time_light_75"
-                        android:onClick="onMyAvailabilityClick"
+                        android:onClick="onClickHandler"
                         android:text="@string/my_availability" />
 
                     <Button
-                        android:id="@+id/btn_my_services"
+                        android:id="@+id/btn_sp_services"
                         style="@style/panel_button"
                         android:drawableTop="@drawable/ic_bell_light_75"
-                        android:onClick="onMyServicesClick"
+                        android:onClick="onClickHandler"
                         android:text="@string/my_services" />
 
-                </TableRow>
-
-                <TableRow
-                    android:id="@+id/btns_admin_1"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <Button
-                        android:id="@+id/btn_services"
-                        style="@style/panel_button"
-                        android:drawableTop="@drawable/ic_bell_light_75"
-                        android:onClick="onServicesClick"
-                        android:text="@string/manage_services" />
-
-                    <Button
-                        android:id="@+id/btn_user_list"
-                        style="@style/panel_button"
-                        android:drawableTop="@drawable/ic_users_light_75"
-                        android:onClick="onUserListClick"
-                        android:text="@string/user_list" />
                 </TableRow>
 
                 <TableRow
@@ -76,14 +56,14 @@
                         android:id="@+id/btn_my_account"
                         style="@style/panel_button"
                         android:drawableTop="@drawable/ic_account_circle_light_75"
-                        android:onClick="onMyAccountClick"
+                        android:onClick="onClickHandler"
                         android:text="@string/my_account" />
 
                     <Button
                         android:id="@+id/btn_sign_out"
                         style="@style/panel_button"
                         android:drawableTop="@drawable/ic_sign_out_light_75"
-                        android:onClick="onSignOutClick"
+                        android:onClick="onClickHandler"
                         android:text="@string/sign_out" />
 
                 </TableRow>

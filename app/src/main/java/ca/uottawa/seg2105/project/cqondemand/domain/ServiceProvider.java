@@ -22,6 +22,12 @@ public class ServiceProvider extends User implements Serializable {
 
     protected Address address;
 
+    protected int rating;
+
+    protected long runningRatingTotal;
+
+    protected int numRatings;
+
     public ServiceProvider(@NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull String password,
                            @NonNull String companyName, boolean licenced, @NonNull String phoneNumber, @NonNull Address address, String description) {
         super(firstName, lastName, username, email, Type.SERVICE_PROVIDER, password);
@@ -50,10 +56,13 @@ public class ServiceProvider extends User implements Serializable {
      * @param address
      */
     public ServiceProvider(@NonNull String key, @NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull String password,
-                           @NonNull String companyName, boolean licenced, @NonNull String phoneNumber, @NonNull Address address, @Nullable String description) {
+                           @NonNull String companyName, boolean licenced, @NonNull String phoneNumber, @NonNull Address address, @Nullable String description, int rating, long runningRatingTotal, int numRatings) {
         this(firstName, lastName, username, email, password, companyName, licenced, phoneNumber, address, description);
         if (null == key || key.isEmpty()) { throw new InvalidDataException("The key cannot be null or empty."); }
         this.key = key;
+        this.rating = rating;
+        this.runningRatingTotal = runningRatingTotal;
+        this.numRatings = numRatings;
     }
 
     public String getCompanyName() {
@@ -74,6 +83,18 @@ public class ServiceProvider extends User implements Serializable {
 
     public String getDescription(){
         return description;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public long getRunningRatingTotal() {
+        return runningRatingTotal;
+    }
+
+    public int getNumRatings() {
+        return numRatings;
     }
 
     @Override
