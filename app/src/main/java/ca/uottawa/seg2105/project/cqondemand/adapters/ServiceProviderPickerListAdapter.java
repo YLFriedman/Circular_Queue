@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class ServiceProviderPickerListAdapter extends RecyclerView.Adapter<Servi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.recycler_list_title_subtitle_icon, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.recycler_list_service_provider_picker, parent, false);
         if (null != clickListener) { view.setOnClickListener(clickListener); }
         return new ViewHolder(view);
     }
@@ -51,11 +52,16 @@ public class ServiceProviderPickerListAdapter extends RecyclerView.Adapter<Servi
         // Set the current item as the view's tag so it can be retrieve easily in the onClick handler
         viewHolder.itemView.setTag(item);
         if (null != item) {
-            viewHolder.txt_title.setText(String.format(Locale.CANADA, context.getString(R.string.full_name_template), item.getFirstName(), item.getLastName()));
-            viewHolder.txt_subtitle.setText(String.format(Locale.CANADA, "%s, %s", item.getUsername(), item.getType().toString()));
-            viewHolder.txt_subtitle.setContentDescription(item.getUsername());
+            viewHolder.txt_title.setText(item.getCompanyName());
+            String numRatings;
+            if (0 == item.getNumRatings()) { numRatings = context.getString(R.string.rating_template_none); }
+            else if (1 == item.getNumRatings()) { numRatings = context.getString(R.string.rating_template_single); }
+            else { numRatings = String.format(Locale.CANADA, context.getString(R.string.rating_template), item.getNumRatings()); }
+            viewHolder.txt_subtitle.setText(numRatings);
+            viewHolder.rating_stars.setRating((float)item.getRating() / 100);
         }
-        viewHolder.img_item_image.setImageResource(R.drawable.ic_account_circle_med_40);
+        //viewHolder.img_item_image.setImageResource(R.drawable.ic_account_circle_med_40);
+        viewHolder.img_item_image.setVisibility(View.GONE);
         viewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_med_30);
     }
 
@@ -70,6 +76,7 @@ public class ServiceProviderPickerListAdapter extends RecyclerView.Adapter<Servi
         TextView txt_subtitle;
         ImageView img_item_image;
         ImageView img_nav;
+        RatingBar rating_stars;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -77,6 +84,7 @@ public class ServiceProviderPickerListAdapter extends RecyclerView.Adapter<Servi
             txt_subtitle = itemView.findViewById(R.id.txt_subtitle);
             img_item_image = itemView.findViewById(R.id.img_item_image);
             img_nav = itemView.findViewById(R.id.img_nav);
+            rating_stars = itemView.findViewById(R.id.rating_stars);
         }
 
     }

@@ -8,7 +8,7 @@
             android:id="@+id/menu_item_user_edit"
             android:checkable="false"
             android:checked="false"
-            android:icon="@drawable/ic_edit_light_20"
+            android:icon="@drawable/ic_edit_light_24"
             android:title="@string/edit_account"
             android:titleCondensed="@string/edit"
             app:showAsAction="ifRoom" />
@@ -20,7 +20,7 @@
             android:id="@+id/menu_item_user_change_password"
             android:checkable="false"
             android:checked="false"
-            android:icon="@drawable/ic_key_light_20"
+            android:icon="@drawable/ic_key_light_24"
             android:title="@string/change_password"
             android:titleCondensed="@string/password"
             app:showAsAction="ifRoom" />

@@ -20,7 +20,7 @@
             android:id="@+id/menu_item_service_edit"
             android:checkable="false"
             android:checked="false"
-            android:icon="@drawable/ic_edit_light_20"
+            android:icon="@drawable/ic_edit_light_24"
             android:title="@string/edit_service"
             android:titleCondensed="@string/edit"
             app:showAsAction="ifRoom" />

@@ -85,6 +85,9 @@
     <string name="signing_in">Signing In...</string>
     <string name="user_account">User Account</string>
     <string name="service_rate_template">$%,d.00 / hour</string>
+    <string name="rating_template_none">(no ratings)</string>
+    <string name="rating_template_single">(1 rating)</string>
+    <string name="rating_template">(%d ratings)</string>
     <string name="zero_value_service">Free</string>
     <string name="category_template">Category: %s</string>
     <string name="category_title_template">%s Services</string>
@@ -261,7 +264,10 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="loading_">Loading...</string>
+    <string name="apply">Apply</string>
     <string name="my_bookings">My Bookings</string>
     <string name="book_service">Book a Service</string>
     <string name="no_providers_found">Sorry, no one is currently providing this service.  \nPlease press back to select a different service or check back later.</string>
+    <string name="filter_providers">Filter Providers</string>
+    <string name="filter_list">Filter List</string>
 </resources>

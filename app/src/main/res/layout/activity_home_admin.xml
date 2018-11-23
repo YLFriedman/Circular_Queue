@@ -35,13 +35,15 @@
                         android:id="@+id/btn_admin_manage_services"
                         style="@style/panel_button"
                         android:drawableTop="@drawable/ic_bell_light_75"
-                        android:onClick="onClickHandler" />
+                        android:onClick="onClickHandler"
+                        android:text="@string/manage_services" />
 
                     <Button
                         android:id="@+id/btn_admin_manage_users"
                         style="@style/panel_button"
                         android:drawableTop="@drawable/ic_users_light_75"
-                        android:onClick="onClickHandler" />
+                        android:onClick="onClickHandler"
+                        android:text="@string/user_list" />
                 </TableRow>
 
                 <TableRow
@@ -53,13 +55,15 @@
                         android:id="@+id/btn_my_account"
                         style="@style/panel_button"
                         android:drawableTop="@drawable/ic_account_circle_light_75"
-                        android:onClick="onClickHandler" />
+                        android:onClick="onClickHandler"
+                        android:text="@string/my_account" />
 
                     <Button
                         android:id="@+id/btn_sign_out"
                         style="@style/panel_button"
                         android:drawableTop="@drawable/ic_sign_out_light_75"
-                        android:onClick="onClickHandler" />
+                        android:onClick="onClickHandler"
+                        android:text="@string/sign_out" />
 
                 </TableRow>
 

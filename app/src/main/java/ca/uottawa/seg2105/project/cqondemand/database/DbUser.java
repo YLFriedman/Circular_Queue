@@ -35,8 +35,8 @@ public class DbUser extends DbItem<User> {
     public String company_name;
     public String description;
     public int rating;
-    public long runningRatingTotal;
-    public int numRatings;
+    public long running_rating_total;
+    public int num_ratings;
 
     public DbUser() {}
 
@@ -57,8 +57,8 @@ public class DbUser extends DbItem<User> {
             company_name = provider.getCompanyName();
             description = provider.getDescription();
             rating = provider.getRating();
-            runningRatingTotal = provider.getRunningRatingTotal();
-            numRatings = provider.getNumRatings();
+            running_rating_total = provider.getRunningRatingTotal();
+            num_ratings = provider.getNumRatings();
         }
     }
 
@@ -66,7 +66,8 @@ public class DbUser extends DbItem<User> {
     public User toDomainObj() {
         if (User.Type.parse(type) == User.Type.SERVICE_PROVIDER) {
             if (null == address) { throw new IllegalArgumentException("The address cannot be null"); }
-            return new ServiceProvider(getKey(), first_name, last_name, username, email, password, company_name, licensed, phone_number, address.toDomainObj(), description, rating, runningRatingTotal, numRatings);
+            return new ServiceProvider(getKey(), first_name, last_name, username, email, password, company_name, licensed,
+                    phone_number,address.toDomainObj(), description, rating, running_rating_total, num_ratings);
         }
         return new User(getKey(), first_name, last_name, username, email, User.Type.parse(type), password);
     }

@@ -1,10 +1,14 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -87,4 +91,38 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
         itemClickEnabled = true;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.pick_service_provider, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_filter_providers:
+                showFilterSettings();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    protected void showFilterSettings() {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.filter_providers)
+                .setMessage(R.string.filter_providers)
+                //.setIcon(R.drawable.ic_filter_list_light_24)
+                .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                    }
+                })
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
+                })
+                .setNegativeButton(R.string.cancel, null).show();
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.text_primary_dark));
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.dialog_red));
+    }
 }
