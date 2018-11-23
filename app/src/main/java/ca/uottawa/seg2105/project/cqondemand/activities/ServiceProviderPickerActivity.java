@@ -110,7 +110,8 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
     protected void showFilterSettings() {
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.filter_providers)
-                .setMessage(R.string.filter_providers)
+
+                //.setMessage(R.string.filter_providers)
                 //.setIcon(R.drawable.ic_filter_list_light_24)
                 .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
