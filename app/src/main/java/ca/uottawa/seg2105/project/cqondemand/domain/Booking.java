@@ -25,7 +25,7 @@ public class Booking {
         @Override
         public String toString() {
             switch (this) {
-                case CANCELLED: return "Canceled";
+                case CANCELLED: return "Cancelled";
                 case APPROVED: return "Approved";
                 case REQUESTED: return "Requested";
                 default: throw new IllegalArgumentException("Invalid Status");
