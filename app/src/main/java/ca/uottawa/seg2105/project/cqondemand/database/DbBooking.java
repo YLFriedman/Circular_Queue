@@ -1,6 +1,6 @@
 package ca.uottawa.seg2105.project.cqondemand.database;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.util.Date;
 

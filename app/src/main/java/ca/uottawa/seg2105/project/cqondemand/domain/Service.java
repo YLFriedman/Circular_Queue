@@ -1,9 +1,8 @@
 package ca.uottawa.seg2105.project.cqondemand.domain;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;

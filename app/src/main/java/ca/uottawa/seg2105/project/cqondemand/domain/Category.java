@@ -1,6 +1,6 @@
 package ca.uottawa.seg2105.project.cqondemand.domain;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 

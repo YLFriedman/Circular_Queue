@@ -1,8 +1,6 @@
 package ca.uottawa.seg2105.project.cqondemand.utilities;
 
-import android.support.annotation.NonNull;
-
-import java.util.ArrayList;
+import androidx.annotation.NonNull;
 
 public interface AsyncSingleValueEventListener<E> {
 
