@@ -48,6 +48,13 @@
                 tools:layout_editor_absoluteX="32dp"
                 tools:layout_editor_absoluteY="134dp" />
 
+            <CheckBox
+                android:id="@+id/box_remember"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:text="Remember Me" />
+
             <LinearLayout
                 android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
