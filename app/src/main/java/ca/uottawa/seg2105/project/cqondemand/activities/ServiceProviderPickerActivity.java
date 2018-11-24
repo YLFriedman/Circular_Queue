@@ -2,9 +2,11 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.Menu;
@@ -26,7 +28,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
-public class ServiceProviderPickerActivity extends SignedInActivity {
+public class ServiceProviderPickerActivity extends SignedInActivity implements DialogProviderFiltersFragment.OnFragmentInteractionListener {
 
     protected boolean itemClickEnabled = true;
     protected RecyclerView recycler_list;
@@ -106,11 +108,15 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
     }
 
     protected void showFilterSettings() {
+
+        FragmentManager fm = getSupportFragmentManager();
+        DialogProviderFiltersFragment providerFilterDialog = DialogProviderFiltersFragment.newInstance();
+        providerFilterDialog.show(fm, "fragment_filter_providers");
+
+        /*View view = getLayoutInflater().inflate(R.layout.fragment_dialog_provider_filters, null);
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.filter_providers)
-
-                //.setMessage(R.string.filter_providers)
-                //.setIcon(R.drawable.ic_filter_list_light_24)
+                .setView(view)
                 .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
@@ -122,6 +128,13 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
                 })
                 .setNegativeButton(R.string.cancel, null).show();
         dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.text_primary_dark));
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.dialog_red));
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.dialog_red));*/
+
     }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        
+    }
+
 }
