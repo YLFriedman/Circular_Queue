@@ -1,9 +1,11 @@
 package ca.uottawa.seg2105.project.cqondemand.domain;
 
 import androidx.annotation.NonNull;
+
+import java.io.Serializable;
 import java.util.Date;
 
-public class Review {
+public class Review implements Serializable {
 
     protected String key;
     protected int rating;
@@ -17,11 +19,11 @@ public class Review {
         date = new Date();
     }
 
-    public Review (@NonNull String key, int rating, String comment, Date date){
+    public Review (int rating, String comment){
 
         this.rating = rating;
         this.comment = comment;
-        this.date = date;
+        date = new Date();
     }
 
     public String getKey() {
