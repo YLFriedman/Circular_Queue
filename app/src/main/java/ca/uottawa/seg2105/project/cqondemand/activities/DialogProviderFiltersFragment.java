@@ -77,7 +77,7 @@ public class DialogProviderFiltersFragment extends DialogFragment implements Vie
                 this.dismissAllowingStateLoss();
                 break;
             case R.id.txt_clear_rating:
-
+                rating_stars.setRating(0);
                 break;
             case R.id.txt_clear_availability:
 

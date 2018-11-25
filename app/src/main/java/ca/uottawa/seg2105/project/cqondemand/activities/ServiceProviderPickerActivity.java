@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -121,10 +122,11 @@ public class ServiceProviderPickerActivity extends SignedInActivity implements D
         recycler_list.setAdapter(new ServiceProviderPickerListAdapter(getApplicationContext(), filteredProviders, new View.OnClickListener() {
             public void onClick(final View view) {
                 if (!itemClickEnabled) { return; }
-                //itemClickEnabled = false;
-                        /*Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
-                        intent.putExtra("user", (Serializable) view.getTag());
-                        startActivity(intent);*/
+                itemClickEnabled = false;
+                Intent intent = new Intent(getApplicationContext(), ServiceProviderProfileActivity.class);
+                intent.putExtra("provider", (Serializable) view.getTag());
+                intent.putExtra("service", currentService);
+                startActivity(intent);
             }
         }));
     }

@@ -279,4 +279,6 @@
     <string name="any_date">Any Date</string>
     <string name="any_time">Any Time</string>
     <string name="set_date_time">Set Date and Time</string>
+    <string name="see_reviews">See Reviews</string>
+    <string name="owner">Owner</string>
 </resources>
