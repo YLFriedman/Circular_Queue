@@ -1,19 +1,35 @@
 package ca.uottawa.seg2105.project.cqondemand.database;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import androidx.annotation.NonNull;
 
-import java.util.Date;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
 
+import androidx.annotation.Nullable;
 import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
+import ca.uottawa.seg2105.project.cqondemand.domain.User;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 public class DbBooking extends DbItem<Booking> {
 
     public String status;
-    public Date start_time;
-    public Date end_time;
-    public Date date_created;
-    public Date date_cancelled_approved;
+    public String service_name;
+    public Integer service_rate;
+    public Long startTime;
+    public Long endTime;
+    public Long date_created;
+    public Long date_cancelled_approved;
+
     public String cancelled_reason;
     public DbUser service_provider;
     public String service_provider_key;
@@ -23,29 +39,145 @@ public class DbBooking extends DbItem<Booking> {
     public DbBooking() {}
 
     public DbBooking(Booking item) {
-        super(item.getKey());
+        super.getKey();
         status = item.getStatus().toString();
-        start_time = item.getStartTime();
-        end_time = item.getEndTime();
-        date_created = item.getDateCreated();
-        date_cancelled_approved = item.getDateCancelledOrApproved();
-        service_provider = new DbUser(item.getServiceProvider());
-        service_provider_key = item.getServiceProviderKey();
-        homeowner = new DbUser(item.getHomeowner());
-        homeowner_key = item.getHomeownerKey();
+        startTime = item.getStartTime().getTime();
+        endTime = item.getEndTime().getTime();
+        date_created = item.getDateCreated().getTime();
+        service_name = item.getServiceName();
+        service_rate = item.getServiceRate();
         cancelled_reason = item.getCancelledReason();
+        homeowner_key = item.getHomeownerKey();
+        service_provider_key = item.getServiceProviderKey();
+        if(item.getDateCancelledOrApproved() != null){
+            date_cancelled_approved = item.getDateCancelledOrApproved().getTime();
+        }
+        if(item.getServiceProvider() != null) {
+            service_provider = new DbUser(item.getServiceProvider());
+        }
+        else {
+            homeowner = new DbUser(item.getHomeowner());
+        }
     }
 
     @NonNull
     public Booking toDomainObj() {
         if (null != service_provider) {
-            return new Booking(getKey(), start_time, end_time, date_created, date_cancelled_approved, service_provider.toDomainObj(), homeowner_key, Booking.Status.parse(status), cancelled_reason);
+            service_provider.setKey(service_provider_key);
+            return new Booking(new Timestamp(startTime),  new Timestamp(endTime),  new Timestamp(date_created), date_cancelled_approved == null ? null : new Timestamp(date_cancelled_approved),
+                    service_provider.toDomainObj(), service_provider_key, homeowner_key, Booking.Status.parse(status), service_name, service_rate, cancelled_reason, true);
         } else if (null != homeowner) {
-            return new Booking(getKey(), start_time, end_time, date_created, date_cancelled_approved, homeowner.toDomainObj(), service_provider_key, Booking.Status.parse(status), cancelled_reason);
+            homeowner.setKey(homeowner_key);
+            return new Booking(new Timestamp(startTime), new Timestamp(endTime),  new Timestamp(date_created), date_cancelled_approved == null ? null : new Timestamp(date_cancelled_approved),
+                    homeowner.toDomainObj(), service_provider_key, homeowner_key, Booking.Status.parse(status), service_name, service_rate, cancelled_reason, false);
         } else {
             throw new InvalidDataException("");
         }
     }
+
+    public static void createBooking(Booking withServiceProvider, Booking withHomeowner, AsyncActionEventListener listener){
+        DatabaseReference keyMaker = FirebaseDatabase.getInstance().getReference().push();
+        String bookingKey = keyMaker.getKey();
+        String homeownerKey = withServiceProvider.getHomeownerKey();
+        String serviceProviderKey = withHomeowner.getServiceProviderKey();
+        DbBooking withServiceProviderDB = new DbBooking(withServiceProvider);
+        DbBooking withHomeownerDB = new DbBooking(withHomeowner);
+        String homeownerPath = String.format("user_bookings/%s/%s", homeownerKey, bookingKey);
+        String serviceProviderPath = String.format("user_bookings/%s/%s", serviceProviderKey, bookingKey);
+        String homeownerLookupPath = String.format("user_bookings_lookup/%s/%s/%s", homeownerKey, serviceProviderKey, bookingKey);
+        String serviceProviderLookupPath = String.format("user_bookings_lookup/%s/%s/%s", serviceProviderKey, homeownerKey, bookingKey);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put(homeownerPath, withServiceProviderDB);
+        map.put(serviceProviderPath, withHomeownerDB);
+        map.put(homeownerLookupPath, true);
+        map.put(serviceProviderLookupPath, true);
+        DbUtilRelational.multiPathUpdate(map, listener);
+    }
+
+    public static void getBookings(User user, AsyncValueEventListener<Booking> listener){
+        String userKey = user.getKey();
+        //DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.USER_BOOKINGS, userKey, listener);
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(String.format("user_bookings/%s", userKey));
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<Booking> returnValue = new ArrayList<>();
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    DbBooking currentBooking =  child.getValue(DbBooking.class);
+                    Booking domainVersion = currentBooking.toDomainObj();
+                    domainVersion.setKey(child.getKey());
+                    returnValue.add(domainVersion);
+                }
+                listener.onSuccess(returnValue);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
+            }
+        });
+    }
+
+    public static void setBookingStatus(Booking booking, Booking.Status status, @Nullable String cancelledReason, Timestamp dateCancelledApproved, AsyncActionEventListener listener) {
+        if(booking.getBookingKey() == null) {
+            throw new IllegalArgumentException("Booking key required to perform update");
+        }
+        String homeownerKey = booking.getHomeownerKey();
+        String serviceProviderKey = booking.getServiceProviderKey();
+        String bookingKey = booking.getBookingKey();
+        String homeownerPathStatus = String.format("user_bookings/%s/%s/status", homeownerKey, bookingKey);
+        String homeownerPathReason = String.format("user_bookings/%s/%s/cancelled_reason", homeownerKey, bookingKey);
+        String homeownerPathDate = String.format("user_bookings/%s/%s/date_cancelled_approved", homeownerKey, bookingKey);
+
+        String providerPathStatus = String.format("user_bookings/%s/%s/status", serviceProviderKey, bookingKey);
+        String providerPathReason = String.format("user_bookings/%s/%s/cancelled_reason", serviceProviderKey, bookingKey);
+        String providerPathDate = String.format("user_bookings/%s/%s/date_cancelled_approved",serviceProviderKey, bookingKey);
+
+        HashMap<String, Object> updateMap = new HashMap<>();
+        if(cancelledReason != null){
+            updateMap.put(homeownerPathReason, cancelledReason);
+            updateMap.put(providerPathReason, cancelledReason);
+        }
+
+        updateMap.put(homeownerPathStatus, status.toString());
+        updateMap.put(providerPathStatus, status.toString());
+        updateMap.put(providerPathDate, dateCancelledApproved.getTime());
+        updateMap.put(homeownerPathDate, dateCancelledApproved.getTime());
+
+        DbUtilRelational.multiPathUpdate(updateMap, listener);
+
+    }
+
+    public static void deleteBooking(Booking booking, AsyncActionEventListener listener){
+        if(booking.getBookingKey() == null){
+            throw new IllegalArgumentException("Booking key required to perform deletion");
+        }
+        String homeownerKey = booking.getHomeownerKey();
+        String providerKey = booking.getServiceProviderKey();
+        String bookingKey = booking.getBookingKey();
+
+        String homeownerDeletionPath = String.format("user_bookings/%s/%s", homeownerKey, bookingKey);
+        String providerDeletionPath = String.format("user_bookings/%s/%s", providerKey, bookingKey);
+
+        String lookupHomeownerPath = String.format("user_bookings_lookup/%s/%s/%s", homeownerKey, providerKey, bookingKey);
+        String lookupProviderPath = String.format("user_bookings_lookup/%s/%s/%s",  providerKey, homeownerKey, bookingKey);
+
+        HashMap<String, Object> deletionMap = new HashMap<>();
+
+        deletionMap.put(homeownerDeletionPath, null);
+        deletionMap.put(providerDeletionPath, null);
+        deletionMap.put(lookupHomeownerPath, null);
+        deletionMap.put(lookupProviderPath, null);
+
+        DbUtilRelational.multiPathUpdate(deletionMap, listener);
+
+    }
+
+    public static void updateObjectInBooking(Booking booking, User updatedUser, AsyncActionEventListener listener){
+
+    }
+
+
 
 
 }
