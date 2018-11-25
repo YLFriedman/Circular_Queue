@@ -131,7 +131,7 @@ public class SignInActivity extends AppCompatActivity {
             field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
         } else {
             // Clear the remember me saved settings
-            State state = State.getInstance();
+            final State state = State.getInstance();
             state.setBooleanPref("saveLogin", false);
             state.removePref("username");
             state.removePref("password");
