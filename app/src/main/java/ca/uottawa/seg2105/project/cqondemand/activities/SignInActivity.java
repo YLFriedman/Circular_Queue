@@ -224,18 +224,18 @@ public class SignInActivity extends AppCompatActivity {
         Address address = new Address("45", 2546, "Easy st.", "Ottawa", "Ontario", "Canada", "K1Z5N9");
         java.sql.Timestamp date = new Timestamp(System.currentTimeMillis());
 
-        ServiceProvider provides = new ServiceProvider("-LRTteBm1Bvhh8KMiGd_", "daddy", "please", "DONOTspankme", "bad@boy.com",
-                "cqpass", "Spaces Allowed", true, "6132453125", address, null, 0, 0, 0);
+        ServiceProvider provides = new ServiceProvider("-LRTteBm1Bvhh8KMiGd_", "MOMMY", "please", "DONOTspankme", "bad@boy.com",
+                "cqpass", "Spaces Allowed", true, "6132453125", address, "I'm gaaaaaaaaaay", 0, 0, 0);
         System.out.println("OUTPUT");
         User user = new User("-LRYCsBuPG8E1gmy6otV", "Test", "Homeowner", "Hope", "thisworks@mail.com", User.Type.HOMEOWNER, Authentication.genHash("cqpass"));
         Booking withProvider = new Booking(date, date, date, null, provides, provides.getKey(), user.getKey(), Booking.Status.REQUESTED, "Extra Nutty", 69, null, true);
         Booking withHomeowner = new Booking(date, date, date, null, user, provides.getKey(), user.getKey(), Booking.Status.REQUESTED, "Extra Nutty", 69, null, false);
         withProvider.setKey("-LSB6L4Zq_hFaIH2it1b");
-        DbBooking.getBookings(user, new AsyncValueEventListener<Booking>() {
+
+        DbUser.updateUser(provides, new AsyncActionEventListener() {
             @Override
-            public void onSuccess(@NonNull ArrayList<Booking> data) {
-                System.out.println(data.size());
-                Booking booking = data.get(0);
+            public void onSuccess() {
+                System.out.println("I'm a boss ass bitch");
             }
 
             @Override

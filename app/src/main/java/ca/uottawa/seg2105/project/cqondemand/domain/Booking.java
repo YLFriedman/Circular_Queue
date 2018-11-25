@@ -65,10 +65,16 @@ public class Booking {
 
     }
 
+    public Booking(String key, Timestamp startTime, Timestamp endTime, Timestamp dateCreated, @Nullable Timestamp dateCancelledOrApproved, User providerOrHomeowner, String serviceProviderKey,
+                   String homeownerKey, Status status, String serviceName, Integer serviceRate, @Nullable String cancelledReason, boolean containsProvider) {
+        this(startTime, endTime, dateCreated, dateCancelledOrApproved, providerOrHomeowner, serviceProviderKey, homeownerKey, status, serviceName, serviceRate, cancelledReason, containsProvider);
+        this.key = key;
+
+    }
 
     public void setKey(String key) { this.key = key; }
 
-    public String getBookingKey() { return this.key; }
+    public String getKey() { return this.key; }
 
     public Status getStatus() {
         return status;

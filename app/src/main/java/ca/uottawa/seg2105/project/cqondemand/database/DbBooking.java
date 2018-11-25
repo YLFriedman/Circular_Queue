@@ -39,7 +39,7 @@ public class DbBooking extends DbItem<Booking> {
     public DbBooking() {}
 
     public DbBooking(Booking item) {
-        super.getKey();
+        super(item.getKey());
         status = item.getStatus().toString();
         startTime = item.getStartTime().getTime();
         endTime = item.getEndTime().getTime();
@@ -64,11 +64,11 @@ public class DbBooking extends DbItem<Booking> {
     public Booking toDomainObj() {
         if (null != service_provider) {
             service_provider.setKey(service_provider_key);
-            return new Booking(new Timestamp(startTime),  new Timestamp(endTime),  new Timestamp(date_created), date_cancelled_approved == null ? null : new Timestamp(date_cancelled_approved),
+            return new Booking(key, new Timestamp(startTime),  new Timestamp(endTime),  new Timestamp(date_created), date_cancelled_approved == null ? null : new Timestamp(date_cancelled_approved),
                     service_provider.toDomainObj(), service_provider_key, homeowner_key, Booking.Status.parse(status), service_name, service_rate, cancelled_reason, true);
         } else if (null != homeowner) {
             homeowner.setKey(homeowner_key);
-            return new Booking(new Timestamp(startTime), new Timestamp(endTime),  new Timestamp(date_created), date_cancelled_approved == null ? null : new Timestamp(date_cancelled_approved),
+            return new Booking(key, new Timestamp(startTime), new Timestamp(endTime),  new Timestamp(date_created), date_cancelled_approved == null ? null : new Timestamp(date_cancelled_approved),
                     homeowner.toDomainObj(), service_provider_key, homeowner_key, Booking.Status.parse(status), service_name, service_rate, cancelled_reason, false);
         } else {
             throw new InvalidDataException("");
@@ -96,35 +96,22 @@ public class DbBooking extends DbItem<Booking> {
 
     public static void getBookings(User user, AsyncValueEventListener<Booking> listener){
         String userKey = user.getKey();
-        //DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.USER_BOOKINGS, userKey, listener);
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(String.format("user_bookings/%s", userKey));
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<Booking> returnValue = new ArrayList<>();
-                for(DataSnapshot child : dataSnapshot.getChildren()){
-                    DbBooking currentBooking =  child.getValue(DbBooking.class);
-                    Booking domainVersion = currentBooking.toDomainObj();
-                    domainVersion.setKey(child.getKey());
-                    returnValue.add(domainVersion);
-                }
-                listener.onSuccess(returnValue);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
-            }
-        });
+        DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.USER_BOOKINGS, userKey, listener);
     }
 
-    public static void setBookingStatus(Booking booking, Booking.Status status, @Nullable String cancelledReason, Timestamp dateCancelledApproved, AsyncActionEventListener listener) {
-        if(booking.getBookingKey() == null) {
+    public static DbListenerHandle<?> getBookingsLive(User user, AsyncValueEventListener<Booking> listener) {
+        String userKey = user.getKey();
+        return DbUtilRelational.getItemsRelationalLive(DbUtilRelational.RelationType.USER_BOOKINGS, userKey, listener);
+    }
+
+    public static void setBookingStatus(Booking booking, Booking.Status status, @Nullable String cancelledReason, AsyncActionEventListener listener) {
+        if(booking.getKey() == null) {
             throw new IllegalArgumentException("Booking key required to perform update");
         }
+        Timestamp dateCancelledApproved = new Timestamp(System.currentTimeMillis());
         String homeownerKey = booking.getHomeownerKey();
         String serviceProviderKey = booking.getServiceProviderKey();
-        String bookingKey = booking.getBookingKey();
+        String bookingKey = booking.getKey();
         String homeownerPathStatus = String.format("user_bookings/%s/%s/status", homeownerKey, bookingKey);
         String homeownerPathReason = String.format("user_bookings/%s/%s/cancelled_reason", homeownerKey, bookingKey);
         String homeownerPathDate = String.format("user_bookings/%s/%s/date_cancelled_approved", homeownerKey, bookingKey);
@@ -149,12 +136,12 @@ public class DbBooking extends DbItem<Booking> {
     }
 
     public static void deleteBooking(Booking booking, AsyncActionEventListener listener){
-        if(booking.getBookingKey() == null){
+        if(booking.getKey() == null){
             throw new IllegalArgumentException("Booking key required to perform deletion");
         }
         String homeownerKey = booking.getHomeownerKey();
         String providerKey = booking.getServiceProviderKey();
-        String bookingKey = booking.getBookingKey();
+        String bookingKey = booking.getKey();
 
         String homeownerDeletionPath = String.format("user_bookings/%s/%s", homeownerKey, bookingKey);
         String providerDeletionPath = String.format("user_bookings/%s/%s", providerKey, bookingKey);
@@ -172,12 +159,6 @@ public class DbBooking extends DbItem<Booking> {
         DbUtilRelational.multiPathUpdate(deletionMap, listener);
 
     }
-
-    public static void updateObjectInBooking(Booking booking, User updatedUser, AsyncActionEventListener listener){
-
-    }
-
-
 
 
 }
