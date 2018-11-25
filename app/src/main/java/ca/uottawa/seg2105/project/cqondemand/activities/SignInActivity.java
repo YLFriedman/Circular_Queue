@@ -3,10 +3,13 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -35,6 +38,11 @@ public class SignInActivity extends AppCompatActivity {
     protected EditText field_username;
     protected EditText field_password;
 
+    private CheckBox box_remember;
+    private SharedPreferences loginPreferences;
+    private SharedPreferences.Editor loginPrefsEditor;
+    private boolean saveLogin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +53,18 @@ public class SignInActivity extends AppCompatActivity {
             btn_sign_in = findViewById(R.id.btn_sign_in);
             btn_sign_up = findViewById(R.id.btn_sign_up);
             btn_create_admin_account = findViewById(R.id.btn_create_admin_account);
+
+            box_remember = findViewById(R.id.box_remember);
+            loginPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
+            loginPrefsEditor = loginPreferences.edit();
+
+            saveLogin = loginPreferences.getBoolean("saveLogin", false);
+            if (saveLogin == true) {
+                field_username.setText(loginPreferences.getString("username", ""));
+                field_password.setText(loginPreferences.getString("password", ""));
+                box_remember.setChecked(true);
+            }
+
             DbUser.getUserByUsername("admin", new AsyncSingleValueEventListener<User>() {
                 @Override
                 public void onSuccess(@NonNull User user) {
@@ -111,6 +131,17 @@ public class SignInActivity extends AppCompatActivity {
             field_password.requestFocus();
             field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
         } else {
+
+            if (box_remember.isChecked()) {
+                loginPrefsEditor.putBoolean("saveLogin", true);
+                loginPrefsEditor.putString("username", field_username.getText().toString());
+                loginPrefsEditor.putString("password", field_password.getText().toString());
+                loginPrefsEditor.commit();
+            } else {
+                loginPrefsEditor.clear();
+                loginPrefsEditor.commit();
+            }
+
             btn_sign_in.setEnabled(false);
             btn_sign_up.setEnabled(false);
             Authentication.authenticate(field_username.getText().toString().trim(), field_password.getText().toString(), new AsyncActionEventListener() {
