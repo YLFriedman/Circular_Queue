@@ -25,7 +25,7 @@ public class DbService extends DbItem<Service> {
     public String unique_name;
     public String name;
     public String category_key;
-    public int rate;
+    public Integer rate;
 
     public DbService() {}
 

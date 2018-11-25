@@ -4,7 +4,6 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -39,15 +38,13 @@ public class SignInActivity extends AppCompatActivity {
     protected EditText field_password;
 
     private CheckBox box_remember;
-    private SharedPreferences loginPreferences;
-    private SharedPreferences.Editor loginPrefsEditor;
-    private boolean saveLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        State state = State.getInstance(getApplicationContext());
         setContentView(R.layout.activity_sign_in);
-        if (null == State.getInstance(getApplicationContext()).getSignedInUser()) {
+        if (null == state.getSignedInUser()) {
             field_username = findViewById(R.id.field_username);
             field_password = findViewById(R.id.field_password);
             btn_sign_in = findViewById(R.id.btn_sign_in);
@@ -55,13 +52,10 @@ public class SignInActivity extends AppCompatActivity {
             btn_create_admin_account = findViewById(R.id.btn_create_admin_account);
 
             box_remember = findViewById(R.id.box_remember);
-            loginPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
-            loginPrefsEditor = loginPreferences.edit();
 
-            saveLogin = loginPreferences.getBoolean("saveLogin", false);
-            if (saveLogin == true) {
-                field_username.setText(loginPreferences.getString("username", ""));
-                field_password.setText(loginPreferences.getString("password", ""));
+            if (state.getBooleanPref("saveLogin", false)) {
+                field_username.setText(state.getStringPref("username", ""));
+                field_password.setText(state.getStringPref("password", ""));
                 box_remember.setChecked(true);
             }
 
@@ -131,22 +125,23 @@ public class SignInActivity extends AppCompatActivity {
             field_password.requestFocus();
             field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
         } else {
-
-            if (box_remember.isChecked()) {
-                loginPrefsEditor.putBoolean("saveLogin", true);
-                loginPrefsEditor.putString("username", field_username.getText().toString());
-                loginPrefsEditor.putString("password", field_password.getText().toString());
-                loginPrefsEditor.commit();
-            } else {
-                loginPrefsEditor.clear();
-                loginPrefsEditor.commit();
-            }
+            // Clear the remember me saved settings
+            State state = State.getInstance();
+            state.setBooleanPref("saveLogin", false);
+            state.removePref("username");
+            state.removePref("password");
 
             btn_sign_in.setEnabled(false);
             btn_sign_up.setEnabled(false);
             Authentication.authenticate(field_username.getText().toString().trim(), field_password.getText().toString(), new AsyncActionEventListener() {
                 @Override
                 public void onSuccess() {
+                    // If remember me was checked and the login is successful, save the login details
+                    if (box_remember.isChecked()) {
+                        state.setBooleanPref("saveLogin", true);
+                        state.setStringPref("username", field_username.getText().toString());
+                        state.setStringPref("password", field_password.getText().toString());
+                    }
                     btn_sign_in.setEnabled(true);
                     btn_sign_up.setEnabled(true);
                     Intent loginIntent = new Intent(getApplicationContext(), HomeActivity.class);

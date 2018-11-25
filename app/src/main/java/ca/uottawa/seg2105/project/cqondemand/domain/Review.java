@@ -7,23 +7,23 @@ import java.util.Date;
 
 public class Review implements Serializable {
 
+    private static final long serialVersionUID = 1;
     protected String key;
     protected int rating;
     protected String comment;
-    protected Date date;
+    protected Date dateCreated;
 
-    public Review (@NonNull String key, int rating, String comment){
 
+    public Review (int rating, String comment) {
         this.rating = rating;
         this.comment = comment;
-        date = new Date();
+        dateCreated = new Date();
     }
 
-    public Review (int rating, String comment){
-
-        this.rating = rating;
-        this.comment = comment;
-        date = new Date();
+    public Review (@NonNull String key, Date dateCreated, int rating, String comment) {
+        this(rating, comment);
+        this.key = key;
+        this.dateCreated = dateCreated;
     }
 
     public String getKey() {
@@ -34,5 +34,5 @@ public class Review implements Serializable {
 
     public String getComment() { return comment; }
 
-    public Date getDate() { return date; }
+    public Date getDateCreated() { return dateCreated; }
 }

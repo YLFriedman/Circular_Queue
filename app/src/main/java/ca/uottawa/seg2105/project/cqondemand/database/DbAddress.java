@@ -7,7 +7,7 @@ import ca.uottawa.seg2105.project.cqondemand.domain.Address;
 public class DbAddress extends DbItem<Address> {
 
     public String unit;
-    public int street_number;
+    public Integer street_number;
     public String street;
     public String city;
     public String country;

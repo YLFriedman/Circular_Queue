@@ -12,13 +12,11 @@ public class State {
     private static final String SETTINGS_NAME = "settings";
     private static final String SIGNED_IN_USER_KEY = "signed_in_user_key";
     private SharedPreferences prefs;
-    private SharedPreferences.Editor prefsEditor;
 
     private User signedInUser;
 
     private State(@NonNull Context context) {
         prefs = context.getApplicationContext().getSharedPreferences(SETTINGS_NAME, Context.MODE_PRIVATE);
-        prefsEditor = prefs.edit();
     }
 
     @NonNull
@@ -34,12 +32,8 @@ public class State {
     }
 
     public void setSignedInUser(@Nullable User signedInUser) {
-        if (null == signedInUser) {
-            prefsEditor.remove(SIGNED_IN_USER_KEY);
-        } else {
-            prefsEditor.putString(SIGNED_IN_USER_KEY, signedInUser.getKey());
-        }
-        prefsEditor.apply();
+        if (null == signedInUser) { removePref(SIGNED_IN_USER_KEY);}
+        else { setStringPref(SIGNED_IN_USER_KEY, signedInUser.getKey()); }
         this.signedInUser = signedInUser;
     }
 
@@ -51,6 +45,26 @@ public class State {
     @Nullable
     public String getSignedInUserKey() {
         return prefs.getString(SIGNED_IN_USER_KEY, null);
+    }
+
+    public void removePref(String key) {
+        prefs.edit().remove(key).apply();
+    }
+
+    public void setStringPref(String key, String value) {
+        prefs.edit().putString(key, value).apply();
+    }
+
+    public void setBooleanPref(String key, boolean value) {
+        prefs.edit().putBoolean(key, value).apply();
+    }
+
+    public String getStringPref(String key, String defaultValue) {
+        return prefs.getString(key, defaultValue);
+    }
+
+    public boolean getBooleanPref(String key, boolean defaultValue) {
+        return prefs.getBoolean(key, defaultValue);
     }
 
 }

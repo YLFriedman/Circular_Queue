@@ -52,6 +52,7 @@
                 android:id="@+id/box_remember"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:checked="false"
                 android:text="Remember Me" />
 
@@ -59,7 +60,7 @@
                 android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:orientation="horizontal"
                 tools:layout_editor_absoluteX="16dp"
                 tools:layout_editor_absoluteY="178dp">

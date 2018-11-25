@@ -10,8 +10,8 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 public class DbBooking extends DbItem<Booking> {
 
     public String status;
-    public Date startTime;
-    public Date endTime;
+    public Date start_time;
+    public Date end_time;
     public Date date_created;
     public Date date_cancelled_approved;
     public String cancelled_reason;
@@ -20,14 +20,13 @@ public class DbBooking extends DbItem<Booking> {
     public DbUser homeowner;
     public String homeowner_key;
 
-
     public DbBooking() {}
 
     public DbBooking(Booking item) {
         super(item.getKey());
         status = item.getStatus().toString();
-        startTime = item.getStartTime();
-        endTime = item.getEndTime();
+        start_time = item.getStartTime();
+        end_time = item.getEndTime();
         date_created = item.getDateCreated();
         date_cancelled_approved = item.getDateCancelledOrApproved();
         service_provider = new DbUser(item.getServiceProvider());
@@ -40,9 +39,9 @@ public class DbBooking extends DbItem<Booking> {
     @NonNull
     public Booking toDomainObj() {
         if (null != service_provider) {
-            return new Booking(getKey(), startTime, endTime, date_created, date_cancelled_approved, service_provider.toDomainObj(), homeowner_key, Booking.Status.parse(status), cancelled_reason);
+            return new Booking(getKey(), start_time, end_time, date_created, date_cancelled_approved, service_provider.toDomainObj(), homeowner_key, Booking.Status.parse(status), cancelled_reason);
         } else if (null != homeowner) {
-            return new Booking(getKey(), startTime, endTime, date_created, date_cancelled_approved, homeowner.toDomainObj(), service_provider_key, Booking.Status.parse(status), cancelled_reason);
+            return new Booking(getKey(), start_time, end_time, date_created, date_cancelled_approved, homeowner.toDomainObj(), service_provider_key, Booking.Status.parse(status), cancelled_reason);
         } else {
             throw new InvalidDataException("");
         }

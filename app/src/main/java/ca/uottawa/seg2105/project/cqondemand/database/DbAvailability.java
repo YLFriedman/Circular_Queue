@@ -21,8 +21,8 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 public class DbAvailability extends DbItem<Availability> {
 
     public String day;
-    public int start_time;
-    public int end_time;
+    public Integer start_time;
+    public Integer end_time;
 
     public DbAvailability() {}
 
