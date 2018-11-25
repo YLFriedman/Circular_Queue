@@ -173,31 +173,90 @@ public class DbUser extends DbItem<User> {
         });
     }
 
-    public static void updateUserRelational(@NonNull final User user, @Nullable final AsyncActionEventListener listener) {
+    private static void updateUserRelational(@NonNull final User user, @Nullable final AsyncActionEventListener listener) {
         final String userKey = user.getKey();
         final DbUser updatedUser = new DbUser(user);
         final HashMap<String, Object> pathMap = new HashMap<String, Object>();
         // Add the primary path to the map
         pathMap.put(String.format("%s/%s", DbUtil.DataType.USER, userKey), updatedUser);
-        if (user instanceof  ServiceProvider) {
-            DbUtilRelational.LookupType.SERVICE_USERS.getRef().child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot child: dataSnapshot.getChildren()) {
-                        String serviceKey = child.getKey();
-                        String path = String.format("%s/%s/%s", DbUtilRelational.RelationType.SERVICE_USERS, serviceKey, userKey);
-                        pathMap.put(path, updatedUser);
-                    }
-                    DbUtilRelational.multiPathUpdate(pathMap, listener);
+        buildBookingsUpdateMap(updatedUser, pathMap, new AsyncSingleValueEventListener<HashMap<String, Object>>() {
+            @Override
+            public void onSuccess(@NonNull HashMap<String, Object> bookingMap) {
+                if (user instanceof  ServiceProvider) {
+                    buildServiceUsersMap(updatedUser, bookingMap, new AsyncSingleValueEventListener<HashMap<String, Object>>() {
+                        @Override
+                        public void onSuccess(@NonNull HashMap<String, Object> bookingAndServiceMap) {
+                            DbUtilRelational.multiPathUpdate(bookingAndServiceMap, listener);
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                            listener.onFailure(reason);
+                        }
+                    });
+                } else {
+                    DbUtilRelational.multiPathUpdate(bookingMap, listener);
                 }
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    if (null != listener) { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
+            }
+
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                listener.onFailure(reason);
+            }
+        });
+
+    }
+
+    private static void buildServiceUsersMap(DbUser updatedUser, HashMap<String, Object> pathMap, AsyncSingleValueEventListener<HashMap<String,Object>> listener){
+        String userKey = updatedUser.getKey();
+        DbUtilRelational.LookupType.SERVICE_USERS.getRef().child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot child: dataSnapshot.getChildren()) {
+                    String serviceKey = child.getKey();
+                    String path = String.format("%s/%s/%s", DbUtilRelational.RelationType.SERVICE_USERS, serviceKey, userKey);
+                    pathMap.put(path, updatedUser);
                 }
-            });
-        } else {
-            DbUtilRelational.multiPathUpdate(pathMap, listener);
+                listener.onSuccess(pathMap);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                if (null != listener) { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
+            }
+        });
+    }
+
+    private static void buildBookingsUpdateMap(DbUser updatedUser, HashMap<String, Object> map, AsyncSingleValueEventListener<HashMap<String, Object>> listener) {
+        String userKey = updatedUser.getKey();
+        String objectType;
+        if(updatedUser.type == User.Type.HOMEOWNER.toString()){
+            objectType = "homeowner";
         }
+        else{
+            objectType = "service_provider";
+        }
+
+        String lookupPath = String.format("user_bookings_lookup/%s", userKey);
+
+        DbUtilRelational.getRef(lookupPath).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot assoc : dataSnapshot.getChildren()){
+                    for(DataSnapshot booking : assoc.getChildren()){
+                        String updatePath = String.format("user_bookings/%s/%s/%s", assoc.getKey(), booking.getKey(), objectType);
+                        map.put(updatePath, updatedUser);
+                    }
+                }
+                listener.onSuccess(map);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
+            }
+        });
+
+
     }
 
     public static void deleteUserRelational(@NonNull User user, @Nullable final AsyncActionEventListener listener) {

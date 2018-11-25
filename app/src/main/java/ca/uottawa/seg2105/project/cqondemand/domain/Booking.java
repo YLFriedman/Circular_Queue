@@ -3,22 +3,23 @@ package ca.uottawa.seg2105.project.cqondemand.domain;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 public class Booking {
 
-
     protected String key;
     protected Status status;
-    protected Date startTime;
-    protected Date endTime;
-    protected Date dateCreated;
-    protected Date dateCancelledOrApproved;
+    protected Timestamp startTime;
+    protected Timestamp endTime;
+    protected Timestamp dateCreated;
+    protected Timestamp dateCancelledOrApproved;
     protected String cancelledReason;
     protected ServiceProvider serviceProvider;
     protected String serviceProviderKey;
     protected User homeowner;
     protected String homeownerKey;
+    protected String serviceName;
+    protected Integer serviceRate;
 
     public enum Status {
         CANCELLED, APPROVED, REQUESTED;
@@ -41,54 +42,61 @@ public class Booking {
         }
     }
 
-    public Booking(@NonNull String key, Date startTime, Date endTime, Date dateCreated, @Nullable Date dateCancelledOrApproved, ServiceProvider provider,
-                   String homeownerKey, Status status, @Nullable String cancelledReason) {
+    public Booking(Timestamp startTime, Timestamp endTime, Timestamp dateCreated, @Nullable Timestamp dateCancelledOrApproved, User providerOrHomeowner, String serviceProviderKey,
+                   String homeownerKey, Status status, String serviceName, Integer serviceRate, @Nullable String cancelledReason, boolean containsProvider) {
         this.startTime = startTime;
         this.endTime = endTime;
-        this.serviceProvider = provider;
         this.homeownerKey = homeownerKey;
         this.status = status;
         this.cancelledReason = cancelledReason;
-        this.key = key;
         this.dateCreated = dateCreated;
         this.dateCancelledOrApproved = dateCancelledOrApproved;
-    }
-
-    public Booking(@NonNull String key, Date startTime, Date endTime, Date dateCreated, @Nullable Date dateCancelledOrApproved, User homeowner,
-                   String serviceProviderKey, Status status, @Nullable String cancelledReason) {
-
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.homeowner = homeowner;
+        this.serviceName = serviceName;
+        this.serviceRate = serviceRate;
         this.serviceProviderKey = serviceProviderKey;
-        this.status = status;
-        this.cancelledReason = cancelledReason;
-        this.key = key;
-        this.dateCreated = dateCreated;
-        this.dateCancelledOrApproved = dateCancelledOrApproved;
+        if(containsProvider){
+            this.serviceProvider = (ServiceProvider) providerOrHomeowner;
+            this.homeowner = null;
+        }
+        else{
+            this.homeowner = providerOrHomeowner;
+            this.serviceProvider = null;
+        }
+
     }
 
-    public String getKey() {
-        return key;
+    public Booking(String key, Timestamp startTime, Timestamp endTime, Timestamp dateCreated, @Nullable Timestamp dateCancelledOrApproved, User providerOrHomeowner, String serviceProviderKey,
+                   String homeownerKey, Status status, String serviceName, Integer serviceRate, @Nullable String cancelledReason, boolean containsProvider) {
+        this(startTime, endTime, dateCreated, dateCancelledOrApproved, providerOrHomeowner, serviceProviderKey, homeownerKey, status, serviceName, serviceRate, cancelledReason, containsProvider);
+        this.key = key;
+
     }
+
+    public void setKey(String key) { this.key = key; }
+
+    public String getKey() { return this.key; }
 
     public Status getStatus() {
         return status;
     }
 
-    public Date getStartTime() {
+    public Timestamp getStartTime() {
         return startTime;
     }
 
-    public Date getEndTime() {
+    public Timestamp getEndTime() {
         return endTime;
     }
 
-    public Date getDateCreated() {
+    public String getServiceName() { return serviceName; }
+
+    public Integer getServiceRate() { return serviceRate; }
+
+    public Timestamp getDateCreated() {
         return dateCreated;
     }
 
-    public Date getDateCancelledOrApproved() {
+    public Timestamp getDateCancelledOrApproved() {
         return dateCancelledOrApproved;
     }
 

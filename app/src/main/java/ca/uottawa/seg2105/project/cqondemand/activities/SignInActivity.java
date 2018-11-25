@@ -12,18 +12,23 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
+import ca.uottawa.seg2105.project.cqondemand.database.DbBooking;
 import ca.uottawa.seg2105.project.cqondemand.database.DbService;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.domain.Address;
 import ca.uottawa.seg2105.project.cqondemand.domain.Availability;
+import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.Authentication;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
@@ -217,23 +222,28 @@ public class SignInActivity extends AppCompatActivity {
 
     public void onUpdateServiceTestClick(View view){
         Address address = new Address("45", 2546, "Easy st.", "Ottawa", "Ontario", "Canada", "K1Z5N9");
-        Availability monday = new Availability(Availability.Day.MONDAY, 9, 17);
-        Availability sunday = new Availability(Availability.Day.SUNDAY, 9, 18);
-        ArrayList<Availability> listyBoy = new ArrayList<>();
-        listyBoy.add(monday);
-        listyBoy.add(sunday);
+        java.sql.Timestamp date = new Timestamp(System.currentTimeMillis());
 
-        ServiceProvider provides = new ServiceProvider("-LRTteBm1Bvhh8KMiGd_", "daddy", "please", "DONOTspankme", "bad@boy.com",
-                "cqpass", "Spaces Allowed", true, "6132453125", address, null, 0, 0, 0);
+        ServiceProvider provides = new ServiceProvider("-LRTteBm1Bvhh8KMiGd_", "MOMMY", "please", "DONOTspankme", "bad@boy.com",
+                "cqpass", "Spaces Allowed", true, "6132453125", address, "I'm gaaaaaaaaaay", 0, 0, 0);
         System.out.println("OUTPUT");
         User user = new User("-LRYCsBuPG8E1gmy6otV", "Test", "Homeowner", "Hope", "thisworks@mail.com", User.Type.HOMEOWNER, Authentication.genHash("cqpass"));
-        Service service = new Service("-LRNf10QyYaAtg9kx3dR", "Super Nutty", 201, "-LRNeyae0rFs4YqwqiVs");
-        DbService.updateService(service, new AsyncActionEventListener() {
+        Booking withProvider = new Booking(date, date, date, null, provides, provides.getKey(), user.getKey(), Booking.Status.REQUESTED, "Extra Nutty", 69, null, true);
+        Booking withHomeowner = new Booking(date, date, date, null, user, provides.getKey(), user.getKey(), Booking.Status.REQUESTED, "Extra Nutty", 69, null, false);
+        withProvider.setKey("-LSB6L4Zq_hFaIH2it1b");
+
+        DbUser.updateUser(provides, new AsyncActionEventListener() {
             @Override
-            public void onSuccess() { }
+            public void onSuccess() {
+                System.out.println("I'm a boss ass bitch");
+            }
+
             @Override
-            public void onFailure(@NonNull AsyncEventFailureReason reason) { }
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+
+            }
         });
+
 
     }
 
