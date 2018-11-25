@@ -271,9 +271,6 @@
     <string name="filter_providers">Filter Providers</string>
     <string name="filter_list">Filter List</string>
     <string name="min_rating">Minimum Rating</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="filters">Filters</string>
     <string name="any_date_time">Any date and time</string>
     <string name="any_date">Any Date</string>
@@ -282,4 +279,5 @@
     <string name="see_reviews">See Reviews</string>
     <string name="owner">Owner</string>
     <string name="licensed">Licensed</string>
+    <string name="review_template">Reviews for: %s</string>
 </resources>
