@@ -30,13 +30,13 @@ public class DbUser extends DbItem<User> {
     public String password;
     public String type;
     public DbAddress address;
-    public boolean licensed;
+    public Boolean licensed;
     public String phone_number;
     public String company_name;
     public String description;
-    public int rating;
-    public long running_rating_total;
-    public int num_ratings;
+    public Integer rating;
+    public Long running_rating_total;
+    public Integer num_ratings;
 
     public DbUser() {}
 
