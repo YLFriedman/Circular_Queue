@@ -278,4 +278,5 @@
     <string name="any_date_time">Any date and time</string>
     <string name="any_date">Any Date</string>
     <string name="any_time">Any Time</string>
+    <string name="set_date_time">Set Date and Time</string>
 </resources>

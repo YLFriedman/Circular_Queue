@@ -47,17 +47,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/clear"
+                android:textAllCaps="true"
                 android:textColor="@color/text_primary_dark"
                 android:textSize="14sp" />
         </LinearLayout>
 
         <RatingBar
-            android:id="@+id/ratingBar"
+            android:id="@+id/stars_filter_rating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:numStars="5"
-            android:rating="0"
             android:stepSize="1" />
 
         <LinearLayout
@@ -67,6 +68,7 @@
 
             <TextView
                 android:id="@+id/txt_title_availability"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_weight="1"
@@ -80,6 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/clear"
+                android:textAllCaps="true"
                 android:textColor="@color/text_primary_dark"
                 android:textSize="14sp" />
         </LinearLayout>
@@ -89,9 +92,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:paddingLeft="8dp"
             android:text="@string/any_date_time"
             android:textColor="@color/text_primary_dark"
             android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btn_set_availability"
+            style="@style/btn_dialog.secondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="8dp"
+            android:paddingRight="16dp"
+            android:text="@string/set_date_time" />
 
     </LinearLayout>
 
@@ -111,7 +124,7 @@
             android:text="@string/cancel" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="end"

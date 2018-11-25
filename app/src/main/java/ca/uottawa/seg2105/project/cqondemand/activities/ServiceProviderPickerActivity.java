@@ -2,10 +2,8 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.adapters.ServiceProviderPickerListAdapter;
@@ -35,6 +34,10 @@ public class ServiceProviderPickerActivity extends SignedInActivity implements D
     protected DbListenerHandle<?> dbListenerHandle;
     protected Service currentService;
     protected TextView txt_empty_list_message;
+    protected int minRating;
+    protected Date startTime;
+    protected Date endTime;
+    protected ArrayList<ServiceProvider> allProviders;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,17 +62,10 @@ public class ServiceProviderPickerActivity extends SignedInActivity implements D
         dbListenerHandle = DbService.getProvidersByServiceLive(currentService, new AsyncValueEventListener<ServiceProvider>() {
             @Override
             public void onSuccess(@NonNull ArrayList<ServiceProvider> data) {
+                allProviders = data;
                 if (data.size() < 1) { txt_empty_list_message.setVisibility(View.VISIBLE); }
                 else { txt_empty_list_message.setVisibility(View.GONE); }
-                recycler_list.setAdapter(new ServiceProviderPickerListAdapter(getApplicationContext(), data, new View.OnClickListener() {
-                    public void onClick(final View view) {
-                        if (!itemClickEnabled) { return; }
-                        //itemClickEnabled = false;
-                        /*Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
-                        intent.putExtra("user", (Serializable) view.getTag());
-                        startActivity(intent);*/
-                    }
-                }));
+                setListAdapter();
             }
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
@@ -107,34 +103,54 @@ public class ServiceProviderPickerActivity extends SignedInActivity implements D
         return super.onOptionsItemSelected(item);
     }
 
+    protected void setListAdapter() {
+        if (null == allProviders) { return; }
+        ArrayList<ServiceProvider> filteredProviders;
+        if (allProviders.size() < 1 || (0 == minRating && null == startTime && null == endTime)) {
+            filteredProviders = allProviders;
+        } else {
+            filteredProviders = new ArrayList<ServiceProvider>(allProviders.size());
+            for (ServiceProvider provider: allProviders) {
+                if ((provider.getRating() / 100) < minRating) { continue; }
+                filteredProviders.add(provider);
+            }
+        }
+        if (allProviders.size() > 0 && filteredProviders.size() < 1) {
+            // TODO: Display message to adjust filters
+        }
+        recycler_list.setAdapter(new ServiceProviderPickerListAdapter(getApplicationContext(), filteredProviders, new View.OnClickListener() {
+            public void onClick(final View view) {
+                if (!itemClickEnabled) { return; }
+                //itemClickEnabled = false;
+                        /*Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
+                        intent.putExtra("user", (Serializable) view.getTag());
+                        startActivity(intent);*/
+            }
+        }));
+    }
+
     protected void showFilterSettings() {
-
+        itemClickEnabled = false;
+        long start = null != startTime ? startTime.getTime() : -1;
+        long end = null != endTime ? endTime.getTime() : -1;
         FragmentManager fm = getSupportFragmentManager();
-        DialogProviderFiltersFragment providerFilterDialog = DialogProviderFiltersFragment.newInstance();
+        DialogProviderFiltersFragment providerFilterDialog = DialogProviderFiltersFragment.newInstance(minRating, start, end);
         providerFilterDialog.show(fm, "fragment_filter_providers");
+    }
 
-        /*View view = getLayoutInflater().inflate(R.layout.fragment_dialog_provider_filters, null);
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle(R.string.filter_providers)
-                .setView(view)
-                .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                    }
-                })
-                .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
-                })
-                .setNegativeButton(R.string.cancel, null).show();
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.text_primary_dark));
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.dialog_red));*/
+    @Override
+    public void onFiltersApply(int minRating, Date startTime, Date endTime) {
+        this.minRating = minRating;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        setListAdapter();
+        //Toast.makeText(getApplicationContext(), "Min Rating: " + minRating, Toast.LENGTH_LONG).show();
 
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-        
+    public void onFiltersDialogDismiss() {
+        itemClickEnabled = true;
     }
 
 }
