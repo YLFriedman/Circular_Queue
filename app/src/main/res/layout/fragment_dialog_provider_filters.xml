@@ -23,41 +23,83 @@
             android:id="@+id/divider_title"
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_marginTop="8dp"
             android:background="?android:attr/listDivider" />
 
-        <TextView
-            android:id="@+id/txt_title_rating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/min_rating"
-            android:textColor="@color/text_primary_dark"
-            android:textSize="18sp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txt_title_rating"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_weight="1"
+                android:text="@string/min_rating"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txt_clear_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/clear"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="14sp" />
+        </LinearLayout>
 
         <RatingBar
             android:id="@+id/ratingBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
             android:numStars="5"
             android:rating="0"
             android:stepSize="1" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txt_title_availability"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_weight="1"
+                android:text="@string/availability"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txt_clear_availability"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/clear"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="14sp" />
+        </LinearLayout>
+
         <TextView
-            android:id="@+id/txt_title_availability"
+            android:id="@+id/txt_title_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/availability"
+            android:layout_marginTop="8dp"
+            android:text="@string/any_date_time"
             android:textColor="@color/text_primary_dark"
-            android:textSize="18sp" />
+            android:textSize="14sp" />
+
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:gravity="end"
         android:orientation="horizontal">
 
@@ -74,13 +116,6 @@
             android:layout_weight="1"
             android:gravity="end"
             android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btn_clear"
-                style="@style/btn_dialog"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/clear" />
 
             <Button
                 android:id="@+id/btn_apply"

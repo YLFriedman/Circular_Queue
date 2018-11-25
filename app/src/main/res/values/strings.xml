@@ -275,4 +275,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="filters">Filters</string>
+    <string name="any_date_time">Any date and time</string>
+    <string name="any_date">Any Date</string>
+    <string name="any_time">Any Time</string>
 </resources>
