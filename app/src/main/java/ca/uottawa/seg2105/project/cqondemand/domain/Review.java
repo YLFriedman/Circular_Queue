@@ -24,6 +24,7 @@ public class Review implements Serializable {
         this.serviceName = booking.getServiceName();
         this.reviewerName = reviewer.getFullName();
         this.reviewerKey = reviewer.getKey();
+        this.key = booking.getKey();
         dateCreated = new Date();
     }
 
