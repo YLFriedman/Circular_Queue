@@ -22,7 +22,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
-public class AvailabilityWeekViewActivity extends SignedInActivity {
+public class WeekViewActivity extends SignedInActivity {
 
     private enum CellState { UNAVAILABLE, AVAILABLE, BOOKED, REQUESTED }
     private class Cell {
@@ -45,7 +45,7 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_availability_week_view);
+        setContentView(R.layout.activity_week_view_availability);
 
         // Create the arrays for the cellViews and cells
         cellViews = new View[7][24];

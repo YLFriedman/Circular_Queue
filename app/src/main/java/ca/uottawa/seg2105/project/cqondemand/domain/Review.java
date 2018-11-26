@@ -21,16 +21,20 @@ public class Review implements Serializable {
     public Review(int rating, @Nullable String comment, @NonNull User reviewer, @NonNull Booking booking) {
         this.rating = rating;
         this.comment = comment;
-        //this.serviceName = serviceName;
-        //this.reviewerName = reviewerName;
-        //this.reviewerKey = reviewerKey;
+        this.serviceName = booking.getServiceName();
+        this.reviewerName = reviewer.getFullName();
+        this.reviewerKey = reviewer.getKey();
         dateCreated = new Date();
     }
 
     public Review(@NonNull String key, @NonNull Date dateCreated, int rating, @Nullable String comment, @NonNull String serviceName, @NonNull String reviewerName, @NonNull String reviewerKey) {
-        //this(rating, comment, serviceName, reviewerName, reviewerKey);
         this.key = key;
         this.dateCreated = dateCreated;
+        this.rating = rating;
+        this.comment = comment;
+        this.serviceName = serviceName;
+        this.reviewerName = reviewerName;
+        this.reviewerKey = reviewerKey;
     }
 
     public String getKey() {
