@@ -9,7 +9,9 @@ public class DbReview extends DbItem<Review> {
 
     public Integer rating;
     public String comment;
-    public Date date_created;
+    public Long date_created;
+    public String reviewerName;
+    public String reviewerKey;
 
     public DbReview() {}
 
@@ -17,12 +19,14 @@ public class DbReview extends DbItem<Review> {
         super(item.getKey());
         rating = item.getRating();
         comment = item.getComment();
-        date_created = item.getDateCreated();
+        date_created = item.getDateCreated().getTime();
+        reviewerName = item.getReviewerName();
+        reviewerKey = item.getReviewerKey();
     }
 
     @NonNull
     public Review toDomainObj() {
-        return new Review(key, date_created, rating, comment);
+        return new Review(key, new Date(date_created), rating, comment, reviewerName, reviewerKey);
     }
 
 }

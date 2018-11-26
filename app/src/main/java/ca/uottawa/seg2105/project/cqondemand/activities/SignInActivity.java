@@ -221,8 +221,8 @@ public class SignInActivity extends AppCompatActivity {
                 "cqpass", "Spaces Allowed", true, "6132453125", address, "I'm gaaaaaaaaaay", 0, 0, 0);
         System.out.println("OUTPUT");
         User user = new User("-LRYCsBuPG8E1gmy6otV", "Test", "Homeowner", "Hope", "thisworks@mail.com", User.Type.HOMEOWNER, Authentication.genHash("cqpass"));
-        Booking withProvider = new Booking(date, date, date, null, provides, provides.getKey(), user.getKey(), Booking.Status.REQUESTED, "Extra Nutty", 69, null, true);
-        Booking withHomeowner = new Booking(date, date, date, null, user, provides.getKey(), user.getKey(), Booking.Status.REQUESTED, "Extra Nutty", 69, null, false);
+        Booking withProvider = new Booking(date, date, null, provides, provides.getKey(), user.getKey(), Booking.Status.REQUESTED, "Extra Nutty", 69, null, true);
+        Booking withHomeowner = new Booking(date, date, null, user, provides.getKey(), user.getKey(), Booking.Status.REQUESTED, "Extra Nutty", 69, null, false);
         withProvider.setKey("-LSB6L4Zq_hFaIH2it1b");
 
         DbUser.updateUser(provides, new AsyncActionEventListener() {

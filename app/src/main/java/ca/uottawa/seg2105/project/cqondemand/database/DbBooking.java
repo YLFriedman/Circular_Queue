@@ -1,22 +1,17 @@
 package ca.uottawa.seg2105.project.cqondemand.database;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import androidx.annotation.NonNull;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import androidx.annotation.Nullable;
 import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
-import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
@@ -49,13 +44,12 @@ public class DbBooking extends DbItem<Booking> {
         cancelled_reason = item.getCancelledReason();
         homeowner_key = item.getHomeownerKey();
         service_provider_key = item.getServiceProviderKey();
-        if(item.getDateCancelledOrApproved() != null){
+        if (item.getDateCancelledOrApproved() != null) {
             date_cancelled_approved = item.getDateCancelledOrApproved().getTime();
         }
-        if(item.getServiceProvider() != null) {
+        if (item.getServiceProvider() != null) {
             service_provider = new DbUser(item.getServiceProvider());
-        }
-        else {
+        } else {
             homeowner = new DbUser(item.getHomeowner());
         }
     }
@@ -64,11 +58,11 @@ public class DbBooking extends DbItem<Booking> {
     public Booking toDomainObj() {
         if (null != service_provider) {
             service_provider.setKey(service_provider_key);
-            return new Booking(key, new Timestamp(startTime),  new Timestamp(endTime),  new Timestamp(date_created), date_cancelled_approved == null ? null : new Timestamp(date_cancelled_approved),
+            return new Booking(key, new Date(startTime),  new Date(endTime),  new Date(date_created), date_cancelled_approved == null ? null : new Date(date_cancelled_approved),
                     service_provider.toDomainObj(), service_provider_key, homeowner_key, Booking.Status.parse(status), service_name, service_rate, cancelled_reason, true);
         } else if (null != homeowner) {
             homeowner.setKey(homeowner_key);
-            return new Booking(key, new Timestamp(startTime), new Timestamp(endTime),  new Timestamp(date_created), date_cancelled_approved == null ? null : new Timestamp(date_cancelled_approved),
+            return new Booking(key, new Date(startTime), new Date(endTime),  new Date(date_created), date_cancelled_approved == null ? null : new Date(date_cancelled_approved),
                     homeowner.toDomainObj(), service_provider_key, homeowner_key, Booking.Status.parse(status), service_name, service_rate, cancelled_reason, false);
         } else {
             throw new InvalidDataException("");
@@ -105,60 +99,49 @@ public class DbBooking extends DbItem<Booking> {
     }
 
     public static void setBookingStatus(Booking booking, Booking.Status status, @Nullable String cancelledReason, AsyncActionEventListener listener) {
-        if(booking.getKey() == null) {
+        if (booking.getKey() == null) {
             throw new IllegalArgumentException("Booking key required to perform update");
         }
-        Timestamp dateCancelledApproved = new Timestamp(System.currentTimeMillis());
+        Date dateCancelledApproved = new Date(System.currentTimeMillis());
         String homeownerKey = booking.getHomeownerKey();
         String serviceProviderKey = booking.getServiceProviderKey();
         String bookingKey = booking.getKey();
         String homeownerPathStatus = String.format("user_bookings/%s/%s/status", homeownerKey, bookingKey);
         String homeownerPathReason = String.format("user_bookings/%s/%s/cancelled_reason", homeownerKey, bookingKey);
         String homeownerPathDate = String.format("user_bookings/%s/%s/date_cancelled_approved", homeownerKey, bookingKey);
-
         String providerPathStatus = String.format("user_bookings/%s/%s/status", serviceProviderKey, bookingKey);
         String providerPathReason = String.format("user_bookings/%s/%s/cancelled_reason", serviceProviderKey, bookingKey);
         String providerPathDate = String.format("user_bookings/%s/%s/date_cancelled_approved",serviceProviderKey, bookingKey);
-
         HashMap<String, Object> updateMap = new HashMap<>();
-        if(cancelledReason != null){
+        if (cancelledReason != null) {
             updateMap.put(homeownerPathReason, cancelledReason);
             updateMap.put(providerPathReason, cancelledReason);
         }
-
         updateMap.put(homeownerPathStatus, status.toString());
         updateMap.put(providerPathStatus, status.toString());
         updateMap.put(providerPathDate, dateCancelledApproved.getTime());
         updateMap.put(homeownerPathDate, dateCancelledApproved.getTime());
 
         DbUtilRelational.multiPathUpdate(updateMap, listener);
-
     }
 
-    public static void deleteBooking(Booking booking, AsyncActionEventListener listener){
-        if(booking.getKey() == null){
+    public static void deleteBooking(Booking booking, AsyncActionEventListener listener) {
+        if (booking.getKey() == null) {
             throw new IllegalArgumentException("Booking key required to perform deletion");
         }
         String homeownerKey = booking.getHomeownerKey();
         String providerKey = booking.getServiceProviderKey();
         String bookingKey = booking.getKey();
-
         String homeownerDeletionPath = String.format("user_bookings/%s/%s", homeownerKey, bookingKey);
         String providerDeletionPath = String.format("user_bookings/%s/%s", providerKey, bookingKey);
-
         String lookupHomeownerPath = String.format("user_bookings_lookup/%s/%s/%s", homeownerKey, providerKey, bookingKey);
         String lookupProviderPath = String.format("user_bookings_lookup/%s/%s/%s",  providerKey, homeownerKey, bookingKey);
-
         HashMap<String, Object> deletionMap = new HashMap<>();
-
         deletionMap.put(homeownerDeletionPath, null);
         deletionMap.put(providerDeletionPath, null);
         deletionMap.put(lookupHomeownerPath, null);
         deletionMap.put(lookupProviderPath, null);
-
         DbUtilRelational.multiPathUpdate(deletionMap, listener);
-
     }
-
 
 }

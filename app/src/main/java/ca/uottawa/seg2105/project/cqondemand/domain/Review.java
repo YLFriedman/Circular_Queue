@@ -1,6 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand.domain;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -9,21 +10,23 @@ public class Review implements Serializable {
 
     private static final long serialVersionUID = 1;
     protected String key;
-    protected User user;
+    protected String reviewerName;
+    protected String reviewerKey;
     protected int rating;
     protected String comment;
     protected Date dateCreated;
 
 
-    public Review (int rating, String comment, User user) {
+    public Review(int rating, @Nullable String comment, @NonNull String reviewerName, @NonNull String reviewerKey) {
         this.rating = rating;
         this.comment = comment;
-        this.user = user;
+        this.reviewerName = reviewerName;
+        this.reviewerKey = reviewerKey;
         dateCreated = new Date();
     }
 
-    public Review (@NonNull String key, Date dateCreated, int rating, String comment, User user) {
-        this(rating, comment, user);
+    public Review(@NonNull String key, @NonNull Date dateCreated, int rating, @Nullable String comment, @NonNull String reviewerName, @NonNull String reviewerKey) {
+        this(rating, comment, reviewerName, reviewerKey);
         this.key = key;
         this.dateCreated = dateCreated;
     }
@@ -32,11 +35,24 @@ public class Review implements Serializable {
         return key;
     }
 
-    public int getRating() { return rating; }
+    public int getRating() {
+        return rating;
+    }
 
-    public String getComment() { return comment; }
+    public String getComment() {
+        return comment;
+    }
 
-    public Date getDateCreated() { return dateCreated; }
+    public Date getDateCreated() {
+        return dateCreated;
+    }
 
-    public String getReviewer() { return user.getFirstName() + " " + user.getLastName(); }
+    public String getReviewerName() {
+        return reviewerName;
+    }
+
+    public String getReviewerKey() {
+        return reviewerKey;
+    }
+
 }

@@ -52,7 +52,7 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Vi
         // Set the current item as the view's tag so it can be retrieve easily in the onClick handler
         viewHolder.itemView.setTag(item);
         if (null != item) {
-            viewHolder.txt_title.setText(item.getReviewer());
+            viewHolder.txt_title.setText(item.getReviewerName());
             //TO BE CHANGED TO STARS LATER
             viewHolder.txt_subtitle.setText(item.getRating() + "/" + 5);
         }

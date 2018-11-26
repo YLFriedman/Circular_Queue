@@ -7,7 +7,7 @@ import com.google.firebase.database.Exclude;
 abstract class DbItem<T> {
 
     @Exclude
-    String key;
+    public String key;
 
     DbItem() { }
 
