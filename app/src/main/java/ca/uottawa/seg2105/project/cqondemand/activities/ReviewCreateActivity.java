@@ -53,6 +53,7 @@ public class ReviewCreateActivity extends SignedInActivity {
 
         btn_create_review.setEnabled(false);
 
+
         DbReview.createReview(newReview, currentProvider.getKey(), new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
