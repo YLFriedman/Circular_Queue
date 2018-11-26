@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.database.DbReview;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
@@ -24,6 +25,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.Authentication;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
@@ -228,15 +230,17 @@ public class SignInActivity extends AppCompatActivity {
         withProvider.setKey("-LSB6L4Zq_hFaIH2it1b");
 
         Review review = new Review(5, "Great Job!", user, withHomeowner);
-        DbReview.createReview(review, "-LRTteBm1Bvhh8KMiGd_",  new AsyncActionEventListener() {
+
+        DbReview.getReviews(provides.getKey(), new AsyncValueEventListener<Review>() {
             @Override
-            public void onSuccess() {
-                System.out.println("Looks like that worked boss");
+            public void onSuccess(@NonNull ArrayList<Review> data) {
+                Review review = data.get(0);
+                System.out.println(review.getComment());
             }
 
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                System.out.println("No Bueno");
+
             }
         });
 
