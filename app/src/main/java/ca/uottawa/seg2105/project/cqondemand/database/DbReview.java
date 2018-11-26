@@ -47,10 +47,9 @@ public class DbReview extends DbItem<Review> {
         DatabaseReference baseRef = DbUtil.getRef(String.format("provider_reviews/%s/%s", serviceProviderKey, reviewKey));
         DbReview dbVersion = new DbReview(review);
         baseRef.setValue(dbVersion, (databaseError, databaseReference) -> {
-            if(databaseError == null) {
+            if (databaseError == null) {
                 listener.onSuccess();
-            }
-            else {
+            } else {
                 listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
             }
         });
