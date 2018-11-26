@@ -5,11 +5,13 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
 import androidx.annotation.Nullable;
 import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
+import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
@@ -66,11 +68,11 @@ public class DbBooking extends DbItem<Booking> {
             return new Booking(key, new Date(start_time), new Date(end_time),  new Date(date_created), date_cancelled_approved == null ? null : new Date(date_cancelled_approved),
                     homeowner.toDomainObj(), service_provider_key, homeowner_key, Booking.Status.parse(status), service_name, service_rate, cancelled_reason, false);
         } else {
-            throw new InvalidDataException("");
+            throw new InvalidDataException("A booking must have either a ServiceProvider or a Homeowner");
         }
     }
 
-    public static void createBooking(Booking withServiceProvider, Booking withHomeowner, AsyncActionEventListener listener){
+    public static void createBooking(@NonNull Booking withServiceProvider, @NonNull Booking withHomeowner, @Nullable AsyncActionEventListener listener){
         DatabaseReference keyMaker = FirebaseDatabase.getInstance().getReference().push();
         String bookingKey = keyMaker.getKey();
         String homeownerKey = withServiceProvider.getHomeownerKey();
@@ -89,20 +91,18 @@ public class DbBooking extends DbItem<Booking> {
         DbUtilRelational.multiPathUpdate(map, listener);
     }
 
-    public static void getBookings(User user, AsyncValueEventListener<Booking> listener){
+    public static void getBookings(@NonNull User user, @NonNull AsyncValueEventListener<Booking> listener) {
         String userKey = user.getKey();
         DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.USER_BOOKINGS, userKey, listener);
     }
 
-    public static DbListenerHandle<?> getBookingsLive(User user, AsyncValueEventListener<Booking> listener) {
+    public static DbListenerHandle<?> getBookingsLive(@NonNull User user, @NonNull AsyncValueEventListener<Booking> listener) {
         String userKey = user.getKey();
         return DbUtilRelational.getItemsRelationalLive(DbUtilRelational.RelationType.USER_BOOKINGS, userKey, listener);
     }
 
-    public static void setBookingStatus(Booking booking, Booking.Status status, @Nullable String cancelledReason, AsyncActionEventListener listener) {
-        if (booking.getKey() == null) {
-            throw new IllegalArgumentException("Booking key required to perform update");
-        }
+    public static void setBookingStatus(@NonNull Booking booking, @NonNull Booking.Status status, @Nullable String cancelledReason, @Nullable AsyncActionEventListener listener) {
+        if (booking.getKey() == null) { throw new IllegalArgumentException("Booking key required to perform update"); }
         Date dateCancelledApproved = new Date(System.currentTimeMillis());
         String homeownerKey = booking.getHomeownerKey();
         String serviceProviderKey = booking.getServiceProviderKey();
@@ -126,10 +126,8 @@ public class DbBooking extends DbItem<Booking> {
         DbUtilRelational.multiPathUpdate(updateMap, listener);
     }
 
-    public static void deleteBooking(Booking booking, AsyncActionEventListener listener) {
-        if (booking.getKey() == null) {
-            throw new IllegalArgumentException("Booking key required to perform deletion");
-        }
+    public static void deleteBooking(@NonNull Booking booking, @Nullable AsyncActionEventListener listener) {
+        if (booking.getKey() == null) { throw new IllegalArgumentException("Booking key required to perform deletion"); }
         String homeownerKey = booking.getHomeownerKey();
         String providerKey = booking.getServiceProviderKey();
         String bookingKey = booking.getKey();
@@ -143,6 +141,10 @@ public class DbBooking extends DbItem<Booking> {
         deletionMap.put(lookupHomeownerPath, null);
         deletionMap.put(lookupProviderPath, null);
         DbUtilRelational.multiPathUpdate(deletionMap, listener);
+    }
+
+    public static void getBookingsAfterTime(@NonNull ServiceProvider provider, @NonNull Date dateTime, @NonNull AsyncValueEventListener<Booking> listener) {
+        listener.onSuccess(new ArrayList<Booking>());
     }
 
 }

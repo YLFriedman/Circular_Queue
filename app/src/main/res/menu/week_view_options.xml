@@ -14,6 +14,18 @@
             app:showAsAction="ifRoom" />
     </group>
     <group
+        android:id="@+id/grp_week_view_date_controls"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_item_select_date"
+            android:checkable="false"
+            android:checked="false"
+            android:icon="@drawable/ic_date_range_light_24"
+            android:title="@string/select_date"
+            android:titleCondensed="@string/date"
+            app:showAsAction="ifRoom" />
+    </group>
+    <group
         android:id="@+id/grp_avail_controls"
         android:checkableBehavior="single">
         <item

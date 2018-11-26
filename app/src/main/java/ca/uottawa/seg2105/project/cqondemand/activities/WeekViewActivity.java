@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,12 +61,15 @@ public class WeekViewActivity extends SignedInActivity {
             return;
         }
 
+
         if ((null == currentProvider) == (null == currentService) && null != currentProvider) {
             mode = Mode.SELECT_TIMESLOT;
-            setContentView(R.layout.activity_week_view_availability);
+            setContentView(R.layout.activity_week_view_calendar);
+            ActionBar actionBar = getSupportActionBar();
+            if (null != actionBar) { actionBar.setTitle(R.string.select_timeslot); }
         } else if (State.getInstance().getSignedInUser() instanceof ServiceProvider) {
             mode = Mode.AVAILABILITY;
-            setContentView(R.layout.activity_week_view_calendar);
+            setContentView(R.layout.activity_week_view_availability);
             currentProvider = (ServiceProvider) State.getInstance().getSignedInUser();
             onRestoreSavedClick();
         } else {
@@ -94,7 +98,9 @@ public class WeekViewActivity extends SignedInActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.week_view_options, menu);
-        if (Mode.AVAILABILITY != mode) {
+        if (Mode.AVAILABILITY == mode) {
+            menu.setGroupVisible(R.id.grp_week_view_date_controls, false);
+        } else {
             menu.setGroupVisible(R.id.grp_avail_controls, false);
         }
         return true;
