@@ -98,6 +98,14 @@
                     android:textSize="18sp" />
             </LinearLayout>
 
+            <Button
+                android:id="@+id/btn_find_availability"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:onClick="onFindAvailabilityPress"
+                android:text="@string/find_availability" />
+
             <TextView
                 android:id="@+id/txt_title_description"
                 style="@style/input_label"

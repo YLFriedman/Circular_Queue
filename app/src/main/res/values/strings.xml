@@ -286,4 +286,5 @@
     <string name="cancelled">Cancelled</string>
     <string name="pending">Pending</string>
     <string name="booked">Booked</string>
+    <string name="find_availability">Find Availability</string>
 </resources>

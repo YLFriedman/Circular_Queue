@@ -65,7 +65,7 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
         currentUser = State.getInstance().getSignedInUser();
 
         if (currentUser instanceof ServiceProvider) {
-            onResetClick();
+            onRestoreSavedClick();
         } else {
             Toast.makeText(getApplicationContext(), R.string.service_provider_required, Toast.LENGTH_LONG).show();
             finish();
@@ -84,7 +84,7 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
         switch (item.getItemId()) {
             case R.id.menu_item_avail_help: onHelpClick(); return true;
             case R.id.menu_item_avail_clear: onClearClick(); return true;
-            case R.id.menu_item_avail_reset: onResetClick(); return true;
+            case R.id.menu_item_avail_reset: onRestoreSavedClick(); return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -134,7 +134,7 @@ public class AvailabilityWeekViewActivity extends SignedInActivity {
         setAllCells(CellState.UNAVAILABLE);
     }
 
-    private void onResetClick() {
+    private void onRestoreSavedClick() {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
         DbAvailability.getAvailabilities((ServiceProvider) currentUser, new AsyncValueEventListener<Availability>() {

@@ -110,4 +110,11 @@ public class ServiceProviderProfileActivity extends SignedInActivity {
         itemClickEnabled = true;
     }
 
+    public void onFindAvailabilityPress(View v) {
+        Intent intent = new Intent(getApplicationContext(), AvailabilityWeekViewActivity.class);
+        intent.putExtra("provider", currentProvider);
+        intent.putExtra("service", currentService);
+        startActivity(intent);
+    }
+
 }
