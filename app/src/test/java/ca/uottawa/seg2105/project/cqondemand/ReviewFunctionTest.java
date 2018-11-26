@@ -4,8 +4,10 @@ import org.junit.Test;
 
 import java.util.Date;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
+import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.domain.Review;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
@@ -66,5 +68,29 @@ public class ReviewFunctionTest {
         } catch (InvalidDataException ignore) {}
         */
 
+    }
+
+    public void validate_Constructor() {
+
+        User user = new User("firstName", "lastName", "username", "email",
+                User.Type.ADMIN, "password");
+
+        Booking booked = new Booking(new Date(2018), new Date(2019), new Date(2018), user,
+                "SPKey", "HOKey", Booking.Status.APPROVED, "serviceName",
+                10, "cancelledReason", true);
+
+        // Test the creation of an object and its getters
+        try {
+            Review testReview = new Review(5, "Good", user, booked);
+            assertEquals("Review getter Failed - Rating", 5, testReview.getRating());
+            assertEquals("Review getter Failed - comment", "Good", testReview.getComment());
+            assertEquals("Review getter Failed - serviceName", booked.getServiceName(), testReview.getServiceName());
+            assertEquals("Review getter Failed - reviewerName", user.getFullName(), testReview.getReviewerName());
+            assertEquals("Review getter Failed - reviewerKey", user.getKey(), testReview.getReviewerKey());
+            assertEquals("Review getter Failed - Key", booked.getKey(), testReview.getKey());
+
+        } catch (InvalidDataException e) {
+            fail("Review construction failed. Error: " + e.getMessage());
+        }
     }
 }
