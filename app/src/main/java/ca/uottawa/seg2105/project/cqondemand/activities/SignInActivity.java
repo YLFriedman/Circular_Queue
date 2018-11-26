@@ -14,9 +14,11 @@ import android.widget.Toast;
 
 import java.sql.Timestamp;
 
+import ca.uottawa.seg2105.project.cqondemand.database.DbReview;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.domain.Address;
 import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
+import ca.uottawa.seg2105.project.cqondemand.domain.Review;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
@@ -222,18 +224,19 @@ public class SignInActivity extends AppCompatActivity {
         System.out.println("OUTPUT");
         User user = new User("-LRYCsBuPG8E1gmy6otV", "Test", "Homeowner", "Hope", "thisworks@mail.com", User.Type.HOMEOWNER, Authentication.genHash("cqpass"));
         Booking withProvider = new Booking(date, date, null, provides, provides.getKey(), user.getKey(), Booking.Status.REQUESTED, "Extra Nutty", 69, null, true);
-        Booking withHomeowner = new Booking(date, date, null, user, provides.getKey(), user.getKey(), Booking.Status.REQUESTED, "Extra Nutty", 69, null, false);
+        Booking withHomeowner = new Booking("-LSAxH1J826LorP7qVzE", date, date, date, null, user, provides.getKey(), user.getKey(), Booking.Status.REQUESTED, "Extra Nutty", 69, null, false);
         withProvider.setKey("-LSB6L4Zq_hFaIH2it1b");
 
-        DbUser.updateUser(provides, new AsyncActionEventListener() {
+        Review review = new Review(5, "Great Job!", user, withHomeowner);
+        DbReview.createReview(review, "-LRTteBm1Bvhh8KMiGd_",  new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
-                System.out.println("I'm a boss ass bitch");
+                System.out.println("Looks like that worked boss");
             }
 
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
-
+                System.out.println("No Bueno");
             }
         });
 

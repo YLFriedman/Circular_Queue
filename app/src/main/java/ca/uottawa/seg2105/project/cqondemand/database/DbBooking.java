@@ -19,9 +19,10 @@ public class DbBooking extends DbItem<Booking> {
 
     public String status;
     public String service_name;
+
     public Integer service_rate;
-    public Long startTime;
-    public Long endTime;
+    public Long start_time;
+    public Long end_time;
     public Long date_created;
     public Long date_cancelled_approved;
 
@@ -36,8 +37,8 @@ public class DbBooking extends DbItem<Booking> {
     public DbBooking(Booking item) {
         super(item.getKey());
         status = item.getStatus().toString();
-        startTime = item.getStartTime().getTime();
-        endTime = item.getEndTime().getTime();
+        start_time = item.getStartTime().getTime();
+        end_time = item.getEndTime().getTime();
         date_created = item.getDateCreated().getTime();
         service_name = item.getServiceName();
         service_rate = item.getServiceRate();
@@ -58,11 +59,11 @@ public class DbBooking extends DbItem<Booking> {
     public Booking toDomainObj() {
         if (null != service_provider) {
             service_provider.setKey(service_provider_key);
-            return new Booking(key, new Date(startTime),  new Date(endTime),  new Date(date_created), date_cancelled_approved == null ? null : new Date(date_cancelled_approved),
+            return new Booking(key, new Date(start_time),  new Date(end_time),  new Date(date_created), date_cancelled_approved == null ? null : new Date(date_cancelled_approved),
                     service_provider.toDomainObj(), service_provider_key, homeowner_key, Booking.Status.parse(status), service_name, service_rate, cancelled_reason, true);
         } else if (null != homeowner) {
             homeowner.setKey(homeowner_key);
-            return new Booking(key, new Date(startTime), new Date(endTime),  new Date(date_created), date_cancelled_approved == null ? null : new Date(date_cancelled_approved),
+            return new Booking(key, new Date(start_time), new Date(end_time),  new Date(date_created), date_cancelled_approved == null ? null : new Date(date_cancelled_approved),
                     homeowner.toDomainObj(), service_provider_key, homeowner_key, Booking.Status.parse(status), service_name, service_rate, cancelled_reason, false);
         } else {
             throw new InvalidDataException("");

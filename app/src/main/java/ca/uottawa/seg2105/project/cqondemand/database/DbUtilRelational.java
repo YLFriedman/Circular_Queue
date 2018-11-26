@@ -23,13 +23,14 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 public class DbUtilRelational extends DbUtil {
 
     enum RelationType {
-        SERVICE_USERS, USER_SERVICES, USER_BOOKINGS;
+        SERVICE_USERS, USER_SERVICES, USER_BOOKINGS, REVIEW;
         @NonNull
         public String toString() {
             switch (this) {
                 case SERVICE_USERS: return "service_users";
                 case USER_SERVICES: return "user_services";
                 case USER_BOOKINGS: return "user_bookings";
+                case REVIEW: return "provider_reviews";
                 default: throw new IllegalArgumentException("Unrecognized type");
             }
         }
@@ -39,6 +40,7 @@ public class DbUtilRelational extends DbUtil {
                 case SERVICE_USERS: return DbUser.class;
                 case USER_SERVICES: return DbService.class;
                 case USER_BOOKINGS: return DbBooking.class;
+                case REVIEW: return DbReview.class;
                 default: throw new IllegalArgumentException("Unrecognized type");
             }
         }
@@ -137,5 +139,7 @@ public class DbUtilRelational extends DbUtil {
         pathMap.put(String.format(path, LookupType.SERVICE_USERS, userKey, serviceKey), null == userDb ? null : true);
         return pathMap;
     }
+
+
 
 }
