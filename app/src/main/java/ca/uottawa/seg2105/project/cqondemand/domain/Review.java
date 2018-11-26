@@ -18,17 +18,17 @@ public class Review implements Serializable {
     protected Date dateCreated;
 
 
-    public Review(int rating, @Nullable String comment, @NonNull String serviceName, @NonNull String reviewerName, @NonNull String reviewerKey) {
+    public Review(int rating, @Nullable String comment, @NonNull User reviewer, @NonNull Booking booking) {
         this.rating = rating;
         this.comment = comment;
-        this.serviceName = serviceName;
-        this.reviewerName = reviewerName;
-        this.reviewerKey = reviewerKey;
+        //this.serviceName = serviceName;
+        //this.reviewerName = reviewerName;
+        //this.reviewerKey = reviewerKey;
         dateCreated = new Date();
     }
 
     public Review(@NonNull String key, @NonNull Date dateCreated, int rating, @Nullable String comment, @NonNull String serviceName, @NonNull String reviewerName, @NonNull String reviewerKey) {
-        this(rating, comment, serviceName, reviewerName, reviewerKey);
+        //this(rating, comment, serviceName, reviewerName, reviewerKey);
         this.key = key;
         this.dateCreated = dateCreated;
     }

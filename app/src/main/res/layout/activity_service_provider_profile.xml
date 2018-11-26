@@ -69,6 +69,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="8dp"
                     android:gravity="center_vertical"
+                    android:onClick="onSeeReviewsClick"
                     android:text="@string/see_reviews"
                     android:textAllCaps="true"
                     android:textColor="@color/text_link"
@@ -97,14 +98,6 @@
                     android:textColor="@color/text_primary_dark"
                     android:textSize="18sp" />
             </LinearLayout>
-
-            <Button
-                android:id="@+id/btn_find_availability"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:onClick="onFindAvailabilityPress"
-                android:text="@string/find_availability" />
 
             <TextView
                 android:id="@+id/txt_title_description"
@@ -186,6 +179,14 @@
                 android:text="@string/placeholder"
                 android:textColor="@color/text_primary_dark"
                 android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btn_find_availability"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:onClick="onFindAvailabilityClick"
+                android:text="@string/find_availability" />
 
         </LinearLayout>
     </ScrollView>

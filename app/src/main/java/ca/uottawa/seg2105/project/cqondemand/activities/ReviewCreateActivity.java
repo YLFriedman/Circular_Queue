@@ -3,10 +3,10 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 import androidx.annotation.NonNull;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.database.DbReview;
+import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
 import ca.uottawa.seg2105.project.cqondemand.domain.Review;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
-import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
@@ -25,6 +25,7 @@ public class ReviewCreateActivity extends SignedInActivity {
 
     protected ServiceProvider currentProvider;
     protected Service currentService;
+    protected Booking currentBooking;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +35,10 @@ public class ReviewCreateActivity extends SignedInActivity {
         Intent intent = getIntent();
         currentProvider = (ServiceProvider) intent.getSerializableExtra("provider");
         currentService = (Service) intent.getSerializableExtra("service");
+        currentBooking = (Booking) intent.getSerializableExtra("booking");
 
         if (null == currentService || null == currentProvider) {
             finish();
-            return;
         }
     }
 
@@ -47,10 +48,8 @@ public class ReviewCreateActivity extends SignedInActivity {
         EditText field_comments = findViewById(R.id.field_comments);
         String comments = field_comments.getText().toString().trim();
         final Button btn_create_review = findViewById(R.id.btn_create_review);
-        String reviewerName = State.getInstance().getSignedInUser().getFullName();
-        String reviewerKey = State.getInstance().getSignedInUser().getKey();
 
-        final Review newReview = new Review((int)stars_rating.getRating(), comments, currentService.getName(), reviewerName, reviewerKey);
+        final Review newReview = new Review((int)stars_rating.getRating(), comments, State.getInstance().getSignedInUser(), currentBooking);
 
         btn_create_review.setEnabled(false);
 

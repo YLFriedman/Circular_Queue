@@ -20,7 +20,6 @@ public class ServiceProviderProfileActivity extends SignedInActivity {
     protected ServiceProvider currentProvider;
     protected Service currentService;
 
-
     protected TextView txt_company_name;
     RatingBar rating_stars;
     protected TextView txt_see_reviews;
@@ -110,10 +109,20 @@ public class ServiceProviderProfileActivity extends SignedInActivity {
         itemClickEnabled = true;
     }
 
-    public void onFindAvailabilityPress(View v) {
+    public void onFindAvailabilityClick(View v) {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), AvailabilityWeekViewActivity.class);
         intent.putExtra("provider", currentProvider);
         intent.putExtra("service", currentService);
+        startActivity(intent);
+    }
+
+    public void onSeeReviewsClick(View v) {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
+        Intent intent = new Intent(getApplicationContext(), ReviewListActivity.class);
+        intent.putExtra("provider", currentProvider);
         startActivity(intent);
     }
 
