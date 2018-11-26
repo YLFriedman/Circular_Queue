@@ -80,7 +80,7 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(new Intent(ctx, CategoryListActivity.class));
                 break;
             case R.id.btn_ho_bookings:
-                itemClickEnabled = true;
+                startActivity(new Intent(ctx, BookingListActivity.class));
                 break;
         }
     }

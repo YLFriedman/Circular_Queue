@@ -18,6 +18,11 @@
         <item name="android:textColor">@color/text_primary_dark</item>
     </style>
 
+    <style name="btn_tab_view">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:textColor">@color/White</item>
+    </style>
+
     <style name="panel_button">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>

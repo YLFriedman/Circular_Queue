@@ -87,7 +87,7 @@ public class Address implements Serializable {
         String output = "";
         if (!unit.isEmpty()) { output += unit + "-"; }
         output += streetNumber + " " + street;
-        output += "\n" + city + " " + getShortProvince() + " " + postalCode;
+        output += "\n" + city + " " + getShortProvince() + ", " + postalCode;
         return output;
     }
 
