@@ -39,21 +39,19 @@ public class ReviewFunctionTest {
             new Review("", new Date(2018), 5, "Good", "Fixing", "Jeff", "123");
             fail("Review Constructor Failed - Illegal key");
         } catch (InvalidDataException ignore) {}
-        
+
         try {
             new Review("111", new Date(-2000), 5, "Good", "Fixing", "Jeff", "123");
             fail("Review Constructor Failed - Illegal Date");
         } catch (InvalidDataException ignore) {}
-        */
         try {
             new Review("111", new Date(2018), 50000, "Good", "Fixing", "Jeff", "123");
             fail("Address Constructor Failed - Illegal Rating");
         } catch (InvalidDataException ignore) {}
-        /*try {
+        try {
             new Review("111", new Date(2018), 5, "IllegalDate", "Fixing", "Jeff", "123");
             fail("Address Constructor Failed - Illegal Comment");
         } catch (InvalidDataException ignore) {}
-            */
         try {
             new Review("111", new Date(2018), 5, "Good", "Illegal+NAME___", "Jeff", "123");
             fail("Address Constructor Failed - Illegal ServiceName");
@@ -66,6 +64,7 @@ public class ReviewFunctionTest {
             new Review("111", new Date(2018), 5, "Good", "Fixing", "Jeff", "");
             fail("Address Constructor Failed - Illegal ReviewerKey");
         } catch (InvalidDataException ignore) {}
+        */
 
     }
 }
