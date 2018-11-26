@@ -1,37 +1,18 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import android.os.Bundle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Locale;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
-import ca.uottawa.seg2105.project.cqondemand.adapters.ServiceListAdapter;
-import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
 import ca.uottawa.seg2105.project.cqondemand.database.DbListenerHandle;
-import ca.uottawa.seg2105.project.cqondemand.database.DbService;
-import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
-import ca.uottawa.seg2105.project.cqondemand.database.DbUtilRelational;
-import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Review;
-import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
-import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
-import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
-import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 

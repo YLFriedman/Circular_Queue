@@ -21,6 +21,9 @@
     <string name="title_activity_booking_list">My Bookings</string>
     <string name="title_activity_service_provider_picker">Pick a Service Provider</string>
     <string name="title_activity_service_provider_profile">Service Provider Profile</string>
+    <string name="title_activity_review_create">Create a Review</string>
+    <string name="title_activity_review_view">Service Provider Review</string>
+    <string name="title_activity_review_list">Service Provider Reviews</string>
     <string name="btn_sign_in">Sign In</string>
     <string name="btn_sign_up">Sign Up</string>
     <string name="signature">Created by CircularQueue</string>
