@@ -53,7 +53,7 @@ public class ReviewCreateActivity extends SignedInActivity {
 
         btn_create_review.setEnabled(false);
 
-        DbReview.createReview(newReview, new AsyncActionEventListener() {
+        DbReview.createReview(newReview, currentBooking.getServiceProviderKey(), new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 //Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_create_success), newReview.getName()), Toast.LENGTH_LONG).show();
