@@ -39,11 +39,12 @@ public class ReviewFunctionTest {
             new Review("", new Date(2018), 5, "Good", "Fixing", "Jeff", "123");
             fail("Review Constructor Failed - Illegal key");
         } catch (InvalidDataException ignore) {}
-        */
+        
         try {
             new Review("111", new Date(-2000), 5, "Good", "Fixing", "Jeff", "123");
             fail("Review Constructor Failed - Illegal Date");
         } catch (InvalidDataException ignore) {}
+        */
         try {
             new Review("111", new Date(2018), 50000, "Good", "Fixing", "Jeff", "123");
             fail("Address Constructor Failed - Illegal Rating");
