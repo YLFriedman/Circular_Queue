@@ -1,7 +1,10 @@
 package ca.uottawa.seg2105.project.cqondemand.database;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import androidx.annotation.NonNull;
 
@@ -14,6 +17,7 @@ import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
@@ -144,7 +148,27 @@ public class DbBooking extends DbItem<Booking> {
     }
 
     public static void getBookingsAfterTime(@NonNull ServiceProvider provider, @NonNull Date dateTime, @NonNull AsyncValueEventListener<Booking> listener) {
-        listener.onSuccess(new ArrayList<Booking>());
+        DatabaseReference dbRef = DbUtil.getRef(String.format("user_bookings/%s", provider.getKey()));
+        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<Booking> returnValue = new ArrayList<>();
+                for(DataSnapshot candidate : dataSnapshot.getChildren()){
+                    if(candidate.child("end_time").getValue(Long.class) > dateTime.getTime()){
+                        DbBooking dbVersion = candidate.getValue(DbBooking.class);
+                        dbVersion.setKey(candidate.getKey());
+                        Booking current = dbVersion.toDomainObj();
+                        returnValue.add(current);
+                    }
+                }
+                listener.onSuccess(returnValue);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
+            }
+        });
     }
 
 }
