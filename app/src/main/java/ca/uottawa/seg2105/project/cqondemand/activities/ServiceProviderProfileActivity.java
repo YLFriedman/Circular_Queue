@@ -1,6 +1,5 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
@@ -112,7 +111,7 @@ public class ServiceProviderProfileActivity extends SignedInActivity {
     public void onFindAvailabilityClick(View v) {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
-        Intent intent = new Intent(getApplicationContext(), AvailabilityWeekViewActivity.class);
+        Intent intent = new Intent(getApplicationContext(), WeekViewActivity.class);
         intent.putExtra("provider", currentProvider);
         intent.putExtra("service", currentService);
         startActivity(intent);

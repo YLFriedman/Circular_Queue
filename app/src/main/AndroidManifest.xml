@@ -75,7 +75,7 @@
             android:label="@string/title_activity_service_create"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.AvailabilityWeekViewActivity"
+            android:name=".activities.WeekViewActivity"
             android:label="@string/title_activity_availability_week_view"
             android:screenOrientation="portrait" />
         <activity

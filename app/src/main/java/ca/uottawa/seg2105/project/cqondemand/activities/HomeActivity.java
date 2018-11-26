@@ -69,7 +69,7 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(new Intent(ctx, CategoryListActivity.class));
                 break;
             case R.id.btn_sp_availability:
-                startActivity(new Intent(ctx, AvailabilityWeekViewActivity.class));
+                startActivity(new Intent(ctx, WeekViewActivity.class));
                 break;
             case R.id.btn_sp_services:
                 intent = new Intent(ctx, ServiceListActivity.class);
