@@ -27,8 +27,8 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
     protected Context context;
     protected ArrayList<Booking> data;
     protected View.OnClickListener clickListener;
-    protected SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMMM d, yyyy");
-    protected SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h a");
+    protected SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMMM d, yyyy", Locale.CANADA);
+    protected SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h a", Locale.CANADA);
 
     public BookingListAdapter(Context context, ArrayList<Booking> data) {
         this.context = context;

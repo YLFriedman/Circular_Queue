@@ -86,6 +86,10 @@ public class User implements Serializable {
         this.key = key;
     }
 
+    public String getFullName() {
+        return String.format("%s %s", firstName, lastName);
+    }
+
     public String getKey() {
         return key;
     }

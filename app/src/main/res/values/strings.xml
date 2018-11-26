@@ -99,6 +99,8 @@
     <string name="delete_category">Delete Category</string>
     <string name="service_category">Service Category</string>
     <string name="hourly_rate">Hourly Rate</string>
+    <string name="create_db_error_template">Unable to create the %s at this time due to a database error. Please try again later.</string>
+    <string name="create_generic_error_template">Unable to create the %s at this time. Please try again later.</string>
     <string name="unlink_service">Unlink Service</string>
     <string name="remove_service">Remove Service</string>
     <string name="service_name_invalid">Please only use letters, numbers, spaces, or apostrophes for the name of a service</string>
@@ -290,4 +292,9 @@
     <string name="pending">Pending</string>
     <string name="booked">Booked</string>
     <string name="find_availability">Find Availability</string>
+    <string name="rating">Rating</string>
+    <string name="comments">Comments</string>
+    <string name="submit_review">Submit Review</string>
+    <string name="created_by">Create By</string>
+    <string name="created_on">Created On</string>
 </resources>

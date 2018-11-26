@@ -262,8 +262,8 @@ public class UserEditActivity extends SignedInActivity {
             }
 
             if (description.isEmpty()) { description = null; }
-            newUser = new ServiceProvider(currentUser.getKey(), firstName, lastName, username, email, currentUser.getPassword(),
-                    companyName, licensed, phoneNumber, address, description, provider.getRating(), provider.getRunningRatingTotal(), provider.getNumRatings());
+            newUser = new ServiceProvider(provider.getKey(), firstName, lastName, username, email, provider.getPassword(),
+                    companyName, licensed, phoneNumber, address, description, provider.getRating(), provider.getRunningRatingTotal(), provider.getNumRatings(), provider.getAvailabilities());
 
         } else {
 

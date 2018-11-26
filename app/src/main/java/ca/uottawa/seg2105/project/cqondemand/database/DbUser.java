@@ -9,7 +9,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
+import ca.uottawa.seg2105.project.cqondemand.domain.Availability;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
@@ -37,6 +40,7 @@ public class DbUser extends DbItem<User> {
     public Integer rating;
     public Long running_rating_total;
     public Integer num_ratings;
+    public List<DbAvailability> availabilities;
 
     public DbUser() {}
 
@@ -59,6 +63,11 @@ public class DbUser extends DbItem<User> {
             rating = provider.getRating();
             running_rating_total = provider.getRunningRatingTotal();
             num_ratings = provider.getNumRatings();
+            if (null == provider.getAvailabilities()) { availabilities = null; }
+            else {
+                availabilities = new LinkedList<DbAvailability>();
+                for (Availability availability: provider.getAvailabilities()) { availabilities.add(new DbAvailability(availability)); }
+            }
         }
     }
 
@@ -66,8 +75,13 @@ public class DbUser extends DbItem<User> {
     public User toDomainObj() {
         if (User.Type.parse(type) == User.Type.SERVICE_PROVIDER) {
             if (null == address) { throw new IllegalArgumentException("The address cannot be null"); }
+            List<Availability> availabilities = null;
+            if (null != this.availabilities) {
+                availabilities = new LinkedList<Availability>();
+                for (DbAvailability availability: this.availabilities) { availabilities.add(availability.toDomainObj()); }
+            }
             return new ServiceProvider(getKey(), first_name, last_name, username, email, password, company_name, licensed,
-                    phone_number,address.toDomainObj(), description, rating, running_rating_total, num_ratings);
+                    phone_number,address.toDomainObj(), description, rating, running_rating_total, num_ratings, availabilities);
         }
         return new User(getKey(), first_name, last_name, username, email, User.Type.parse(type), password);
     }

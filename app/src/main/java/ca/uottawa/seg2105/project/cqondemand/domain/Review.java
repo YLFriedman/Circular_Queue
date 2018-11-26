@@ -10,6 +10,7 @@ public class Review implements Serializable {
 
     private static final long serialVersionUID = 1;
     protected String key;
+    protected String serviceName;
     protected String reviewerName;
     protected String reviewerKey;
     protected int rating;
@@ -17,16 +18,17 @@ public class Review implements Serializable {
     protected Date dateCreated;
 
 
-    public Review(int rating, @Nullable String comment, @NonNull String reviewerName, @NonNull String reviewerKey) {
+    public Review(int rating, @Nullable String comment, @NonNull String serviceName, @NonNull String reviewerName, @NonNull String reviewerKey) {
         this.rating = rating;
         this.comment = comment;
+        this.serviceName = serviceName;
         this.reviewerName = reviewerName;
         this.reviewerKey = reviewerKey;
         dateCreated = new Date();
     }
 
-    public Review(@NonNull String key, @NonNull Date dateCreated, int rating, @Nullable String comment, @NonNull String reviewerName, @NonNull String reviewerKey) {
-        this(rating, comment, reviewerName, reviewerKey);
+    public Review(@NonNull String key, @NonNull Date dateCreated, int rating, @Nullable String comment, @NonNull String serviceName, @NonNull String reviewerName, @NonNull String reviewerKey) {
+        this(rating, comment, serviceName, reviewerName, reviewerKey);
         this.key = key;
         this.dateCreated = dateCreated;
     }
@@ -41,6 +43,10 @@ public class Review implements Serializable {
 
     public String getComment() {
         return comment;
+    }
+
+    public String getServiceName() {
+        return serviceName;
     }
 
     public Date getDateCreated() {

@@ -24,7 +24,7 @@ public class CategoryCreateActivity extends SignedInActivity {
         setContentView(R.layout.activity_category_create);
     }
 
-    public void onCreateCategory(View view){
+    public void onCreateCategoryClick(View view) {
         final EditText field_category_name = findViewById(R.id.field_category_name);
         final String categoryName = field_category_name.getText().toString().trim();
         final Button btn_create_category = findViewById(R.id.btn_create_category);

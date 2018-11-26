@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.Serializable;
+import java.util.List;
 
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
@@ -28,8 +29,10 @@ public class ServiceProvider extends User implements Serializable {
 
     protected int numRatings;
 
+    List<Availability> availabilities;
+
     public ServiceProvider(@NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull String password,
-                           @NonNull String companyName, boolean licenced, @NonNull String phoneNumber, @NonNull Address address, String description) {
+                           @NonNull String companyName, boolean licenced, @NonNull String phoneNumber, @NonNull Address address, @Nullable String description) {
         super(firstName, lastName, username, email, Type.SERVICE_PROVIDER, password);
         if (!FieldValidation.companyNameIsValid(companyName)) { throw new InvalidDataException("Invalid companyName. Legal characters: " + FieldValidation.COMPANY_NAME_CHARS); }
         if (null != phoneNumber && !phoneNumber.equals("{@TEST}") && !FieldValidation.phoneIsValid(phoneNumber)) { throw new InvalidDataException("Invalid phoneNumber. "); }
@@ -56,13 +59,15 @@ public class ServiceProvider extends User implements Serializable {
      * @param address
      */
     public ServiceProvider(@NonNull String key, @NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull String password,
-                           @NonNull String companyName, boolean licenced, @NonNull String phoneNumber, @NonNull Address address, @Nullable String description, int rating, long runningRatingTotal, int numRatings) {
+                           @NonNull String companyName, boolean licenced, @NonNull String phoneNumber, @NonNull Address address, @Nullable String description, int rating,
+                           long runningRatingTotal, int numRatings, @Nullable List<Availability> availabilities) {
         this(firstName, lastName, username, email, password, companyName, licenced, phoneNumber, address, description);
         if (null == key || key.isEmpty()) { throw new InvalidDataException("The key cannot be null or empty."); }
         this.key = key;
         this.rating = rating;
         this.runningRatingTotal = runningRatingTotal;
         this.numRatings = numRatings;
+        this.availabilities = availabilities;
     }
 
     public String getCompanyName() {
@@ -95,6 +100,10 @@ public class ServiceProvider extends User implements Serializable {
 
     public int getNumRatings() {
         return numRatings;
+    }
+
+    public List<Availability> getAvailabilities() {
+        return availabilities;
     }
 
     @Override
