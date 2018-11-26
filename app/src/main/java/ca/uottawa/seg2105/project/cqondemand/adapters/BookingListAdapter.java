@@ -1,37 +1,41 @@
 package ca.uottawa.seg2105.project.cqondemand.adapters;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import ca.uottawa.seg2105.project.cqondemand.R;
-import ca.uottawa.seg2105.project.cqondemand.domain.User;
+import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
 
 /**
- * An adapter class for the RecyclerView contained in the user home activity. Defines the layouts that
- * will be contained in the RecyclerView.
+ * An adapter class for the RecyclerView that contains a list of categories
  */
 
-public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHolder> {
+public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.ViewHolder> {
 
-    private Context context;
-    private ArrayList<User> data;
-    private View.OnClickListener clickListener;
+    protected Context context;
+    protected ArrayList<Booking> data;
+    protected View.OnClickListener clickListener;
+    protected SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMMM d, yyyy");
+    protected SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h a");
 
-    public UserListAdapter(Context context, ArrayList<User> data) {
+    public BookingListAdapter(Context context, ArrayList<Booking> data) {
         this.context = context;
         this.data = data;
     }
 
-    public UserListAdapter(Context context, ArrayList<User> data, View.OnClickListener clickListener) {
+    public BookingListAdapter(Context context, ArrayList<Booking> data, View.OnClickListener clickListener) {
         this.context = context;
         this.data = data;
         this.clickListener = clickListener;
@@ -47,14 +51,21 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        User item = data.get(i);
+        Booking item = data.get(i);
         // Set the current item as the view's tag so it can be retrieve easily in the onClick handler
         viewHolder.itemView.setTag(item);
         if (null != item) {
-            viewHolder.txt_title.setText(String.format(Locale.CANADA, context.getString(R.string.full_name_template), item.getFirstName(), item.getLastName()));
-            viewHolder.txt_subtitle.setText(String.format(Locale.CANADA, "%s, %s", item.getUsername(), item.getType().toString()));
+            viewHolder.txt_title.setText(item.getServiceName());
+
+            DATE_FORMAT.format(new Date(item.getStartTime().getTime()));
+            viewHolder.txt_subtitle.setText(String.format(
+                    "%s  %s to $s",
+                    DATE_FORMAT.format(new Date(item.getStartTime().getTime())),
+                    TIME_FORMAT.format(new Date(item.getStartTime().getTime())),
+                    TIME_FORMAT.format(new Date(item.getEndTime().getTime()))
+            ));
         }
-        viewHolder.img_item_image.setImageResource(R.drawable.ic_account_circle_med_40);
+        //viewHolder.img_item_image.setImageResource(R.drawable.ic_account_circle_med_40);
         viewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_med_30);
     }
 

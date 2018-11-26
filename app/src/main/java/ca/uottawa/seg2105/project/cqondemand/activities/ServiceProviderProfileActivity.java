@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import java.util.Locale;
 
-public class ServiceProviderProfileActivity extends AppCompatActivity {
+public class ServiceProviderProfileActivity extends SignedInActivity {
 
     protected boolean itemClickEnabled = true;
     protected ServiceProvider currentProvider;

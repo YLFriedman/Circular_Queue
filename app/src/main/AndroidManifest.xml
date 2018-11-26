@@ -86,7 +86,12 @@
             android:name=".activities.ServiceProviderPickerActivity"
             android:label="@string/title_activity_service_provider_picker"
             android:screenOrientation="portrait" />
-        <activity android:name=".activities.ServiceProviderProfileActivity"></activity>
+        <activity android:name=".activities.ServiceProviderProfileActivity"
+            android:label="@string/title_activity_service_provider_profile"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activities.BookingListActivity"
+            android:label="@string/title_activity_booking_list"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

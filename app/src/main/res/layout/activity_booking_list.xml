@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.BookingListActivity">
+
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="visible">
+
+            <Button
+                android:id="@+id/btn_tab_booked"
+                style="@style/btn_tab_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onTabPressed"
+                android:text="@string/booked" />
+
+            <Button
+                android:id="@+id/btn_tab_pending"
+                style="@style/btn_tab_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onTabPressed"
+                android:text="@string/pending" />
+
+            <Button
+                android:id="@+id/btn_tab_cancelled"
+                style="@style/btn_tab_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onTabPressed"
+                android:text="@string/cancelled" />
+
+            <Button
+                android:id="@+id/btn_tab_past"
+                style="@style/btn_tab_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onTabPressed"
+                android:text="@string/past" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="16dp"
+            android:paddingTop="8dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="8dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="307dp" />
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
