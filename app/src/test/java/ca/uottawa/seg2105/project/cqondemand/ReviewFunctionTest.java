@@ -27,7 +27,7 @@ public class ReviewFunctionTest {
             assertEquals("Review getter Failed - rating", 5, testReview.getRating());
             assertEquals("Review getter Failed - comment", "Good", testReview.getComment());
             assertEquals("Review getter Failed - serviceName", "Fixing", testReview.getServiceName());
-            assertEquals("Review getter Failed - reviewerName", "Jeff", testReview.getReviewerKey());
+            assertEquals("Review getter Failed - reviewerName", "Jeff", testReview.getReviewerName());
             assertEquals("Review getter Failed - reviewerKey", "123", testReview.getReviewerKey());
 
         } catch (InvalidDataException e) {
