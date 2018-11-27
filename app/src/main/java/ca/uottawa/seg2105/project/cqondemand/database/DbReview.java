@@ -58,4 +58,8 @@ public class DbReview extends DbItem<Review> {
     public static void getReviews(String serviceProviderKey, AsyncValueEventListener<Review> listener) {
         DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.REVIEW, serviceProviderKey, listener);
     }
+    public static DbListenerHandle<?> getReviewsLive(@NonNull String serviceProviderKey, @NonNull AsyncValueEventListener<Review> listener) {
+        return DbUtilRelational.getItemsRelationalLive(DbUtilRelational.RelationType.USER_BOOKINGS, serviceProviderKey, listener);
+    }
+
 }
