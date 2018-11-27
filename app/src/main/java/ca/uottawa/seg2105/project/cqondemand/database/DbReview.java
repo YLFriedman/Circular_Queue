@@ -1,8 +1,6 @@
 package ca.uottawa.seg2105.project.cqondemand.database;
 
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Date;
 
@@ -56,10 +54,12 @@ public class DbReview extends DbItem<Review> {
     }
 
     public static void getReviews(String serviceProviderKey, AsyncValueEventListener<Review> listener) {
-        DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.REVIEW, serviceProviderKey, listener);
+        DbQuery query = DbQuery.createChildValueQuery("date_created");
+        DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.PROVIDER_REVIEWS, serviceProviderKey, query, listener);
     }
     public static DbListenerHandle<?> getReviewsLive(@NonNull String serviceProviderKey, @NonNull AsyncValueEventListener<Review> listener) {
-        return DbUtilRelational.getItemsRelationalLive(DbUtilRelational.RelationType.USER_BOOKINGS, serviceProviderKey, listener);
+        DbQuery query = DbQuery.createChildValueQuery("date_created");
+        return DbUtilRelational.getItemsRelationalLive(DbUtilRelational.RelationType.PROVIDER_REVIEWS, serviceProviderKey, query, listener);
     }
 
 }

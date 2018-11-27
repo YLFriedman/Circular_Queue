@@ -5,23 +5,22 @@ import com.google.firebase.database.Query;
 
 public class DbQuery {
 
-    protected enum OrderBy { CHILD, KEY, VALUE}
+    private enum OrderBy { CHILD, KEY, VALUE}
     enum Limit { FIRST, LAST }
-    protected enum Filter { RANGE, START, END, EQUALS }
-    protected enum FilterType { STRING, DOUBLE, BOOLEAN }
+    private enum Filter { RANGE, START, END, EQUALS }
+    private enum FilterType { STRING, DOUBLE, BOOLEAN }
 
-    protected OrderBy order;
-    protected String keyName;
-    protected Limit limit;
-    protected int limitNum;
-    protected Filter filter;
-    protected FilterType filterType;
-    protected Object startAt;
-    protected Object endAt;
-    protected Object equals;
+    private OrderBy order;
+    private String keyName;
+    private Limit limit;
+    private int limitNum;
+    private Filter filter;
+    private FilterType filterType;
+    private Object startAt;
+    private Object endAt;
+    private Object equals;
 
-
-    protected DbQuery() {}
+    private DbQuery() {}
 
     Query apply(DatabaseReference ref) {
         Query query = null;
@@ -65,143 +64,130 @@ public class DbQuery {
     }
 
 
-    void setLimit(Limit limit, int limitNum) {
+    DbQuery setLimit(Limit limit, int limitNum) {
         this.limit = limit;
         this.limitNum = limitNum;
+        return this;
     }
 
 
-    void setRangeFilter(String startValue, String endValue) {
+    DbQuery setRangeFilter(String startValue, String endValue) {
         filter = Filter.RANGE;
         filterType = FilterType.STRING;
         this.startAt = startValue;
         this.endAt = endValue;
+        return this;
     }
 
-    void setRangeFilter(int startValue, int endValue) {
-        filter = Filter.RANGE;
-        filterType = FilterType.DOUBLE;
-        this.startAt = (double) startValue;
-        this.endAt = (double) endValue;
-    }
-
-    void setRangeFilter(long startValue, long endValue) {
-        filter = Filter.RANGE;
-        filterType = FilterType.DOUBLE;
-        this.startAt = (double) startValue;
-        this.endAt = (double) endValue;
-    }
-
-    void setRangeFilter(double startValue, double endValue) {
+    DbQuery setRangeFilter(double startValue, double endValue) {
         filter = Filter.RANGE;
         filterType = FilterType.DOUBLE;
         this.startAt = startValue;
         this.endAt = endValue;
+        return this;
+    }
+
+    DbQuery setRangeFilter(int startValue, int endValue) {
+        return setRangeFilter((double) startValue, (double) endValue);
+    }
+
+    DbQuery setRangeFilter(long startValue, long endValue) {
+        return setRangeFilter((double) startValue, (double) endValue);
     }
 
 
-    void setStartAtFilter(String value) {
+    DbQuery setStartAtFilter(String value) {
         filter = Filter.START;
         filterType = FilterType.STRING;
         this.startAt = value;
+        return this;
     }
 
-    void setStartAtFilter(int value) {
-        filter = Filter.START;
-        filterType = FilterType.DOUBLE;
-        this.startAt = (double) value;
-    }
-
-    void setStartAtFilter(long value) {
-        filter = Filter.START;
-        filterType = FilterType.DOUBLE;
-        this.startAt = (double) value;
-    }
-
-    void setStartAtFilter(double value) {
+    DbQuery setStartAtFilter(double value) {
         filter = Filter.START;
         filterType = FilterType.DOUBLE;
         this.startAt = value;
+        return this;
+    }
+
+    DbQuery setStartAtFilter(int value) {
+        return setStartAtFilter((double) value);
+    }
+
+    DbQuery setStartAtFilter(long value) {
+        return setStartAtFilter((double) value);
     }
 
 
-    void setEndAtFilter(String value) {
+    DbQuery setEndAtFilter(String value) {
         filter = Filter.END;
         this.endAt = value;
+        return this;
     }
 
-    void setEndAtFilter(int value) {
-        filter = Filter.END;
-        filterType = FilterType.DOUBLE;
-        this.endAt = (double) value;
-    }
-
-    void setEndAtFilter(long value) {
-        filter = Filter.END;
-        filterType = FilterType.DOUBLE;
-        this.endAt = (double) value;
-    }
-
-    void setEndAtFilter(double value) {
+    DbQuery setEndAtFilter(double value) {
         filter = Filter.END;
         filterType = FilterType.DOUBLE;
         this.endAt = value;
+        return this;
+    }
+
+    DbQuery setEndAtFilter(int value) {
+        return setEndAtFilter((double) value);
+    }
+
+    DbQuery setEndAtFilter(long value) {
+        return setEndAtFilter((double) value);
     }
 
 
-    void setEqualsFilter(String value) {
+    DbQuery setEqualsFilter(String value) {
         filter = Filter.EQUALS;
         filterType = FilterType.STRING;
         this.equals = value;
+        return this;
     }
 
-    void setEqualsFilter(int value) {
-        filter = Filter.EQUALS;
-        filterType = FilterType.DOUBLE;
-        this.equals = (double) value;
-    }
-
-    void setEqualsFilter(long value) {
-        filter = Filter.EQUALS;
-        filterType = FilterType.DOUBLE;
-        this.equals = (double) value;
-    }
-
-    void setEqualsFilter(double value) {
+    DbQuery setEqualsFilter(double value) {
         filter = Filter.EQUALS;
         filterType = FilterType.DOUBLE;
         this.equals = value;
+        return this;
     }
 
-    void setEqualsFilter(boolean value) {
+    DbQuery setEqualsFilter(int value) {
+        return setEqualsFilter((double) value);
+    }
+
+    DbQuery setEqualsFilter(long value) {
+        return setEqualsFilter((double) value);
+    }
+
+    DbQuery setEqualsFilter(boolean value) {
         filter = Filter.EQUALS;
         filterType = FilterType.BOOLEAN;
         this.equals = value;
+        return this;
     }
 
 
-    static class Factory {
+    static DbQuery createChildValueQuery(String childKeyName) {
+        DbQuery query = new DbQuery();
+        query.order = OrderBy.CHILD;
+        query.keyName = childKeyName;
+        return query;
+    }
 
-        static DbQuery createChildValueQuery(String childKeyName) {
-            DbQuery query = new DbQuery();
-            query.order = OrderBy.CHILD;
-            query.keyName = childKeyName;
-            return query;
-        }
+    static DbQuery createKeyQuery() {
+        DbQuery query = new DbQuery();
+        query.order = OrderBy.KEY;
+        return query;
+    }
 
-        static DbQuery createKeyQuery() {
-            DbQuery query = new DbQuery();
-            query.order = OrderBy.KEY;
-            return query;
-        }
-
-        static DbQuery createValueQuery(String keyName) {
-            DbQuery query = new DbQuery();
-            query.order = OrderBy.VALUE;
-            query.keyName = keyName;
-            return query;
-        }
-
+    static DbQuery createValueQuery() {
+        DbQuery query = new DbQuery();
+        query.order = OrderBy.VALUE;
+        return query;
     }
 
 }

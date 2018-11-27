@@ -102,13 +102,13 @@ public class DbBooking extends DbItem<Booking> {
     }
 
     public static void getBookings(@NonNull User user, @NonNull AsyncValueEventListener<Booking> listener) {
-        String userKey = user.getKey();
-        DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.USER_BOOKINGS, userKey, listener);
+        DbQuery query = DbQuery.createChildValueQuery("start_time");
+        DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.USER_BOOKINGS, user.getKey(), query, listener);
     }
 
     public static DbListenerHandle<?> getBookingsLive(@NonNull User user, @NonNull AsyncValueEventListener<Booking> listener) {
-        String userKey = user.getKey();
-        return DbUtilRelational.getItemsRelationalLive(DbUtilRelational.RelationType.USER_BOOKINGS, userKey, listener);
+        DbQuery query = DbQuery.createChildValueQuery("start_time");
+        return DbUtilRelational.getItemsRelationalLive(DbUtilRelational.RelationType.USER_BOOKINGS, user.getKey(), query, listener);
     }
 
     public static void setBookingStatus(@NonNull Booking booking, @NonNull Booking.Status status, @Nullable String cancelledReason, @Nullable AsyncActionEventListener listener) {

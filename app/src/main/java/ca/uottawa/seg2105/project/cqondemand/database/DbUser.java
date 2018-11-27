@@ -156,7 +156,8 @@ public class DbUser extends DbItem<User> {
     }
 
     public static void getUserByUsername(@NonNull String username, @NonNull final AsyncSingleValueEventListener<User> listener) {
-        DbUtil.getItems(DbUtil.DataType.USER, "unique_name", User.getUniqueName(username), new AsyncValueEventListener<User>() {
+        DbQuery query = DbQuery.createChildValueQuery("unique_name").setEqualsFilter(User.getUniqueName(username));
+        DbUtil.getItems(DbUtil.DataType.USER, query, new AsyncValueEventListener<User>() {
             @Override
             public void onSuccess(@NonNull ArrayList<User> data) {
                 if (data.size() == 1) { listener.onSuccess(data.get(0)); }
@@ -169,12 +170,14 @@ public class DbUser extends DbItem<User> {
     }
 
     public static void getUsers(@NonNull AsyncValueEventListener<User> listener) {
-        DbUtil.getItems(DbUtil.DataType.USER, listener);
+        DbQuery query = DbQuery.createChildValueQuery("unique_name");
+        DbUtil.getItems(DbUtil.DataType.USER, query, listener);
     }
 
     @NonNull
     public static DbListenerHandle<?> getUsersLive(@NonNull final AsyncValueEventListener<User> listener) {
-        return DbUtil.getItemsLive(DbUtil.DataType.USER, listener);
+        DbQuery query = DbQuery.createChildValueQuery("unique_name");
+        return DbUtil.getItemsLive(DbUtil.DataType.USER, query, listener);
     }
 
     public static void updatePassword(@NonNull User user, @NonNull String newPassword, @Nullable final AsyncSingleValueEventListener<User> listener) {
@@ -306,7 +309,8 @@ public class DbUser extends DbItem<User> {
         if (provider.getKey() == null || provider.getKey().isEmpty()) {
             throw new IllegalArgumentException("A service provider object with a key is required. Unable to query the database without the key.");
         }
-        DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.USER_SERVICES, provider.getKey(), listener);
+        DbQuery query = DbQuery.createChildValueQuery("name");
+        DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.USER_SERVICES, provider.getKey(), query, listener);
     }
 
     @NonNull
@@ -314,7 +318,8 @@ public class DbUser extends DbItem<User> {
         if (provider.getKey() == null || provider.getKey().isEmpty()) {
             throw new IllegalArgumentException("A service provider object with a key is required. Unable to query the database without the key.");
         }
-        return DbUtilRelational.getItemsRelationalLive(DbUtilRelational.RelationType.USER_SERVICES, provider.getKey(), listener);
+        DbQuery query = DbQuery.createChildValueQuery("name");
+        return DbUtilRelational.getItemsRelationalLive(DbUtilRelational.RelationType.USER_SERVICES, provider.getKey(), query, listener);
     }
 
 }

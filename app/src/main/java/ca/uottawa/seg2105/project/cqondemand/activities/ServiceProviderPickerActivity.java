@@ -59,7 +59,10 @@ public class ServiceProviderPickerActivity extends SignedInActivity implements D
         }
 
         recycler_list.setHasFixedSize(true);
-        recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
+        recycler_list.setLayoutManager(layoutManager);
         dbListenerHandle = DbService.getProvidersByServiceLive(currentService, new AsyncValueEventListener<ServiceProvider>() {
             @Override
             public void onSuccess(@NonNull ArrayList<ServiceProvider> data) {

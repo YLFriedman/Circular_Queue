@@ -73,7 +73,8 @@ public class DbCategory extends DbItem<Category> {
     }
 
     public static void getCategoryByName(@NonNull String name, @NonNull final AsyncSingleValueEventListener<Category> listener) {
-        DbUtil.getItems(DbUtil.DataType.CATEGORY, "unique_name", Category.getUniqueName(name), new AsyncValueEventListener<Category>() {
+        DbQuery query = DbQuery.createChildValueQuery("unique_name").setEqualsFilter(Category.getUniqueName(name));
+        DbUtil.getItems(DbUtil.DataType.CATEGORY, query, new AsyncValueEventListener<Category>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Category> data) {
                 if (data.size() == 1) { listener.onSuccess(data.get(0)); }
@@ -86,12 +87,14 @@ public class DbCategory extends DbItem<Category> {
     }
 
     public static void getCategories(@NonNull AsyncValueEventListener<Category> listener) {
-        DbUtil.getItems(DbUtil.DataType.CATEGORY, listener);
+        DbQuery query = DbQuery.createChildValueQuery("unique_name");
+        DbUtil.getItems(DbUtil.DataType.CATEGORY, query, listener);
     }
 
     @NonNull
     public static DbListenerHandle<?> getCategoriesLive(@NonNull final AsyncValueEventListener<Category> listener) {
-        return DbUtil.getItemsLive(DbUtil.DataType.CATEGORY, listener);
+        DbQuery query = DbQuery.createChildValueQuery("unique_name");
+        return DbUtil.getItemsLive(DbUtil.DataType.CATEGORY, query, listener);
     }
 
 }

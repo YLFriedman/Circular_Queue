@@ -7,6 +7,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -23,14 +24,14 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 public class DbUtilRelational extends DbUtil {
 
     enum RelationType {
-        SERVICE_USERS, USER_SERVICES, USER_BOOKINGS, REVIEW;
+        SERVICE_USERS, USER_SERVICES, USER_BOOKINGS, PROVIDER_REVIEWS;
         @NonNull
         public String toString() {
             switch (this) {
                 case SERVICE_USERS: return "service_users";
                 case USER_SERVICES: return "user_services";
                 case USER_BOOKINGS: return "user_bookings";
-                case REVIEW: return "provider_reviews";
+                case PROVIDER_REVIEWS: return "provider_reviews";
                 default: throw new IllegalArgumentException("Unrecognized type");
             }
         }
@@ -40,7 +41,7 @@ public class DbUtilRelational extends DbUtil {
                 case SERVICE_USERS: return DbUser.class;
                 case USER_SERVICES: return DbService.class;
                 case USER_BOOKINGS: return DbBooking.class;
-                case REVIEW: return DbReview.class;
+                case PROVIDER_REVIEWS: return DbReview.class;
                 default: throw new IllegalArgumentException("Unrecognized type");
             }
         }
@@ -65,18 +66,22 @@ public class DbUtilRelational extends DbUtil {
         }
     }
 
-    static <T> void getItemsRelational(@NonNull final RelationType relationType, @NonNull String childKey, @NonNull final AsyncValueEventListener<T> listener) {
-        getItemsRelational(relationType, childKey, listener, true);
+    static <T> void getItemsRelational(@NonNull final RelationType relationType, @NonNull String childKey, @NonNull DbQuery queryDb, @NonNull final AsyncValueEventListener<T> listener) {
+        getItemsRelational(relationType, childKey, queryDb, listener, true);
     }
 
     @NonNull
-    static <T> DbListenerHandle<ValueEventListener> getItemsRelationalLive(@NonNull final RelationType relationType, @NonNull String childKey, @NonNull final AsyncValueEventListener<T> listener) {
-        return getItemsRelational(relationType, childKey, listener, false);
+    static <T> DbListenerHandle<ValueEventListener> getItemsRelationalLive(@NonNull final RelationType relationType, @NonNull String childKey, @NonNull DbQuery queryDb, @NonNull final AsyncValueEventListener<T> listener) {
+        return getItemsRelational(relationType, childKey, queryDb, listener, false);
     }
 
     @SuppressWarnings("unchecked")
     @NonNull
-    protected static <T> DbListenerHandle<ValueEventListener> getItemsRelational(@NonNull final RelationType relationType, @NonNull String childKey, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
+    private static <T> DbListenerHandle<ValueEventListener> getItemsRelational(@NonNull final RelationType relationType, @NonNull String childKey, @Nullable DbQuery queryDb, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
+        Query query;
+        if (null == queryDb) { query = DbQuery.createKeyQuery().apply(relationType.getRef().child(childKey)); }
+        else { query = queryDb.apply(relationType.getRef().child(childKey)); }
+
         ValueEventListener dataConversionListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -101,12 +106,11 @@ public class DbUtilRelational extends DbUtil {
                 listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
             }
         };
-        DatabaseReference ref = relationType.getRef().child(childKey);
         if (singleEvent) {
-            ref.addListenerForSingleValueEvent(dataConversionListener);
-            return new DbListenerHandle<ValueEventListener>(ref, null);
+            query.addListenerForSingleValueEvent(dataConversionListener);
+            return new DbListenerHandle<ValueEventListener>(query.getRef(), null);
         } else {
-            return new DbListenerHandle<ValueEventListener>(ref, ref.addValueEventListener(dataConversionListener));
+            return new DbListenerHandle<ValueEventListener>(query.getRef(), query.addValueEventListener(dataConversionListener));
         }
     }
 

@@ -32,7 +32,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 public class DbUtil {
 
-    protected static final HashMap<String, DatabaseReference> references = new HashMap<String, DatabaseReference>();
+    private static final HashMap<String, DatabaseReference> references = new HashMap<String, DatabaseReference>();
 
     /**
      * Enum for differentiating between different object types
@@ -66,7 +66,7 @@ public class DbUtil {
         }
     }
 
-    protected static DatabaseReference getRef(String refName) {
+    static DatabaseReference getRef(String refName) {
         DatabaseReference ref = references.get(refName);
         if (null == ref) {
             ref = FirebaseDatabase.getInstance().getReference().child(refName);
@@ -87,7 +87,7 @@ public class DbUtil {
      * @return A DbItem adaptation of the input object
      */
     @NonNull
-    protected static DbItem<?> objectToDbItem(@NonNull Object object) {
+    private static DbItem<?> objectToDbItem(@NonNull Object object) {
         if (object instanceof User) { return new DbUser((User) object); }
         if (object instanceof Service) { return new DbService((Service) object); }
         if (object instanceof Category) { return new DbCategory((Category) object); }
@@ -145,9 +145,22 @@ public class DbUtil {
         });
     }
 
+    static <T> void getItems(@NonNull final DataType type, @NonNull DbQuery queryDb, @NonNull final AsyncValueEventListener<T> listener) {
+        getItems(type, queryDb, listener, true);
+    }
+
+    @NonNull
+    static <T> DbListenerHandle<ValueEventListener> getItemsLive(@NonNull final DataType type, @NonNull DbQuery queryDb, @NonNull final AsyncValueEventListener<T> listener) {
+        return getItems(type, queryDb, listener, false);
+    }
+
     @SuppressWarnings("unchecked")
-    static <T> ValueEventListener getDbToDomainValueListener(@NonNull final DataType type, @NonNull final AsyncValueEventListener<T> listener) {
-        return new ValueEventListener() {
+    private static <T> DbListenerHandle<ValueEventListener> getItems(@NonNull final DataType type, @Nullable DbQuery queryDb, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
+        Query query;
+        if (null == queryDb) { query = DbQuery.createKeyQuery().apply(type.getRef()); }
+        else { query = queryDb.apply(type.getRef()); }
+
+        ValueEventListener dataConversionListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 long size = dataSnapshot.getChildrenCount();
@@ -172,54 +185,7 @@ public class DbUtil {
                 listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
             }
         };
-    }
 
-    static <T> void getItems(@NonNull final DataType type, @NonNull final AsyncValueEventListener<T> listener) {
-        getItems(type, listener, true);
-    }
-
-    @NonNull
-    static <T> DbListenerHandle<ValueEventListener> getItemsLive(@NonNull final DataType type, @NonNull final AsyncValueEventListener<T> listener) {
-        return getItems(type, listener, false);
-    }
-
-    @SuppressWarnings("unchecked")
-    protected static <T> DbListenerHandle<ValueEventListener> getItems(@NonNull final DataType type, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
-        ValueEventListener dataConversionListener = getDbToDomainValueListener(type, listener);
-        DatabaseReference ref = type.getRef();
-        if (singleEvent) {
-            ref.addListenerForSingleValueEvent(dataConversionListener);
-            return new DbListenerHandle<ValueEventListener>(ref, null);
-        } else {
-            return new DbListenerHandle<ValueEventListener>(ref, ref.addValueEventListener(dataConversionListener));
-        }
-    }
-
-    static <T> void getItems(@NonNull final DataType type, @NonNull String childKey, @NonNull String childValue, @NonNull final AsyncValueEventListener<T> listener) {
-        Query query = type.getRef().orderByChild(childKey).equalTo(childValue);
-        getItems(type, query, listener, true);
-    }
-
-    static <T> void getItems(@NonNull final DataType type, @NonNull String childKey, int childValue, @NonNull final AsyncValueEventListener<T> listener) {
-        Query query = type.getRef().orderByChild(childKey).equalTo(childValue);
-        getItems(type, query, listener, true);
-    }
-
-    @NonNull
-    static <T> DbListenerHandle<ValueEventListener> getItemsLive(@NonNull final DataType type, @NonNull String childKey, @NonNull String childValue, @NonNull final AsyncValueEventListener<T> listener) {
-        Query query = type.getRef().orderByChild(childKey).equalTo(childValue);
-        return getItems(type, query, listener, false);
-    }
-
-    @NonNull
-    static <T> DbListenerHandle<ValueEventListener> getItemsLive(@NonNull final DataType type, @NonNull String childKey, int childValue, @NonNull final AsyncValueEventListener<T> listener) {
-        Query query = type.getRef().orderByChild(childKey).equalTo(childValue);
-        return getItems(type, query, listener, false);
-    }
-
-    @SuppressWarnings("unchecked")
-    protected static <T> DbListenerHandle<ValueEventListener> getItems(@NonNull final DataType type, @NonNull Query query, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
-        ValueEventListener dataConversionListener = getDbToDomainValueListener(type, listener);
         if (singleEvent) {
             query.addListenerForSingleValueEvent(dataConversionListener);
             return new DbListenerHandle<ValueEventListener>(query.getRef(), null);
