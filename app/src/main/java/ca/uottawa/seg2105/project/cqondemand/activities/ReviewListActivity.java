@@ -41,7 +41,7 @@ public class ReviewListActivity extends SignedInActivity {
     protected ReviewListAdapter review_list_adapter;
     protected ServiceProvider currentServiceProvider;
     protected User currentUser;
-    protected DbListenerHandle<?> dbListenerHandle;
+    //protected DbListenerHandle<?> dbListenerHandle;
     int itemActionIcon;
 
     @Override
@@ -73,7 +73,7 @@ public class ReviewListActivity extends SignedInActivity {
         ActionBar actionBar = getSupportActionBar();
 
         //Defining UI behaviour when list is received
-        AsyncValueEventListener<Review> listener = new AsyncValueEventListener<Review>() {
+        DbReview.getReviews(currentServiceProvider.getKey(), new AsyncValueEventListener<Review>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Review> data) {
                 review_list_adapter = new ReviewListAdapter(getApplicationContext(), data, itemActionIcon, getItemClickListener());
@@ -83,13 +83,8 @@ public class ReviewListActivity extends SignedInActivity {
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), "Cannot access review at this time" , Toast.LENGTH_LONG).show();
-
             }
-        };
-        dbListenerHandle = DbReview.getReviewsLive(currentServiceProvider.getKey(), listener);
-
-
-
+        });
 
     }
 
@@ -97,7 +92,7 @@ public class ReviewListActivity extends SignedInActivity {
     public void onDestroy() {
         super.onDestroy();
         // Cleanup the data listener for the services list
-        if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
+        //if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
     }
 
     @Override
