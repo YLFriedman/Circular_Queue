@@ -44,10 +44,11 @@ public class ReviewListActivity extends SignedInActivity {
     //protected DbListenerHandle<?> dbListenerHandle;
     int itemActionIcon;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_service_list);
+        setContentView(R.layout.activity_review_list);
         User signedInUser = State.getInstance().getSignedInUser();
 
         if (null == signedInUser) {
@@ -55,19 +56,17 @@ public class ReviewListActivity extends SignedInActivity {
         }
 
         txt_sub_title = findViewById(R.id.txt_sub_title);
-        divider_txt_sub_title = findViewById(R.id.divider_txt_sub_title);
         recycler_list = findViewById(R.id.recycler_list);
         recycler_list.setHasFixedSize(true);
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
-        // Initialize the review components as hidden
-        txt_sub_title.setVisibility(View.GONE);
-        divider_txt_sub_title.setVisibility(View.GONE);
         Intent intent = getIntent();
 
         // Get the current review and current user
         currentServiceProvider = (ServiceProvider) intent.getSerializableExtra("provider");
         currentUser = (User) intent.getSerializableExtra("user");
+
+        txt_sub_title.setText(String.format(getString(R.string.review_template), currentServiceProvider.getCompanyName()));
 
         // Get the action bar
         ActionBar actionBar = getSupportActionBar();
