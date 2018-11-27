@@ -41,12 +41,12 @@
                 app:srcCompat="@drawable/ic_zoom_out_med_30" />
 
             <Button
-                android:id="@+id/btn_save"
+                android:id="@+id/btn_next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
-                android:onClick="onSaveClick"
-                android:text="@string/save" />
+                android:onClick="onNextClick"
+                android:text="@string/next" />
 
             <ImageView
                 android:id="@+id/img_zoom_in"
@@ -1500,11 +1500,12 @@
                 android:id="@+id/txt_month_name"
                 android:layout_width="34dp"
                 android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
                 android:text="@string/mmm"
                 android:textSize="12sp" />
 
             <TextView
-                android:id="@+id/txt_day_num_0"
+                android:id="@+id/txt_sun_num"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -1512,7 +1513,7 @@
                 android:text="@string/hashtag" />
 
             <TextView
-                android:id="@+id/txt_day_num_1"
+                android:id="@+id/txt_mon_num"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -1520,7 +1521,7 @@
                 android:text="@string/hashtag" />
 
             <TextView
-                android:id="@+id/txt_day_num_2"
+                android:id="@+id/txt_tue_num"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -1528,7 +1529,7 @@
                 android:text="@string/hashtag" />
 
             <TextView
-                android:id="@+id/txt_day_num_3"
+                android:id="@+id/txt_wed_num"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -1536,7 +1537,7 @@
                 android:text="@string/hashtag" />
 
             <TextView
-                android:id="@+id/txt_day_num_4"
+                android:id="@+id/txt_thu_num"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -1544,7 +1545,7 @@
                 android:text="@string/hashtag" />
 
             <TextView
-                android:id="@+id/txt_day_num_5"
+                android:id="@+id/txt_fri_num"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -1552,7 +1553,7 @@
                 android:text="@string/hashtag" />
 
             <TextView
-                android:id="@+id/txt_day_num_6"
+                android:id="@+id/txt_sat_num"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

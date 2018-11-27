@@ -9,10 +9,17 @@ import androidx.appcompat.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.database.DbAvailability;
@@ -46,6 +53,12 @@ public class WeekViewActivity extends SignedInActivity {
     protected Cell[][] cells;
     protected ServiceProvider currentProvider;
     protected Service currentService;
+    protected SimpleDateFormat MONTH_FORMAT = new SimpleDateFormat("MMM", Locale.CANADA);
+    protected SimpleDateFormat DAY_FORMAT = new SimpleDateFormat("d", Locale.CANADA);
+    protected SimpleDateFormat TEST_FORMAT = new SimpleDateFormat("MMM d, yyyy", Locale.CANADA);
+    protected TextView txt_month_name;
+    protected TextView[] txt_day_nums;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +80,16 @@ public class WeekViewActivity extends SignedInActivity {
             setContentView(R.layout.activity_week_view_calendar);
             ActionBar actionBar = getSupportActionBar();
             if (null != actionBar) { actionBar.setTitle(R.string.select_timeslot); }
+            txt_month_name = findViewById(R.id.txt_month_name);
+            txt_day_nums = new TextView[7];
+            txt_day_nums[0] = findViewById(R.id.txt_sun_num);
+            txt_day_nums[1] = findViewById(R.id.txt_mon_num);
+            txt_day_nums[2] = findViewById(R.id.txt_tue_num);
+            txt_day_nums[3] = findViewById(R.id.txt_wed_num);
+            txt_day_nums[4] = findViewById(R.id.txt_thu_num);
+            txt_day_nums[5] = findViewById(R.id.txt_fri_num);
+            txt_day_nums[6] = findViewById(R.id.txt_sat_num);
+            setDate(new Date(System.currentTimeMillis()));
         } else if (State.getInstance().getSignedInUser() instanceof ServiceProvider) {
             mode = Mode.AVAILABILITY;
             setContentView(R.layout.activity_week_view_availability);
@@ -116,12 +139,31 @@ public class WeekViewActivity extends SignedInActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    protected void setDate(Date date) {
+        txt_month_name.setText("");
+        for (TextView txt: txt_day_nums) { txt.setText(""); }
+        Calendar cal = Calendar.getInstance(Locale.CANADA);
+        cal.setTime(date);
+        int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+        if (dayOfWeek != 1) { cal.add(Calendar.DAY_OF_MONTH, 1 - dayOfWeek); }
+        txt_month_name.setText(MONTH_FORMAT.format(cal.getTime()).substring(0, 3));
+        for (TextView txt: txt_day_nums) {
+            txt.setText(DAY_FORMAT.format(cal.getTime()));
+            cal.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+    }
+
     private void setAvailabilities(@NonNull boolean[][] availabilities) {
         for (int day = 0; day < 7; day++) {
             for (int time = 0; time < 24; time++) {
                 setCell(day, time, availabilities[day][time] ? CellState.AVAILABLE : CellState.UNAVAILABLE);
             }
         }
+    }
+
+    public void onNextClick(View view) {
+
     }
 
     public void onSaveClick(View view) {
