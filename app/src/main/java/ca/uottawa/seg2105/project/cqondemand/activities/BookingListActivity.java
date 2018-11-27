@@ -1,7 +1,6 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import ca.uottawa.seg2105.project.cqondemand.R;
@@ -15,17 +14,12 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 import android.content.Intent;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.Serializable;
-import java.io.UncheckedIOException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 
 public class BookingListActivity extends SignedInActivity {
@@ -46,8 +40,8 @@ public class BookingListActivity extends SignedInActivity {
     protected boolean itemClickEnabled = true;
     protected RecyclerView recycler_list;
     protected DbListenerHandle<?> dbListenerHandle;
-    protected Button[] tabButtons;
-    protected String[] tabStringTemplates;
+    protected Button[] buttons;
+    protected String[] tabTitles;
     protected ArrayList<ArrayList<Booking>> dataLists;
 
     @SuppressWarnings("unchecked")
@@ -59,21 +53,20 @@ public class BookingListActivity extends SignedInActivity {
         User signedInUser = State.getInstance().getSignedInUser();
         if (null == signedInUser) { return; }
 
-        tabButtons = new Button[4];
-        tabButtons[0] = findViewById(R.id.btn_tab_booked);
-        tabButtons[1] = findViewById(R.id.btn_tab_pending);
-        tabButtons[2] = findViewById(R.id.btn_tab_cancelled);
-        tabButtons[3] = findViewById(R.id.btn_tab_past);
+        buttons = new Button[4];
+        buttons[0] = findViewById(R.id.btn_tab_booked);
+        buttons[1] = findViewById(R.id.btn_tab_pending);
+        buttons[2] = findViewById(R.id.btn_tab_cancelled);
+        buttons[3] = findViewById(R.id.btn_tab_past);
 
-        tabStringTemplates = new String[4];
-        tabStringTemplates[0] = getString(R.string.booked_template);
-        tabStringTemplates[1] = getString(R.string.pending_template);
-        tabStringTemplates[2] = getString(R.string.cancelled_template);
-        tabStringTemplates[3] = getString(R.string.past);
+        tabTitles = new String[4];
+        tabTitles[0] = getString(R.string.booked_template);
+        tabTitles[1] = getString(R.string.pending_template);
+        tabTitles[2] = getString(R.string.cancelled_template);
+        tabTitles[3] = getString(R.string.past);
 
         dataLists = new ArrayList<ArrayList<Booking>>(4);
         for (int i = 0; i < 4; i++) { dataLists.add(null); }
-
 
         recycler_list = findViewById(R.id.recycler_list);
         recycler_list.setHasFixedSize(true);
@@ -135,13 +128,13 @@ public class BookingListActivity extends SignedInActivity {
 
     protected void setScreen(Screen screen) {
         for (int i = 0; i < Screen.values().length; i++) {
-            tabButtons[i].setBackgroundColor(getResources().getColor(R.color.transparent));
-            tabButtons[i].setTextColor(getResources().getColor(R.color.White));
-            tabButtons[i].setText(String.format(tabStringTemplates[i], (null == dataLists.get(i) ? 0 : dataLists.get(i).size())));
+            buttons[i].setBackgroundColor(getResources().getColor(R.color.transparent));
+            buttons[i].setTextColor(getResources().getColor(R.color.White));
+            buttons[i].setText(String.format(tabTitles[i], (null == dataLists.get(i) ? 0 : dataLists.get(i).size())));
         }
-        //tabButtons[screen.getIdx()].setPaintFlags(tabButtons[bIdx].getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        tabButtons[screen.getIdx()].setBackgroundColor(getResources().getColor(R.color.background_default));
-        tabButtons[screen.getIdx()].setTextColor(getResources().getColor(R.color.text_primary_dark));
+        //buttons[screen.getIdx()].setPaintFlags(buttons[bIdx].getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        buttons[screen.getIdx()].setBackgroundColor(getResources().getColor(R.color.background_default));
+        buttons[screen.getIdx()].setTextColor(getResources().getColor(R.color.text_primary_dark));
         this.screen = screen;
         setListData();
     }
