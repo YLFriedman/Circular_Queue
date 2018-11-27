@@ -8,12 +8,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.adapters.ReviewListAdapter;
 import ca.uottawa.seg2105.project.cqondemand.database.DbListenerHandle;
 import ca.uottawa.seg2105.project.cqondemand.database.DbReview;
 import ca.uottawa.seg2105.project.cqondemand.domain.Review;
@@ -35,9 +38,9 @@ public class ReviewListActivity extends SignedInActivity {
     TextView txt_sub_title;
     View divider_txt_sub_title;
     protected RecyclerView recycler_list;
+    protected ReviewListAdapter review_list_adapter;
     protected ServiceProvider currentServiceProvider;
     protected User currentUser;
-    protected ServiceProvider currentProvider;
     protected DbListenerHandle<?> dbListenerHandle;
     int itemActionIcon;
 
@@ -73,11 +76,13 @@ public class ReviewListActivity extends SignedInActivity {
         AsyncValueEventListener<Review> listener = new AsyncValueEventListener<Review>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Review> data) {
-
+                review_list_adapter = new ReviewListAdapter(getApplicationContext(), data, itemActionIcon, getItemClickListener());
+                recycler_list.setAdapter(review_list_adapter);
             }
 
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                Toast.makeText(getApplicationContext(), "Cannot access review at this time" , Toast.LENGTH_LONG).show();
 
             }
         };
@@ -105,5 +110,24 @@ public class ReviewListActivity extends SignedInActivity {
         txt_sub_title.setVisibility(View.VISIBLE);
         divider_txt_sub_title.setVisibility(View.VISIBLE);
         txt_sub_title.setText(subTitle);
+    }
+
+    private View.OnClickListener getItemClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(itemClickEnabled == false) {
+                    return;
+                }
+
+                itemClickEnabled = false;
+                Review currentReview = (Review) view.getTag();
+                Intent intent = new Intent(getApplicationContext(), ReviewViewActivity.class);
+                intent.putExtra("review", currentReview);
+                intent.putExtra("provider", currentServiceProvider);
+                startActivity(intent);
+
+            }
+        };
     }
 }
