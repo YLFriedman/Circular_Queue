@@ -9,7 +9,6 @@ import androidx.appcompat.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -18,20 +17,19 @@ import android.widget.Toast;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.LinkedList;
 import java.util.Locale;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
-import ca.uottawa.seg2105.project.cqondemand.database.DbAvailability;
+import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.domain.Availability;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
-import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class WeekViewActivity extends SignedInActivity implements DatePickerDialog.OnDateSetListener {
@@ -51,17 +49,20 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
 
     protected enum Mode { SELECT_TIMESLOT, AVAILABILITY }
     protected Mode mode;
-    protected boolean itemClickEnabled = true;
+    protected boolean itemClickEnabled;
     protected View[][] cellViews;
     protected Cell[][] cells;
     protected ServiceProvider currentProvider;
     protected Service currentService;
     protected SimpleDateFormat MONTH_FORMAT = new SimpleDateFormat("MMM", Locale.CANADA);
     protected SimpleDateFormat DAY_FORMAT = new SimpleDateFormat("d", Locale.CANADA);
+    protected SimpleDateFormat TODAY_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.CANADA);
     protected TextView txt_month_name;
     protected TextView[] txt_day_nums;
     protected Date currentDate;
-    Calendar cal;
+    protected Calendar cal;
+    protected int startAtDayOfWeek;
+    protected int[] requestedCell;
 
 
     @Override
@@ -73,16 +74,42 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
             currentProvider = (ServiceProvider) intent.getSerializableExtra("provider");
             currentService = (Service) intent.getSerializableExtra("service");
         } catch (ClassCastException e) {
-            // TODO: Toast message for invalid type
+            Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
             finish();
             return;
         }
 
-        cal = Calendar.getInstance(Locale.CANADA);
-
         if ((null == currentProvider) == (null == currentService) && null != currentProvider) {
             mode = Mode.SELECT_TIMESLOT;
             setContentView(R.layout.activity_week_view_calendar);
+        } else if (State.getInstance().getSignedInUser() instanceof ServiceProvider) {
+            mode = Mode.AVAILABILITY;
+            setContentView(R.layout.activity_week_view_availability);
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.service_provider_required, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+        // Create the arrays for the cellViews and cells
+        cellViews = new View[7][24];
+        cells = new Cell[7][24];
+        startAtDayOfWeek = 0;
+
+        // Initialize the cellViews and cells arrays
+        for (int day = 0; day < 7; day++) {
+            for (int time = 0; time < 24; time++) {
+                cells[day][time] = new Cell(day, time);
+                cellViews[day][time] = findViewById(getResources().getIdentifier(cells[day][time].getCellName(), "id", getPackageName()));
+                cellViews[day][time].setLongClickable(true);
+                cellViews[day][time].setOnLongClickListener(new CellLongClickListener());
+                cellViews[day][time].setTag(cells[day][time]);
+            }
+        }
+
+        itemClickEnabled = true;
+        cal = Calendar.getInstance(Locale.CANADA);
+
+        if (Mode.SELECT_TIMESLOT == mode) {
             ActionBar actionBar = getSupportActionBar();
             if (null != actionBar) { actionBar.setTitle(R.string.select_timeslot); }
             txt_month_name = findViewById(R.id.txt_month_name);
@@ -95,30 +122,9 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
             txt_day_nums[5] = findViewById(R.id.txt_fri_num);
             txt_day_nums[6] = findViewById(R.id.txt_sat_num);
             setDate(new Date(intent.getLongExtra("date", System.currentTimeMillis())));
-        } else if (State.getInstance().getSignedInUser() instanceof ServiceProvider) {
-            mode = Mode.AVAILABILITY;
-            setContentView(R.layout.activity_week_view_availability);
+        } else if (Mode.AVAILABILITY == mode) {
             currentProvider = (ServiceProvider) State.getInstance().getSignedInUser();
-            onRestoreSavedClick();
-        } else {
-            Toast.makeText(getApplicationContext(), R.string.service_provider_required, Toast.LENGTH_LONG).show();
-            finish();
-            return;
-        }
-
-        // Create the arrays for the cellViews and cells
-        cellViews = new View[7][24];
-        cells = new Cell[7][24];
-
-        // Initialize the cellViews and cells arrays
-        for (int day = 0; day < 7; day++) {
-            for (int time = 0; time < 24; time++) {
-                cells[day][time] = new Cell(day, time);
-                cellViews[day][time] = findViewById(getResources().getIdentifier(cells[day][time].getCellName(), "id", getPackageName()));
-                cellViews[day][time].setLongClickable(true);
-                cellViews[day][time].setOnLongClickListener(new CellLongClickListener());
-                cellViews[day][time].setTag(cells[day][time]);
-            }
+            loadProviderAvailabilities();
         }
 
         ScrollView grid_scroll_view = findViewById(R.id.grid_scroll_view);
@@ -141,25 +147,28 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
         switch (item.getItemId()) {
             case R.id.menu_item_avail_help: onHelpClick(); return true;
             case R.id.menu_item_avail_clear: onClearClick(); return true;
-            case R.id.menu_item_avail_reset: onRestoreSavedClick(); return true;
+            case R.id.menu_item_avail_reset: loadProviderAvailabilities(); return true;
             case R.id.menu_item_select_date: onSelectDateClick(); return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     protected void setDate(Date date) {
+        startAtDayOfWeek = 0;
         currentDate = date;
         txt_month_name.setText("");
         for (TextView txt: txt_day_nums) { txt.setText(""); }
+        String today = TODAY_FORMAT.format(new Date());
         cal.setTime(date);
         int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
         if (dayOfWeek != 1) { cal.add(Calendar.DAY_OF_MONTH, 1 - dayOfWeek); }
         txt_month_name.setText(MONTH_FORMAT.format(cal.getTime()).substring(0, 3));
         for (TextView txt: txt_day_nums) {
+            if (today.equals(TODAY_FORMAT.format(cal.getTime()))) { startAtDayOfWeek = cal.get(Calendar.DAY_OF_WEEK) - 1; }
             txt.setText(DAY_FORMAT.format(cal.getTime()));
             cal.add(Calendar.DAY_OF_MONTH, 1);
         }
-
+        loadProviderAvailabilities();
     }
 
     @Override
@@ -179,34 +188,42 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
     }
 
     private void setAvailabilities(@NonNull boolean[][] availabilities) {
+        requestedCell = null;
         for (int day = 0; day < 7; day++) {
             for (int time = 0; time < 24; time++) {
-                setCell(day, time, availabilities[day][time] ? CellState.AVAILABLE : CellState.UNAVAILABLE);
+                if (day < startAtDayOfWeek) {
+                    setCell(day, time, CellState.UNAVAILABLE);
+                } else {
+                    setCell(day, time, availabilities[day][time] ? CellState.AVAILABLE : CellState.UNAVAILABLE);
+                }
             }
         }
     }
 
     public void onNextClick(View view) {
+        if (null == requestedCell) {
+            Toast.makeText(getApplicationContext(), getString(R.string.timeslot_required), Toast.LENGTH_LONG).show();
+            return;
+        }
 
     }
 
     public void onSaveClick(View view) {
-        if (Mode.AVAILABILITY == mode) {
-            if (!itemClickEnabled) { return; }
-            itemClickEnabled = false;
-            DbAvailability.setAvailabilities(currentProvider, Availability.toList(getAvailabilities()), new AsyncActionEventListener() {
-                @Override
-                public void onSuccess() {
-                    Toast.makeText(getApplicationContext(), getString(R.string.availability_saved_successfully), Toast.LENGTH_LONG).show();
-                    itemClickEnabled = true;
-                }
-                @Override
-                public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                    Toast.makeText(getApplicationContext(), getString(R.string.availability_save_failed), Toast.LENGTH_LONG).show();
-                    itemClickEnabled = true;
-                }
-            });
-        }
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
+        currentProvider.setAvailabilities(Availability.toList(getAvailabilities()));
+        DbUser.updateUser(currentProvider, new AsyncActionEventListener() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(getApplicationContext(), getString(R.string.availability_saved_successfully), Toast.LENGTH_LONG).show();
+                itemClickEnabled = true;
+            }
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                Toast.makeText(getApplicationContext(), getString(R.string.availability_save_failed), Toast.LENGTH_LONG).show();
+                itemClickEnabled = true;
+            }
+        });
     }
 
     private void onHelpClick() {
@@ -236,21 +253,15 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
         setAllCells(CellState.UNAVAILABLE);
     }
 
-    private void onRestoreSavedClick() {
+    private void loadProviderAvailabilities() {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
-        DbAvailability.getAvailabilities(currentProvider, new AsyncValueEventListener<Availability>() {
-            @Override
-            public void onSuccess(@NonNull ArrayList<Availability> data) {
-                setAvailabilities(Availability.toArrays(data));
-                itemClickEnabled = true;
-            }
-            @Override
-            public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                Toast.makeText(getApplicationContext(), getString(R.string.availability_load_failed), Toast.LENGTH_LONG).show();
-                itemClickEnabled = true;
-            }
-        });
+        if (null == currentProvider.getAvailabilities()) {
+            setAvailabilities(Availability.toArrays(new LinkedList<Availability>()));
+        } else {
+            setAvailabilities(Availability.toArrays(currentProvider.getAvailabilities()));
+        }
+        itemClickEnabled = true;
     }
 
     private boolean[][] getAvailabilities() {
@@ -275,7 +286,7 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
         switch (cells[day][time].cellState) {
             case AVAILABLE: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_available); break;
             case BOOKED: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_booked); break;
-            case REQUESTED:
+            case REQUESTED: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_requested); break;
             case UNAVAILABLE:
             default: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_default);
         }
@@ -287,11 +298,46 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
     }
 
     public void onCellClick(View view) {
+        Cell cell;
+        if (view.getTag() instanceof Cell) { cell = (Cell) view.getTag(); }
+        else { return; }
         if (Mode.AVAILABILITY == mode) {
-            Cell cell;
-            if (view.getTag() instanceof Cell) { cell = (Cell) view.getTag(); }
-            else { return; }
             toggleAvailability(cell.day, cell.time);
+        } else if (Mode.SELECT_TIMESLOT == mode) {
+            setRequested(cell.day, cell.time);
+        }
+    }
+
+    public void setRequested(int day, int time) {
+        Cell cell = cells[day][time];
+        if (CellState.AVAILABLE == cell.cellState) {
+            if (null == requestedCell) {
+                setCell(cell.day, cell.time, CellState.REQUESTED);
+                requestedCell = new int[]{ day, time };
+            } else if (requestedCell[0] == day) {
+                int cursor = requestedCell[1];
+                if (time < requestedCell[1]) {
+                    do { requestedCell[1] = cursor; setCell(day, cursor--, CellState.REQUESTED); }
+                    while (cursor >= time && (CellState.AVAILABLE == cells[day][cursor].cellState || CellState.REQUESTED == cells[day][cursor].cellState));
+                } else {
+                    do { setCell(day, cursor++, CellState.REQUESTED); }
+                    while (cursor <= time && (CellState.AVAILABLE == cells[day][cursor].cellState || CellState.REQUESTED == cells[day][cursor].cellState));
+                }
+            } else {
+                loadProviderAvailabilities();
+                setCell(cell.day, cell.time, CellState.REQUESTED);
+                requestedCell = new int[]{ day, time };
+            }
+
+        } else if (CellState.REQUESTED == cell.cellState) {
+            int cursor = time;
+            do { setCell(day, cursor--, CellState.AVAILABLE); }
+            while (cursor >= 0 && CellState.REQUESTED == cells[day][cursor].cellState);
+            cursor = time + 1;
+            while (cursor <= 23 && CellState.REQUESTED == cells[day][cursor].cellState) {
+                setCell(day, cursor++, CellState.AVAILABLE);
+            }
+            requestedCell = null;
         }
     }
 

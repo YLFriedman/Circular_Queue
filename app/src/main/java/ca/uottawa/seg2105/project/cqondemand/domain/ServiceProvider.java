@@ -106,6 +106,10 @@ public class ServiceProvider extends User implements Serializable {
         return availabilities;
     }
 
+    public void setAvailabilities(List<Availability> availabilities) {
+        this.availabilities = availabilities;
+    }
+
     @Override
     public boolean equals(Object otherObj) {
         if (!(otherObj instanceof ServiceProvider)) { return false; }
