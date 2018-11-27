@@ -21,6 +21,9 @@
     <style name="btn_tab_view">
         <item name="android:background">@color/transparent</item>
         <item name="android:textColor">@color/White</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:padding">12dp</item>
     </style>
 
     <style name="panel_button">

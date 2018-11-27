@@ -299,10 +299,10 @@
     <string name="cancelled">Cancelled</string>
     <string name="pending">Pending</string>
     <string name="booked">Booked</string>
-    <string name="past_underline"><u>Past</u></string>
-    <string name="cancelled_underline"><u>Cancelled</u></string>
-    <string name="pending_underline"><u>Pending</u></string>
-    <string name="booked_underline"><u>Booked</u></string>
+    <string name="past_template">Past (%d)</string>
+    <string name="cancelled_template">Cancelled (%d)</string>
+    <string name="pending_template">Pending (%d)</string>
+    <string name="booked_template">Booked (%d)</string>
     <string name="find_availability">Find Availability</string>
     <string name="rating">Rating</string>
     <string name="comments">Comments</string>

@@ -66,6 +66,7 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
             ));
         }
         //viewHolder.img_item_image.setImageResource(R.drawable.ic_account_circle_med_40);
+        viewHolder.img_item_image.setVisibility(View.GONE);
         viewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_med_30);
     }
 
