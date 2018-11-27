@@ -73,6 +73,7 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Vi
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            txt_subtitle = itemView.findViewById(R.id.txt_subtitle);
             txt_subtitle.setVisibility(View.GONE);
             txt_title = itemView.findViewById(R.id.txt_title);
             rating_stars = itemView.findViewById(R.id.rating_stars);

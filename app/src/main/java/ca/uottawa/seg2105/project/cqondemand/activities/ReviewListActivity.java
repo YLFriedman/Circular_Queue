@@ -59,12 +59,14 @@ public class ReviewListActivity extends SignedInActivity {
         recycler_list = findViewById(R.id.recycler_list);
         recycler_list.setHasFixedSize(true);
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        txt_sub_title.setText(String.format(getString(R.string.review_template), currentServiceProvider.getCompanyName()));
+
         Intent intent = getIntent();
 
         // Get the current review and current user
         currentServiceProvider = (ServiceProvider) intent.getSerializableExtra("provider");
         currentUser = (User) intent.getSerializableExtra("user");
+
+        txt_sub_title.setText(String.format(getString(R.string.review_template), currentServiceProvider.getCompanyName()));
 
         // Get the action bar
         ActionBar actionBar = getSupportActionBar();
