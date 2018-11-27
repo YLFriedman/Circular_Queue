@@ -1,3 +1,7 @@
+CircleCi Status
+[![CircleCI](https://circleci.com/gh/YLFriedman/Circular_Queue.svg?style=svg&circle-token=b00d7aced896b3a4e1ca8502f79a6864329f67e3)](https://circleci.com/gh/YLFriedman/Circular_Queue)
+
+
 # CircularQueue
 SEG 2105 Final Project Repository (Fall 2018)
 

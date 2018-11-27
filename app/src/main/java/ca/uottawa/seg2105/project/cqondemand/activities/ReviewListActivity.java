@@ -9,10 +9,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.database.DbListenerHandle;
+import ca.uottawa.seg2105.project.cqondemand.database.DbReview;
 import ca.uottawa.seg2105.project.cqondemand.domain.Review;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
@@ -28,7 +35,7 @@ public class ReviewListActivity extends SignedInActivity {
     TextView txt_sub_title;
     View divider_txt_sub_title;
     protected RecyclerView recycler_list;
-    protected Review currentReview;
+    protected ServiceProvider currentServiceProvider;
     protected User currentUser;
     protected ServiceProvider currentProvider;
     protected DbListenerHandle<?> dbListenerHandle;
@@ -56,13 +63,28 @@ public class ReviewListActivity extends SignedInActivity {
         Intent intent = getIntent();
 
         // Get the current review and current user
-        currentReview = (Review) intent.getSerializableExtra("review");
+        currentServiceProvider = (ServiceProvider) intent.getSerializableExtra("provider");
         currentUser = (User) intent.getSerializableExtra("user");
 
         // Get the action bar
         ActionBar actionBar = getSupportActionBar();
 
-        //dbListenerHandle = DbCategory.getReviewsLive(new AsyncValueEventListener<Review>() {
+        //Defining UI behaviour when list is received
+        AsyncValueEventListener<Review> listener = new AsyncValueEventListener<Review>() {
+            @Override
+            public void onSuccess(@NonNull ArrayList<Review> data) {
+
+            }
+
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+
+            }
+        };
+        dbListenerHandle = DbReview.getReviewsLive(currentServiceProvider.getKey(), listener);
+
+
+
 
     }
 
