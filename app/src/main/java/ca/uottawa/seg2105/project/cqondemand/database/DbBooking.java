@@ -52,43 +52,52 @@ public class DbBooking extends DbItem<Booking> {
         if (item.getDateCancelledOrApproved() != null) {
             date_cancelled_approved = item.getDateCancelledOrApproved().getTime();
         }
-        if (item.getServiceProvider() != null) {
-            service_provider = new DbUser(item.getServiceProvider());
-        } else {
-            homeowner = new DbUser(item.getHomeowner());
-        }
+        if (item.getServiceProvider() != null) { service_provider = new DbUser(item.getServiceProvider()); }
+        if (item.getHomeowner() != null) { homeowner = new DbUser(item.getHomeowner()); }
     }
 
     @NonNull
     public Booking toDomainObj() {
+        if (null == start_time || null == end_time || null == date_created) {
+            throw new InvalidDataException("A booking must have a valid start time, end time and date created.");
+        }
         if (null != service_provider) {
             service_provider.setKey(service_provider_key);
-            return new Booking(key, new Date(start_time),  new Date(end_time),  new Date(date_created), date_cancelled_approved == null ? null : new Date(date_cancelled_approved),
-                    service_provider.toDomainObj(), service_provider_key, homeowner_key, Booking.Status.parse(status), service_name, service_rate, cancelled_reason, true);
+            return new Booking(key, new Date(start_time), new Date(end_time), new Date(date_created), date_cancelled_approved == null ? null : new Date(date_cancelled_approved),
+                    (ServiceProvider) service_provider.toDomainObj(), homeowner_key, Booking.Status.parse(status), service_name, service_rate, cancelled_reason);
         } else if (null != homeowner) {
             homeowner.setKey(homeowner_key);
-            return new Booking(key, new Date(start_time), new Date(end_time),  new Date(date_created), date_cancelled_approved == null ? null : new Date(date_cancelled_approved),
-                    homeowner.toDomainObj(), service_provider_key, homeowner_key, Booking.Status.parse(status), service_name, service_rate, cancelled_reason, false);
+            return new Booking(key, new Date(start_time), new Date(end_time), new Date(date_created), date_cancelled_approved == null ? null : new Date(date_cancelled_approved),
+                    homeowner.toDomainObj(), service_provider_key, Booking.Status.parse(status), service_name, service_rate, cancelled_reason);
         } else {
-            throw new InvalidDataException("A booking must have either a ServiceProvider or a Homeowner");
+            throw new InvalidDataException("A booking must have a ServiceProvider or a Homeowner");
         }
     }
 
-    public static void createBooking(@NonNull Booking withServiceProvider, @NonNull Booking withHomeowner, @Nullable AsyncActionEventListener listener) {
+    public static void createBooking(@NonNull Booking booking, @Nullable AsyncActionEventListener listener) {
+        if (null == booking.getHomeowner() || null == booking.getServiceProvider() ||
+                null == booking.getHomeowner().getKey() || booking.getHomeowner().getKey().isEmpty() ||
+                null == booking.getServiceProvider().getKey() || booking.getServiceProvider().getKey().isEmpty() ) {
+            throw new IllegalArgumentException("A booking with a homeowner and service provider which both have keys is required.");
+        }
+        // Get the keys required for the database paths
         String bookingKey = DbUtil.generateKey();
-        String homeownerKey = withServiceProvider.getHomeownerKey();
-        String serviceProviderKey = withHomeowner.getServiceProviderKey();
-        DbBooking withServiceProviderDB = new DbBooking(withServiceProvider);
-        DbBooking withHomeownerDB = new DbBooking(withHomeowner);
-        String homeownerPath = String.format("user_bookings/%s/%s", homeownerKey, bookingKey);
-        String serviceProviderPath = String.format("user_bookings/%s/%s", serviceProviderKey, bookingKey);
-        String homeownerLookupPath = String.format("user_bookings_lookup/%s/%s/%s", homeownerKey, serviceProviderKey, bookingKey);
-        String serviceProviderLookupPath = String.format("user_bookings_lookup/%s/%s/%s", serviceProviderKey, homeownerKey, bookingKey);
+        String homeownerKey = booking.getHomeownerKey();
+        String serviceProviderKey = booking.getServiceProviderKey();
+        // Create two DbBooking objects, one with a service provider, one with a homeowner
+        DbBooking withServiceProviderDB = new DbBooking(booking);
+        withServiceProviderDB.homeowner = null;
+        DbBooking withHomeownerDB = new DbBooking(booking);
+        withHomeownerDB.service_provider = null;
         HashMap<String, Object> map = new HashMap<>();
-        map.put(homeownerPath, withServiceProviderDB);
-        map.put(serviceProviderPath, withHomeownerDB);
-        map.put(homeownerLookupPath, true);
-        map.put(serviceProviderLookupPath, true);
+        // Add the homeowner path using the DbBooking containing a service provider object
+        map.put(String.format("user_bookings/%s/%s", homeownerKey, bookingKey), withServiceProviderDB);
+        // Add the service provider path using the DbBooking containing a homeowner object
+        map.put(String.format("user_bookings/%s/%s", serviceProviderKey, bookingKey), withHomeownerDB);
+        // Add the lookup paths for both the homeowner and service provider
+        map.put(String.format("user_bookings_lookup/%s/%s/%s", homeownerKey, serviceProviderKey, bookingKey), true);
+        map.put(String.format("user_bookings_lookup/%s/%s/%s", serviceProviderKey, homeownerKey, bookingKey), true);
+        // Send the updates to the databse
         DbUtilRelational.multiPathUpdate(map, listener);
     }
 

@@ -44,33 +44,44 @@ public class Booking implements Serializable {
         }
     }
 
-    public Booking(@NonNull Date startTime, @NonNull Date endTime, @NonNull User providerOrHomeowner, @NonNull String serviceProviderKey, @NonNull String homeownerKey, @NonNull Service service, boolean containsProvider) {
+    public Booking(@NonNull Date startTime, @NonNull Date endTime, @NonNull User homeowner, @NonNull ServiceProvider provider, @NonNull Service service) {
         this.startTime = startTime;
         this.endTime = endTime;
-        this.homeownerKey = homeownerKey;
+        this.homeownerKey = homeowner.getKey();
         this.status = Status.REQUESTED;
         this.dateCreated = new Date();
         this.serviceName = service.getName();
         this.serviceRate = service.getRate();
-        this.serviceProviderKey = serviceProviderKey;
-        if (containsProvider) {
-            this.serviceProvider = (ServiceProvider) providerOrHomeowner;
-            this.homeowner = null;
-        } else {
-            this.homeowner = providerOrHomeowner;
-            this.serviceProvider = null;
-        }
-
+        this.serviceProviderKey = provider.getKey();
+        this.homeowner = homeowner;
+        this.serviceProvider = provider;
     }
 
-    public Booking(@NonNull String key, @NonNull Date startTime, @NonNull Date endTime, @NonNull Date dateCreated, @Nullable Date dateCancelledOrApproved, User providerOrHomeowner, @NonNull String serviceProviderKey,
-                   @NonNull String homeownerKey, @NonNull Status status, @NonNull String serviceName, int serviceRate, @Nullable String cancelledReason, boolean containsProvider) {
-        this(startTime, endTime, providerOrHomeowner, serviceProviderKey, homeownerKey, new Service(serviceName, serviceRate, ""), containsProvider);
+    private Booking (String key, Date startTime, Date endTime, Date dateCreated, Date dateCancelledOrApproved, User homeowner, String homeownerKey,
+                     ServiceProvider provider, String providerKey, Status status, String serviceName, int serviceRate, String cancelledReason) {
         this.key = key;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.dateCreated = dateCreated;
-        this.status = status;
-        this.cancelledReason = cancelledReason;
         this.dateCancelledOrApproved = dateCancelledOrApproved;
+        this.homeowner = homeowner;
+        this.homeownerKey = homeownerKey;
+        this.serviceProvider = provider;
+        this.serviceProviderKey = providerKey;
+        this.status = status;
+        this.serviceName = serviceName;
+        this.serviceRate = serviceRate;
+        this.cancelledReason = cancelledReason;
+    }
+
+    public Booking(@NonNull String key, @NonNull Date startTime, @NonNull Date endTime, @NonNull Date dateCreated, @Nullable Date dateCancelledOrApproved,
+                   @NonNull User homeowner, @NonNull String serviceProviderKey, @NonNull Status status, @NonNull String serviceName, int serviceRate, @Nullable String cancelledReason) {
+        this(key, startTime, endTime, dateCreated, dateCancelledOrApproved, homeowner, homeowner.getKey(), null, serviceProviderKey, status, serviceName, serviceRate, cancelledReason);
+    }
+
+    public Booking(@NonNull String key, @NonNull Date startTime, @NonNull Date endTime, @NonNull Date dateCreated, @Nullable Date dateCancelledOrApproved,
+                   @NonNull ServiceProvider provider, @NonNull String homeownerKey, @NonNull Status status, @NonNull String serviceName, int serviceRate, @Nullable String cancelledReason) {
+        this(key, startTime, endTime, dateCreated, dateCancelledOrApproved, null, homeownerKey, provider, provider.getKey(), status, serviceName, serviceRate, cancelledReason);
     }
 
     public String getKey() {

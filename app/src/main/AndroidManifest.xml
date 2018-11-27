@@ -106,6 +106,7 @@
             android:name=".activities.ReviewListActivity"
             android:label="@string/title_activity_review_list"
             android:screenOrientation="portrait" />
+        <activity android:name=".activities.BookingViewActivity"></activity>
     </application>
 
 </manifest>

@@ -6,7 +6,10 @@ import java.util.Date;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import ca.uottawa.seg2105.project.cqondemand.domain.Address;
 import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
+import ca.uottawa.seg2105.project.cqondemand.domain.Service;
+import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.domain.Review;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
@@ -74,10 +77,10 @@ public class ReviewFunctionTest {
 
         User user = new User("firstName", "lastName", "username", "email",
                 User.Type.ADMIN, "password");
+        Address testAddressA = new Address( "2a", 12, "Bullvue", "Ottawa", "Ontario", "Canada", "K0A1A0");
+        ServiceProvider provider = new ServiceProvider("firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", testAddressA, "description");
 
-        Booking booked = new Booking(new Date(2018), new Date(2019), new Date(2018), user,
-                "SPKey", "HOKey", Booking.Status.APPROVED, "serviceName",
-                10, "cancelledReason", true);
+        Booking booked = new Booking(new Date(2018), new Date(2019), user, provider, new Service("serviceName", 10, ""));
 
         // Test the creation of an object and its getters
         try {

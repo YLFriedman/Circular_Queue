@@ -59,7 +59,7 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
 
             DATE_FORMAT.format(new Date(item.getStartTime().getTime()));
             viewHolder.txt_subtitle.setText(String.format(
-                    "%s  %s to $s",
+                    "%s  %s to %s",
                     DATE_FORMAT.format(new Date(item.getStartTime().getTime())),
                     TIME_FORMAT.format(new Date(item.getStartTime().getTime())),
                     TIME_FORMAT.format(new Date(item.getEndTime().getTime()))

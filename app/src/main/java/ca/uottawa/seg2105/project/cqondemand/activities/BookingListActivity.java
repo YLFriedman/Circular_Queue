@@ -15,9 +15,12 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.Serializable;
@@ -35,6 +38,10 @@ public class BookingListActivity extends SignedInActivity {
     protected ArrayList<Booking> dataPending;
     protected ArrayList<Booking> dataCancelled;
     protected ArrayList<Booking> dataPast;
+    protected Button btn_tab_booked;
+    protected Button btn_tab_pending;
+    protected Button btn_tab_cancelled;
+    protected Button btn_tab_past;
 
 
     @Override
@@ -45,6 +52,12 @@ public class BookingListActivity extends SignedInActivity {
         User signedInUser = State.getInstance().getSignedInUser();
         if (null == signedInUser) { return; }
 
+        btn_tab_booked = findViewById(R.id.btn_tab_booked);
+        btn_tab_pending = findViewById(R.id.btn_tab_pending);
+        btn_tab_cancelled = findViewById(R.id.btn_tab_cancelled);
+        btn_tab_past = findViewById(R.id.btn_tab_past);
+
+        btn_tab_booked.setPaintFlags(btn_tab_booked.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         screen = Screen.BOOKED;
         recycler_list = findViewById(R.id.recycler_list);
         recycler_list.setHasFixedSize(true);
@@ -59,7 +72,7 @@ public class BookingListActivity extends SignedInActivity {
                 dataPast = new ArrayList<Booking>();
                 Long now = System.currentTimeMillis();
                 for (Booking booking: data) {
-                    if (booking.getEndTime().getTime() > now) {
+                    if (booking.getEndTime().getTime() < now) {
                         dataPast.add(booking);
                     } else {
                         switch (booking.getStatus()) {
@@ -105,6 +118,17 @@ public class BookingListActivity extends SignedInActivity {
     protected void setScreen(Screen screen) {
         if (this.screen != screen) {
             this.screen = screen;
+            btn_tab_booked.setPaintFlags(btn_tab_booked.getPaintFlags() & (~ Paint.UNDERLINE_TEXT_FLAG));
+            btn_tab_pending.setPaintFlags(btn_tab_pending.getPaintFlags() & (~ Paint.UNDERLINE_TEXT_FLAG));
+            btn_tab_cancelled.setPaintFlags(btn_tab_cancelled.getPaintFlags() & (~ Paint.UNDERLINE_TEXT_FLAG));
+            btn_tab_past.setPaintFlags(btn_tab_past.getPaintFlags() & (~ Paint.UNDERLINE_TEXT_FLAG));
+            switch (screen) {
+                case PENDING: btn_tab_pending.setPaintFlags(btn_tab_pending.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG); break;
+                case CANCELLED: btn_tab_cancelled.setPaintFlags(btn_tab_cancelled.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG); break;
+                case PAST: btn_tab_past.setPaintFlags(btn_tab_past.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG); break;
+                case BOOKED:
+                default: btn_tab_booked.setPaintFlags(btn_tab_booked.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG); break;
+            }
             setListData();
         }
     }
@@ -121,10 +145,10 @@ public class BookingListActivity extends SignedInActivity {
         recycler_list.setAdapter(new BookingListAdapter(getApplicationContext(), data, new View.OnClickListener() {
             public void onClick(final View view) {
                 if (!itemClickEnabled) { return; }
-                        /*itemClickEnabled = false;
-                        Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
-                        intent.putExtra("booking", (Serializable) view.getTag());
-                        startActivityForResult(intent, 0);*/
+                itemClickEnabled = false;
+                Intent intent = new Intent(getApplicationContext(), BookingViewActivity.class);
+                intent.putExtra("booking", (Serializable) view.getTag());
+                startActivityForResult(intent, 0);
             }
         }));
     }

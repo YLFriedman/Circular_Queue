@@ -156,6 +156,9 @@
     <string name="category_delete_db_error">Unable to delete the \'%s\' category at this time due to a database error. Please try again later.</string>
     <string name="item_remove_db_error_template">Unable to remove the \'%s\' %s at this time due to a database error. Please try again later.</string>
     <string name="item_remove_error_template">Unable to remove the \'%s\' %s at this time. Please try again later.</string>
+    <string name="item_create_success_template">The \'%s\' %s has been successfully created.</string>
+    <string name="item_create_error_template">Unable to create the \'%s\' %s at this time. Please try again later.</string>
+    <string name="item_create_db_error_template">Unable to create the \'%s\' %s at this time due to a database error. Please try again later.</string>
     <string name="category_delete_has_services_error">Unable to delete the \'%s\' category because it has services assigned to it. Please re-assign the services, then delete.</string>
     <string name="category_delete_success">The \'%s\' category has been successfully deleted.</string>
     <string name="service_details_db_error">There was an error getting the service details from the database. Please try again later.</string>
@@ -277,6 +280,7 @@
     <string name="loading_">Loading...</string>
     <string name="apply">Apply</string>
     <string name="my_bookings">My Bookings</string>
+    <string name="booking">Booking</string>
     <string name="book_service">Book a Service</string>
     <string name="no_providers_found">Sorry, no one is currently providing this service.  \nPlease press back to select a different service or check back later.</string>
     <string name="filter_providers">Filter Providers</string>
@@ -295,6 +299,10 @@
     <string name="cancelled">Cancelled</string>
     <string name="pending">Pending</string>
     <string name="booked">Booked</string>
+    <string name="past_underline"><u>Past</u></string>
+    <string name="cancelled_underline"><u>Cancelled</u></string>
+    <string name="pending_underline"><u>Pending</u></string>
+    <string name="booked_underline"><u>Booked</u></string>
     <string name="find_availability">Find Availability</string>
     <string name="rating">Rating</string>
     <string name="comments">Comments</string>
