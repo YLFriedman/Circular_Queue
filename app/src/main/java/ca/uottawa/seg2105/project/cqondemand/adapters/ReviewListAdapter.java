@@ -43,7 +43,7 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Vi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.recycler_list_title_subtitle, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.recycler_list_service_provider_picker, parent, false);
         if (null != clickListener) { view.setOnClickListener(clickListener); }
         return new ViewHolder(view);
     }
@@ -55,8 +55,7 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Vi
         viewHolder.itemView.setTag(item);
         if (null != item) {
             viewHolder.txt_title.setText(item.getReviewerName());
-            //TO BE CHANGED TO STARS LATER
-            viewHolder.txt_subtitle.setText(item.getRating() + "/" + 5);
+            rating_stars.setRating(item.getRating());
         }
         viewHolder.img_nav.setImageResource(icon);
     }
@@ -74,8 +73,9 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Vi
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            txt_subtitle.setVisibility(View.GONE);
             txt_title = itemView.findViewById(R.id.txt_title);
-            txt_subtitle = itemView.findViewById(R.id.txt_subtitle);
+            rating_stars = itemView.findViewById(R.id.rating_stars);
             img_nav = itemView.findViewById(R.id.img_nav);
         }
 
