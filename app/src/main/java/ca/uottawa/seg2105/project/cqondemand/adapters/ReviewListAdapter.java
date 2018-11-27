@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import ca.uottawa.seg2105.project.cqondemand.domain.Review;
 public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.ViewHolder> {
 
     private int icon = R.drawable.ic_chevron_right_med_30;
+    private RatingBar rating_stars;
     private Context context;
     private ArrayList<Review> data;
     private View.OnClickListener clickListener;

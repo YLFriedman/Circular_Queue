@@ -225,24 +225,12 @@ public class SignInActivity extends AppCompatActivity {
                 "cqpass", "Spaces Allowed", true, "6132453125", address, "I'm gaaaaaaaaaay", 0, 0, 0, null);
         System.out.println("OUTPUT");
         User user = new User("-LRYCsBuPG8E1gmy6otV", "Test", "Homeowner", "Hope", "thisworks@mail.com", User.Type.HOMEOWNER, Authentication.genHash("cqpass"));
-        //Booking withProvider = new Booking(date, date, null, provides, provides.getKey(), user.getKey(), Booking.Status.REQUESTED, "Extra Nutty", 69, null, true);
-        //Booking withHomeowner = new Booking("-LSAxH1J826LorP7qVzE", date, date, date, null, user, provides.getKey(), user.getKey(), Booking.Status.REQUESTED, "Extra Nutty", 69, null, false);
-        //withProvider.setKey("-LSB6L4Zq_hFaIH2it1b");
-
-        //Review review = new Review(5, "Great Job!", user, withHomeowner);
-
-        DbReview.getReviews(provider.getKey(), new AsyncValueEventListener<Review>() {
-            @Override
-            public void onSuccess(@NonNull ArrayList<Review> data) {
-                Review review = data.get(0);
-                System.out.println(review.getComment());
-            }
-
-            @Override
-            public void onFailure(@NonNull AsyncEventFailureReason reason) {
-
-            }
-        });
+        State state = State.getInstance();
+        state.setSignedInUser(user);
+        Intent intent = new Intent(getApplicationContext(), ReviewListActivity.class);
+        intent.putExtra("user", user);
+        intent.putExtra("provider", provider);
+        startActivity(intent);
 
 
     }
