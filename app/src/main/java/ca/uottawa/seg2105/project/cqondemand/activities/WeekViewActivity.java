@@ -11,15 +11,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.database.DbAvailability;
@@ -31,7 +34,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
-public class WeekViewActivity extends SignedInActivity {
+public class WeekViewActivity extends SignedInActivity implements DatePickerDialog.OnDateSetListener {
 
     protected enum CellState { UNAVAILABLE, AVAILABLE, BOOKED, REQUESTED }
     protected class Cell {
@@ -55,9 +58,10 @@ public class WeekViewActivity extends SignedInActivity {
     protected Service currentService;
     protected SimpleDateFormat MONTH_FORMAT = new SimpleDateFormat("MMM", Locale.CANADA);
     protected SimpleDateFormat DAY_FORMAT = new SimpleDateFormat("d", Locale.CANADA);
-    protected SimpleDateFormat TEST_FORMAT = new SimpleDateFormat("MMM d, yyyy", Locale.CANADA);
     protected TextView txt_month_name;
     protected TextView[] txt_day_nums;
+    protected Date currentDate;
+    Calendar cal;
 
 
     @Override
@@ -74,6 +78,7 @@ public class WeekViewActivity extends SignedInActivity {
             return;
         }
 
+        cal = Calendar.getInstance(Locale.CANADA);
 
         if ((null == currentProvider) == (null == currentService) && null != currentProvider) {
             mode = Mode.SELECT_TIMESLOT;
@@ -89,7 +94,7 @@ public class WeekViewActivity extends SignedInActivity {
             txt_day_nums[4] = findViewById(R.id.txt_thu_num);
             txt_day_nums[5] = findViewById(R.id.txt_fri_num);
             txt_day_nums[6] = findViewById(R.id.txt_sat_num);
-            setDate(new Date(System.currentTimeMillis()));
+            setDate(new Date(intent.getLongExtra("date", System.currentTimeMillis())));
         } else if (State.getInstance().getSignedInUser() instanceof ServiceProvider) {
             mode = Mode.AVAILABILITY;
             setContentView(R.layout.activity_week_view_availability);
@@ -116,6 +121,8 @@ public class WeekViewActivity extends SignedInActivity {
             }
         }
 
+        ScrollView grid_scroll_view = findViewById(R.id.grid_scroll_view);
+        grid_scroll_view.scrollTo(0, dpToPx(252));
     }
 
     @Override
@@ -135,14 +142,15 @@ public class WeekViewActivity extends SignedInActivity {
             case R.id.menu_item_avail_help: onHelpClick(); return true;
             case R.id.menu_item_avail_clear: onClearClick(); return true;
             case R.id.menu_item_avail_reset: onRestoreSavedClick(); return true;
+            case R.id.menu_item_select_date: onSelectDateClick(); return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     protected void setDate(Date date) {
+        currentDate = date;
         txt_month_name.setText("");
         for (TextView txt: txt_day_nums) { txt.setText(""); }
-        Calendar cal = Calendar.getInstance(Locale.CANADA);
         cal.setTime(date);
         int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
         if (dayOfWeek != 1) { cal.add(Calendar.DAY_OF_MONTH, 1 - dayOfWeek); }
@@ -152,6 +160,22 @@ public class WeekViewActivity extends SignedInActivity {
             cal.add(Calendar.DAY_OF_MONTH, 1);
         }
 
+    }
+
+    @Override
+    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+        setDate(new GregorianCalendar(year, monthOfYear, dayOfMonth).getTime());
+    }
+
+    public void onSelectDateClick() {
+        cal.setTime(currentDate);
+        DatePickerDialog dpd = DatePickerDialog.newInstance(this, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+        dpd.setAccentColor(getResources().getColor(R.color.colorPrimary));
+        dpd.setOkColor(getResources().getColor(R.color.dialog_red));
+        dpd.setCancelColor(getResources().getColor(R.color.text_secondary_dark));
+        cal.setTime(new Date());
+        dpd.setMinDate(cal);
+        dpd.show(getSupportFragmentManager(), "date_select");
     }
 
     private void setAvailabilities(@NonNull boolean[][] availabilities) {

@@ -24,4 +24,7 @@
     <color name="black_overlay">#66000000</color>
     <color name="transparent">#00000000</color>
 
+    <color name="mdtp_accent_color">@color/colorPrimary</color>
+    <color name="mdtp_accent_color_dark">@color/colorPrimaryDark</color>
+
 </resources>
