@@ -132,6 +132,12 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        itemClickEnabled = true;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.week_view_options, menu);
         if (Mode.AVAILABILITY == mode) {
@@ -154,18 +160,24 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
     }
 
     protected void setDate(Date date) {
+        Date currentDate;
         startAtDayOfWeek = 0;
         currentDate = date;
         txt_month_name.setText("");
         for (TextView txt: txt_day_nums) { txt.setText(""); }
         String today = TODAY_FORMAT.format(new Date());
         cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
         int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
         if (dayOfWeek != 1) { cal.add(Calendar.DAY_OF_MONTH, 1 - dayOfWeek); }
         txt_month_name.setText(MONTH_FORMAT.format(cal.getTime()).substring(0, 3));
         for (TextView txt: txt_day_nums) {
             if (today.equals(TODAY_FORMAT.format(cal.getTime()))) { startAtDayOfWeek = cal.get(Calendar.DAY_OF_WEEK) - 1; }
-            txt.setText(DAY_FORMAT.format(cal.getTime()));
+            currentDate = cal.getTime();
+            txt.setText(DAY_FORMAT.format(currentDate));
+            txt.setTag(currentDate);
             cal.add(Calendar.DAY_OF_MONTH, 1);
         }
         loadProviderAvailabilities();
@@ -201,11 +213,35 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
     }
 
     public void onNextClick(View view) {
+        if (!itemClickEnabled) { return; }
         if (null == requestedCell) {
             Toast.makeText(getApplicationContext(), getString(R.string.timeslot_required), Toast.LENGTH_LONG).show();
             return;
         }
+        cal.setTime((Date) txt_day_nums[requestedCell[0]].getTag());
+        cal.set(Calendar.HOUR_OF_DAY, requestedCell[1]);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        if (cal.getTimeInMillis() < System.currentTimeMillis()) {
+            Toast.makeText(getApplicationContext(), getString(R.string.start_time_in_the_past), Toast.LENGTH_LONG).show();
+            return;
+        }
+        long startTime = cal.getTimeInMillis();
+        int day = requestedCell[0];
+        int time = requestedCell[1] + 1;
+        while (CellState.REQUESTED == cells[day][time].cellState) {
+            time++;
+        }
+        cal.set(Calendar.HOUR_OF_DAY, time);
+        long endTime = cal.getTimeInMillis();
 
+        itemClickEnabled = false;
+        Intent intent = new Intent(getApplicationContext(), BookingCreateActivity.class);
+        intent.putExtra("provider", currentProvider);
+        intent.putExtra("service", currentService);
+        intent.putExtra("start_time", startTime);
+        intent.putExtra("end_time", endTime);
+        startActivity(intent);
     }
 
     public void onSaveClick(View view) {
@@ -250,7 +286,10 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
     }
 
     private void onClearClick() {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
         setAllCells(CellState.UNAVAILABLE);
+        itemClickEnabled = true;
     }
 
     private void loadProviderAvailabilities() {

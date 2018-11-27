@@ -17,7 +17,7 @@
     <string name="title_activity_service_edit">Edit Service Details</string>
     <string name="title_activity_service_list">Services</string>
     <string name="title_activity_availability_week_view">Availabilities</string>
-    <string name="title_activity_booking_create">Create a Booking</string>
+    <string name="title_activity_booking_create">Confirm Booking</string>
     <string name="title_activity_booking_list">My Bookings</string>
     <string name="title_activity_service_provider_picker">Pick a Service Provider</string>
     <string name="title_activity_service_provider_profile">Service Provider Profile</string>
@@ -265,6 +265,7 @@
     <string name="tips">Tips</string>
     <string name="select_timeslot">Select a Timeslot</string>
     <string name="timeslot_required">Please select a timeslot to continue.</string>
+    <string name="start_time_in_the_past">Please select start time that is in the future. </string>
     <string name="avail_tip_1">- Tap on a timeslot to toggle it between available and unavailable.</string>
     <string name="avail_tip_2">- Long press on an unavailable timeslot to mark it, and the timeslots above it (up to an available timeslot), as available.</string>
     <string name="avail_tip_3">- Long press on an available timeslot to mark it, and the connected timeslots above and below it, as unavailable.</string>
@@ -306,4 +307,8 @@
     <string name="mmm">MMM</string>
     <string name="date">Date</string>
     <string name="select_date">Select a Date</string>
+    <string name="start_time">Start Time</string>
+    <string name="end_time">End Time</string>
+    <string name="time">Time</string>
+    <string name="submit_request">Submit Request</string>
 </resources>

@@ -221,17 +221,17 @@ public class SignInActivity extends AppCompatActivity {
         Address address = new Address("45", 2546, "Easy st.", "Ottawa", "Ontario", "Canada", "K1Z5N9");
         java.sql.Timestamp date = new Timestamp(System.currentTimeMillis());
 
-        ServiceProvider provides = new ServiceProvider("-LRTteBm1Bvhh8KMiGd_", "MOMMY", "please", "DONOTspankme", "bad@boy.com",
+        ServiceProvider provider = new ServiceProvider("-LRTteBm1Bvhh8KMiGd_", "MOMMY", "please", "DONOTspankme", "bad@boy.com",
                 "cqpass", "Spaces Allowed", true, "6132453125", address, "I'm gaaaaaaaaaay", 0, 0, 0, null);
         System.out.println("OUTPUT");
         User user = new User("-LRYCsBuPG8E1gmy6otV", "Test", "Homeowner", "Hope", "thisworks@mail.com", User.Type.HOMEOWNER, Authentication.genHash("cqpass"));
-        Booking withProvider = new Booking(date, date, null, provides, provides.getKey(), user.getKey(), Booking.Status.REQUESTED, "Extra Nutty", 69, null, true);
-        Booking withHomeowner = new Booking("-LSAxH1J826LorP7qVzE", date, date, date, null, user, provides.getKey(), user.getKey(), Booking.Status.REQUESTED, "Extra Nutty", 69, null, false);
-        withProvider.setKey("-LSB6L4Zq_hFaIH2it1b");
+        //Booking withProvider = new Booking(date, date, null, provides, provides.getKey(), user.getKey(), Booking.Status.REQUESTED, "Extra Nutty", 69, null, true);
+        //Booking withHomeowner = new Booking("-LSAxH1J826LorP7qVzE", date, date, date, null, user, provides.getKey(), user.getKey(), Booking.Status.REQUESTED, "Extra Nutty", 69, null, false);
+        //withProvider.setKey("-LSB6L4Zq_hFaIH2it1b");
 
-        Review review = new Review(5, "Great Job!", user, withHomeowner);
+        //Review review = new Review(5, "Great Job!", user, withHomeowner);
 
-        DbReview.getReviews(provides.getKey(), new AsyncValueEventListener<Review>() {
+        DbReview.getReviews(provider.getKey(), new AsyncValueEventListener<Review>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Review> data) {
                 Review review = data.get(0);

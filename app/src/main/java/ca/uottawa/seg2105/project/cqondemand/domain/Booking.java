@@ -44,17 +44,14 @@ public class Booking implements Serializable {
         }
     }
 
-    public Booking(@NonNull Date startTime, @NonNull Date endTime, @Nullable Date dateCancelledOrApproved, User providerOrHomeowner, @NonNull String serviceProviderKey,
-                   @NonNull String homeownerKey, @NonNull Status status, @NonNull String serviceName, int serviceRate, @Nullable String cancelledReason, boolean containsProvider) {
+    public Booking(@NonNull Date startTime, @NonNull Date endTime, @NonNull User providerOrHomeowner, @NonNull String serviceProviderKey, @NonNull String homeownerKey, @NonNull Service service, boolean containsProvider) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.homeownerKey = homeownerKey;
-        this.status = status;
-        this.cancelledReason = cancelledReason;
+        this.status = Status.REQUESTED;
         this.dateCreated = new Date();
-        this.dateCancelledOrApproved = dateCancelledOrApproved;
-        this.serviceName = serviceName;
-        this.serviceRate = serviceRate;
+        this.serviceName = service.getName();
+        this.serviceRate = service.getRate();
         this.serviceProviderKey = serviceProviderKey;
         if (containsProvider) {
             this.serviceProvider = (ServiceProvider) providerOrHomeowner;
@@ -68,14 +65,13 @@ public class Booking implements Serializable {
 
     public Booking(@NonNull String key, @NonNull Date startTime, @NonNull Date endTime, @NonNull Date dateCreated, @Nullable Date dateCancelledOrApproved, User providerOrHomeowner, @NonNull String serviceProviderKey,
                    @NonNull String homeownerKey, @NonNull Status status, @NonNull String serviceName, int serviceRate, @Nullable String cancelledReason, boolean containsProvider) {
-        this(startTime, endTime, dateCancelledOrApproved, providerOrHomeowner, serviceProviderKey, homeownerKey, status, serviceName, serviceRate, cancelledReason, containsProvider);
+        this(startTime, endTime, providerOrHomeowner, serviceProviderKey, homeownerKey, new Service(serviceName, serviceRate, ""), containsProvider);
         this.key = key;
         this.dateCreated = dateCreated;
-
+        this.status = status;
+        this.cancelledReason = cancelledReason;
+        this.dateCancelledOrApproved = dateCancelledOrApproved;
     }
-
-    // TODO: Delete key setter after testing complete
-    public void setKey(String key) { this.key = key; }
 
     public String getKey() {
         return key;
@@ -128,7 +124,5 @@ public class Booking implements Serializable {
     public String getHomeownerKey() {
         return homeownerKey;
     }
-
-
 
 }

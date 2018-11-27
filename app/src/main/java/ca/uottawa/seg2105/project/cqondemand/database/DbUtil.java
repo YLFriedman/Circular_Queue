@@ -75,6 +75,10 @@ public class DbUtil {
         return ref;
     }
 
+    static String generateKey() {
+        return FirebaseDatabase.getInstance().getReference().push().getKey();
+    }
+
     /**
      * Method for creating a DbItem adapted from a domain object. The input object must be of type
      * Service, User or Category. Throws an IllegalArgumentException if passed any other type of object

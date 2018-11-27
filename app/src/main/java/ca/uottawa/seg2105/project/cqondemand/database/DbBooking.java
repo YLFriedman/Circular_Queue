@@ -25,13 +25,11 @@ public class DbBooking extends DbItem<Booking> {
 
     public String status;
     public String service_name;
-
     public Integer service_rate;
     public Long start_time;
     public Long end_time;
     public Long date_created;
     public Long date_cancelled_approved;
-
     public String cancelled_reason;
     public DbUser service_provider;
     public String service_provider_key;
@@ -76,9 +74,8 @@ public class DbBooking extends DbItem<Booking> {
         }
     }
 
-    public static void createBooking(@NonNull Booking withServiceProvider, @NonNull Booking withHomeowner, @Nullable AsyncActionEventListener listener){
-        DatabaseReference keyMaker = FirebaseDatabase.getInstance().getReference().push();
-        String bookingKey = keyMaker.getKey();
+    public static void createBooking(@NonNull Booking withServiceProvider, @NonNull Booking withHomeowner, @Nullable AsyncActionEventListener listener) {
+        String bookingKey = DbUtil.generateKey();
         String homeownerKey = withServiceProvider.getHomeownerKey();
         String serviceProviderKey = withHomeowner.getServiceProviderKey();
         DbBooking withServiceProviderDB = new DbBooking(withServiceProvider);
