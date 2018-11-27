@@ -160,7 +160,6 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
     }
 
     protected void setDate(Date date) {
-        Date currentDate;
         startAtDayOfWeek = 0;
         currentDate = date;
         txt_month_name.setText("");
@@ -175,9 +174,8 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
         txt_month_name.setText(MONTH_FORMAT.format(cal.getTime()).substring(0, 3));
         for (TextView txt: txt_day_nums) {
             if (today.equals(TODAY_FORMAT.format(cal.getTime()))) { startAtDayOfWeek = cal.get(Calendar.DAY_OF_WEEK) - 1; }
-            currentDate = cal.getTime();
-            txt.setText(DAY_FORMAT.format(currentDate));
-            txt.setTag(currentDate);
+            txt.setText(DAY_FORMAT.format(cal.getTime()));
+            txt.setTag(cal.getTime());
             cal.add(Calendar.DAY_OF_MONTH, 1);
         }
         loadProviderAvailabilities();
