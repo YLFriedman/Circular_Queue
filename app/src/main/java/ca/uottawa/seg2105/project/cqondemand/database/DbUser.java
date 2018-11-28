@@ -252,13 +252,13 @@ public class DbUser extends DbItem<User> {
         String objectType;
         if (User.Type.parse(updatedUser.type) == User.Type.HOMEOWNER) { objectType = "homeowner"; }
         else { objectType = "service_provider"; }
-        String lookupPath = String.format("user_bookings_lookup/%s", userKey);
+        String lookupPath = String.format("%s/%s", DbUtilRelational.LookupType.USER_BOOKINGS, userKey);
         DbUtilRelational.getRef(lookupPath).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot assoc: dataSnapshot.getChildren()) {
                     for (DataSnapshot booking: assoc.getChildren()) {
-                        String updatePath = String.format("user_bookings/%s/%s/%s", assoc.getKey(), booking.getKey(), objectType);
+                        String updatePath = String.format("%s/%s/%s/%s", DbUtilRelational.RelationType.USER_BOOKINGS, assoc.getKey(), booking.getKey(), objectType);
                         map.put(updatePath, updatedUser);
                     }
                 }
