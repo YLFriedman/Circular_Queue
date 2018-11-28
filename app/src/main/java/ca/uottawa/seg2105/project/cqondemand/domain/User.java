@@ -15,7 +15,7 @@ public class User implements Serializable {
     protected String key;
     /**
      * The class User allows for the creation of User objects, and stores the pertinent values for each User.
-     * Users can be of type Homeowner, Service Provider or Admin. Getters or Setters for all mutable values
+     * Users can be of type Homeowner, Service Provider or Admin. Getters for all mutable values
      * are also provided.
      */
     protected String firstName;
@@ -55,9 +55,8 @@ public class User implements Serializable {
     }
 
     /**
-     * Constructor for User objects. This constructor supports users of type Homeowner and of type Service Provider
+     * Constructor for User objects. Does not require a key.
      *
-     * @throws IllegalArgumentException if any of the parameters are null
      * @param firstName The first name of the user
      * @param lastName The last name of the user
      * @param username The Username (Used as a unique identifier)
@@ -80,16 +79,35 @@ public class User implements Serializable {
         this.password = password;
     }
 
+    /**
+     * Constructor for User objects. Requires a database Key
+     *
+     * @param key  the database key
+     * @param firstName The first name of the user
+     * @param lastName The last name of the user
+     * @param username The Username (Used as a unique identifier)
+     * @param email The user's email address
+     * @param type The type of the account
+     * @param password The user's password
+     */
     public User(@NonNull String key, @NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull Type type, @NonNull String password) {
         this(firstName, lastName, username, email, type, password);
         if (null == key || key.isEmpty()) { throw new InvalidDataException("The key cannot be null or empty."); }
         this.key = key;
     }
 
+    /**
+     * Method to get a User's full name
+     * @return A string containing the user's first and last names
+     */
     public String getFullName() {
         return String.format("%s %s", firstName, lastName);
     }
 
+    /**
+     * Getter for the database key associated with a User
+     * @return the associated key
+     */
     public String getKey() {
         return key;
     }
@@ -142,16 +160,30 @@ public class User implements Serializable {
         return type;
     }
 
+    /**
+     * Gets the unique username of this User
+     * @return the unique username
+     */
     public String getUniqueName() {
         return getUniqueName(username);
     }
 
+    /**
+     * Generates a unique name based in an input string
+     * @param username input string
+     * @return a unique version of the input. All letters set to lowercase, spaces and other special characters replaces by underscores
+     */
     public static String getUniqueName(@NonNull String username) {
         String uniqueName = username.toLowerCase();
         uniqueName = uniqueName.replaceAll("[^a-z0-9]+", "_");
         return uniqueName;
     }
 
+    /**
+     * Method to determine if a particular User is equal to a given object
+     * @param otherObj the object to be compared to
+     * @return whether or not this user is equal to the given object
+     */
     @Override
     public boolean equals(Object otherObj) {
         if (!(otherObj instanceof User)) { return false; }
@@ -166,6 +198,10 @@ public class User implements Serializable {
         return null != getUniqueName() && getUniqueName().equals(other.getUniqueName());
     }
 
+    /**
+     * Returns a string representation of a particular user
+     * @return the string representation
+     */
     @NonNull
     @Override
     public String toString() {
