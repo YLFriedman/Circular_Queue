@@ -12,11 +12,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.sql.Timestamp;
-
 import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
-import ca.uottawa.seg2105.project.cqondemand.domain.Address;
-import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
@@ -213,20 +209,6 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     public void onUpdateServiceTestClick(View view){
-        Address address = new Address("45", 2546, "Easy st.", "Ottawa", "Ontario", "Canada", "K1Z5N9");
-        java.sql.Timestamp date = new Timestamp(System.currentTimeMillis());
-
-        ServiceProvider provider = new ServiceProvider("-LRTteBm1Bvhh8KMiGd_", "MOMMY", "please", "DONOTspankme", "bad@boy.com",
-                "cqpass", "Spaces Allowed", true, "6132453125", address, "I'm gaaaaaaaaaay", 0, 0, 0, null);
-        System.out.println("OUTPUT");
-        User user = new User("-LRYCsBuPG8E1gmy6otV", "Test", "Homeowner", "Hope", "thisworks@mail.com", User.Type.HOMEOWNER, Authentication.genHash("cqpass"));
-        State state = State.getInstance();
-        state.setSignedInUser(user);
-        Intent intent = new Intent(getApplicationContext(), ReviewListActivity.class);
-        intent.putExtra("user", user);
-        intent.putExtra("provider", provider);
-        startActivity(intent);
-
 
     }
 

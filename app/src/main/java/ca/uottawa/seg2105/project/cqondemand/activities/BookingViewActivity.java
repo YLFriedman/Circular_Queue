@@ -112,6 +112,13 @@ public class BookingViewActivity extends SignedInActivity {
 
         configureView();
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        btn_submit_review.setVisibility(View.GONE);
+        itemClickEnabled = true;
         if (Mode.HOMEOWNER == mode && Booking.Status.COMPLETED == currentBooking.getStatus()) {
             DbReview.getReview(currentBooking.getServiceProvider().getKey(), currentBooking.getKey(), new AsyncSingleValueEventListener<Review>() {
                 @Override
@@ -127,13 +134,6 @@ public class BookingViewActivity extends SignedInActivity {
                 }
             });
         }
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        itemClickEnabled = true;
     }
 
     @Override

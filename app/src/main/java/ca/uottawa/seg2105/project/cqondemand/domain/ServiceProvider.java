@@ -186,7 +186,7 @@ public class ServiceProvider extends User implements Serializable {
      */
     public void applyRating(int newRating) {
         numRatings++;
-        runningRatingTotal += rating;
+        runningRatingTotal += newRating;
         float calcRating = (runningRatingTotal / (float) numRatings) * 100;
         rating = Math.round(calcRating);
     }
