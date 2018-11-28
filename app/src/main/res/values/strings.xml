@@ -295,6 +295,7 @@
     <string name="filter_providers">Filter Providers</string>
     <string name="filter_list">Filter List</string>
     <string name="min_rating">Minimum Rating</string>
+    <string name="invalid_rating_message">A rating must be between 1 and 5 stars. </string>
     <string name="filters">Filters</string>
     <string name="any_date_time">Any date and time</string>
     <string name="any_date">Any Date</string>

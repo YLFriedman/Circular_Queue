@@ -131,7 +131,7 @@ public class FieldValidation {
     public static final String CATEGORY_NAME_CHARS = SERVICE_NAME_CHARS;
 
 
-    /*
+    /* *****************************************
      * Generic, Re-usable functions
      *******************************************/
 
@@ -158,7 +158,7 @@ public class FieldValidation {
         return false;
     }
 
-    /*
+    /* *****************************************
      * Validation of Service fields
      *******************************************/
 
@@ -171,7 +171,7 @@ public class FieldValidation {
         return objectNameIsValid(name);
     }
 
-    /*
+    /* *****************************************
      * Validation of Category fields
      *******************************************/
 
@@ -184,7 +184,7 @@ public class FieldValidation {
         return objectNameIsValid(name);
     }
 
-    /*
+    /* *****************************************
      * Validation of User Account fields
      *******************************************/
 
@@ -263,7 +263,7 @@ public class FieldValidation {
         return android.util.Patterns.PHONE.matcher(phone).matches();
     }
 
-    /*
+    /* *****************************************
      * Validation of Address fields
      *******************************************/
 
@@ -331,11 +331,17 @@ public class FieldValidation {
         return postalCode.matches(POSTAL_CODE_REGEX);
     }
 
-    /*
+    /* *****************************************
      * Validation of Review fields
      *******************************************/
 
+    /**
+     * Checks the validity of a rating.
+     * @param rating the rating number to test
+     * @return true if the rating is valid, false otherwise
+     */
     public static boolean ratingIsValid(int rating){
-        return rating >= 0 && rating <= 5;
+        return rating >= 1 && rating <= 5;
     }
+
 }
