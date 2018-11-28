@@ -21,6 +21,7 @@ import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.adapters.ServiceProviderPickerListAdapter;
 import ca.uottawa.seg2105.project.cqondemand.database.DbListenerHandle;
 import ca.uottawa.seg2105.project.cqondemand.database.DbService;
+import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
@@ -50,8 +51,13 @@ public class ServiceProviderPickerActivity extends SignedInActivity implements D
         if (null == signedInUser) { return; }
 
         Intent intent = getIntent();
-        // Get the current category and current user
-        currentService = (Service) intent.getSerializableExtra("service");
+        try {
+            currentService = (Service) intent.getSerializableExtra("service");
+        } catch (ClassCastException e) {
+            Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
         if (null == currentService) {
             Toast.makeText(getApplicationContext(), R.string.service_required, Toast.LENGTH_LONG).show();
             finish();

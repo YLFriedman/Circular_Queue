@@ -12,9 +12,11 @@ import android.widget.Toast;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
+import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
+import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class CategoryCreateActivity extends SignedInActivity {
 
@@ -22,6 +24,8 @@ public class CategoryCreateActivity extends SignedInActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_create);
+        User signedInUser = State.getInstance().getSignedInUser();
+        if (null == signedInUser || User.Type.ADMIN != signedInUser.getType()) { finish(); return; }
     }
 
     public void onCreateCategoryClick(View view) {

@@ -19,8 +19,10 @@ import ca.uottawa.seg2105.project.cqondemand.adapters.SpinnerAdapter;
 import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
 import ca.uottawa.seg2105.project.cqondemand.database.DbListenerHandle;
 import ca.uottawa.seg2105.project.cqondemand.database.DbService;
+import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
+import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
@@ -43,7 +45,13 @@ public class ServiceEditActivity extends SignedInActivity {
         EditText field_rate = findViewById(R.id.field_rate);
         // Get the service from the intent
         Intent intent = getIntent();
-        currentService = (Service) intent.getSerializableExtra("service");
+        try {
+            currentService = (Service) intent.getSerializableExtra("service");
+        } catch (ClassCastException e) {
+            Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
         // If we have a service, setup the activity
         if (null != currentService) {
             field_service_name.setText(currentService.getName());

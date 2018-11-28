@@ -152,10 +152,6 @@ public class User implements Serializable {
         return uniqueName;
     }
 
-    public boolean isAdmin() {
-        return type == Type.ADMIN;
-    }
-
     @Override
     public boolean equals(Object otherObj) {
         if (!(otherObj instanceof User)) { return false; }

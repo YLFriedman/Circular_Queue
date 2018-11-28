@@ -296,6 +296,7 @@
     <string name="owner">Owner</string>
     <string name="licensed">Licensed</string>
     <string name="review_template">Reviews for: %s</string>
+    <string name="review">Review</string>
     <string name="past">Past</string>
     <string name="cancelled">Cancelled</string>
     <string name="pending">Pending</string>

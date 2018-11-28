@@ -59,7 +59,13 @@ public class UserEditActivity extends SignedInActivity {
         fields_2 = findViewById(R.id.fields_2);
 
         Intent intent = getIntent();
-        currentUser = (User) intent.getSerializableExtra("user");
+        try {
+            currentUser = (User) intent.getSerializableExtra("user");
+        } catch (ClassCastException e) {
+            Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
 
         if (null != currentUser) {
             field_username.setText(currentUser.getUsername(), TextView.BufferType.EDITABLE);

@@ -32,7 +32,7 @@ public class UserListActivity extends SignedInActivity {
         setContentView(R.layout.activity_user_list);
         recycler_list = findViewById(R.id.recycler_list);
         User signedInUser = State.getInstance().getSignedInUser();
-        if (null == signedInUser || !signedInUser.isAdmin()) { finish(); return; }
+        if (null == signedInUser || User.Type.ADMIN != signedInUser.getType()) { finish(); return; }
 
         recycler_list.setHasFixedSize(true);
         recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));

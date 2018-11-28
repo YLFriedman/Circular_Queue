@@ -40,8 +40,15 @@ public class ServiceViewActivity extends SignedInActivity {
         txt_category = findViewById(R.id.txt_category);
 
         Intent intent = getIntent();
-        currentService = (Service) intent.getSerializableExtra("service");
-        currentCategory = (Category) intent.getSerializableExtra("category");
+        try {
+            currentService = (Service) intent.getSerializableExtra("service");
+            currentCategory = (Category) intent.getSerializableExtra("category");
+        } catch (ClassCastException e) {
+            Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
         if (null != currentService) {
             setupFields();
         }  else {
@@ -91,7 +98,7 @@ public class ServiceViewActivity extends SignedInActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         User user = State.getInstance().getSignedInUser();
-        if (null != user && user.isAdmin()) {
+        if (null != user && User.Type.ADMIN == user.getType()) {
             getMenuInflater().inflate(R.menu.service_options, menu);
             menu.setGroupVisible(R.id.grp_category_controls, false);
             return true;

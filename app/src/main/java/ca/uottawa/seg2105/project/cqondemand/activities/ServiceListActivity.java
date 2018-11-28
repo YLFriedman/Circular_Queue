@@ -66,8 +66,14 @@ public class ServiceListActivity extends SignedInActivity {
         divider_txt_sub_title.setVisibility(View.GONE);
         Intent intent = getIntent();
         // Get the current category and current user
-        currentCategory = (Category) intent.getSerializableExtra("category");
-        currentUser = (User) intent.getSerializableExtra("user");
+        try {
+            currentCategory = (Category) intent.getSerializableExtra("category");
+            currentUser = (User) intent.getSerializableExtra("user");
+        } catch (ClassCastException e) {
+            Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
         // Get the action bar
         ActionBar actionBar = getSupportActionBar();
         // Set the default item itemActionIcon

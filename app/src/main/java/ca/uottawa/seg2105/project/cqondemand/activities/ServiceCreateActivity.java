@@ -38,7 +38,14 @@ public class ServiceCreateActivity extends SignedInActivity {
         setContentView(R.layout.activity_service_create);
 
         Intent intent = getIntent();
-        currentCategory = (Category) intent.getSerializableExtra("category");
+        try {
+            currentCategory = (Category) intent.getSerializableExtra("category");
+        } catch (ClassCastException e) {
+            Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
         spinner_categories = findViewById(R.id.spinner_categories);
 
         dbListenerHandle = DbCategory.getCategoriesLive(new AsyncValueEventListener<Category>() {

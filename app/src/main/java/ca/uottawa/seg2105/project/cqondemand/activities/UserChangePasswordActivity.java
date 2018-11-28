@@ -36,7 +36,13 @@ public class UserChangePasswordActivity extends SignedInActivity {
         btn_save_password = findViewById(R.id.btn_save_password);
         // Get the user object from the intent
         Intent intent = getIntent();
-        currentUser = (User) intent.getSerializableExtra("user");
+        try {
+            currentUser = (User) intent.getSerializableExtra("user");
+        } catch (ClassCastException e) {
+            Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
         if (null == currentUser) {
             Toast.makeText(getApplicationContext(),  String.format(getString(R.string.current_item_provided_template), getString(R.string.account)), Toast.LENGTH_SHORT).show();
             finish();

@@ -52,13 +52,21 @@ public class UserViewActivity extends SignedInActivity {
         txt_address = findViewById(R.id.txt_address);
 
         Intent intent = getIntent();
-        currentUser = (User) intent.getSerializableExtra("user");
+        try {
+            currentUser = (User) intent.getSerializableExtra("user");
+        } catch (ClassCastException e) {
+            Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
         if (null != currentUser) {
             setupFields();
         } else {
             currentUser = State.getInstance().getSignedInUser();
             setupFields();
         }
+
     }
 
     @Override

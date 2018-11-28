@@ -33,11 +33,18 @@ public class ReviewCreateActivity extends SignedInActivity {
         setContentView(R.layout.activity_review_create);
 
         Intent intent = getIntent();
-        currentProvider = (ServiceProvider) intent.getSerializableExtra("provider");
-        currentService = (Service) intent.getSerializableExtra("service");
-        currentBooking = (Booking) intent.getSerializableExtra("booking");
+        try {
+            currentProvider = (ServiceProvider) intent.getSerializableExtra("provider");
+            currentService = (Service) intent.getSerializableExtra("service");
+            currentBooking = (Booking) intent.getSerializableExtra("booking");
+        } catch (ClassCastException e) {
+            Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
 
-        if (null == currentService || null == currentProvider) {
+        if (null == currentService || null == currentProvider || null == currentBooking) {
+            Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
             finish();
         }
     }
@@ -57,7 +64,7 @@ public class ReviewCreateActivity extends SignedInActivity {
         DbReview.createReview(newReview, currentProvider.getKey(), new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
-                //Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_create_success), newReview.getName()), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), String.format(getString(R.string.item_create_success_template), currentProvider.getCompanyName(), getString(R.string.review).toLowerCase()), Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getApplicationContext(), ReviewViewActivity.class);
                 intent.putExtra("review", newReview);
                 intent.putExtra("provider", currentProvider);
@@ -68,10 +75,10 @@ public class ReviewCreateActivity extends SignedInActivity {
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 switch (reason) {
                     case DATABASE_ERROR:
-                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.create_db_error_template), getString(R.string.rating).toLowerCase()), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.create_db_error_template), getString(R.string.review).toLowerCase()), Toast.LENGTH_LONG).show();
                         break;
                     default: // Some other kind of error
-                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.create_generic_error_template), getString(R.string.rating).toLowerCase()), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.create_generic_error_template), getString(R.string.review).toLowerCase()), Toast.LENGTH_LONG).show();
                 }
                 btn_create_review.setEnabled(true);
             }
