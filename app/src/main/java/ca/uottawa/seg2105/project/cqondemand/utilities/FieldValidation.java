@@ -331,4 +331,11 @@ public class FieldValidation {
         return postalCode.matches(POSTAL_CODE_REGEX);
     }
 
+    /*******************************************
+     * Validation of Review fields
+     *******************************************/
+
+    public static boolean ratingIsValid(int rating){
+        return rating >= 0 && rating <= 5;
+    }
 }

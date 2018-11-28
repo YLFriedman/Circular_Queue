@@ -2,6 +2,7 @@ package ca.uottawa.seg2105.project.cqondemand.domain;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -45,11 +46,14 @@ public class Booking implements Serializable {
     }
 
     public Booking(@NonNull Date startTime, @NonNull Date endTime, @NonNull User homeowner, @NonNull ServiceProvider provider, @NonNull Service service) {
+        Date now = new Date();
+        if (startTime.compareTo(endTime) >= 0) { throw new InvalidDataException("The end time must be after the start time.");}
+        if (startTime.compareTo(now) >= 0) { throw new InvalidDataException("Booking must be in the future.");}
         this.startTime = startTime;
         this.endTime = endTime;
         this.homeownerKey = homeowner.getKey();
         this.status = Status.REQUESTED;
-        this.dateCreated = new Date();
+        this.dateCreated = now;
         this.serviceName = service.getName();
         this.serviceRate = service.getRate();
         this.serviceProviderKey = provider.getKey();
@@ -59,6 +63,7 @@ public class Booking implements Serializable {
 
     private Booking (String key, Date startTime, Date endTime, Date dateCreated, Date dateCancelledOrApproved, User homeowner, String homeownerKey,
                      ServiceProvider provider, String providerKey, Status status, String serviceName, int serviceRate, String cancelledReason) {
+        if (null == key || key.isEmpty()) { throw new InvalidDataException("The key cannot be null or empty."); }
         this.key = key;
         this.startTime = startTime;
         this.endTime = endTime;
