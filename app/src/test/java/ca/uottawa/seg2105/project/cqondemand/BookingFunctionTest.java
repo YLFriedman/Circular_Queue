@@ -20,14 +20,14 @@ public class BookingFunctionTest {
     @Test
     public void validate_Constructor() {
 
-        User user = new User("firstName", "lastName", "username", "email",
-                User.Type.ADMIN, "password");
+        User user = new User("firstName", "lastName", "username", "{@TEST}",
+                User.Type.ADMIN, "passtest");
         Address testAddressA = new Address("2a", 12, "Bullvue", "Ottawa", "Ontario", "Canada", "K0A1A0");
         ServiceProvider provider = new ServiceProvider("firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", testAddressA, "description");
 
         // Test the creation of an object and its getters
         try {
-            Booking testBooking = new Booking(new Date(2018), new Date(2019), user, provider, new Service("serviceName", 10, ""));
+            Booking testBooking = new Booking(new Date(2018), new Date(2019), user, provider, new Service("serviceName", 10, "key"));
             assertEquals("Booking getter Failed - startTime", new Date(2018), testBooking.getStartTime());
             assertEquals("Booking getter Failed - endTime", new Date(2019), testBooking.getEndTime());
             assertEquals("Booking getter Failed - homeownerKey", user.getKey(), testBooking.getHomeownerKey());
