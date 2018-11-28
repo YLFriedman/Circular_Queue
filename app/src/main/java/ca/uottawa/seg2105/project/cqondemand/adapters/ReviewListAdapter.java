@@ -51,10 +51,10 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Vi
         // Set the current item as the view's tag so it can be retrieve easily in the onClick handler
         viewHolder.itemView.setTag(item);
         if (null != item) {
-            viewHolder.txt_title.setText(item.getReviewerName());
+            viewHolder.txt_title.setText(item.getServiceName());
             viewHolder.rating_stars.setRating(item.getRating());
+            viewHolder.txt_subtitle.setText(String.format(context.getString(R.string.review_by_template), item.getReviewerName()));
         }
-        viewHolder.txt_subtitle.setVisibility(View.GONE);
         viewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_med_30);
         viewHolder.img_item_image.setVisibility(View.GONE);
     }

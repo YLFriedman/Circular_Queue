@@ -1501,7 +1501,7 @@
                 android:layout_width="34dp"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="@string/mmm"
+                android:text="@string/mmm_placeholder"
                 android:textSize="12sp" />
 
             <TextView

@@ -7,6 +7,7 @@ import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -64,6 +65,11 @@ public class ServiceProviderProfileActivity extends SignedInActivity {
         txt_title_description = findViewById(R.id.txt_title_description);
         txt_description = findViewById(R.id.txt_description);
         txt_address = findViewById(R.id.txt_address);
+
+        if (null == currentService) {
+            Button btn_find_availability = findViewById(R.id.btn_find_availability);
+            btn_find_availability.setVisibility(View.GONE);
+        }
 
         setupFields();
     }

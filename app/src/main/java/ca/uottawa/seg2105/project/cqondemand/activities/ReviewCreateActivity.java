@@ -19,12 +19,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class ReviewCreateActivity extends SignedInActivity {
 
     protected ServiceProvider currentProvider;
-    protected Service currentService;
     protected Booking currentBooking;
 
     @Override
@@ -34,8 +34,6 @@ public class ReviewCreateActivity extends SignedInActivity {
 
         Intent intent = getIntent();
         try {
-            currentProvider = (ServiceProvider) intent.getSerializableExtra("provider");
-            currentService = (Service) intent.getSerializableExtra("service");
             currentBooking = (Booking) intent.getSerializableExtra("booking");
         } catch (ClassCastException e) {
             Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
@@ -43,10 +41,16 @@ public class ReviewCreateActivity extends SignedInActivity {
             return;
         }
 
-        if (null == currentService || null == currentProvider || null == currentBooking) {
+        if (null == currentBooking || null == currentBooking.getServiceProvider()) {
             Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
             finish();
         }
+
+        currentProvider = currentBooking.getServiceProvider();
+        TextView txt_service_provider = findViewById(R.id.txt_service_provider);
+        TextView txt_service_name = findViewById(R.id.txt_service_name);
+        txt_service_provider.setText(currentProvider.getCompanyName());
+        txt_service_name.setText(currentBooking.getServiceName());
     }
 
     public void onCreateReviewClick(View view) {

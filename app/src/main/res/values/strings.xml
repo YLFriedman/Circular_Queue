@@ -88,6 +88,7 @@
     <string name="category">Category</string>
     <string name="service">Service</string>
     <string name="account">Account</string>
+    <string name="completed">Completed</string>
     <string name="signing_in">Signing In...</string>
     <string name="user_account">User Account</string>
     <string name="service_rate_template">$%,d.00 / hour</string>
@@ -296,7 +297,9 @@
     <string name="owner">Owner</string>
     <string name="licensed">Licensed</string>
     <string name="review_template">Reviews for: %s</string>
+    <string name="review_by_template">By: %s</string>
     <string name="review">Review</string>
+    <string name="client">Client</string>
     <string name="past">Past</string>
     <string name="cancelled">Cancelled</string>
     <string name="pending">Pending</string>
@@ -309,16 +312,21 @@
     <string name="rating">Rating</string>
     <string name="comments">Comments</string>
     <string name="submit_review">Submit Review</string>
-    <string name="created_by">Create By</string>
+    <string name="created_by">Created By</string>
     <string name="created_on">Created On</string>
     <string name="zoom_in">Zoom In</string>
     <string name="zoom_out">Zoom Out</string>
     <string name="hashtag">#</string>
-    <string name="mmm">MMM</string>
+    <string name="mmm_placeholder">MMM</string>
     <string name="date">Date</string>
     <string name="select_date">Select a Date</string>
     <string name="start_time">Start Time</string>
     <string name="end_time">End Time</string>
     <string name="time">Time</string>
     <string name="submit_request">Submit Request</string>
+    <string name="date_time">Date / Time</string>
+    <string name="see_profile">See Profile</string>
+    <string name="status">Status</string>
+    <string name="view_profile">View Profile</string>
+    <string name="rate_service">Rate the Service</string>
 </resources>

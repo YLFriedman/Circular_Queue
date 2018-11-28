@@ -46,7 +46,10 @@ public class ReviewListActivity extends SignedInActivity {
         txt_sub_title = findViewById(R.id.txt_sub_title);
         recycler_list = findViewById(R.id.recycler_list);
         recycler_list.setHasFixedSize(true);
-        recycler_list.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
+        recycler_list.setLayoutManager(layoutManager);
 
         Intent intent = getIntent();
         try {
