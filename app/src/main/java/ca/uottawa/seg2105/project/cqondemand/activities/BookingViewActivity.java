@@ -1,11 +1,13 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.database.DbBooking;
 import ca.uottawa.seg2105.project.cqondemand.database.DbReview;
@@ -50,6 +53,7 @@ public class BookingViewActivity extends SignedInActivity {
     private TextView txt_approved_on;
     private TextView txt_cancelled_on;
     private TextView txt_cancelled_reason;
+    private TextView txt_cancelled_by;
     private Button btn_submit_review;
     private Button btn_approve_booking;
 
@@ -104,6 +108,7 @@ public class BookingViewActivity extends SignedInActivity {
         txt_approved_on = findViewById(R.id.txt_approved_on);
         txt_cancelled_on = findViewById(R.id.txt_cancelled_on);
         txt_cancelled_reason = findViewById(R.id.txt_cancelled_reason);
+        txt_cancelled_by = findViewById(R.id.txt_cancelled_by);
 
         configureView();
 
@@ -123,7 +128,6 @@ public class BookingViewActivity extends SignedInActivity {
             });
         }
 
-
     }
 
     @Override
@@ -134,7 +138,7 @@ public class BookingViewActivity extends SignedInActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (Booking.Status.REQUESTED != currentBooking.getStatus() || Booking.Status.APPROVED != currentBooking.getStatus()) {
+        if (Booking.Status.REQUESTED == currentBooking.getStatus() || Booking.Status.APPROVED == currentBooking.getStatus()) {
             getMenuInflater().inflate(R.menu.booking_options, menu);
             return true;
         }
@@ -167,6 +171,7 @@ public class BookingViewActivity extends SignedInActivity {
         if (Booking.Status.CANCELLED == currentBooking.getStatus()) {
             txt_cancelled_on.setText(DATE_FORMAT.format(currentBooking.getDateCancelledOrApproved()));
             txt_cancelled_reason.setText(currentBooking.getCancelledReason());
+            txt_cancelled_by.setText(currentBooking.getCancelledBy());
             grp_cancelled.setVisibility(View.VISIBLE);
         } else if (Booking.Status.APPROVED == currentBooking.getStatus()) {
             txt_approved_on.setText(DATE_FORMAT.format(currentBooking.getDateCancelledOrApproved()));
@@ -190,7 +195,6 @@ public class BookingViewActivity extends SignedInActivity {
         itemClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ServiceProviderProfileActivity.class);
         intent.putExtra("provider", currentBooking.getServiceProvider());
-        //intent.putExtra("service", currentService);
         startActivity(intent);
     }
 
@@ -203,10 +207,50 @@ public class BookingViewActivity extends SignedInActivity {
     }
 
     private void cancelBooking() {
-
+        if (Booking.Status.REQUESTED != currentBooking.getStatus() && Booking.Status.APPROVED != currentBooking.getStatus()) { configureView(); return; }
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
+        View cancelView = getLayoutInflater().inflate(R.layout.dialog_cancel_booking, null);
+        EditText cancelReasonField = cancelView.findViewById(R.id.field_cancellation_reason);
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.cancel_booking)
+                .setMessage(String.format(getString(R.string.cancel_confirm_dialog_template), getString(R.string.booking).toLowerCase()))
+                .setView(cancelView)
+                .setIcon(R.drawable.ic_report_red_30)
+                .setPositiveButton(R.string.cancel_booking, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        DbBooking.cancelBooking(currentBooking, cancelReasonField.getText().toString(), new AsyncActionEventListener() {
+                            @Override
+                            public void onSuccess() {
+                                itemClickEnabled = true;
+                                configureView();
+                                Toast.makeText(getApplicationContext(), getString(R.string.booking_cancelled_successfully), Toast.LENGTH_LONG).show();
+                            }
+                            @Override
+                            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                                switch (reason) {
+                                    case DATABASE_ERROR:
+                                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.update_db_error_template), getString(R.string.booking).toLowerCase()), Toast.LENGTH_LONG).show();
+                                        break;
+                                    default: // Some other kind of error
+                                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.update_generic_error_template), getString(R.string.booking).toLowerCase()), Toast.LENGTH_LONG).show();
+                                }
+                                itemClickEnabled = true;
+                            }
+                        });
+                    }
+                })
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
+                })
+                .setNegativeButton(R.string.close, null).show();
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.text_primary_dark));
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.dialog_red));
     }
 
     public void onApproveBookingClick(View v) {
+        if (Booking.Status.APPROVED != currentBooking.getStatus()) { configureView(); return; }
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
         btn_approve_booking.setEnabled(false);

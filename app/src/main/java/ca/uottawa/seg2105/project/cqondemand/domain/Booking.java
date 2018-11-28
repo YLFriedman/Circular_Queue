@@ -17,6 +17,7 @@ public class Booking implements Serializable {
     protected Date dateCreated;
     protected Date dateCancelledOrApproved;
     protected String cancelledReason;
+    protected String cancelledBy;
     protected ServiceProvider serviceProvider;
     protected String serviceProviderKey;
     protected User homeowner;
@@ -44,24 +45,29 @@ public class Booking implements Serializable {
     }
 
     public Booking(@NonNull Date startTime, @NonNull Date endTime, @NonNull User homeowner, @NonNull ServiceProvider provider, @NonNull Service service) {
-        Date now = new Date();
-        if (startTime.compareTo(endTime) >= 0) { throw new InvalidDataException("The end time must be after the start time.");}
-        if (startTime.compareTo(now) >= 0) { throw new InvalidDataException("Booking must be in the future.");}
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.homeownerKey = homeowner.getKey();
-        this.status = Status.REQUESTED;
-        this.dateCreated = now;
-        this.serviceName = service.getName();
-        this.serviceRate = service.getRate();
-        this.serviceProviderKey = provider.getKey();
-        this.homeowner = homeowner;
-        this.serviceProvider = provider;
+        this("temp", startTime, endTime, new Date(), null, homeowner, homeowner.getKey(), provider, provider.getKey(),
+                Status.REQUESTED, service.getName(), service.getRate(), null, null);
+        this.key = null;
+        if (startTime.compareTo(new Date()) >= 0) { throw new InvalidDataException("Booking must be in the future.");}
+    }
+
+    public Booking(@NonNull String key, @NonNull Date startTime, @NonNull Date endTime, @NonNull Date dateCreated, @Nullable Date dateCancelledOrApproved,
+                   @NonNull User homeowner, @NonNull String serviceProviderKey, @NonNull Status status, @NonNull String serviceName, int serviceRate,
+                   @Nullable String cancelledReason, @Nullable String cancelledBy) {
+        this(key, startTime, endTime, dateCreated, dateCancelledOrApproved, homeowner, homeowner.getKey(), null, serviceProviderKey, status, serviceName, serviceRate, cancelledReason, cancelledBy);
+    }
+
+    public Booking(@NonNull String key, @NonNull Date startTime, @NonNull Date endTime, @NonNull Date dateCreated, @Nullable Date dateCancelledOrApproved,
+                   @NonNull ServiceProvider provider, @NonNull String homeownerKey, @NonNull Status status, @NonNull String serviceName, int serviceRate,
+                   @Nullable String cancelledReason, @Nullable String cancelledBy) {
+        this(key, startTime, endTime, dateCreated, dateCancelledOrApproved, null, homeownerKey, provider, provider.getKey(), status, serviceName, serviceRate, cancelledReason, cancelledBy);
     }
 
     private Booking (String key, Date startTime, Date endTime, Date dateCreated, Date dateCancelledOrApproved, User homeowner, String homeownerKey,
-                     ServiceProvider provider, String providerKey, Status status, String serviceName, int serviceRate, String cancelledReason) {
+                     ServiceProvider provider, String providerKey, Status status, String serviceName, int serviceRate, String cancelledReason, String cancelledBy) {
         if (null == key || key.isEmpty()) { throw new InvalidDataException("The key cannot be null or empty."); }
+        Date now = new Date();
+        if (startTime.compareTo(endTime) >= 0) { throw new InvalidDataException("The end time must be after the start time.");}
         this.key = key;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -75,16 +81,7 @@ public class Booking implements Serializable {
         this.serviceName = serviceName;
         this.serviceRate = serviceRate;
         this.cancelledReason = cancelledReason;
-    }
-
-    public Booking(@NonNull String key, @NonNull Date startTime, @NonNull Date endTime, @NonNull Date dateCreated, @Nullable Date dateCancelledOrApproved,
-                   @NonNull User homeowner, @NonNull String serviceProviderKey, @NonNull Status status, @NonNull String serviceName, int serviceRate, @Nullable String cancelledReason) {
-        this(key, startTime, endTime, dateCreated, dateCancelledOrApproved, homeowner, homeowner.getKey(), null, serviceProviderKey, status, serviceName, serviceRate, cancelledReason);
-    }
-
-    public Booking(@NonNull String key, @NonNull Date startTime, @NonNull Date endTime, @NonNull Date dateCreated, @Nullable Date dateCancelledOrApproved,
-                   @NonNull ServiceProvider provider, @NonNull String homeownerKey, @NonNull Status status, @NonNull String serviceName, int serviceRate, @Nullable String cancelledReason) {
-        this(key, startTime, endTime, dateCreated, dateCancelledOrApproved, null, homeownerKey, provider, provider.getKey(), status, serviceName, serviceRate, cancelledReason);
+        this.cancelledBy = cancelledBy;
     }
 
     public String getKey() {
@@ -128,6 +125,10 @@ public class Booking implements Serializable {
         return cancelledReason;
     }
 
+    public String getCancelledBy() {
+        return cancelledBy;
+    }
+
     public ServiceProvider getServiceProvider() {
         return serviceProvider;
     }
@@ -149,9 +150,10 @@ public class Booking implements Serializable {
         dateCancelledOrApproved = updateTime;
     }
 
-    public void cancelBooking(@NonNull Date updateTime, @Nullable String cancelledReason) {
+    public void cancelBooking(@NonNull Date updateTime, @Nullable String cancelledReason, @Nullable String cancelledBy) {
         status = Status.CANCELLED;
         this.cancelledReason = cancelledReason;
+        this.cancelledBy = cancelledBy;
         dateCancelledOrApproved = updateTime;
     }
 

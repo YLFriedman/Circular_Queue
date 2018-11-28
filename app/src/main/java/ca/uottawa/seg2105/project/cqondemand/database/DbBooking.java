@@ -14,12 +14,14 @@ import java.util.HashMap;
 
 import androidx.annotation.Nullable;
 import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
+import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
+import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class DbBooking extends DbItem<Booking> {
 
@@ -31,6 +33,7 @@ public class DbBooking extends DbItem<Booking> {
     public Long date_created;
     public Long date_cancelled_approved;
     public String cancelled_reason;
+    public String cancelled_by;
     public DbUser service_provider;
     public String service_provider_key;
     public DbUser homeowner;
@@ -47,6 +50,7 @@ public class DbBooking extends DbItem<Booking> {
         service_name = item.getServiceName();
         service_rate = item.getServiceRate();
         cancelled_reason = item.getCancelledReason();
+        cancelled_by = item.getCancelledBy();
         homeowner_key = item.getHomeownerKey();
         service_provider_key = item.getServiceProviderKey();
         if (item.getDateCancelledOrApproved() != null) {
@@ -64,11 +68,11 @@ public class DbBooking extends DbItem<Booking> {
         if (null != service_provider) {
             service_provider.setKey(service_provider_key);
             return new Booking(key, new Date(start_time), new Date(end_time), new Date(date_created), date_cancelled_approved == null ? null : new Date(date_cancelled_approved),
-                    (ServiceProvider) service_provider.toDomainObj(), homeowner_key, Booking.Status.parse(status), service_name, service_rate, cancelled_reason);
+                    (ServiceProvider) service_provider.toDomainObj(), homeowner_key, Booking.Status.parse(status), service_name, service_rate, cancelled_reason, cancelled_by);
         } else if (null != homeowner) {
             homeowner.setKey(homeowner_key);
             return new Booking(key, new Date(start_time), new Date(end_time), new Date(date_created), date_cancelled_approved == null ? null : new Date(date_cancelled_approved),
-                    homeowner.toDomainObj(), service_provider_key, Booking.Status.parse(status), service_name, service_rate, cancelled_reason);
+                    homeowner.toDomainObj(), service_provider_key, Booking.Status.parse(status), service_name, service_rate, cancelled_reason, cancelled_by);
         } else {
             throw new InvalidDataException("A booking must have a ServiceProvider or a Homeowner");
         }
@@ -116,7 +120,7 @@ public class DbBooking extends DbItem<Booking> {
         if (Booking.Status.REQUESTED != booking.getStatus()) { throw new IllegalArgumentException("Only a 'Requested' booking can be approved."); }
         //booking.approveBooking(updateTime);
         final Date updateTime = new Date(System.currentTimeMillis());
-        setBookingStatus(booking, Booking.Status.APPROVED, updateTime, null, new AsyncActionEventListener() {
+        setBookingStatus(booking, Booking.Status.APPROVED, updateTime, null, null, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 booking.approveBooking(updateTime);
@@ -133,10 +137,15 @@ public class DbBooking extends DbItem<Booking> {
         if (null == booking.getKey() || null == booking.getServiceProviderKey()) { throw new IllegalArgumentException("Booking key and provider key required to perform update"); }
         if (Booking.Status.REQUESTED != booking.getStatus() && Booking.Status.APPROVED != booking.getStatus()) { throw new IllegalArgumentException("Only a 'Requested' or 'Approved' booking can be cancelled."); }
         final Date updateTime = new Date(System.currentTimeMillis());
-        setBookingStatus(booking, Booking.Status.CANCELLED, updateTime, cancelReason, new AsyncActionEventListener() {
+        final User signedInUser = State.getInstance().getSignedInUser();
+        if (null == signedInUser) {
+            if (null != listener) { listener.onFailure(AsyncEventFailureReason.INVALID_DATA); }
+            return;
+        }
+        setBookingStatus(booking, Booking.Status.CANCELLED, updateTime, cancelReason, signedInUser.getFullName(), new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
-                booking.cancelBooking(updateTime, cancelReason);
+                booking.cancelBooking(updateTime, cancelReason, signedInUser.getFullName());
                 if (null != listener) { listener.onSuccess(); }
             }
             @Override
@@ -146,21 +155,27 @@ public class DbBooking extends DbItem<Booking> {
         });
     }
 
-    private static void setBookingStatus(@NonNull Booking booking, @NonNull Booking.Status status, Date updateTime, @Nullable String cancelledReason, @Nullable AsyncActionEventListener listener) {
+    private static void setBookingStatus(@NonNull Booking booking, @NonNull Booking.Status status, Date updateTime, @Nullable String cancelledReason, @Nullable String cancelledBy, @Nullable AsyncActionEventListener listener) {
         if (null == booking.getKey() || null == booking.getServiceProviderKey()) { throw new IllegalArgumentException("Booking key and provider key required to perform update"); }
         String homeownerKey = booking.getHomeownerKey();
         String serviceProviderKey = booking.getServiceProviderKey();
         String bookingKey = booking.getKey();
         String homeownerPathStatus = String.format("user_bookings/%s/%s/status", homeownerKey, bookingKey);
         String homeownerPathReason = String.format("user_bookings/%s/%s/cancelled_reason", homeownerKey, bookingKey);
+        String homeownerPathCancelledBy = String.format("user_bookings/%s/%s/cancelled_by", homeownerKey, bookingKey);
         String homeownerPathDate = String.format("user_bookings/%s/%s/date_cancelled_approved", homeownerKey, bookingKey);
         String providerPathStatus = String.format("user_bookings/%s/%s/status", serviceProviderKey, bookingKey);
         String providerPathReason = String.format("user_bookings/%s/%s/cancelled_reason", serviceProviderKey, bookingKey);
+        String providerPathCancelledBy = String.format("user_bookings/%s/%s/cancelled_by", serviceProviderKey, bookingKey);
         String providerPathDate = String.format("user_bookings/%s/%s/date_cancelled_approved",serviceProviderKey, bookingKey);
         HashMap<String, Object> updateMap = new HashMap<>();
-        if (cancelledReason != null) {
+        if (cancelledReason != null && !cancelledReason.isEmpty()) {
             updateMap.put(homeownerPathReason, cancelledReason);
             updateMap.put(providerPathReason, cancelledReason);
+        }
+        if (cancelledBy != null && !cancelledBy.isEmpty()) {
+            updateMap.put(homeownerPathCancelledBy, cancelledBy);
+            updateMap.put(providerPathCancelledBy, cancelledBy);
         }
         updateMap.put(homeownerPathStatus, status.toString());
         updateMap.put(providerPathStatus, status.toString());

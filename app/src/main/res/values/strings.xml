@@ -106,6 +106,7 @@
     <string name="update_db_error_template">Unable to update this %s at this time due to a database error. Please try again later.</string>
     <string name="update_generic_error_template">Unable to update this %s at this time. Please try again later.</string>
     <string name="booking_approved_successfully">This booking has been successfully approved.</string>
+    <string name="booking_cancelled_successfully">This booking has been successfully cancelled.</string>
     <string name="unlink_service">Unlink Service</string>
     <string name="remove_service">Remove Service</string>
     <string name="service_name_invalid">Please only use letters, numbers, spaces, or apostrophes for the name of a service</string>
@@ -184,6 +185,7 @@
     <string name="bttn_test_update">Test Service Update</string>
     <string name="delete_confirm_dialog_template">Are you sure you want to delete the \'%s\' %s?\nThis CANNOT be undone!</string>
     <string name="remove_confirm_dialog_template">Are you sure you want to remove the \'%s\' %s?</string>
+    <string name="cancel_confirm_dialog_template">Are you sure you want to cancel this %s?\nThis CANNOT be undone!</string>
     <string name="invalid_company_name_error">Please use only letters, numbers or underscores for your company name!</string>
     <string name="empty_company_name_error">Company name is required!</string>
     <string name="invalid_phone_error">The phone number format is invalid!</string>
@@ -338,4 +340,5 @@
     <string name="cancelled_on">Cancelled On</string>
     <string name="approved_on">Approved On</string>
     <string name="cancellation_reason">Cancellation Reason</string>
+    <string name="cancelled_by">Cancelled By</string>
 </resources>

@@ -253,6 +253,24 @@
                     android:text="@string/placeholder"
                     android:textColor="@color/text_primary_dark"
                     android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/txt_title_cancelled_by"
+                    style="@style/input_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/cancelled_by"
+                    android:textColor="@color/text_secondary_dark" />
+
+                <TextView
+                    android:id="@+id/txt_cancelled_by"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:text="@string/placeholder"
+                    android:textColor="@color/text_primary_dark"
+                    android:textSize="18sp" />
             </LinearLayout>
 
             <Button
