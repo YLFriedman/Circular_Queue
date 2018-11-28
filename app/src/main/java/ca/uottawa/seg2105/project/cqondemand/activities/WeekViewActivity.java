@@ -346,6 +346,7 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
     }
 
     public void setRequested(int day, int time) {
+        //TODO: detect clicks with a break in the availability and move the requested block
         Cell cell = cells[day][time];
         if (CellState.AVAILABLE == cell.cellState) {
             if (null == requestedCell) {
