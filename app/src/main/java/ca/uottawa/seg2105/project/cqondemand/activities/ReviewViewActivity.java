@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -30,8 +31,14 @@ public class ReviewViewActivity extends SignedInActivity {
         setContentView(R.layout.activity_review_view);
 
         Intent intent = getIntent();
-        currentReview = (Review) intent.getSerializableExtra("review");
-        currentProvider = (ServiceProvider) intent.getSerializableExtra("provider");
+        try {
+            currentReview = (Review) intent.getSerializableExtra("review");
+            currentProvider = (ServiceProvider) intent.getSerializableExtra("provider");
+        } catch (ClassCastException e) {
+            Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
 
         if (null == currentReview || null == currentProvider) {
             finish();
@@ -56,7 +63,7 @@ public class ReviewViewActivity extends SignedInActivity {
         rating_stars.setRating(0);
         txt_comments.setText("");
         if (null != currentReview && null != currentProvider) {
-            txt_service_provider.setText(currentProvider.getFullName());
+            txt_service_provider.setText(currentProvider.getCompanyName());
             txt_service_name.setText(currentReview.getServiceName());
             txt_created_by.setText(currentReview.getReviewerName());
             txt_created_on.setText(DATE_FORMAT.format(currentReview.getDateCreated()));

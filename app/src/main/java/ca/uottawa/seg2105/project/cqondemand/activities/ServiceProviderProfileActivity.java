@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Locale;
 
@@ -41,13 +42,13 @@ public class ServiceProviderProfileActivity extends SignedInActivity {
             currentProvider = (ServiceProvider) intent.getSerializableExtra("provider");
             currentService = (Service) intent.getSerializableExtra("service");
         } catch (ClassCastException e) {
-            // TODO: Toast message for invalid type
+            Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
             finish();
             return;
         }
 
         if (null == currentProvider) {
-            // TODO: Toast message for no provider
+            Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
             finish();
             return;
         }
@@ -88,7 +89,7 @@ public class ServiceProviderProfileActivity extends SignedInActivity {
             else if (1 == currentProvider.getNumRatings()) { numRatings = getString(R.string.rating_template_single); }
             else { numRatings = String.format(Locale.CANADA, getString(R.string.rating_template), currentProvider.getNumRatings()); }
             txt_num_ratings.setText(numRatings);
-            txt_full_name.setText(String.format(getString(R.string.full_name_template), currentProvider.getFirstName(), currentProvider.getLastName()));
+            txt_full_name.setText(currentProvider.getFullName());
             txt_email.setText(currentProvider.getEmail());
             txt_company_name.setText(currentProvider.getCompanyName());
             txt_phone.setText(currentProvider.getPhoneNumber());

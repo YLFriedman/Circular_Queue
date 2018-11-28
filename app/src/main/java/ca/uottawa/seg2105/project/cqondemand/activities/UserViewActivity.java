@@ -85,7 +85,7 @@ public class UserViewActivity extends SignedInActivity {
         } else {
             txt_account_type.setText(currentUser.getType().toString());
             txt_username.setText(currentUser.getUsername());
-            txt_full_name.setText(String.format(getString(R.string.full_name_template), currentUser.getFirstName(), currentUser.getLastName()));
+            txt_full_name.setText(currentUser.getFullName());
             txt_email.setText(currentUser.getEmail());
             if (currentUser instanceof ServiceProvider) {
                 ServiceProvider provider = (ServiceProvider) currentUser;

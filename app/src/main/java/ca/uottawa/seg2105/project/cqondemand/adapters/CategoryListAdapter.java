@@ -30,8 +30,7 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
     }
 
     public CategoryListAdapter(Context context, ArrayList<Category> data, View.OnClickListener clickListener) {
-        this.context = context;
-        this.data = data;
+        this(context, data);
         this.clickListener = clickListener;
     }
 

@@ -79,6 +79,10 @@
             android:label="@string/title_activity_availability_week_view"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".activities.BookingViewActivity"
+            android:label="@string/title_activity_booking_view"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activities.BookingCreateActivity"
             android:label="@string/title_activity_booking_create"
             android:screenOrientation="portrait" />
@@ -106,7 +110,6 @@
             android:name=".activities.ReviewListActivity"
             android:label="@string/title_activity_review_list"
             android:screenOrientation="portrait" />
-        <activity android:name=".activities.BookingViewActivity"></activity>
     </application>
 
 </manifest>

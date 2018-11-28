@@ -18,6 +18,7 @@
     <string name="title_activity_service_list">Services</string>
     <string name="title_activity_availability_week_view">Availabilities</string>
     <string name="title_activity_booking_create">Confirm Booking</string>
+    <string name="title_activity_booking_view">Booking Details</string>
     <string name="title_activity_booking_list">My Bookings</string>
     <string name="title_activity_service_provider_picker">Pick a Service Provider</string>
     <string name="title_activity_service_provider_profile">Service Provider Profile</string>

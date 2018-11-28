@@ -23,20 +23,17 @@ import ca.uottawa.seg2105.project.cqondemand.domain.Review;
 
 public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.ViewHolder> {
 
-    private int icon = R.drawable.ic_chevron_right_med_30;
-    private RatingBar rating_stars;
     private Context context;
     private ArrayList<Review> data;
     private View.OnClickListener clickListener;
 
-    public ReviewListAdapter(Context context, ArrayList<Review> data, int iconResID) {
+    public ReviewListAdapter(Context context, ArrayList<Review> data) {
         this.context = context;
         this.data = data;
-        this.icon = iconResID;
     }
 
-    public ReviewListAdapter(Context context, ArrayList<Review> data, int iconResID, View.OnClickListener clickListener) {
-        this(context, data, iconResID);
+    public ReviewListAdapter(Context context, ArrayList<Review> data, View.OnClickListener clickListener) {
+        this(context, data);
         this.clickListener = clickListener;
     }
 
@@ -55,9 +52,11 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Vi
         viewHolder.itemView.setTag(item);
         if (null != item) {
             viewHolder.txt_title.setText(item.getReviewerName());
-            rating_stars.setRating(item.getRating());
+            viewHolder.rating_stars.setRating(item.getRating());
         }
-        viewHolder.img_nav.setImageResource(icon);
+        viewHolder.txt_subtitle.setVisibility(View.GONE);
+        viewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_med_30);
+        viewHolder.img_item_image.setVisibility(View.GONE);
     }
 
     @Override
@@ -70,15 +69,18 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Vi
         TextView txt_title;
         TextView txt_subtitle;
         ImageView img_nav;
+        ImageView img_item_image;
+        RatingBar rating_stars;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txt_subtitle = itemView.findViewById(R.id.txt_subtitle);
-            txt_subtitle.setVisibility(View.GONE);
             txt_title = itemView.findViewById(R.id.txt_title);
             rating_stars = itemView.findViewById(R.id.rating_stars);
             img_nav = itemView.findViewById(R.id.img_nav);
+            img_item_image = itemView.findViewById(R.id.img_item_image);
         }
 
     }
+
 }
