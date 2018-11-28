@@ -101,6 +101,7 @@
     <string name="delete_category">Delete Category</string>
     <string name="service_category">Service Category</string>
     <string name="hourly_rate">Hourly Rate</string>
+    <string name="already_rated">This service booking has already been rated.  It cannot be rated again.</string>
     <string name="create_db_error_template">Unable to create the %s at this time due to a database error. Please try again later.</string>
     <string name="create_generic_error_template">Unable to create the %s at this time. Please try again later.</string>
     <string name="update_db_error_template">Unable to update this %s at this time due to a database error. Please try again later.</string>

@@ -78,6 +78,9 @@ public class ReviewCreateActivity extends SignedInActivity {
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 switch (reason) {
+                    case ALREADY_EXISTS:
+                        Toast.makeText(getApplicationContext(), getString(R.string.already_rated), Toast.LENGTH_LONG).show();
+                        break;
                     case DATABASE_ERROR:
                         Toast.makeText(getApplicationContext(), String.format(getString(R.string.create_db_error_template), getString(R.string.review).toLowerCase()), Toast.LENGTH_LONG).show();
                         break;

@@ -48,7 +48,7 @@ public class Booking implements Serializable {
         this("temp", startTime, endTime, new Date(), null, homeowner, homeowner.getKey(), provider, provider.getKey(),
                 Status.REQUESTED, service.getName(), service.getRate(), null, null);
         this.key = null;
-        if (startTime.compareTo(new Date()) >= 0) { throw new InvalidDataException("Booking must be in the future.");}
+        if (startTime.compareTo(new Date()) <= 0) { throw new InvalidDataException("Booking must be in the future.");}
     }
 
     public Booking(@NonNull String key, @NonNull Date startTime, @NonNull Date endTime, @NonNull Date dateCreated, @Nullable Date dateCancelledOrApproved,

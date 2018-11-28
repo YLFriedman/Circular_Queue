@@ -250,7 +250,7 @@ public class BookingViewActivity extends SignedInActivity {
     }
 
     public void onApproveBookingClick(View v) {
-        if (Booking.Status.APPROVED != currentBooking.getStatus()) { configureView(); return; }
+        if (Booking.Status.REQUESTED != currentBooking.getStatus()) { configureView(); return; }
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
         btn_approve_booking.setEnabled(false);
