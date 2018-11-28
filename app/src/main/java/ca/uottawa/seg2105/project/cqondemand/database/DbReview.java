@@ -3,10 +3,13 @@ package ca.uottawa.seg2105.project.cqondemand.database;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import ca.uottawa.seg2105.project.cqondemand.domain.Review;
+import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
@@ -38,12 +41,30 @@ public class DbReview extends DbItem<Review> {
         return new Review(key, new Date(date_created), rating, comment, service_name, reviewer_name, reviewer_key);
     }
 
-    public static void createReview(@NonNull Review review, String serviceProviderKey, @Nullable AsyncActionEventListener listener) {
-        String reviewKey = review.getKey();
-        if(reviewKey == null) {
-            throw new IllegalArgumentException("Review key required to update database");
-        }
-        DatabaseReference baseRef = DbUtil.getRef(String.format("provider_reviews/%s/%s", serviceProviderKey, reviewKey));
+    public static void createReview(@NonNull Review review, @NonNull ServiceProvider provider, @Nullable AsyncActionEventListener listener) {
+        if (null == review.getKey()) { throw new IllegalArgumentException("Review key required to update database"); }
+        if (null == provider.getKey()) { throw new IllegalArgumentException("Review key required to update database"); }
+        getReview(provider.getKey(), review.getKey(), new AsyncSingleValueEventListener<Review>() {
+            @Override
+            public void onSuccess(@NonNull Review item) {
+                // Failure Condition: Booking already reviewed
+                if (null != listener) { listener.onFailure(AsyncEventFailureReason.ALREADY_EXISTS); }
+            }
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                if (AsyncEventFailureReason.DOES_NOT_EXIST == reason) {
+                    // Do the update
+                    Map<String, Object> pathMap = new HashMap<String, Object>();
+                    pathMap.put(String.format("provider_reviews/%s/%s", provider.getKey(), review.getKey()), new DbReview(review));
+                    // TODO: Apply review to service provider
+                    DbUser.updateUser(provider, pathMap, listener);
+                } else {
+                    if (null != listener) { listener.onFailure(reason); }
+                }
+            }
+        });
+
+        /*DatabaseReference baseRef = DbUtil.getRef(String.format("provider_reviews/%s/%s", serviceProviderKey, reviewKey));
         DbReview dbVersion = new DbReview(review);
         baseRef.setValue(dbVersion, (databaseError, databaseReference) -> {
             if (databaseError == null) {
@@ -51,8 +72,11 @@ public class DbReview extends DbItem<Review> {
             } else {
                 listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
             }
-        });
+        });*/
     }
+
+
+
 
     public static void getReview(@NonNull String serviceProviderKey, @NonNull String bookingKey, AsyncSingleValueEventListener<Review> listener) {
         String path = String.format("%s/%s", serviceProviderKey, bookingKey);

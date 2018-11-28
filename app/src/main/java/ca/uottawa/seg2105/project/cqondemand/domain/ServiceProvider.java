@@ -110,6 +110,13 @@ public class ServiceProvider extends User implements Serializable {
         this.availabilities = availabilities;
     }
 
+    public void applyReview(Review review) {
+        numRatings++;
+        runningRatingTotal += review.getRating();
+        float calcRating = (runningRatingTotal / (float) numRatings) * 100;
+        rating = Math.round(calcRating);
+    }
+
     @Override
     public boolean equals(Object otherObj) {
         if (!(otherObj instanceof ServiceProvider)) { return false; }
