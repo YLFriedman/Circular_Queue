@@ -172,7 +172,7 @@ public class BookingViewActivity extends SignedInActivity {
             txt_approved_on.setText(DATE_FORMAT.format(currentBooking.getDateCancelledOrApproved()));
             grp_approved.setVisibility(View.VISIBLE);
         }
-        
+
         if (Mode.HOMEOWNER == mode) {
             txt_service_provider.setText(currentBooking.getServiceProvider().getCompanyName());
             grp_homeowner.setVisibility(View.GONE);

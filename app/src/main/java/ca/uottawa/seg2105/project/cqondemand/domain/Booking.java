@@ -92,7 +92,7 @@ public class Booking implements Serializable {
     }
 
     public Status getStatus() {
-        // If the booking end time is in the past  CANCELLED, APPROVED, REQUESTED, EXPIRED, COMPLETED;
+        // If the booking end time is in the past
         if (endTime.getTime() < System.currentTimeMillis()) {
             if (Status.REQUESTED == status) { return Status.EXPIRED; }
             if (Status.APPROVED == status) { return Status.COMPLETED; }

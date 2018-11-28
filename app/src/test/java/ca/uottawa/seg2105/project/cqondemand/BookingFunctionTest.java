@@ -28,10 +28,11 @@ public class BookingFunctionTest {
         // Test the creation of an object and its getters
         try {
             Booking testBooking = new Booking(new Date(2018), new Date(2019), user, provider, new Service("serviceName", 10, "key"));
+            testBooking.cancelBooking(new Date(), null);
             assertEquals("Booking getter Failed - startTime", new Date(2018), testBooking.getStartTime());
             assertEquals("Booking getter Failed - endTime", new Date(2019), testBooking.getEndTime());
             assertEquals("Booking getter Failed - homeownerKey", user.getKey(), testBooking.getHomeownerKey());
-            assertEquals("Booking getter Failed - status", Booking.Status.REQUESTED, testBooking.getStatus());
+            assertEquals("Booking getter Failed - status", Booking.Status.CANCELLED, testBooking.getStatus());
             assertEquals("Booking getter Failed - endTime", new Date(2019), testBooking.getEndTime());
             assertEquals("Booking getter Failed - serviceName", "serviceName", testBooking.getServiceName());
             assertEquals("Booking getter Failed - serviceRate", 10, testBooking.getServiceRate());
