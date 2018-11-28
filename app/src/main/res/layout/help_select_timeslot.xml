@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/txt_title_legend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/legend"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="22sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/cell_unavailable"
+                    style="@style/availability_grid_cell"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="4dp"
+                    android:layout_weight="0"
+                    android:contentDescription="@string/availability" />
+
+                <TextView
+                    android:id="@+id/txt_unavailable"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:text="@string/unavailable"
+                    android:textColor="@color/text_primary_dark"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/cell_available"
+                    style="@style/availability_grid_cell.available"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="4dp"
+                    android:layout_weight="0"
+                    android:contentDescription="@string/availability" />
+
+                <TextView
+                    android:id="@+id/txt_available"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:text="@string/available"
+                    android:textColor="@color/text_primary_dark"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txt_title_tips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/tips"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="22sp" />
+
+            <TextView
+                android:id="@+id/txt_avail_tip_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/avail_tip_1"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txt_avail_tip_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/avail_tip_2"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txt_avail_tip_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/avail_tip_3"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+</ScrollView>

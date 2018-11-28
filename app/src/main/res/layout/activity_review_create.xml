@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.ReviewCreateActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="24dp"
+            android:paddingTop="16dp"
+            android:paddingRight="24dp"
+            android:paddingBottom="16dp" >
+
+            <TextView
+                android:id="@+id/txt_title_service_provider"
+                style="@style/input_label"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="@string/service_provider"
+                android:textColor="@color/text_secondary_dark" />
+
+            <TextView
+                android:id="@+id/txt_service_provider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="@string/placeholder"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txt_title_service"
+                style="@style/input_label"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="@string/service"
+                android:textColor="@color/text_secondary_dark" />
+
+            <TextView
+                android:id="@+id/txt_service_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="@string/placeholder"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txt_title_rating"
+                style="@style/input_label"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="@string/rating"
+                android:textColor="@color/text_secondary_dark" />
+
+            <RatingBar
+                android:id="@+id/rating_stars"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="12dp"
+                android:numStars="5"
+                android:stepSize="1" />
+
+            <EditText
+                android:id="@+id/field_comments"
+                style="@style/input_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:hint="@string/comments"
+                android:inputType="textMultiLine|textNoSuggestions" />
+
+            <Button
+                android:id="@+id/btn_create_review"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:onClick="onCreateReviewClick"
+                android:text="@string/submit_review" />
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

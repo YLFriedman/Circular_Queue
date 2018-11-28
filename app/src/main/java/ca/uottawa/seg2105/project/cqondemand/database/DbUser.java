@@ -1,7 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand.database;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -9,7 +9,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
+import ca.uottawa.seg2105.project.cqondemand.domain.Availability;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
@@ -30,14 +33,18 @@ public class DbUser extends DbItem<User> {
     public String password;
     public String type;
     public DbAddress address;
-    public boolean licensed;
+    public Boolean licensed;
     public String phone_number;
     public String company_name;
     public String description;
+    public Integer rating;
+    public Long running_rating_total;
+    public Integer num_ratings;
+    public List<DbAvailability> availabilities;
 
     public DbUser() {}
 
-    DbUser(User item) {
+    public DbUser(User item) {
         super(item.getKey());
         unique_name = item.getUniqueName();
         first_name = item.getFirstName();
@@ -49,20 +56,34 @@ public class DbUser extends DbItem<User> {
         if (item instanceof ServiceProvider) {
             ServiceProvider provider = (ServiceProvider) item;
             address = new DbAddress(provider.getAddress());
-            company_name = provider.getCompanyName();
-            phone_number = provider.getPhoneNumber();
             licensed = provider.isLicensed();
+            phone_number = provider.getPhoneNumber();
+            company_name = provider.getCompanyName();
             description = provider.getDescription();
+            rating = provider.getRating();
+            running_rating_total = provider.getRunningRatingTotal();
+            num_ratings = provider.getNumRatings();
+            if (null == provider.getAvailabilities()) { availabilities = null; }
+            else {
+                availabilities = new LinkedList<DbAvailability>();
+                for (Availability availability: provider.getAvailabilities()) { availabilities.add(new DbAvailability(availability)); }
+            }
         }
     }
 
     @NonNull
     public User toDomainObj() {
-        if (User.parseType(type) == User.Type.SERVICE_PROVIDER) {
+        if (User.Type.parse(type) == User.Type.SERVICE_PROVIDER) {
             if (null == address) { throw new IllegalArgumentException("The address cannot be null"); }
-            return new ServiceProvider(retrieveKey(), first_name, last_name, username, email, password, company_name, licensed, phone_number, address.toDomainObj(), description);
+            List<Availability> availabilities = null;
+            if (null != this.availabilities) {
+                availabilities = new LinkedList<Availability>();
+                for (DbAvailability availability: this.availabilities) { availabilities.add(availability.toDomainObj()); }
+            }
+            return new ServiceProvider(getKey(), first_name, last_name, username, email, password, company_name, licensed,
+                    phone_number,address.toDomainObj(), description, rating, running_rating_total, num_ratings, availabilities);
         }
-        return new User(retrieveKey(), first_name, last_name, username, email, User.parseType(type), password);
+        return new User(getKey(), first_name, last_name, username, email, User.Type.parse(type), password);
     }
 
     public static void createUser(@NonNull final User user, @Nullable final AsyncActionEventListener listener) {
@@ -88,7 +109,7 @@ public class DbUser extends DbItem<User> {
             @Override
             public void onSuccess() {
                 // If we are updating the logged in user, replace the user object
-                if (user.equals(State.getState().getSignedInUser())) { State.getState().setSignedInUser(user); }
+                if (user.equals(State.getInstance().getSignedInUser())) { State.getInstance().setSignedInUser(user); }
                 if (null != listener) { listener.onSuccess(); }
             }
             @Override
@@ -113,9 +134,21 @@ public class DbUser extends DbItem<User> {
         });
     }
 
-    public static void deleteUser(@NonNull User user, @Nullable AsyncActionEventListener listener) {
+    public static void deleteUser(final @NonNull User user, final @Nullable AsyncActionEventListener listener) {
         if (null == user.getKey() || user.getKey().isEmpty()) { throw new IllegalArgumentException("A user object with a key is required. Unable to delete from the database without the key."); }
-        deleteUserRelational(user, listener);
+        final AsyncActionEventListener loggedInUserUpdateListener = new AsyncActionEventListener() {
+            @Override
+            public void onSuccess() {
+                // If we are deleting the logged in user, remove the signed in user
+                if (user.equals(State.getInstance().getSignedInUser())) { State.getInstance().setSignedInUser(null); }
+                if (null != listener) { listener.onSuccess(); }
+            }
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                if (null != listener) { listener.onFailure(reason); }
+            }
+        };
+        deleteUserRelational(user, loggedInUserUpdateListener);
     }
 
     public static void getUser(@NonNull String key, @NonNull final AsyncSingleValueEventListener<User> listener) {
@@ -123,7 +156,8 @@ public class DbUser extends DbItem<User> {
     }
 
     public static void getUserByUsername(@NonNull String username, @NonNull final AsyncSingleValueEventListener<User> listener) {
-        DbUtil.getItems(DbUtil.DataType.USER, "unique_name", User.getUniqueName(username), new AsyncValueEventListener<User>() {
+        DbQuery query = DbQuery.createChildValueQuery("unique_name").setEqualsFilter(User.getUniqueName(username));
+        DbUtil.getItems(DbUtil.DataType.USER, query, new AsyncValueEventListener<User>() {
             @Override
             public void onSuccess(@NonNull ArrayList<User> data) {
                 if (data.size() == 1) { listener.onSuccess(data.get(0)); }
@@ -136,38 +170,14 @@ public class DbUser extends DbItem<User> {
     }
 
     public static void getUsers(@NonNull AsyncValueEventListener<User> listener) {
-        DbUtil.getItems(DbUtil.DataType.USER, listener);
+        DbQuery query = DbQuery.createChildValueQuery("unique_name");
+        DbUtil.getItems(DbUtil.DataType.USER, query, listener);
     }
 
     @NonNull
     public static DbListenerHandle<?> getUsersLive(@NonNull final AsyncValueEventListener<User> listener) {
-        return DbUtil.getItemsLive(DbUtil.DataType.USER, listener);
-    }
-
-    /**
-     * Callback method for authenticating a given set of user credentials through the database. Fails
-     * if username does not exist or does not match store password value.
-     *
-     * @param username the username to be authenticated
-     * @param password the password to be authenticated
-     * @param listener the listener that will be informed if authentication was successful or not
-     */
-    public static void authenticate(@NonNull String username, @NonNull final String password, @Nullable final AsyncActionEventListener listener) {
-        getUserByUsername(username, new AsyncSingleValueEventListener<User>() {
-            @Override
-            public void onSuccess(@NonNull User user) {
-                if (user.getPassword().equals(password)) {
-                    State.getState().setSignedInUser(user);
-                    if (null != listener) { listener.onSuccess(); }
-                } else {
-                    if (null != listener) { listener.onFailure(AsyncEventFailureReason.PASSWORD_MISMATCH); }
-                }
-            }
-            @Override
-            public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                if (null != listener) { listener.onFailure(reason); }
-            }
-        });
+        DbQuery query = DbQuery.createChildValueQuery("unique_name");
+        return DbUtil.getItemsLive(DbUtil.DataType.USER, query, listener);
     }
 
     public static void updatePassword(@NonNull User user, @NonNull String newPassword, @Nullable final AsyncSingleValueEventListener<User> listener) {
@@ -180,31 +190,90 @@ public class DbUser extends DbItem<User> {
         });
     }
 
-    public static void updateUserRelational(@NonNull final User user, @Nullable final AsyncActionEventListener listener) {
+    private static void updateUserRelational(@NonNull final User user, @Nullable final AsyncActionEventListener listener) {
         final String userKey = user.getKey();
         final DbUser updatedUser = new DbUser(user);
         final HashMap<String, Object> pathMap = new HashMap<String, Object>();
         // Add the primary path to the map
         pathMap.put(String.format("%s/%s", DbUtil.DataType.USER, userKey), updatedUser);
-        if (user instanceof  ServiceProvider) {
-            DbUtilRelational.LookupType.SERVICE_USERS.getRef().child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot child: dataSnapshot.getChildren()) {
-                        String serviceKey = child.getKey();
-                        String path = String.format("%s/%s/%s", DbUtilRelational.RelationType.SERVICE_USERS, serviceKey, userKey);
-                        pathMap.put(path, updatedUser);
-                    }
-                    DbUtilRelational.multiPathUpdate(pathMap, listener);
+        buildBookingsUpdateMap(updatedUser, pathMap, new AsyncSingleValueEventListener<HashMap<String, Object>>() {
+            @Override
+            public void onSuccess(@NonNull HashMap<String, Object> bookingMap) {
+                if (user instanceof  ServiceProvider) {
+                    buildServiceUsersMap(updatedUser, bookingMap, new AsyncSingleValueEventListener<HashMap<String, Object>>() {
+                        @Override
+                        public void onSuccess(@NonNull HashMap<String, Object> bookingAndServiceMap) {
+                            DbUtilRelational.multiPathUpdate(bookingAndServiceMap, listener);
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                            listener.onFailure(reason);
+                        }
+                    });
+                } else {
+                    DbUtilRelational.multiPathUpdate(bookingMap, listener);
                 }
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    if (null != listener) { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
+            }
+
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                listener.onFailure(reason);
+            }
+        });
+
+    }
+
+    private static void buildServiceUsersMap(DbUser updatedUser, HashMap<String, Object> pathMap, AsyncSingleValueEventListener<HashMap<String,Object>> listener){
+        String userKey = updatedUser.getKey();
+        DbUtilRelational.LookupType.SERVICE_USERS.getRef().child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot child: dataSnapshot.getChildren()) {
+                    String serviceKey = child.getKey();
+                    String path = String.format("%s/%s/%s", DbUtilRelational.RelationType.SERVICE_USERS, serviceKey, userKey);
+                    pathMap.put(path, updatedUser);
                 }
-            });
-        } else {
-            DbUtilRelational.multiPathUpdate(pathMap, listener);
+                listener.onSuccess(pathMap);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                if (null != listener) { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
+            }
+        });
+    }
+
+    private static void buildBookingsUpdateMap(DbUser updatedUser, HashMap<String, Object> map, AsyncSingleValueEventListener<HashMap<String, Object>> listener) {
+        String userKey = updatedUser.getKey();
+        String objectType;
+        if(updatedUser.type == User.Type.HOMEOWNER.toString()){
+            objectType = "homeowner";
         }
+        else{
+            objectType = "service_provider";
+        }
+
+        String lookupPath = String.format("user_bookings_lookup/%s", userKey);
+
+        DbUtilRelational.getRef(lookupPath).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot assoc : dataSnapshot.getChildren()){
+                    for(DataSnapshot booking : assoc.getChildren()){
+                        String updatePath = String.format("user_bookings/%s/%s/%s", assoc.getKey(), booking.getKey(), objectType);
+                        map.put(updatePath, updatedUser);
+                    }
+                }
+                listener.onSuccess(map);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
+            }
+        });
+
+
     }
 
     public static void deleteUserRelational(@NonNull User user, @Nullable final AsyncActionEventListener listener) {
@@ -240,7 +309,8 @@ public class DbUser extends DbItem<User> {
         if (provider.getKey() == null || provider.getKey().isEmpty()) {
             throw new IllegalArgumentException("A service provider object with a key is required. Unable to query the database without the key.");
         }
-        DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.USER_SERVICES, provider.getKey(), listener);
+        DbQuery query = DbQuery.createChildValueQuery("name");
+        DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.USER_SERVICES, provider.getKey(), query, listener);
     }
 
     @NonNull
@@ -248,7 +318,8 @@ public class DbUser extends DbItem<User> {
         if (provider.getKey() == null || provider.getKey().isEmpty()) {
             throw new IllegalArgumentException("A service provider object with a key is required. Unable to query the database without the key.");
         }
-        return DbUtilRelational.getItemsRelationalLive(DbUtilRelational.RelationType.USER_SERVICES, provider.getKey(), listener);
+        DbQuery query = DbQuery.createChildValueQuery("name");
+        return DbUtilRelational.getItemsRelationalLive(DbUtilRelational.RelationType.USER_SERVICES, provider.getKey(), query, listener);
     }
 
 }

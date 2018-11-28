@@ -1,8 +1,8 @@
 package ca.uottawa.seg2105.project.cqondemand.adapters;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,8 +30,7 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
     }
 
     public CategoryListAdapter(Context context, ArrayList<Category> data, View.OnClickListener clickListener) {
-        this.context = context;
-        this.data = data;
+        this(context, data);
         this.clickListener = clickListener;
     }
 

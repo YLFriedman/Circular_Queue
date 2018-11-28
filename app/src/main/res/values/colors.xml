@@ -5,17 +5,28 @@
     <color name="text_secondary_dark">#8c8c8c</color>
     <color name="text_primary_light">#F2F2F2</color>
     <color name="text_secondary_light">#EEEEEE</color>
+
+    <color name="background_default">#FAFAFA</color>
+
     <color name="colorPrimary">#3f51b5</color>
     <color name="colorPrimaryDark">#303f9f</color>
     <color name="colorAccent">#ff4081</color>
+    <color name="text_link">#003cd4</color>
+
     <color name="btn_confirm">#003cd4</color>
     <color name="btn_danger">#ee9999</color>
     <color name="light_blue">#abb4e5</color>
+
     <color name="White">#ffffff</color>
     <color name="icon_light">#f2f2f2</color>
     <color name="icon_medium">#8C8C8C</color>
     <color name="icon_dark">#000000</color>
     <color name="dialog_red">#BB5555</color>
 
+    <color name="black_overlay">#66000000</color>
+    <color name="transparent">#00000000</color>
+
+    <color name="mdtp_accent_color">@color/colorPrimary</color>
+    <color name="mdtp_accent_color_dark">@color/colorPrimaryDark</color>
 
 </resources>

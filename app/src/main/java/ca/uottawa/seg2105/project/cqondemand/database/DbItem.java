@@ -1,10 +1,13 @@
 package ca.uottawa.seg2105.project.cqondemand.database;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+
+import com.google.firebase.database.Exclude;
 
 abstract class DbItem<T> {
 
-    private String key;
+    @Exclude
+    public String key;
 
     DbItem() { }
 
@@ -14,11 +17,13 @@ abstract class DbItem<T> {
 
     abstract @NonNull T toDomainObj();
 
-    void storeKey(@NonNull String key) {
+    @Exclude
+    void setKey(@NonNull String key) {
         this.key = key;
     }
 
-    String retrieveKey() {
+    @Exclude
+    String getKey() {
         return key;
     }
 

@@ -2,14 +2,15 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
@@ -42,8 +43,8 @@ public class CategoryListActivity extends SignedInActivity {
                     public void onClick(final View view) {
                         if (!itemClickEnabled) { return; }
                         itemClickEnabled = false;
-                        State.getState().setCurrentCategory((Category) view.getTag());
                         Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
+                        intent.putExtra("category", (Serializable) view.getTag());
                         startActivityForResult(intent, 0);
                     }
                 }));
@@ -82,7 +83,7 @@ public class CategoryListActivity extends SignedInActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        User user = State.getState().getSignedInUser();
+        User user = State.getInstance().getSignedInUser();
         if (null != user && user.getType() == User.Type.ADMIN) {
             getMenuInflater().inflate(R.menu.category_list_options, menu);
             return true;

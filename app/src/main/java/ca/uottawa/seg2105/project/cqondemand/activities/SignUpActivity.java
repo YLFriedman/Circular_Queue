@@ -1,8 +1,8 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -26,6 +26,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
+import ca.uottawa.seg2105.project.cqondemand.utilities.Authentication;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -352,6 +353,8 @@ public class SignUpActivity extends AppCompatActivity {
 
         if (!fields_1AreValid() || (User.Type.SERVICE_PROVIDER == userType && !fields_2AreValid())) { return; }
 
+        password = Authentication.genHash(password);
+
         User newUser = null;
         if (User.Type.SERVICE_PROVIDER == userType) {
             Address address = new Address(unit, streetNumberInt, streetName, city, province, country, postalCode);
@@ -404,12 +407,6 @@ public class SignUpActivity extends AppCompatActivity {
         field_email.setText("test@email.com");
         field_password.setText("cqpass");
         field_password_confirm.setText("cqpass");
-    }
-
-    public void onTestlick(View view) {
-        String province = spinner_province.getSelectedItem() == null ? "null" : spinner_province.getSelectedItem().toString();
-        String userType = spinner_user_type.getSelectedItem() == null ? "null" : spinner_user_type.getSelectedItem().toString();
-        Toast.makeText(getApplicationContext(), "userType: " + userType + "\nprovince: " + province, Toast.LENGTH_LONG).show();
     }
 
 }

@@ -1,8 +1,8 @@
 package ca.uottawa.seg2105.project.cqondemand.adapters;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,9 +51,8 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
         // Set the current item as the view's tag so it can be retrieve easily in the onClick handler
         viewHolder.itemView.setTag(item);
         if (null != item) {
-            viewHolder.txt_title.setText(String.format(Locale.CANADA, context.getString(R.string.full_name_template), item.getFirstName(), item.getLastName()));
+            viewHolder.txt_title.setText(item.getFullName());
             viewHolder.txt_subtitle.setText(String.format(Locale.CANADA, "%s, %s", item.getUsername(), item.getType().toString()));
-            viewHolder.txt_subtitle.setContentDescription(item.getUsername());
         }
         viewHolder.img_item_image.setImageResource(R.drawable.ic_account_circle_med_40);
         viewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_med_30);

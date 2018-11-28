@@ -1,27 +1,27 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import java.sql.Timestamp;
 
-import ca.uottawa.seg2105.project.cqondemand.database.DbService;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.domain.Address;
-import ca.uottawa.seg2105.project.cqondemand.domain.Availability;
-import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.utilities.Authentication;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
@@ -34,16 +34,28 @@ public class SignInActivity extends AppCompatActivity {
     protected EditText field_username;
     protected EditText field_password;
 
+    private CheckBox box_remember;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        State state = State.getInstance(getApplicationContext());
         setContentView(R.layout.activity_sign_in);
-        if (null == State.getState().getSignedInUser()) {
+        if (null == state.getSignedInUser()) {
             field_username = findViewById(R.id.field_username);
             field_password = findViewById(R.id.field_password);
             btn_sign_in = findViewById(R.id.btn_sign_in);
             btn_sign_up = findViewById(R.id.btn_sign_up);
             btn_create_admin_account = findViewById(R.id.btn_create_admin_account);
+
+            box_remember = findViewById(R.id.box_remember);
+
+            if (state.getBooleanPref("saveLogin", false)) {
+                field_username.setText(state.getStringPref("username", ""));
+                field_password.setText(state.getStringPref("password", ""));
+                box_remember.setChecked(true);
+            }
+
             DbUser.getUserByUsername("admin", new AsyncSingleValueEventListener<User>() {
                 @Override
                 public void onSuccess(@NonNull User user) {
@@ -64,7 +76,7 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if (null != State.getState().getSignedInUser()) {
+        if (null != State.getInstance().getSignedInUser()) {
             Intent loginIntent = new Intent(getApplicationContext(), HomeActivity.class);
             startActivity(loginIntent);
             finish();
@@ -74,9 +86,13 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed () {
+        moveTaskToBack (false);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (RESULT_CANCELED == resultCode) {
-            //field_username.getText().clear();
             field_password.getText().clear();
             if (field_username.getText().toString().isEmpty()) {
                 field_username.requestFocus();
@@ -106,11 +122,23 @@ public class SignInActivity extends AppCompatActivity {
             field_password.requestFocus();
             field_password.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
         } else {
+            // Clear the remember me saved settings
+            final State state = State.getInstance();
+            state.setBooleanPref("saveLogin", false);
+            state.removePref("username");
+            state.removePref("password");
+
             btn_sign_in.setEnabled(false);
             btn_sign_up.setEnabled(false);
-            DbUser.authenticate(field_username.getText().toString().trim(), field_password.getText().toString(), new AsyncActionEventListener() {
+            Authentication.authenticate(field_username.getText().toString().trim(), field_password.getText().toString(), new AsyncActionEventListener() {
                 @Override
                 public void onSuccess() {
+                    // If remember me was checked and the login is successful, save the login details
+                    if (box_remember.isChecked()) {
+                        state.setBooleanPref("saveLogin", true);
+                        state.setStringPref("username", field_username.getText().toString());
+                        state.setStringPref("password", field_password.getText().toString());
+                    }
                     btn_sign_in.setEnabled(true);
                     btn_sign_up.setEnabled(true);
                     Intent loginIntent = new Intent(getApplicationContext(), HomeActivity.class);
@@ -152,7 +180,7 @@ public class SignInActivity extends AppCompatActivity {
     public void onCreateAdminAccountClick(View view) {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
-        User user = new User("Admin", "User", "admin", "yfrie071@uottawa.ca", User.Type.ADMIN, "admin");
+        User user = new User("Admin", "User", "admin", "yfrie071@uottawa.ca", User.Type.ADMIN, Authentication.genHash("admin"));
         DbUser.createUser(user, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
@@ -175,7 +203,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     public void onCreateTestAccountClick(View view) {
-        User user = new User("Test", "User", "test", "test@test.test", User.Type.HOMEOWNER, "cqpass");
+        User user = new User("Test", "User", "test", "test@test.test", User.Type.HOMEOWNER, Authentication.genHash("cqpass"));
         DbUser.createUser(user, new AsyncActionEventListener() {
             @Override
             public void onSuccess() { }
@@ -186,26 +214,20 @@ public class SignInActivity extends AppCompatActivity {
 
     public void onUpdateServiceTestClick(View view){
         Address address = new Address("45", 2546, "Easy st.", "Ottawa", "Ontario", "Canada", "K1Z5N9");
-        Availability monday = new Availability(Availability.Day.MONDAY, 9, 17);
-        Availability sunday = new Availability(Availability.Day.SUNDAY, 9, 18);
-        ArrayList<Availability> listyBoy = new ArrayList<>();
-        listyBoy.add(monday);
-        listyBoy.add(sunday);
+        java.sql.Timestamp date = new Timestamp(System.currentTimeMillis());
 
-        ServiceProvider provides = new ServiceProvider("-LRTteBm1Bvhh8KMiGd_", "daddy", "please", "DONOTspankme", "bad@boy.com",
-                "cqpass", "Spaces Allowed", true, "6132453125", address, null);
+        ServiceProvider provider = new ServiceProvider("-LRTteBm1Bvhh8KMiGd_", "MOMMY", "please", "DONOTspankme", "bad@boy.com",
+                "cqpass", "Spaces Allowed", true, "6132453125", address, "I'm gaaaaaaaaaay", 0, 0, 0, null);
         System.out.println("OUTPUT");
-        User user = new User("-LRYCsBuPG8E1gmy6otV", "Test", "Homeowner", "Hope", "thisworks@mail.com", User.Type.HOMEOWNER, "cqpass");
-        Service service = new Service("-LRNf10QyYaAtg9kx3dR", "Super Nutty", 201, "-LRNeyae0rFs4YqwqiVs");
-        DbService.updateService(service, new AsyncActionEventListener() {
-            @Override
-            public void onSuccess() { }
-            @Override
-            public void onFailure(@NonNull AsyncEventFailureReason reason) { }
-        });
+        User user = new User("-LRYCsBuPG8E1gmy6otV", "Test", "Homeowner", "Hope", "thisworks@mail.com", User.Type.HOMEOWNER, Authentication.genHash("cqpass"));
+        State state = State.getInstance();
+        state.setSignedInUser(user);
+        Intent intent = new Intent(getApplicationContext(), ReviewListActivity.class);
+        intent.putExtra("user", user);
+        intent.putExtra("provider", provider);
+        startActivity(intent);
+
 
     }
-
-
 
 }

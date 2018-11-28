@@ -2,8 +2,8 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,7 +20,7 @@ import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
-public class UserAccountViewActivity extends SignedInActivity {
+public class UserViewActivity extends SignedInActivity {
 
     protected boolean itemClickEnabled = true;
     protected TextView txt_account_type;
@@ -38,7 +38,7 @@ public class UserAccountViewActivity extends SignedInActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_account_view);
+        setContentView(R.layout.activity_user_view);
         // Set references to the UI objects
         txt_account_type = findViewById(R.id.txt_account_type);
         txt_username = findViewById(R.id.txt_username);
@@ -50,23 +50,37 @@ public class UserAccountViewActivity extends SignedInActivity {
         txt_description = findViewById(R.id.txt_description);
         txt_licensed = findViewById(R.id.txt_licensed);
         txt_address = findViewById(R.id.txt_address);
+
+        Intent intent = getIntent();
+        try {
+            currentUser = (User) intent.getSerializableExtra("user");
+        } catch (ClassCastException e) {
+            Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
+        if (null != currentUser) {
+            setupFields();
+        } else {
+            currentUser = State.getInstance().getSignedInUser();
+            setupFields();
+        }
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
         if (isFinishing()) { return; }
-        if (null != State.getState().getCurrentUser()) {
-            currentUser = State.getState().getCurrentUser();
-            State.getState().setCurrentUser(null);
-            setupFields();
-        } else if (null != currentUser) {
-            setupFields();
-        } else {
-            currentUser = State.getState().getSignedInUser();
-            setupFields();
-        }
         itemClickEnabled = true;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        currentUser = (User) intent.getSerializableExtra("user");
+        if (null != currentUser) { setupFields(); }
     }
 
     private void setupFields() {
@@ -79,7 +93,7 @@ public class UserAccountViewActivity extends SignedInActivity {
         } else {
             txt_account_type.setText(currentUser.getType().toString());
             txt_username.setText(currentUser.getUsername());
-            txt_full_name.setText(String.format(getString(R.string.full_name_template), currentUser.getFirstName(), currentUser.getLastName()));
+            txt_full_name.setText(currentUser.getFullName());
             txt_email.setText(currentUser.getEmail());
             if (currentUser instanceof ServiceProvider) {
                 ServiceProvider provider = (ServiceProvider) currentUser;
@@ -95,12 +109,12 @@ public class UserAccountViewActivity extends SignedInActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        User user = State.getState().getSignedInUser();
-        getMenuInflater().inflate(R.menu.user_options, menu);
+        User user = State.getInstance().getSignedInUser();
+        getMenuInflater().inflate(R.menu.booking_options, menu);
         if (null != user && user.getType() == User.Type.ADMIN) {
             menu.setGroupVisible(R.id.grp_user_edit_controls, false);
         }
-        if (!State.getState().getSignedInUser().equals(currentUser)) {
+        if (!State.getInstance().getSignedInUser().equals(currentUser)) {
             menu.setGroupVisible(R.id.grp_user_password_controls, false);
         }
         return true;
@@ -119,15 +133,17 @@ public class UserAccountViewActivity extends SignedInActivity {
     public void onEditAccountClick() {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
-        State.getState().setCurrentUser(currentUser);
-        startActivity(new Intent(getApplicationContext(), UserAccountEditActivity.class));
+        Intent intent = new Intent(getApplicationContext(), UserEditActivity.class);
+        intent.putExtra("user", currentUser);
+        startActivity(intent);
     }
 
     public void onChangePasswordClick() {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
-        State.getState().setCurrentUser(currentUser);
-        startActivity(new Intent(getApplicationContext(), UserAccountChangePasswordActivity.class));
+        Intent intent = new Intent(getApplicationContext(), UserChangePasswordActivity.class);
+        intent.putExtra("user", currentUser);
+        startActivity(intent);
     }
 
     public void onDeleteAccountClick() {
@@ -143,7 +159,6 @@ public class UserAccountViewActivity extends SignedInActivity {
                             DbUser.deleteUser(currentUser, new AsyncActionEventListener() {
                                 public void onSuccess() {
                                     Toast.makeText(getApplicationContext(), String.format(getString(R.string.account_delete_success), currentUser.getUsername()), Toast.LENGTH_LONG).show();
-                                    if (currentUser.equals(State.getState().getSignedInUser())) { State.getState().setSignedInUser(null); }
                                     finish();
                                 }
                                 public void onFailure(@NonNull AsyncEventFailureReason reason) {

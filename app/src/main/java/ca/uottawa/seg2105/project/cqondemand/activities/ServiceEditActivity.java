@@ -1,10 +1,10 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
-import android.support.annotation.NonNull;
+import android.content.Intent;
+import androidx.annotation.NonNull;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -15,22 +15,24 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.adapters.SpinnerAdapter;
 import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
 import ca.uottawa.seg2105.project.cqondemand.database.DbListenerHandle;
 import ca.uottawa.seg2105.project.cqondemand.database.DbService;
+import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
+import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
-import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class ServiceEditActivity extends SignedInActivity {
 
     protected Spinner spinner_categories;
-    protected String categoryName;
+    protected Category currentCategory;
     protected Service currentService;
     protected DbListenerHandle<?> dbListenerHandle;
 
@@ -41,8 +43,16 @@ public class ServiceEditActivity extends SignedInActivity {
         spinner_categories = findViewById(R.id.spinner_categories);
         EditText field_service_name = findViewById(R.id.field_service_name);
         EditText field_rate = findViewById(R.id.field_rate);
-        currentService = State.getState().getCurrentService();
-        State.getState().setCurrentService(null);
+        // Get the service from the intent
+        Intent intent = getIntent();
+        try {
+            currentService = (Service) intent.getSerializableExtra("service");
+        } catch (ClassCastException e) {
+            Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+        // If we have a service, setup the activity
         if (null != currentService) {
             field_service_name.setText(currentService.getName());
             field_rate.setText(String.valueOf(currentService.getRate()));
@@ -57,6 +67,7 @@ public class ServiceEditActivity extends SignedInActivity {
                 }
             });
         } else {
+            Toast.makeText(getApplicationContext(), R.string.current_service_empty, Toast.LENGTH_LONG).show();
             finish();
         }
     }
@@ -69,17 +80,17 @@ public class ServiceEditActivity extends SignedInActivity {
     }
 
     private void loadSpinnerData(ArrayList<Category> data) {
-        data.add(0, new Category(getString(R.string.category_select)));
+        data.add(0, null);
         // Check if there was already a selection made
         Object currentSelection = spinner_categories.getSelectedItem();
         if (null != currentSelection && !currentSelection.toString().equals(getString(R.string.category_list_select))) {
-            categoryName = currentSelection.toString();
+            currentCategory = (Category) currentSelection;
         }
         // Create the adapter and pass it to the spinner
-        final ArrayAdapter<Category> dataAdapter = new ArrayAdapter<Category>(getApplicationContext(), R.layout.spinner_item_title, data);
+        final SpinnerAdapter<Category> dataAdapter = new SpinnerAdapter<Category>(getApplicationContext(), R.layout.spinner_item_title, getString(R.string.category_select), data);
         spinner_categories.setAdapter(dataAdapter);
         // Set the spinner to be the previously selected or initial category
-        if (null != categoryName) { spinner_categories.setSelection(dataAdapter.getPosition(new Category(categoryName))); }
+        if (null != currentCategory) { spinner_categories.setSelection(dataAdapter.getPosition(currentCategory)); }
         else {
             // If no category exists, attempt to get one from the currentService object
             currentService.getCategory(new AsyncSingleValueEventListener<Category>() {
@@ -157,8 +168,12 @@ public class ServiceEditActivity extends SignedInActivity {
         DbService.updateService(newService, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
-                State.getState().setCurrentService(newService);
                 Toast.makeText(getApplicationContext(), String.format(getString(R.string.service_update_success), newService.getName()), Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getApplicationContext(), ServiceViewActivity.class);
+                intent.putExtra("service", newService);
+                intent.putExtra("category", category);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
                 finish();
             }
             @Override

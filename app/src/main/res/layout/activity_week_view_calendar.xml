@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.AvailabilityWeekViewActivity">
+    tools:context=".activities.WeekViewActivity">
 
     <LinearLayout
-        android:id="@+id/linearLayout3"
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -34,24 +34,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:contentDescription="@string/zoom_out"
                 android:onClick="onZoomOutClick"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
                 app:srcCompat="@drawable/ic_zoom_out_med_30" />
 
             <Button
-                android:id="@+id/btn_save"
+                android:id="@+id/btn_next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
-                android:onClick="onSaveClick"
-                android:text="@string/save" />
+                android:onClick="onNextClick"
+                android:text="@string/next" />
 
             <ImageView
                 android:id="@+id/img_zoom_in"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:contentDescription="@string/zoom_in"
                 android:onClick="onZoomInClick"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
@@ -62,21 +64,20 @@
     </LinearLayout>
 
     <ScrollView
-        android:id="@+id/scrollView2"
+        android:id="@+id/grid_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/title_row">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingLeft="16dp"
-            android:paddingTop="28dp"
             android:paddingRight="16dp">
 
             <LinearLayout
@@ -1405,8 +1406,8 @@
         android:id="@+id/title_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginLeft="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_weight="1"
@@ -1418,11 +1419,17 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
+            android:id="@+id/day_titles"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingTop="5dp"
             android:paddingBottom="3dp">
+
+            <TextView
+                android:id="@+id/txt_spacer"
+                android:layout_width="34dp"
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/txt_sun"
@@ -1482,6 +1489,79 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/day_numbers"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingBottom="3dp">
+
+            <TextView
+                android:id="@+id/txt_month_name"
+                android:layout_width="34dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/mmm_placeholder"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/txt_sun_num"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="bottom|center_horizontal"
+                android:text="@string/hashtag" />
+
+            <TextView
+                android:id="@+id/txt_mon_num"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="bottom|center_horizontal"
+                android:text="@string/hashtag" />
+
+            <TextView
+                android:id="@+id/txt_tue_num"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="bottom|center_horizontal"
+                android:text="@string/hashtag" />
+
+            <TextView
+                android:id="@+id/txt_wed_num"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="bottom|center_horizontal"
+                android:text="@string/hashtag" />
+
+            <TextView
+                android:id="@+id/txt_thu_num"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="bottom|center_horizontal"
+                android:text="@string/hashtag" />
+
+            <TextView
+                android:id="@+id/txt_fri_num"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="bottom|center_horizontal"
+                android:text="@string/hashtag" />
+
+            <TextView
+                android:id="@+id/txt_sat_num"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="bottom|center_horizontal"
+                android:text="@string/hashtag" />
+
+        </LinearLayout>
+
         <View
             android:id="@+id/divider2"
             android:layout_width="match_parent"
@@ -1492,4 +1572,4 @@
 
     </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

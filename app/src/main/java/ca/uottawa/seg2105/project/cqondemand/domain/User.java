@@ -1,6 +1,6 @@
 package ca.uottawa.seg2105.project.cqondemand.domain;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 
@@ -15,7 +15,7 @@ public class User implements Serializable {
     protected String key;
     /**
      * The class User allows for the creation of User objects, and stores the pertinent values for each User.
-     * Users can be of type Homeowner, Service Provider or Admin. Getters or Setters for all mutable values
+     * Users can be of type Homeowner, Service Provider or Admin. Getters for all mutable values
      * are also provided.
      */
     protected String firstName;
@@ -44,12 +44,19 @@ public class User implements Serializable {
                 default: return this.name();
             }
         }
+        public static Type parse(String status) {
+            switch (status.toUpperCase()) {
+                case "ADMIN": return Type.ADMIN;
+                case "HOMEOWNER": return Type.HOMEOWNER;
+                case "SERVICE PROVIDER": return Type.SERVICE_PROVIDER;
+                default: throw new IllegalArgumentException("Invalid User Type");
+            }
+        }
     }
 
     /**
-     * Constructor for User objects. This constructor supports users of type Homeowner and of type Service Provider
+     * Constructor for User objects. Does not require a key.
      *
-     * @throws IllegalArgumentException if any of the parameters are null
      * @param firstName The first name of the user
      * @param lastName The last name of the user
      * @param username The Username (Used as a unique identifier)
@@ -72,12 +79,35 @@ public class User implements Serializable {
         this.password = password;
     }
 
+    /**
+     * Constructor for User objects. Requires a database Key
+     *
+     * @param key  the database key
+     * @param firstName The first name of the user
+     * @param lastName The last name of the user
+     * @param username The Username (Used as a unique identifier)
+     * @param email The user's email address
+     * @param type The type of the account
+     * @param password The user's password
+     */
     public User(@NonNull String key, @NonNull String firstName, @NonNull String lastName, @NonNull String username, @NonNull String email, @NonNull Type type, @NonNull String password) {
         this(firstName, lastName, username, email, type, password);
         if (null == key || key.isEmpty()) { throw new InvalidDataException("The key cannot be null or empty."); }
         this.key = key;
     }
 
+    /**
+     * Method to get a User's full name
+     * @return A string containing the user's first and last names
+     */
+    public String getFullName() {
+        return String.format("%s %s", firstName, lastName);
+    }
+
+    /**
+     * Getter for the database key associated with a User
+     * @return the associated key
+     */
     public String getKey() {
         return key;
     }
@@ -130,46 +160,48 @@ public class User implements Serializable {
         return type;
     }
 
+    /**
+     * Gets the unique username of this User
+     * @return the unique username
+     */
     public String getUniqueName() {
         return getUniqueName(username);
     }
 
+    /**
+     * Generates a unique name based in an input string
+     * @param username input string
+     * @return a unique version of the input. All letters set to lowercase, spaces and other special characters replaces by underscores
+     */
     public static String getUniqueName(@NonNull String username) {
         String uniqueName = username.toLowerCase();
         uniqueName = uniqueName.replaceAll("[^a-z0-9]+", "_");
         return uniqueName;
     }
 
-    public boolean isAdmin() {
-        return type == Type.ADMIN;
-    }
-
     /**
-     * A method for converting a string representation of a Type into a Type.
-     *
-     * @throws IllegalArgumentException if the input String is not a valid Type
-     * @param input the String representation of a Type you wish to convert
-     * @return The user type that is associated to the given string
+     * Method to determine if a particular User is equal to a given object
+     * @param otherObj the object to be compared to
+     * @return whether or not this user is equal to the given object
      */
-    public static Type parseType(String input) {
-        if (null == input) { throw new IllegalArgumentException("'null' is not a valid user type. "); }
-        switch (input) {
-            case "Homeowner": return Type.HOMEOWNER;
-            case "Service Provider": return Type.SERVICE_PROVIDER;
-            case "Admin": return Type.ADMIN;
-            default: throw new IllegalArgumentException("'" + input + "' is not a valid user type. ");
-        }
-    }
-
     @Override
     public boolean equals(Object otherObj) {
         if (!(otherObj instanceof User)) { return false; }
         if (this == otherObj) { return true; }
         User other = (User) otherObj;
         if (null != key && null != other.key) { return key.equals(other.key); }
+        if ((null == firstName) != (null == other.firstName) || (null != firstName && !firstName.equals(other.firstName))) { return false; }
+        if ((null == lastName)  != (null == other.lastName)  || (null != lastName  && !lastName.equals(other.lastName))) { return false; }
+        if ((null == email)     != (null == other.email)     || (null != email     && !email.equals(other.email))) { return false; }
+        if ((null == password)  != (null == other.password)  || (null != password  && !password.equals(other.password))) { return false; }
+        if ((null == type)      != (null == other.type)      || (null != type      && !type.equals(other.type))) { return false; }
         return null != getUniqueName() && getUniqueName().equals(other.getUniqueName());
     }
 
+    /**
+     * Returns a string representation of a particular user
+     * @return the string representation
+     */
     @NonNull
     @Override
     public String toString() {

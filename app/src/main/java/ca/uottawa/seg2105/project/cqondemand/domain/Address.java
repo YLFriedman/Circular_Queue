@@ -1,12 +1,16 @@
 package ca.uottawa.seg2105.project.cqondemand.domain;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
+/**
+ * Class to represent a real world address, implements serializable so as to be better suited for Intents
+ *
+ */
 public class Address implements Serializable {
 
     private static final long serialVersionUID = 1;
@@ -18,10 +22,22 @@ public class Address implements Serializable {
     protected String province;
     protected String postalCode;
 
+    //List to store province names in full and shortened versions
     protected static final String[] PROVINCES_SHORT = { "AB", "BC", "MB", "NB", "NL", "NT", "NS", "NU", "ON", "PE", "QC", "SK", "YT" };
     public static final String[] PROVINCES = { "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador", "Northwest Territories",
                                                 "Nova Scotia", "Nunavut", "Ontario", "Prince Edward Island", "Quebec", "Saskatchewan", "Yukon" };
 
+    /**
+     * Constructor for new Address object. Requires valid and non-null inputs for all fields, also assumes that the address is Canadian.
+     *
+     * @param unit The unit associated with this address
+     * @param streetNumber The street number associated with this address
+     * @param street The street name associated with this address
+     * @param city The city name associated with this address
+     * @param province The province associated with this address
+     * @param country The country associated with this address
+     * @param postalCode The postal code associated with this address
+     */
     public Address(@NonNull String unit, @NonNull int streetNumber, @NonNull String street, @NonNull String city, @NonNull String province, @NonNull String country, @NonNull String postalCode) {
         if (!FieldValidation.unitIsValid(unit)) { throw new InvalidDataException("Invalid unit. Legal characters: " + FieldValidation.ADDRESS_UNIT_CHARS); }
         if (!FieldValidation.streetNumberIsValid(streetNumber)) { throw new InvalidDataException("Invalid streetNumber. Must be greater than 0. "); }
@@ -40,34 +56,68 @@ public class Address implements Serializable {
         this.postalCode.toUpperCase();
     }
 
+    /**
+     * Gets the unit of a particular address
+     * @return the unit associated with this address
+     */
     public String getUnit() {
         return unit;
     }
 
+    /**
+     *Gets the street number of a particular address
+     * @return the street number associated with this address
+     */
     public int getStreetNumber() {
         return streetNumber;
     }
+
+    /**
+     *Gets the street name of a particular address
+     * @return the street name associated with this address
+     */
 
     public String getStreet() {
         return street;
     }
 
+    /**
+     *Gets the city of a particular address
+     * @return the city associated with this address
+     */
     public String getCity() {
         return city;
     }
 
+    /**
+     *Gets the country of a particular address
+     * @return the country associated with this address
+     */
     public String getCountry() {
         return country;
     }
 
+    /**
+     *Gets the province of a particular address
+     * @return the province associated with this address
+     */
     public String getProvince() {
         return province;
     }
 
+    /**
+     *Gets the postal code of a particular address
+     * @return the postal code associated with this address
+     */
     public String getPostalCode() {
         return postalCode;
     }
 
+    /**
+     *Checks if this address is the same as another object
+     * @param otherObj the object this address will be compared to
+     * @return
+     */
     @Override
     public boolean equals(Object otherObj) {
         if (!(otherObj instanceof Address)) { return false; }
@@ -82,15 +132,23 @@ public class Address implements Serializable {
         return streetNumber == other.streetNumber;
     }
 
+    /**
+     *Returns a string representation of this address
+     * @return a string representation of this address
+     */
     @Override
     public String toString() {
         String output = "";
         if (!unit.isEmpty()) { output += unit + "-"; }
         output += streetNumber + " " + street;
-        output += "\n" + city + " " + getShortProvince() + " " + postalCode;
+        output += "\n" + city + " " + getShortProvince() + ", " + postalCode;
         return output;
     }
 
+    /**
+     *Gets a shortened version of this address' province
+     * @return a shortened version of this address' province
+     */
     public String getShortProvince() {
         String compare = province.toLowerCase();
         for (int i = 0; i < PROVINCES.length; i++) {

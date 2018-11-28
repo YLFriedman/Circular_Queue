@@ -10,8 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activities.SignInActivity"
-            android:label="@string/title_activity_sign_in"
+            android:name=".activities.SplashScreenActivity"
+            android:configChanges="keyboardHidden|screenSize"
+            android:label="@string/title_activity_splash_screen"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,28 +21,33 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.SignUpActivity"
+            android:name=".activities.SignInActivity"
             android:exported="true"
+            android:label="@string/title_activity_sign_in"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.SignUpActivity"
             android:label="@string/title_activity_create_account"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.HomeActivity"
+            android:exported="true"
             android:label="@string/title_activity_home"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.UserAccountViewActivity"
+            android:name=".activities.UserViewActivity"
             android:label="@string/title_activity_user_account_view"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.UserAccountEditActivity"
+            android:name=".activities.UserEditActivity"
             android:label="@string/title_activity_user_account_edit"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.UserAccountChangePasswordActivity"
+            android:name=".activities.UserChangePasswordActivity"
             android:label="@string/title_activity_user_account_change_password"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.UserAccountListActivity"
+            android:name=".activities.UserListActivity"
             android:label="@string/title_activity_user_account_list"
             android:screenOrientation="portrait" />
         <activity
@@ -68,8 +74,41 @@
             android:name=".activities.ServiceCreateActivity"
             android:label="@string/title_activity_service_create"
             android:screenOrientation="portrait" />
-        <activity android:name=".activities.AvailabilityWeekViewActivity"
+        <activity
+            android:name=".activities.WeekViewActivity"
             android:label="@string/title_activity_availability_week_view"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.BookingViewActivity"
+            android:label="@string/title_activity_booking_view"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.BookingCreateActivity"
+            android:label="@string/title_activity_booking_create"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.BookingListActivity"
+            android:label="@string/title_activity_booking_list"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.ServiceProviderPickerActivity"
+            android:label="@string/title_activity_service_provider_picker"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.ServiceProviderProfileActivity"
+            android:label="@string/title_activity_service_provider_profile"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.ReviewCreateActivity"
+            android:label="@string/title_activity_review_create"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.ReviewViewActivity"
+            android:label="@string/title_activity_review_view"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.ReviewListActivity"
+            android:label="@string/title_activity_review_list"
             android:screenOrientation="portrait" />
     </application>
 

@@ -2,12 +2,11 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +28,7 @@ public class ServiceViewActivity extends SignedInActivity {
     protected TextView txt_name;
     protected TextView txt_rate;
     protected TextView txt_category;
-    protected String categoryName;
+    protected Category currentCategory;
     protected Service currentService;
 
     @Override
@@ -39,19 +38,31 @@ public class ServiceViewActivity extends SignedInActivity {
         txt_name = findViewById(R.id.txt_name);
         txt_rate = findViewById(R.id.txt_rate);
         txt_category = findViewById(R.id.txt_category);
-        txt_name.setText("");
-        txt_rate.setText("");
-        txt_category.setText("");
+
+        Intent intent = getIntent();
+        try {
+            currentService = (Service) intent.getSerializableExtra("service");
+            currentCategory = (Category) intent.getSerializableExtra("category");
+        } catch (ClassCastException e) {
+            Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
+        if (null != currentService) {
+            setupFields();
+        }  else {
+            Toast.makeText(getApplicationContext(), R.string.current_service_empty, Toast.LENGTH_LONG).show();
+            finish();
+        }
     }
 
-    public void onResume() {
-        super.onResume();
-        if (isFinishing()) { return; }
-        if (null != State.getState().getCurrentService()) {
-            currentService = State.getState().getCurrentService();
-            State.getState().setCurrentService(null);
-            setupFields();
-        } else if (null != currentService) {
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        currentService = (Service) intent.getSerializableExtra("service");
+        currentCategory = (Category) intent.getSerializableExtra("category");
+        if (null != currentService) {
             setupFields();
         }  else {
             Toast.makeText(getApplicationContext(), R.string.current_service_empty, Toast.LENGTH_LONG).show();
@@ -70,10 +81,12 @@ public class ServiceViewActivity extends SignedInActivity {
             } else {
                 txt_rate.setText(String.format(Locale.CANADA, getString(R.string.service_rate_template), currentService.getRate()));
             }
+            // If given a category, load it first to speed up category display when the service doesnt have it pre-loaded
+            if (null != currentCategory) { txt_category.setText(String.format(Locale.CANADA, getString(R.string.category_template), currentCategory.getName())); }
             currentService.getCategory(new AsyncSingleValueEventListener<Category>() {
                 @Override
                 public void onSuccess(@NonNull Category item) {
-                    categoryName = item.getName();
+                    currentCategory = item;
                     txt_category.setText(String.format(Locale.CANADA, getString(R.string.category_template), item.getName()));
                 }
                 @Override
@@ -84,8 +97,8 @@ public class ServiceViewActivity extends SignedInActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        User user = State.getState().getSignedInUser();
-        if (null != user && user.isAdmin()) {
+        User user = State.getInstance().getSignedInUser();
+        if (null != user && User.Type.ADMIN == user.getType()) {
             getMenuInflater().inflate(R.menu.service_options, menu);
             menu.setGroupVisible(R.id.grp_category_controls, false);
             return true;
@@ -107,15 +120,15 @@ public class ServiceViewActivity extends SignedInActivity {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ServiceCreateActivity.class);
-        if (null != categoryName) { intent.putExtra("category_name", categoryName); }
+        if (null != currentCategory) { intent.putExtra("category", currentCategory); }
         startActivity(intent);
     }
 
     public void onEditServiceClick() {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
-        State.getState().setCurrentService(currentService);
         Intent intent = new Intent(getApplicationContext(), ServiceEditActivity.class);
+        intent.putExtra("service", currentService);
         startActivity(intent);
     }
 

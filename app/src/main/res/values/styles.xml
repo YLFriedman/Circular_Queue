@@ -8,7 +8,23 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="btn_danger"></style>
+    <style name="btn_dialog">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:textColor">@color/dialog_red</item>
+    </style>
+
+    <style name="btn_dialog.secondary" parent="btn_dialog">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:textColor">@color/text_primary_dark</item>
+    </style>
+
+    <style name="btn_tab_view">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:textColor">@color/White</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:padding">12dp</item>
+    </style>
 
     <style name="panel_button">
         <item name="android:layout_width">0dp</item>
@@ -55,6 +71,18 @@
         <item name="android:layout_width">35dp</item>
         <item name="android:textSize">12sp</item>
         <item name="android:gravity">top|left</item>
+    </style>
+
+    <style name="FullscreenTheme" parent="AppTheme">
+        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
+        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
+    </style>
+
+    <style name="FullscreenActionBarStyle" parent="android:Widget.Holo.ActionBar">
+        <item name="android:background">@color/black_overlay</item>
     </style>
 
 </resources>

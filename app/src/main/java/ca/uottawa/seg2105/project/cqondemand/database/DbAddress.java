@@ -1,13 +1,13 @@
 package ca.uottawa.seg2105.project.cqondemand.database;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import ca.uottawa.seg2105.project.cqondemand.domain.Address;
 
 public class DbAddress extends DbItem<Address> {
 
     public String unit;
-    public int street_number;
+    public Integer street_number;
     public String street;
     public String city;
     public String country;
@@ -16,7 +16,7 @@ public class DbAddress extends DbItem<Address> {
 
     public DbAddress() {}
 
-    DbAddress(Address item) {
+    public DbAddress(Address item) {
         unit = item.getUnit();
         street_number = item.getStreetNumber();
         street = item.getStreet();

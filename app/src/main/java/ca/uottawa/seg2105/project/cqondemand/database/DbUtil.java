@@ -1,7 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand.database;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,7 +32,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 public class DbUtil {
 
-    protected static final HashMap<String, DatabaseReference> references = new HashMap<String, DatabaseReference>();
+    private static final HashMap<String, DatabaseReference> references = new HashMap<String, DatabaseReference>();
 
     /**
      * Enum for differentiating between different object types
@@ -62,13 +62,21 @@ public class DbUtil {
             }
         }
         public DatabaseReference getRef() {
-            DatabaseReference ref = references.get(this.toString());
-            if (null == ref) {
-                ref = FirebaseDatabase.getInstance().getReference().child(this.toString());
-                references.put(this.toString(), ref);
-            }
-            return ref;
+            return DbUtil.getRef(this.toString());
         }
+    }
+
+    static DatabaseReference getRef(String refName) {
+        DatabaseReference ref = references.get(refName);
+        if (null == ref) {
+            ref = FirebaseDatabase.getInstance().getReference().child(refName);
+            references.put(refName, ref);
+        }
+        return ref;
+    }
+
+    static String generateKey() {
+        return FirebaseDatabase.getInstance().getReference().push().getKey();
     }
 
     /**
@@ -79,7 +87,7 @@ public class DbUtil {
      * @return A DbItem adaptation of the input object
      */
     @NonNull
-    protected static DbItem<?> objectToDbItem(@NonNull Object object) {
+    private static DbItem<?> objectToDbItem(@NonNull Object object) {
         if (object instanceof User) { return new DbUser((User) object); }
         if (object instanceof Service) { return new DbService((Service) object); }
         if (object instanceof Category) { return new DbCategory((Category) object); }
@@ -115,7 +123,7 @@ public class DbUtil {
                     try {
                         DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(type.getDbItemClass());
                         if (null != dbItem && null != snapshot.getKey()) {
-                            dbItem.storeKey(snapshot.getKey());
+                            dbItem.setKey(snapshot.getKey());
                             T domainObjItem = dbItem.toDomainObj();
                             listener.onSuccess(domainObjItem);
                         } else {
@@ -137,9 +145,22 @@ public class DbUtil {
         });
     }
 
+    static <T> void getItems(@NonNull final DataType type, @NonNull DbQuery queryDb, @NonNull final AsyncValueEventListener<T> listener) {
+        getItems(type, queryDb, listener, true);
+    }
+
+    @NonNull
+    static <T> DbListenerHandle<ValueEventListener> getItemsLive(@NonNull final DataType type, @NonNull DbQuery queryDb, @NonNull final AsyncValueEventListener<T> listener) {
+        return getItems(type, queryDb, listener, false);
+    }
+
     @SuppressWarnings("unchecked")
-    static <T> ValueEventListener getDbToDomainValueListener(@NonNull final DataType type, @NonNull final AsyncValueEventListener<T> listener) {
-        return new ValueEventListener() {
+    private static <T> DbListenerHandle<ValueEventListener> getItems(@NonNull final DataType type, @Nullable DbQuery queryDb, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
+        Query query;
+        if (null == queryDb) { query = DbQuery.createKeyQuery().apply(type.getRef()); }
+        else { query = queryDb.apply(type.getRef()); }
+
+        ValueEventListener dataConversionListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 long size = dataSnapshot.getChildrenCount();
@@ -148,7 +169,7 @@ public class DbUtil {
                     try {
                         DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(type.getDbItemClass());
                         if (null != dbItem && null != snapshot.getKey()) {
-                            dbItem.storeKey(snapshot.getKey());
+                            dbItem.setKey(snapshot.getKey());
                             T domainObjItem = dbItem.toDomainObj();
                             returnValue.add(domainObjItem);
                         }
@@ -164,54 +185,7 @@ public class DbUtil {
                 listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
             }
         };
-    }
 
-    static <T> void getItems(@NonNull final DataType type, @NonNull final AsyncValueEventListener<T> listener) {
-        getItems(type, listener, true);
-    }
-
-    @NonNull
-    static <T> DbListenerHandle<ValueEventListener> getItemsLive(@NonNull final DataType type, @NonNull final AsyncValueEventListener<T> listener) {
-        return getItems(type, listener, false);
-    }
-
-    @SuppressWarnings("unchecked")
-    protected static <T> DbListenerHandle<ValueEventListener> getItems(@NonNull final DataType type, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
-        ValueEventListener dataConversionListener = getDbToDomainValueListener(type, listener);
-        DatabaseReference ref = type.getRef();
-        if (singleEvent) {
-            ref.addListenerForSingleValueEvent(dataConversionListener);
-            return new DbListenerHandle<ValueEventListener>(ref, null);
-        } else {
-            return new DbListenerHandle<ValueEventListener>(ref, ref.addValueEventListener(dataConversionListener));
-        }
-    }
-
-    static <T> void getItems(@NonNull final DataType type, @NonNull String childKey, @NonNull String childValue, @NonNull final AsyncValueEventListener<T> listener) {
-        Query query = type.getRef().orderByChild(childKey).equalTo(childValue);
-        getItems(type, query, listener, true);
-    }
-
-    static <T> void getItems(@NonNull final DataType type, @NonNull String childKey, int childValue, @NonNull final AsyncValueEventListener<T> listener) {
-        Query query = type.getRef().orderByChild(childKey).equalTo(childValue);
-        getItems(type, query, listener, true);
-    }
-
-    @NonNull
-    static <T> DbListenerHandle<ValueEventListener> getItemsLive(@NonNull final DataType type, @NonNull String childKey, @NonNull String childValue, @NonNull final AsyncValueEventListener<T> listener) {
-        Query query = type.getRef().orderByChild(childKey).equalTo(childValue);
-        return getItems(type, query, listener, false);
-    }
-
-    @NonNull
-    static <T> DbListenerHandle<ValueEventListener> getItemsLive(@NonNull final DataType type, @NonNull String childKey, int childValue, @NonNull final AsyncValueEventListener<T> listener) {
-        Query query = type.getRef().orderByChild(childKey).equalTo(childValue);
-        return getItems(type, query, listener, false);
-    }
-
-    @SuppressWarnings("unchecked")
-    protected static <T> DbListenerHandle<ValueEventListener> getItems(@NonNull final DataType type, @NonNull Query query, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
-        ValueEventListener dataConversionListener = getDbToDomainValueListener(type, listener);
         if (singleEvent) {
             query.addListenerForSingleValueEvent(dataConversionListener);
             return new DbListenerHandle<ValueEventListener>(query.getRef(), null);
@@ -223,8 +197,8 @@ public class DbUtil {
     static <T> void deleteItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(item);
         final DbItem<?> dbItem = objectToDbItem(item);
-        if (null == dbItem.retrieveKey() || dbItem.retrieveKey().isEmpty()) { throw new IllegalArgumentException("An item key is required. Unable to delete from the database without the key."); }
-        type.getRef().child(dbItem.retrieveKey()).removeValue(new DatabaseReference.CompletionListener() {
+        if (null == dbItem.getKey() || dbItem.getKey().isEmpty()) { throw new IllegalArgumentException("An item key is required. Unable to delete from the database without the key."); }
+        type.getRef().child(dbItem.getKey()).removeValue(new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                 if (null != listener) {
@@ -241,7 +215,7 @@ public class DbUtil {
         final DatabaseReference pushRef = type.getRef().push();
         String key = pushRef.getKey();
         if (null == key) { listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR); }
-        dbItem.storeKey(pushRef.getKey());
+        dbItem.setKey(pushRef.getKey());
         pushRef.setValue(dbItem, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
@@ -256,11 +230,11 @@ public class DbUtil {
     static <T> void updateItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(item);
         final DbItem<?> dbItem = objectToDbItem(item);
-        getItem(type, dbItem.retrieveKey(), new AsyncSingleValueEventListener<T>() {
+        getItem(type, dbItem.getKey(), new AsyncSingleValueEventListener<T>() {
             @Override
             public void onSuccess(@NonNull T item) {
                 // Success condition: Item exists in database and can be updated
-                type.getRef().child(dbItem.retrieveKey()).setValue(dbItem, new DatabaseReference.CompletionListener() {
+                type.getRef().child(dbItem.getKey()).setValue(dbItem, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                         if (null != listener) {

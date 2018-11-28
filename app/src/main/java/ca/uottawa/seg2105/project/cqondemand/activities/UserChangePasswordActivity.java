@@ -1,8 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -11,15 +10,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
-import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.Authentication;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
-import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
-public class UserAccountChangePasswordActivity extends SignedInActivity {
+public class UserChangePasswordActivity extends SignedInActivity {
 
     protected EditText field_password_old;
     protected EditText field_password;
@@ -30,22 +28,28 @@ public class UserAccountChangePasswordActivity extends SignedInActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_account_change_password);
+        setContentView(R.layout.activity_user_change_password);
         // Set references to the  UI objects
         field_password_old = findViewById(R.id.field_password_old);
         field_password = findViewById(R.id.field_password);
         field_password_confirm = findViewById(R.id.field_password_confirm);
         btn_save_password = findViewById(R.id.btn_save_password);
-
-        currentUser = State.getState().getCurrentUser();
-        State.getState().setCurrentUser(null);
+        // Get the user object from the intent
+        Intent intent = getIntent();
+        try {
+            currentUser = (User) intent.getSerializableExtra("user");
+        } catch (ClassCastException e) {
+            Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
         if (null == currentUser) {
             Toast.makeText(getApplicationContext(),  String.format(getString(R.string.current_item_provided_template), getString(R.string.account)), Toast.LENGTH_SHORT).show();
             finish();
         }
     }
 
-    public void onSavePasswordClick(View view){
+    public void onSavePasswordClick(View view) {
         final String oldPassword = field_password_old.getText().toString();
         final String password = field_password.getText().toString();
         final String passwordConfirm = field_password_confirm.getText().toString();
@@ -78,10 +82,13 @@ public class UserAccountChangePasswordActivity extends SignedInActivity {
         }
 
         btn_save_password.setEnabled(false);
-        DbUser.updatePassword(currentUser, password, new AsyncSingleValueEventListener<User>() {
-            public void onSuccess(@NonNull User item) {
-                State.getState().setCurrentUser(item);
+        DbUser.updatePassword(currentUser, Authentication.genHash(password), new AsyncSingleValueEventListener<User>() {
+            public void onSuccess(@NonNull User updatedUser) {
                 Toast.makeText(getApplicationContext(), R.string.password_update_success, Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
+                intent.putExtra("user", updatedUser);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
                 finish();
             }
             public void onFailure(@NonNull AsyncEventFailureReason reason) {

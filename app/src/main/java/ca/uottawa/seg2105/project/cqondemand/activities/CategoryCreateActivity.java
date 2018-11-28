@@ -2,7 +2,7 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
@@ -12,6 +12,7 @@ import android.widget.Toast;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
+import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
@@ -23,9 +24,11 @@ public class CategoryCreateActivity extends SignedInActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_create);
+        User signedInUser = State.getInstance().getSignedInUser();
+        if (null == signedInUser || User.Type.ADMIN != signedInUser.getType()) { finish(); return; }
     }
 
-    public void onCreateCategory(View view){
+    public void onCreateCategoryClick(View view) {
         final EditText field_category_name = findViewById(R.id.field_category_name);
         final String categoryName = field_category_name.getText().toString().trim();
         final Button btn_create_category = findViewById(R.id.btn_create_category);
@@ -46,8 +49,8 @@ public class CategoryCreateActivity extends SignedInActivity {
             @Override
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), String.format(getString(R.string.category_create_success), newCategory.getName()), Toast.LENGTH_LONG).show();
-                State.getState().setCurrentCategory(newCategory);
                 Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
+                intent.putExtra("category", newCategory);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 finish();

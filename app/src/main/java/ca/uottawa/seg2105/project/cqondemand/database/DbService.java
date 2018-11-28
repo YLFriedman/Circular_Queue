@@ -1,7 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand.database;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -14,6 +14,7 @@ import java.util.HashMap;
 
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
+import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
@@ -24,11 +25,11 @@ public class DbService extends DbItem<Service> {
     public String unique_name;
     public String name;
     public String category_key;
-    public int rate;
+    public Integer rate;
 
     public DbService() {}
 
-    DbService(Service item) {
+    public DbService(Service item) {
         super(item.getKey());
         unique_name = item.getUniqueName();
         name = item.getName();
@@ -37,7 +38,7 @@ public class DbService extends DbItem<Service> {
     }
 
     @NonNull
-    public Service toDomainObj() { return new Service(retrieveKey(), name, rate, category_key); }
+    public Service toDomainObj() { return new Service(getKey(), name, rate, category_key); }
 
     public static void createService(@NonNull final Service service, @Nullable final AsyncActionEventListener listener) {
         getServiceByName(service.getName(), new AsyncSingleValueEventListener<Service>() {
@@ -85,7 +86,8 @@ public class DbService extends DbItem<Service> {
     }
 
     public static void getServiceByName(@NonNull String name, @NonNull final AsyncSingleValueEventListener<Service> listener) {
-        DbUtil.getItems(DbUtil.DataType.USER, "unique_name", Service.getUniqueName(name), new AsyncValueEventListener<Service>() {
+        DbQuery query = DbQuery.createChildValueQuery("unique_name").setEqualsFilter(Service.getUniqueName(name));
+        DbUtil.getItems(DbUtil.DataType.USER, query, new AsyncValueEventListener<Service>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Service> data) {
                 if (data.size() == 1) { listener.onSuccess(data.get(0)); }
@@ -98,31 +100,37 @@ public class DbService extends DbItem<Service> {
     }
 
     public static void getServices(@NonNull AsyncValueEventListener<Service> listener) {
-        DbUtil.getItems(DbUtil.DataType.SERVICE, listener);
+        DbQuery query = DbQuery.createChildValueQuery("unique_name");
+        DbUtil.getItems(DbUtil.DataType.SERVICE, query, listener);
     }
 
     @NonNull
     public static DbListenerHandle<?> getServicesLive(@NonNull final AsyncValueEventListener<Service> listener) {
-        return DbUtil.getItemsLive(DbUtil.DataType.SERVICE, listener);
+        DbQuery query = DbQuery.createChildValueQuery("unique_name");
+        return DbUtil.getItemsLive(DbUtil.DataType.SERVICE, query, listener);
     }
 
     public static void getServicesByCategory(@NonNull Category category, @NonNull AsyncValueEventListener<Service> listener) {
-        DbUtil.getItems(DbUtil.DataType.SERVICE, "category_key", category.getKey(), listener);
+        DbQuery query = DbQuery.createChildValueQuery("category_key").setEqualsFilter(category.getKey());
+        DbUtil.getItems(DbUtil.DataType.SERVICE, query, listener);
     }
 
     @NonNull
     public static DbListenerHandle<?> getServicesByCategoryLive(@NonNull Category category, @NonNull final AsyncValueEventListener<Service> listener) {
-        return DbUtil.getItemsLive(DbUtil.DataType.SERVICE, "category_key", category.getKey(), listener);
+        DbQuery query = DbQuery.createChildValueQuery("category_key").setEqualsFilter(category.getKey());
+        return DbUtil.getItemsLive(DbUtil.DataType.SERVICE, query, listener);
     }
 
-    public static void getProvidersByService(@NonNull Service service, @NonNull AsyncValueEventListener<Service> listener) {
+    public static void getProvidersByService(@NonNull Service service, @NonNull AsyncValueEventListener<ServiceProvider> listener) {
         if (service.getKey() == null || service.getKey().isEmpty()) { throw new IllegalArgumentException("A service object with a key is required. Unable to query the database without the key."); }
-        DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.SERVICE_USERS, service.getKey(), listener);
+        DbQuery query = DbQuery.createChildValueQuery("rating");
+        DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.SERVICE_USERS, service.getKey(), query, listener);
     }
 
-    public static DbListenerHandle<ValueEventListener> getProvidersByServiceLive(@NonNull Service service, @NonNull final AsyncValueEventListener<Service> listener) {
+    public static DbListenerHandle<ValueEventListener> getProvidersByServiceLive(@NonNull Service service, @NonNull final AsyncValueEventListener<ServiceProvider> listener) {
         if (service.getKey() == null || service.getKey().isEmpty()) { throw new IllegalArgumentException("A service object with a key is required. Unable to query the database without the key."); }
-        return DbUtilRelational.getItemsRelationalLive(DbUtilRelational.RelationType.SERVICE_USERS, service.getKey(), listener);
+        DbQuery query = DbQuery.createChildValueQuery("rating");
+        return DbUtilRelational.getItemsRelationalLive(DbUtilRelational.RelationType.SERVICE_USERS, service.getKey(), query, listener);
     }
 
     private static void multiPathUpdate(@NonNull final Service service, @Nullable final AsyncActionEventListener listener) {

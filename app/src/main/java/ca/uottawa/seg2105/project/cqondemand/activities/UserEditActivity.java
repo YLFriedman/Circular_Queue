@@ -1,6 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
-import android.support.annotation.NonNull;
+import android.content.Intent;
+import androidx.annotation.NonNull;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -23,10 +24,9 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
-import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
-public class UserAccountEditActivity extends SignedInActivity {
+public class UserEditActivity extends SignedInActivity {
 
     protected User currentUser;
     protected EditText field_username;
@@ -50,7 +50,7 @@ public class UserAccountEditActivity extends SignedInActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_account_edit);
+        setContentView(R.layout.activity_user_edit);
         // Set references to the  UI objects
         field_username = findViewById(R.id.field_username);
         field_first_name = findViewById(R.id.field_first_name);
@@ -58,8 +58,15 @@ public class UserAccountEditActivity extends SignedInActivity {
         field_email = findViewById(R.id.field_email);
         fields_2 = findViewById(R.id.fields_2);
 
-        currentUser = State.getState().getCurrentUser();
-        State.getState().setCurrentUser(null);
+        Intent intent = getIntent();
+        try {
+            currentUser = (User) intent.getSerializableExtra("user");
+        } catch (ClassCastException e) {
+            Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
         if (null != currentUser) {
             field_username.setText(currentUser.getUsername(), TextView.BufferType.EDITABLE);
             field_first_name.setText(currentUser.getFirstName(), TextView.BufferType.EDITABLE);
@@ -148,7 +155,7 @@ public class UserAccountEditActivity extends SignedInActivity {
 
         // Validate Service Provider fields
         User newUser = null;
-        if (User.Type.SERVICE_PROVIDER == currentUser.getType()) {
+        if (currentUser instanceof ServiceProvider) {
             ServiceProvider provider = (ServiceProvider) currentUser;
             String companyName = field_company_name.getText().toString().trim();
             boolean licensed = switch_licensed.isChecked();
@@ -261,7 +268,8 @@ public class UserAccountEditActivity extends SignedInActivity {
             }
 
             if (description.isEmpty()) { description = null; }
-            newUser = new ServiceProvider(currentUser.getKey(), firstName, lastName, username, email, currentUser.getPassword(), companyName, licensed, phoneNumber, address, description);
+            newUser = new ServiceProvider(provider.getKey(), firstName, lastName, username, email, provider.getPassword(),
+                    companyName, licensed, phoneNumber, address, description, provider.getRating(), provider.getRunningRatingTotal(), provider.getNumRatings(), provider.getAvailabilities());
 
         } else {
 
@@ -282,8 +290,11 @@ public class UserAccountEditActivity extends SignedInActivity {
 
         DbUser.updateUser(updatedUser, new AsyncActionEventListener() {
             public void onSuccess() {
-                State.getState().setCurrentUser(updatedUser);
                 Toast.makeText(getApplicationContext(), R.string.account_update_success, Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
+                intent.putExtra("user", updatedUser);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
                 finish();
             }
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
@@ -308,4 +319,5 @@ public class UserAccountEditActivity extends SignedInActivity {
         });
 
     }
+
 }

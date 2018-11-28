@@ -2,18 +2,19 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -35,7 +36,7 @@ import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class ServiceListActivity extends SignedInActivity {
 
-    protected enum Mode { LIST_SERVICES, MANAGE_SERVICES, ADD_PROVIDER_SERVICES, REMOVE_PROVIDER_SERVICES, LIST_PROVIDER_SERVICES }
+    protected enum Mode { LIST_SERVICES, MANAGE_SERVICES, ADD_PROVIDER_SERVICES, REMOVE_PROVIDER_SERVICES, LIST_PROVIDER_SERVICES, PICK_FOR_BOOKING }
     protected boolean itemClickEnabled = true;
     protected Mode mode;
     protected boolean useCategory;
@@ -53,7 +54,8 @@ public class ServiceListActivity extends SignedInActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_list);
-        if (null == State.getState().getSignedInUser()) { return; }
+        User signedInUser = State.getInstance().getSignedInUser();
+        if (null == signedInUser) { return; }
         txt_sub_title = findViewById(R.id.txt_sub_title);
         divider_txt_sub_title = findViewById(R.id.divider_txt_sub_title);
         recycler_list = findViewById(R.id.recycler_list);
@@ -62,36 +64,51 @@ public class ServiceListActivity extends SignedInActivity {
         // Initialize the category components as hidden
         txt_sub_title.setVisibility(View.GONE);
         divider_txt_sub_title.setVisibility(View.GONE);
+        Intent intent = getIntent();
         // Get the current category and current user
-        currentCategory = State.getState().getCurrentCategory();
-        State.getState().setCurrentCategory(null);
-        currentUser = State.getState().getCurrentUser();
-        State.getState().setCurrentUser(null);
+        try {
+            currentCategory = (Category) intent.getSerializableExtra("category");
+            currentUser = (User) intent.getSerializableExtra("user");
+        } catch (ClassCastException e) {
+            Toast.makeText(getApplicationContext(), R.string.invalid_intent_object, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+        // Get the action bar
         ActionBar actionBar = getSupportActionBar();
         // Set the default item itemActionIcon
         itemActionIcon = R.drawable.ic_chevron_right_med_30;
         // Determine and initialize the mode
         if (currentUser instanceof ServiceProvider) {
             currentProvider = (ServiceProvider) currentUser;
-            if (State.getState().getSignedInUser().equals(currentUser)) {
+            if (signedInUser.equals(currentUser)) {
                 mode = Mode.REMOVE_PROVIDER_SERVICES;
                 if (null != actionBar) { actionBar.setTitle(getString(R.string.my_services)); }
                 itemActionIcon = R.drawable.ic_remove_circle_outline_med_30;
             } else {
                 mode = Mode.LIST_PROVIDER_SERVICES;
             }
-        } else if (State.getState().getSignedInUser().isAdmin()) {
-            mode = Mode.MANAGE_SERVICES;
-            useCategory = null != currentCategory;
-        } else if (State.getState().getSignedInUser() instanceof ServiceProvider) {
-            currentProvider = (ServiceProvider) State.getState().getSignedInUser();
-            mode = Mode.ADD_PROVIDER_SERVICES;
-            itemActionIcon = R.drawable.ic_add_med_30;
-            useCategory = null != currentCategory;
-            if (null != actionBar) { actionBar.setTitle(getString(R.string.select_a_service)); }
-        }  else {
-            mode = Mode.LIST_SERVICES;
-            useCategory = null != currentCategory;
+        } else {
+            switch (signedInUser.getType()) {
+                case ADMIN:
+                    mode = Mode.MANAGE_SERVICES;
+                    useCategory = null != currentCategory;
+                    break;
+                case SERVICE_PROVIDER:
+                    currentProvider = (ServiceProvider) signedInUser;
+                    mode = Mode.ADD_PROVIDER_SERVICES;
+                    itemActionIcon = R.drawable.ic_add_med_30;
+                    useCategory = null != currentCategory;
+                    if (null != actionBar) { actionBar.setTitle(getString(R.string.select_a_service)); }
+                    break;
+                case HOMEOWNER:
+                    mode = Mode.PICK_FOR_BOOKING;
+                    useCategory = null != currentCategory;
+                    break;
+                default:
+                    mode = Mode.LIST_SERVICES;
+                    useCategory = null != currentCategory;
+            }
         }
 
         AsyncValueEventListener<Service> listener = new AsyncValueEventListener<Service>() {
@@ -113,6 +130,7 @@ public class ServiceListActivity extends SignedInActivity {
             case ADD_PROVIDER_SERVICES:
             case MANAGE_SERVICES:
             case LIST_SERVICES:
+            case PICK_FOR_BOOKING:
             default:
                 if (useCategory) {
                     setSubTitle(String.format(Locale.CANADA, getString(R.string.category_title_template), currentCategory.getName()));
@@ -140,19 +158,6 @@ public class ServiceListActivity extends SignedInActivity {
         txt_sub_title.setVisibility(View.VISIBLE);
         divider_txt_sub_title.setVisibility(View.VISIBLE);
         txt_sub_title.setText(subTitle);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (Mode.MANAGE_SERVICES == mode) {
-            getMenuInflater().inflate(R.menu.service_list_manage_options, menu);
-            if (!useCategory) { menu.setGroupVisible(R.id.grp_category_delete_controls, false); }
-            return true;
-        } else if (Mode.REMOVE_PROVIDER_SERVICES == mode) {
-            getMenuInflater().inflate(R.menu.service_list_options, menu);
-            return true;
-        }
-        return super.onCreateOptionsMenu(menu);
     }
 
     private View.OnClickListener getItemClickListener() {
@@ -195,7 +200,7 @@ public class ServiceListActivity extends SignedInActivity {
                                     DbUtilRelational.unlinkServiceAndProvider(service, currentProvider, new AsyncActionEventListener() {
                                         @Override
                                         public void onSuccess() {
-                                            Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(getApplicationContext(), String.format(getString(R.string.service_removed_from_provider_success_template), service.getName()), Toast.LENGTH_LONG).show();
                                         }
                                         @Override
                                         public void onFailure(@NonNull AsyncEventFailureReason reason) {
@@ -213,18 +218,40 @@ public class ServiceListActivity extends SignedInActivity {
                     dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.dialog_red));
                 }
             };
+        } else if (Mode.PICK_FOR_BOOKING == mode) {
+            return new View.OnClickListener() {
+                public void onClick(final View view) {
+                    if (!itemClickEnabled) { return; }
+                    itemClickEnabled = false;
+                    Intent intent = new Intent(getApplicationContext(), ServiceProviderPickerActivity.class);
+                    intent.putExtra("service", (Serializable) view.getTag());
+                    startActivity(intent);
+                }
+            };
         } else {
             return new View.OnClickListener() {
                 public void onClick(final View view) {
                     if (!itemClickEnabled) { return; }
                     itemClickEnabled = false;
-                    final Service service = (Service) view.getTag();
-                    State.getState().setCurrentService(service);
                     Intent intent = new Intent(getApplicationContext(), ServiceViewActivity.class);
+                    intent.putExtra("service", (Serializable) view.getTag());
                     startActivity(intent);
                 }
             };
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (Mode.MANAGE_SERVICES == mode) {
+            getMenuInflater().inflate(R.menu.service_list_manage_options, menu);
+            if (!useCategory) { menu.setGroupVisible(R.id.grp_category_delete_controls, false); }
+            return true;
+        } else if (Mode.REMOVE_PROVIDER_SERVICES == mode) {
+            getMenuInflater().inflate(R.menu.service_list_options, menu);
+            return true;
+        }
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -233,12 +260,12 @@ public class ServiceListActivity extends SignedInActivity {
             case R.id.menu_item_category_create: onCreateCategoryClick(); return true;
             case R.id.menu_item_service_create: onCreateServiceClick(); return true;
             case R.id.menu_item_category_delete: onDeleteCategoryClick(); return true;
-            case R.id.menu_item_service_add: onAddServiceClick(); return true;
+            case R.id.menu_item_service_add: onLinkServiceToProviderClick(); return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void onAddServiceClick() {
+    public void onLinkServiceToProviderClick() {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
         startActivity(new Intent(getApplicationContext(), CategoryListActivity.class));
@@ -254,7 +281,7 @@ public class ServiceListActivity extends SignedInActivity {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ServiceCreateActivity.class);
-        if (null != currentCategory) { intent.putExtra("category_name", currentCategory.getName()); }
+        if (null != currentCategory) { intent.putExtra("category", currentCategory); }
         startActivity(intent);
     }
 

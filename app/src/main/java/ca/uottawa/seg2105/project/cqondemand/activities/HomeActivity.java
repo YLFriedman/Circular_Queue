@@ -1,24 +1,18 @@
 package ca.uottawa.seg2105.project.cqondemand.activities;
 
+import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TableRow;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
-import ca.uottawa.seg2105.project.cqondemand.activities.CategoryListActivity;
-import ca.uottawa.seg2105.project.cqondemand.activities.SignInActivity;
-import ca.uottawa.seg2105.project.cqondemand.activities.UserAccountListActivity;
-import ca.uottawa.seg2105.project.cqondemand.activities.UserAccountViewActivity;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class HomeActivity extends AppCompatActivity {
 
     protected boolean itemClickEnabled = true;
-    protected TableRow btns_admin_1;
-    protected TableRow btns_service_provider_1;
 
     /*
      * Fills in layout for UserHome activity
@@ -26,84 +20,70 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-        // Get references to the view items
-        btns_admin_1 = findViewById(R.id.btns_admin_1);
-        btns_service_provider_1 = findViewById(R.id.btns_service_provider_1);
+        User signedInUser = State.getInstance(getApplicationContext()).getSignedInUser();
+        if (null == signedInUser) { return; }
+        switch (signedInUser.getType()) {
+            case ADMIN: setContentView(R.layout.activity_home_admin); break;
+            case SERVICE_PROVIDER: setContentView(R.layout.activity_home_service_provider); break;
+            case HOMEOWNER: setContentView(R.layout.activity_home_homeowner); break;
+            default: onClickHandler(findViewById(R.id.btn_sign_out));
+        }
+
+    }
+
+    @Override
+    public void onBackPressed () {
+        moveTaskToBack(false);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        User user = State.getState().getSignedInUser();
+        itemClickEnabled = true;
+        User user = State.getInstance().getSignedInUser();
         if (null == user) {
-            onSignOutClick(null);
+            onClickHandler(findViewById(R.id.btn_sign_out));
         } else {
             itemClickEnabled = true;
-            // Hide all non-shared admin button rows
-            btns_admin_1.setVisibility(View.GONE);
-            btns_service_provider_1.setVisibility(View.GONE);
-
-            // Enable the relevant button rows
-            switch (user.getType()) {
-                case ADMIN:
-                    btns_admin_1.setVisibility(View.VISIBLE);
-                    break;
-                case HOMEOWNER:
-                    break;
-                case SERVICE_PROVIDER:
-                    btns_service_provider_1.setVisibility(View.VISIBLE);
-                    break;
-            }
         }
     }
 
-    // Admin Only Button Functions
-
-    public void onServicesClick(View view) {
+    public void onClickHandler(View view) {
         if (!itemClickEnabled) { return; }
         itemClickEnabled = false;
-        startActivity(new Intent(getApplicationContext(), CategoryListActivity.class));
-    }
-
-    public void onUserListClick(View view) {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
-        startActivity(new Intent(getApplicationContext(), UserAccountListActivity.class));
-    }
-
-    // Service Provider Only Button Functions
-
-    public void onMyAvailabilityClick(View view) {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
-        startActivity(new Intent(getApplicationContext(), AvailabilityWeekViewActivity.class));
-    }
-    public void onMyServicesClick(View view) {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
-        State.getState().setCurrentUser(State.getState().getSignedInUser());
-        startActivity(new Intent(getApplicationContext(), ServiceListActivity.class));
-    }
-
-
-    // ALL Users Button Functions
-    /*
-     * Navigates to AccountDetails when clicked
-     * Displays Account Details
-     */
-    public void onMyAccountClick(View view) {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
-        startActivity(new Intent(getApplicationContext(), UserAccountViewActivity.class));
-    }
-
-    public void onSignOutClick(View view) {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
-        State.getState().setSignedInUser(null);
-        startActivity(new Intent(getApplicationContext(), SignInActivity.class));
-        finish();
+        Context ctx = getApplicationContext();
+        Intent intent;
+        switch (view.getId()) {
+            case R.id.btn_my_account:
+                startActivity(new Intent(ctx, UserViewActivity.class));
+                break;
+            case R.id.btn_sign_out:
+                State.getInstance().setSignedInUser(null);
+                startActivity(new Intent(ctx, SignInActivity.class));
+                finish();
+                break;
+            case R.id.btn_admin_manage_users:
+                startActivity(new Intent(ctx, UserListActivity.class));
+                break;
+            case R.id.btn_admin_manage_services:
+                startActivity(new Intent(ctx, CategoryListActivity.class));
+                break;
+            case R.id.btn_sp_availability:
+                startActivity(new Intent(ctx, WeekViewActivity.class));
+                break;
+            case R.id.btn_sp_services:
+                intent = new Intent(ctx, ServiceListActivity.class);
+                intent.putExtra("user", State.getInstance().getSignedInUser());
+                startActivity(intent);
+                break;
+            case R.id.btn_ho_book_service:
+                startActivity(new Intent(ctx, CategoryListActivity.class));
+                break;
+            case R.id.btn_sp_bookings:
+            case R.id.btn_ho_bookings:
+                startActivity(new Intent(ctx, BookingListActivity.class));
+                break;
+        }
     }
 
 }
