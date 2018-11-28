@@ -110,7 +110,7 @@ public class UserViewActivity extends SignedInActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         User user = State.getInstance().getSignedInUser();
-        getMenuInflater().inflate(R.menu.booking_options, menu);
+        getMenuInflater().inflate(R.menu.user_options, menu);
         if (null != user && user.getType() == User.Type.ADMIN) {
             menu.setGroupVisible(R.id.grp_user_edit_controls, false);
         }

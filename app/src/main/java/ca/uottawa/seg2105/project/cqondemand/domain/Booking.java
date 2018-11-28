@@ -13,6 +13,11 @@ import java.util.Date;
  * contains the service provider and the key of the homeowner. This is due to a database storage strategy wherein both
  * versions are stored and accessible via associated keys.
  *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
  */
 public class Booking implements Serializable {
 
@@ -70,7 +75,7 @@ public class Booking implements Serializable {
         this("temp", startTime, endTime, new Date(), null, homeowner, homeowner.getKey(), provider, provider.getKey(),
                 Status.REQUESTED, service.getName(), service.getRate(), null, null);
         this.key = null;
-        if (startTime.compareTo(new Date()) >= 0) { throw new InvalidDataException("Booking must be in the future.");}
+        if (startTime.compareTo(new Date()) <= 0) { throw new InvalidDataException("Booking must be in the future.");}
     }
 
     /**

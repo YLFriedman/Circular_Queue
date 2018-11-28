@@ -11,6 +11,12 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 /**
  * Class to represent a Service Provider, extends the User class.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
  */
 public class ServiceProvider extends User implements Serializable {
 
@@ -171,6 +177,18 @@ public class ServiceProvider extends User implements Serializable {
      */
     public void setAvailabilities(List<Availability> availabilities) {
         this.availabilities = availabilities;
+    }
+
+    /**
+     * Applies the rating to the provider's overall rating by adding the rating to the
+     * running total and dividing by the total number of ratings.
+     * @param newRating the rating value to be applied
+     */
+    public void applyRating(int newRating) {
+        numRatings++;
+        runningRatingTotal += newRating;
+        float calcRating = (runningRatingTotal / (float) numRatings) * 100;
+        rating = Math.round(calcRating);
     }
 
     /**

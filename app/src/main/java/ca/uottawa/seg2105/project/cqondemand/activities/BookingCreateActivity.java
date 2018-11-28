@@ -3,7 +3,6 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -87,16 +86,22 @@ public class BookingCreateActivity extends SignedInActivity {
 
     public void onSubmitBookingClick(View v) {
 
+        if (startTime.compareTo(new Date()) <= 0) {
+            Toast.makeText(getApplicationContext(), getString(R.string.start_time_in_the_past), Toast.LENGTH_LONG).show();
+            return;
+        }
+
         User homeowner = State.getInstance().getSignedInUser();
 
         final Booking newBooking = new Booking(startTime, endTime, homeowner, currentProvider, currentService);
 
         final Button btn_submit_booking = findViewById(R.id.btn_submit_booking);
         btn_submit_booking.setEnabled(false);
+
         DbBooking.createBooking(newBooking, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
-                Toast.makeText(getApplicationContext(), String.format(getString(R.string.item_create_success_template), currentService.getName(), getString(R.string.booking)).toLowerCase(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), String.format(getString(R.string.item_create_success_template), currentService.getName(), getString(R.string.booking).toLowerCase()), Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);

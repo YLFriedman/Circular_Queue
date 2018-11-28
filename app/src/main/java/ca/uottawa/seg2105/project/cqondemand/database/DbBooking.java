@@ -3,7 +3,6 @@ package ca.uottawa.seg2105.project.cqondemand.database;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import androidx.annotation.NonNull;
@@ -14,7 +13,6 @@ import java.util.HashMap;
 
 import androidx.annotation.Nullable;
 import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
-import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
@@ -95,12 +93,12 @@ public class DbBooking extends DbItem<Booking> {
         withHomeownerDB.service_provider = null;
         HashMap<String, Object> map = new HashMap<>();
         // Add the homeowner path using the DbBooking containing a service provider object
-        map.put(String.format("user_bookings/%s/%s", homeownerKey, bookingKey), withServiceProviderDB);
+        map.put(String.format("%s/%s/%s", DbUtilRelational.RelationType.USER_BOOKINGS, homeownerKey, bookingKey), withServiceProviderDB);
         // Add the service provider path using the DbBooking containing a homeowner object
-        map.put(String.format("user_bookings/%s/%s", serviceProviderKey, bookingKey), withHomeownerDB);
+        map.put(String.format("%s/%s/%s", DbUtilRelational.RelationType.USER_BOOKINGS, serviceProviderKey, bookingKey), withHomeownerDB);
         // Add the lookup paths for both the homeowner and service provider
-        map.put(String.format("user_bookings_lookup/%s/%s/%s", homeownerKey, serviceProviderKey, bookingKey), true);
-        map.put(String.format("user_bookings_lookup/%s/%s/%s", serviceProviderKey, homeownerKey, bookingKey), true);
+        map.put(String.format("%s/%s/%s/%s", DbUtilRelational.LookupType.USER_BOOKINGS, homeownerKey, serviceProviderKey, bookingKey), true);
+        map.put(String.format("%s/%s/%s/%s", DbUtilRelational.LookupType.USER_BOOKINGS, serviceProviderKey, homeownerKey, bookingKey), true);
         // Send the updates to the databse
         DbUtilRelational.multiPathUpdate(map, listener);
     }
@@ -160,14 +158,15 @@ public class DbBooking extends DbItem<Booking> {
         String homeownerKey = booking.getHomeownerKey();
         String serviceProviderKey = booking.getServiceProviderKey();
         String bookingKey = booking.getKey();
-        String homeownerPathStatus = String.format("user_bookings/%s/%s/status", homeownerKey, bookingKey);
-        String homeownerPathReason = String.format("user_bookings/%s/%s/cancelled_reason", homeownerKey, bookingKey);
-        String homeownerPathCancelledBy = String.format("user_bookings/%s/%s/cancelled_by", homeownerKey, bookingKey);
-        String homeownerPathDate = String.format("user_bookings/%s/%s/date_cancelled_approved", homeownerKey, bookingKey);
-        String providerPathStatus = String.format("user_bookings/%s/%s/status", serviceProviderKey, bookingKey);
-        String providerPathReason = String.format("user_bookings/%s/%s/cancelled_reason", serviceProviderKey, bookingKey);
-        String providerPathCancelledBy = String.format("user_bookings/%s/%s/cancelled_by", serviceProviderKey, bookingKey);
-        String providerPathDate = String.format("user_bookings/%s/%s/date_cancelled_approved",serviceProviderKey, bookingKey);
+        String base = DbUtilRelational.RelationType.USER_BOOKINGS.toString();
+        String homeownerPathStatus = String.format("%s/%s/%s/status", base, homeownerKey, bookingKey);
+        String homeownerPathReason = String.format("%s/%s/%s/cancelled_reason", base, homeownerKey, bookingKey);
+        String homeownerPathCancelledBy = String.format("%s/%s/%s/cancelled_by", base, homeownerKey, bookingKey);
+        String homeownerPathDate = String.format("%s/%s/%s/date_cancelled_approved", base, homeownerKey, bookingKey);
+        String providerPathStatus = String.format("%s/%s/%s/status", base, serviceProviderKey, bookingKey);
+        String providerPathReason = String.format("%s/%s/%s/cancelled_reason", base, serviceProviderKey, bookingKey);
+        String providerPathCancelledBy = String.format("%s/%s/%s/cancelled_by", base, serviceProviderKey, bookingKey);
+        String providerPathDate = String.format("%s/%s/%s/date_cancelled_approved", base,serviceProviderKey, bookingKey);
         HashMap<String, Object> updateMap = new HashMap<>();
         if (cancelledReason != null && !cancelledReason.isEmpty()) {
             updateMap.put(homeownerPathReason, cancelledReason);
@@ -190,10 +189,10 @@ public class DbBooking extends DbItem<Booking> {
         String homeownerKey = booking.getHomeownerKey();
         String providerKey = booking.getServiceProviderKey();
         String bookingKey = booking.getKey();
-        String homeownerDeletionPath = String.format("user_bookings/%s/%s", homeownerKey, bookingKey);
-        String providerDeletionPath = String.format("user_bookings/%s/%s", providerKey, bookingKey);
-        String lookupHomeownerPath = String.format("user_bookings_lookup/%s/%s/%s", homeownerKey, providerKey, bookingKey);
-        String lookupProviderPath = String.format("user_bookings_lookup/%s/%s/%s",  providerKey, homeownerKey, bookingKey);
+        String homeownerDeletionPath = String.format("%s/%s/%s", DbUtilRelational.RelationType.USER_BOOKINGS, homeownerKey, bookingKey);
+        String providerDeletionPath = String.format("%s/%s/%s", DbUtilRelational.RelationType.USER_BOOKINGS, providerKey, bookingKey);
+        String lookupHomeownerPath = String.format("%s/%s/%s/%s", DbUtilRelational.LookupType.USER_BOOKINGS, homeownerKey, providerKey, bookingKey);
+        String lookupProviderPath = String.format("%s/%s/%s/%s", DbUtilRelational.LookupType.USER_BOOKINGS,  providerKey, homeownerKey, bookingKey);
         HashMap<String, Object> deletionMap = new HashMap<>();
         deletionMap.put(homeownerDeletionPath, null);
         deletionMap.put(providerDeletionPath, null);
@@ -203,7 +202,7 @@ public class DbBooking extends DbItem<Booking> {
     }
 
     public static void getBookingsAfterTime(@NonNull ServiceProvider provider, @NonNull Date dateTime, @NonNull AsyncValueEventListener<Booking> listener) {
-        DatabaseReference dbRef = DbUtil.getRef(String.format("user_bookings/%s", provider.getKey()));
+        DatabaseReference dbRef = DbUtil.getRef(String.format("%s/%s", DbUtilRelational.RelationType.USER_BOOKINGS, provider.getKey()));
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

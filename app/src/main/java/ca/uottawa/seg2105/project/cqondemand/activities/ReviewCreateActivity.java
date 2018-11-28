@@ -65,7 +65,7 @@ public class ReviewCreateActivity extends SignedInActivity {
         btn_create_review.setEnabled(false);
 
 
-        DbReview.createReview(newReview, currentProvider.getKey(), new AsyncActionEventListener() {
+        DbReview.createReview(newReview, currentProvider, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), String.format(getString(R.string.item_create_success_template), currentProvider.getCompanyName(), getString(R.string.review).toLowerCase()), Toast.LENGTH_LONG).show();
@@ -78,6 +78,12 @@ public class ReviewCreateActivity extends SignedInActivity {
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 switch (reason) {
+                    case ALREADY_EXISTS:
+                        Toast.makeText(getApplicationContext(), getString(R.string.already_rated), Toast.LENGTH_LONG).show();
+                        break;
+                    case DOES_NOT_EXIST:
+                        Toast.makeText(getApplicationContext(), getString(R.string.user_does_not_exist_review_create), Toast.LENGTH_LONG).show();
+                        break;
                     case DATABASE_ERROR:
                         Toast.makeText(getApplicationContext(), String.format(getString(R.string.create_db_error_template), getString(R.string.review).toLowerCase()), Toast.LENGTH_LONG).show();
                         break;
