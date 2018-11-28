@@ -48,6 +48,20 @@
                 </TableRow>
 
                 <TableRow
+                    android:id="@+id/btns_service_provider_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <Button
+                        android:id="@+id/btn_sp_bookings"
+                        style="@style/panel_button"
+                        android:drawableTop="@drawable/ic_assignment_complete_light_75"
+                        android:onClick="onClickHandler"
+                        android:text="@string/my_bookings" />
+
+                </TableRow>
+
+                <TableRow
                     android:id="@+id/btns_account"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">

@@ -79,6 +79,7 @@ public class HomeActivity extends AppCompatActivity {
             case R.id.btn_ho_book_service:
                 startActivity(new Intent(ctx, CategoryListActivity.class));
                 break;
+            case R.id.btn_sp_bookings:
             case R.id.btn_ho_bookings:
                 startActivity(new Intent(ctx, BookingListActivity.class));
                 break;

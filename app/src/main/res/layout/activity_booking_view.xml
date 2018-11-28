@@ -186,6 +186,75 @@
                 android:textColor="@color/text_primary_dark"
                 android:textSize="18sp" />
 
+            <LinearLayout
+                android:id="@+id/grp_approved"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txt_title_approved_on"
+                    style="@style/input_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/approved_on"
+                    android:textColor="@color/text_secondary_dark" />
+
+                <TextView
+                    android:id="@+id/txt_approved_on"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:text="@string/placeholder"
+                    android:textColor="@color/text_primary_dark"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/grp_cancelled"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txt_title_cancelled_on"
+                    style="@style/input_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/cancelled_on"
+                    android:textColor="@color/text_secondary_dark" />
+
+                <TextView
+                    android:id="@+id/txt_cancelled_on"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:text="@string/placeholder"
+                    android:textColor="@color/text_primary_dark"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/txt_title_cancelled_reason"
+                    style="@style/input_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/cancellation_reason"
+                    android:textColor="@color/text_secondary_dark" />
+
+                <TextView
+                    android:id="@+id/txt_cancelled_reason"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:text="@string/placeholder"
+                    android:textColor="@color/text_primary_dark"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
             <Button
                 android:id="@+id/btn_submit_review"
                 android:layout_width="match_parent"
@@ -193,6 +262,14 @@
                 android:layout_marginTop="12dp"
                 android:onClick="onRateServiceClick"
                 android:text="@string/rate_service" />
+
+            <Button
+                android:id="@+id/btn_approve_booking"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:onClick="onApproveBookingClick"
+                android:text="@string/approve_booking" />
 
         </LinearLayout>
 

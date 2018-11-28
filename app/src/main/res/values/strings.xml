@@ -103,6 +103,9 @@
     <string name="hourly_rate">Hourly Rate</string>
     <string name="create_db_error_template">Unable to create the %s at this time due to a database error. Please try again later.</string>
     <string name="create_generic_error_template">Unable to create the %s at this time. Please try again later.</string>
+    <string name="update_db_error_template">Unable to update this %s at this time due to a database error. Please try again later.</string>
+    <string name="update_generic_error_template">Unable to update this %s at this time. Please try again later.</string>
+    <string name="booking_approved_successfully">This booking has been successfully approved.</string>
     <string name="unlink_service">Unlink Service</string>
     <string name="remove_service">Remove Service</string>
     <string name="service_name_invalid">Please only use letters, numbers, spaces, or apostrophes for the name of a service</string>
@@ -307,6 +310,7 @@
     <string name="past_template">Past (%d)</string>
     <string name="cancelled_template">Cancelled (%d)</string>
     <string name="pending_template">Pending (%d)</string>
+    <string name="requested_template">Requested (%d)</string>
     <string name="booked_template">Booked (%d)</string>
     <string name="find_availability">Find Availability</string>
     <string name="rating">Rating</string>
@@ -329,4 +333,9 @@
     <string name="status">Status</string>
     <string name="view_profile">View Profile</string>
     <string name="rate_service">Rate the Service</string>
+    <string name="cancel_booking">Cancel Booking</string>
+    <string name="approve_booking">Approve This Booking</string>
+    <string name="cancelled_on">Cancelled On</string>
+    <string name="approved_on">Approved On</string>
+    <string name="cancellation_reason">Cancellation Reason</string>
 </resources>

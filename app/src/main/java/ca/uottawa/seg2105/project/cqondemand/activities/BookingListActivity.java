@@ -61,7 +61,7 @@ public class BookingListActivity extends SignedInActivity {
 
         tabTitles = new String[4];
         tabTitles[0] = getString(R.string.booked_template);
-        tabTitles[1] = getString(R.string.pending_template);
+        tabTitles[1] = getString(R.string.requested_template);
         tabTitles[2] = getString(R.string.cancelled_template);
         tabTitles[3] = getString(R.string.past);
 

@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import ca.uottawa.seg2105.project.cqondemand.domain.Review;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 
 public class DbReview extends DbItem<Review> {
@@ -53,7 +54,12 @@ public class DbReview extends DbItem<Review> {
         });
     }
 
-    public static void getReviews(String serviceProviderKey, AsyncValueEventListener<Review> listener) {
+    public static void getReview(@NonNull String serviceProviderKey, @NonNull String bookingKey, AsyncSingleValueEventListener<Review> listener) {
+        String path = String.format("%s/%s", serviceProviderKey, bookingKey);
+        DbUtilRelational.getItemRelational(DbUtilRelational.RelationType.PROVIDER_REVIEWS, path, listener);
+    }
+
+    public static void getReviews(@NonNull String serviceProviderKey, @NonNull AsyncValueEventListener<Review> listener) {
         DbQuery query = DbQuery.createChildValueQuery("date_created");
         DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.PROVIDER_REVIEWS, serviceProviderKey, query, listener);
     }

@@ -18,6 +18,7 @@ import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
@@ -64,6 +65,39 @@ public class DbUtilRelational extends DbUtil {
         public DatabaseReference getRef() {
             return DbUtil.getRef(this.toString());
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    static <T> void getItemRelational(@NonNull final RelationType relationType, @NonNull String path, @NonNull final AsyncSingleValueEventListener<T> listener) {
+        relationType.getRef().child(path).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                    listener.onFailure(AsyncEventFailureReason.DOES_NOT_EXIST);
+                } else {
+                    try {
+                        DbItem<T> dbItem = (DbItem<T>) snapshot.getValue(relationType.getDbItemClass());
+                        if (null != dbItem && null != snapshot.getKey()) {
+                            dbItem.setKey(snapshot.getKey());
+                            T domainObjItem = dbItem.toDomainObj();
+                            listener.onSuccess(domainObjItem);
+                        } else {
+                            listener.onFailure(AsyncEventFailureReason.INVALID_DATA);
+                        }
+                    } catch (IllegalArgumentException e) {
+                        listener.onFailure(AsyncEventFailureReason.INVALID_DATA);
+                    } catch (InvalidDataException e) {
+                        listener.onFailure(AsyncEventFailureReason.INVALID_DATA);
+                    } catch (ClassCastException e) {
+                        listener.onFailure(AsyncEventFailureReason.INVALID_DATA);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
+            }
+        });
     }
 
     static <T> void getItemsRelational(@NonNull final RelationType relationType, @NonNull String childKey, @NonNull DbQuery queryDb, @NonNull final AsyncValueEventListener<T> listener) {

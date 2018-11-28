@@ -111,9 +111,43 @@ public class DbBooking extends DbItem<Booking> {
         return DbUtilRelational.getItemsRelationalLive(DbUtilRelational.RelationType.USER_BOOKINGS, user.getKey(), query, listener);
     }
 
-    public static void setBookingStatus(@NonNull Booking booking, @NonNull Booking.Status status, @Nullable String cancelledReason, @Nullable AsyncActionEventListener listener) {
-        if (booking.getKey() == null) { throw new IllegalArgumentException("Booking key required to perform update"); }
-        Date dateCancelledApproved = new Date(System.currentTimeMillis());
+    public static void approveBooking(@NonNull Booking booking, @Nullable AsyncActionEventListener listener) {
+        if (null == booking.getKey() || null == booking.getServiceProviderKey()) { throw new IllegalArgumentException("Booking key and provider key required to perform update"); }
+        if (Booking.Status.REQUESTED != booking.getStatus()) { throw new IllegalArgumentException("Only a 'Requested' booking can be approved."); }
+        //booking.approveBooking(updateTime);
+        final Date updateTime = new Date(System.currentTimeMillis());
+        setBookingStatus(booking, Booking.Status.APPROVED, updateTime, null, new AsyncActionEventListener() {
+            @Override
+            public void onSuccess() {
+                booking.approveBooking(updateTime);
+                if (null != listener) { listener.onSuccess(); }
+            }
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                if (null != listener) { listener.onFailure(reason); }
+            }
+        });
+    }
+
+    public static void cancelBooking(@NonNull Booking booking, @Nullable String cancelReason, @Nullable AsyncActionEventListener listener) {
+        if (null == booking.getKey() || null == booking.getServiceProviderKey()) { throw new IllegalArgumentException("Booking key and provider key required to perform update"); }
+        if (Booking.Status.REQUESTED != booking.getStatus() && Booking.Status.APPROVED != booking.getStatus()) { throw new IllegalArgumentException("Only a 'Requested' or 'Approved' booking can be cancelled."); }
+        final Date updateTime = new Date(System.currentTimeMillis());
+        setBookingStatus(booking, Booking.Status.CANCELLED, updateTime, cancelReason, new AsyncActionEventListener() {
+            @Override
+            public void onSuccess() {
+                booking.cancelBooking(updateTime, cancelReason);
+                if (null != listener) { listener.onSuccess(); }
+            }
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                if (null != listener) { listener.onFailure(reason); }
+            }
+        });
+    }
+
+    private static void setBookingStatus(@NonNull Booking booking, @NonNull Booking.Status status, Date updateTime, @Nullable String cancelledReason, @Nullable AsyncActionEventListener listener) {
+        if (null == booking.getKey() || null == booking.getServiceProviderKey()) { throw new IllegalArgumentException("Booking key and provider key required to perform update"); }
         String homeownerKey = booking.getHomeownerKey();
         String serviceProviderKey = booking.getServiceProviderKey();
         String bookingKey = booking.getKey();
@@ -130,8 +164,8 @@ public class DbBooking extends DbItem<Booking> {
         }
         updateMap.put(homeownerPathStatus, status.toString());
         updateMap.put(providerPathStatus, status.toString());
-        updateMap.put(providerPathDate, dateCancelledApproved.getTime());
-        updateMap.put(homeownerPathDate, dateCancelledApproved.getTime());
+        updateMap.put(providerPathDate, updateTime.getTime());
+        updateMap.put(homeownerPathDate, updateTime.getTime());
 
         DbUtilRelational.multiPathUpdate(updateMap, listener);
     }

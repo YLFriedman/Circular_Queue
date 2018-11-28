@@ -2,19 +2,28 @@ package ca.uottawa.seg2105.project.cqondemand.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.database.DbBooking;
+import ca.uottawa.seg2105.project.cqondemand.database.DbReview;
 import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
+import ca.uottawa.seg2105.project.cqondemand.domain.Review;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class BookingViewActivity extends SignedInActivity {
@@ -28,6 +37,8 @@ public class BookingViewActivity extends SignedInActivity {
     private SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h:mm a", Locale.CANADA);
     private LinearLayout grp_provider;
     private LinearLayout grp_homeowner;
+    private LinearLayout grp_cancelled;
+    private LinearLayout grp_approved;
     private TextView txt_homeowner;
     private TextView txt_service_provider;
     private TextView txt_service_name;
@@ -36,6 +47,11 @@ public class BookingViewActivity extends SignedInActivity {
     private TextView txt_service_rate;
     private TextView txt_created_on;
     private TextView txt_status;
+    private TextView txt_approved_on;
+    private TextView txt_cancelled_on;
+    private TextView txt_cancelled_reason;
+    private Button btn_submit_review;
+    private Button btn_approve_booking;
 
 
     @Override
@@ -71,8 +87,12 @@ public class BookingViewActivity extends SignedInActivity {
             }
         }
 
+        btn_submit_review = findViewById(R.id.btn_submit_review);
+        btn_approve_booking = findViewById(R.id.btn_approve_booking);
         grp_homeowner = findViewById(R.id.grp_homeowner);
         grp_provider = findViewById(R.id.grp_provider);
+        grp_cancelled = findViewById(R.id.grp_cancelled);
+        grp_approved = findViewById(R.id.grp_approved);
         txt_homeowner = findViewById(R.id.txt_homeowner);
         txt_service_provider = findViewById(R.id.txt_service_provider);
         txt_service_name = findViewById(R.id.txt_service_name);
@@ -81,8 +101,28 @@ public class BookingViewActivity extends SignedInActivity {
         txt_service_rate = findViewById(R.id.txt_service_rate);
         txt_created_on = findViewById(R.id.txt_created_on);
         txt_status = findViewById(R.id.txt_status);
+        txt_approved_on = findViewById(R.id.txt_approved_on);
+        txt_cancelled_on = findViewById(R.id.txt_cancelled_on);
+        txt_cancelled_reason = findViewById(R.id.txt_cancelled_reason);
 
-        setFields();
+        configureView();
+
+        if (Mode.HOMEOWNER == mode && Booking.Status.COMPLETED == currentBooking.getStatus()) {
+            DbReview.getReview(currentBooking.getServiceProvider().getKey(), currentBooking.getKey(), new AsyncSingleValueEventListener<Review>() {
+                @Override
+                public void onSuccess(@NonNull Review item) {
+                    // If a review already exists for this booking, do nothing
+                }
+                @Override
+                public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                    // If there is no review, show the button to submit a review
+                    if (AsyncEventFailureReason.DOES_NOT_EXIST == reason) {
+                        btn_submit_review.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+        }
+
 
     }
 
@@ -92,16 +132,47 @@ public class BookingViewActivity extends SignedInActivity {
         itemClickEnabled = true;
     }
 
-    private void setFields() {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (Booking.Status.REQUESTED != currentBooking.getStatus() || Booking.Status.APPROVED != currentBooking.getStatus()) {
+            getMenuInflater().inflate(R.menu.booking_options, menu);
+            return true;
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_booking_cancel: cancelBooking(); return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void configureView() {
+
+        btn_submit_review.setVisibility(View.GONE);
+        btn_approve_booking.setVisibility(View.GONE);
+        grp_cancelled.setVisibility(View.GONE);
+        grp_approved.setVisibility(View.GONE);
+
         txt_service_name.setText(currentBooking.getServiceName());
         txt_date.setText(DAY_FORMAT.format(currentBooking.getStartTime()));
         txt_time.setText(String.format("%s to %s", TIME_FORMAT.format(currentBooking.getStartTime()), TIME_FORMAT.format(currentBooking.getEndTime())));
         if (0 == currentBooking.getServiceRate()) { txt_service_rate.setText(getString(R.string.zero_value_service)); }
         else { txt_service_rate.setText(String.format(Locale.CANADA, getString(R.string.service_rate_template), currentBooking.getServiceRate())); }
         txt_created_on.setText(DATE_FORMAT.format(currentBooking.getDateCreated()));
-        if (Booking.Status.CANCELLED != currentBooking.getStatus() && currentBooking.getEndTime().getTime() >= System.currentTimeMillis()) { txt_status.setText(getString(R.string.completed)); }
-        else { txt_status.setText(currentBooking.getStatus().toString()); }
+        txt_status.setText(currentBooking.getStatus().toString());
 
+        if (Booking.Status.CANCELLED == currentBooking.getStatus()) {
+            txt_cancelled_on.setText(DATE_FORMAT.format(currentBooking.getDateCancelledOrApproved()));
+            txt_cancelled_reason.setText(currentBooking.getCancelledReason());
+            grp_cancelled.setVisibility(View.VISIBLE);
+        } else if (Booking.Status.APPROVED == currentBooking.getStatus()) {
+            txt_approved_on.setText(DATE_FORMAT.format(currentBooking.getDateCancelledOrApproved()));
+            grp_approved.setVisibility(View.VISIBLE);
+        }
+        
         if (Mode.HOMEOWNER == mode) {
             txt_service_provider.setText(currentBooking.getServiceProvider().getCompanyName());
             grp_homeowner.setVisibility(View.GONE);
@@ -109,8 +180,9 @@ public class BookingViewActivity extends SignedInActivity {
         } else if (Mode.SERVICE_PROVIDER == mode) {
             txt_homeowner.setText(currentBooking.getHomeowner().getFullName());
             grp_provider.setVisibility(View.GONE);
-
+            if (Booking.Status.REQUESTED == currentBooking.getStatus()) { btn_approve_booking.setVisibility(View.VISIBLE); }
         }
+
     }
 
     public void onSeeProviderProfileClick(View v) {
@@ -128,6 +200,36 @@ public class BookingViewActivity extends SignedInActivity {
         Intent intent = new Intent(getApplicationContext(), ReviewCreateActivity.class);
         intent.putExtra("booking", currentBooking);
         startActivity(intent);
+    }
+
+    private void cancelBooking() {
+
+    }
+
+    public void onApproveBookingClick(View v) {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
+        btn_approve_booking.setEnabled(false);
+        DbBooking.approveBooking(currentBooking, new AsyncActionEventListener() {
+            @Override
+            public void onSuccess() {
+                itemClickEnabled = true;
+                configureView();
+                Toast.makeText(getApplicationContext(), getString(R.string.booking_approved_successfully), Toast.LENGTH_LONG).show();
+            }
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                switch (reason) {
+                    case DATABASE_ERROR:
+                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.update_db_error_template), getString(R.string.booking).toLowerCase()), Toast.LENGTH_LONG).show();
+                        break;
+                    default: // Some other kind of error
+                        Toast.makeText(getApplicationContext(), String.format(getString(R.string.update_generic_error_template), getString(R.string.booking).toLowerCase()), Toast.LENGTH_LONG).show();
+                }
+                btn_approve_booking.setEnabled(true);
+                itemClickEnabled = true;
+            }
+        });
     }
 
 }

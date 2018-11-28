@@ -25,23 +25,21 @@ public class Booking implements Serializable {
     protected int serviceRate;
 
     public enum Status {
-        CANCELLED, APPROVED, REQUESTED;
+        CANCELLED, APPROVED, REQUESTED, EXPIRED, COMPLETED;
         @Override
         public String toString() {
             switch (this) {
                 case CANCELLED: return "Cancelled";
                 case APPROVED: return "Approved";
                 case REQUESTED: return "Requested";
+                case EXPIRED: return "Expired";
+                case COMPLETED: return "Completed";
                 default: throw new IllegalArgumentException("Invalid Status");
             }
         }
         public static Status parse(String status) {
-            switch (status.toUpperCase()) {
-                case "CANCELLED": return Status.CANCELLED;
-                case "APPROVED": return Status.APPROVED;
-                case "REQUESTED": return Status.REQUESTED;
-                default: throw new IllegalArgumentException("Invalid Status");
-            }
+            for (Status s: Status.values()) { if (s.toString().toLowerCase().equals(status.toLowerCase())) { return s; } }
+            throw new IllegalArgumentException("Invalid Status");
         }
     }
 
@@ -94,6 +92,11 @@ public class Booking implements Serializable {
     }
 
     public Status getStatus() {
+        // If the booking end time is in the past  CANCELLED, APPROVED, REQUESTED, EXPIRED, COMPLETED;
+        if (endTime.getTime() < System.currentTimeMillis()) {
+            if (Status.REQUESTED == status) { return Status.EXPIRED; }
+            if (Status.APPROVED == status) { return Status.COMPLETED; }
+        }
         return status;
     }
 
@@ -139,6 +142,17 @@ public class Booking implements Serializable {
 
     public String getHomeownerKey() {
         return homeownerKey;
+    }
+
+    public void approveBooking(@NonNull Date updateTime) {
+        status = Status.APPROVED;
+        dateCancelledOrApproved = updateTime;
+    }
+
+    public void cancelBooking(@NonNull Date updateTime, @Nullable String cancelledReason) {
+        status = Status.CANCELLED;
+        this.cancelledReason = cancelledReason;
+        dateCancelledOrApproved = updateTime;
     }
 
 }
