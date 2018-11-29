@@ -30,8 +30,8 @@ public class BookingCreateActivity extends SignedInActivity {
     protected Service currentService;
     protected Date startTime;
     protected Date endTime;
-    protected SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMMM d, YYYY  hh:mm a", Locale.CANADA);
-    protected SimpleDateFormat DAY_FORMAT = new SimpleDateFormat("MMMM d, YYYY", Locale.CANADA);
+    protected SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMMM d, yyyy  hh:mm a", Locale.CANADA);
+    protected SimpleDateFormat DAY_FORMAT = new SimpleDateFormat("MMMM d, yyyy", Locale.CANADA);
     protected SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h:mm a", Locale.CANADA);
     protected TextView txt_service_provider;
     protected TextView txt_service_name;

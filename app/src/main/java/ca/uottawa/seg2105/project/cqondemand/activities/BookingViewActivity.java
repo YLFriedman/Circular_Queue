@@ -37,8 +37,8 @@ public class BookingViewActivity extends SignedInActivity {
     private Mode mode;
     private boolean itemClickEnabled;
     private Booking currentBooking;
-    private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMMM d, YYYY  h:mm a", Locale.CANADA);
-    private SimpleDateFormat DAY_FORMAT = new SimpleDateFormat("MMMM d, YYYY", Locale.CANADA);
+    private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMMM d, yyyy  h:mm a", Locale.CANADA);
+    private SimpleDateFormat DAY_FORMAT = new SimpleDateFormat("MMMM d, yyyy", Locale.CANADA);
     private SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h:mm a", Locale.CANADA);
     private LinearLayout grp_provider;
     private LinearLayout grp_homeowner;
