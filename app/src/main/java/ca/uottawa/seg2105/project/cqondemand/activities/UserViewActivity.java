@@ -9,8 +9,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Locale;
 
 import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
@@ -28,11 +31,15 @@ public class UserViewActivity extends SignedInActivity {
     protected TextView txt_full_name;
     protected TextView txt_email;
     protected TextView txt_company_name;
+    RatingBar rating_stars;
+    protected TextView txt_see_reviews;
+    protected TextView txt_num_ratings;
     protected TextView txt_phone;
     protected TextView txt_description;
     protected TextView txt_licensed;
     protected TextView txt_address;
     protected LinearLayout service_provider_info;
+    protected LinearLayout grp_rating;
     protected User currentUser;
 
     @Override
@@ -45,9 +52,13 @@ public class UserViewActivity extends SignedInActivity {
         txt_full_name = findViewById(R.id.txt_full_name);
         txt_email = findViewById(R.id.txt_email);
         service_provider_info = findViewById(R.id.service_provider_info);
+        grp_rating = findViewById(R.id.grp_rating);
         txt_company_name = findViewById(R.id.txt_company_name);
         txt_phone = findViewById(R.id.txt_phone);
         txt_description = findViewById(R.id.txt_description);
+        rating_stars = findViewById(R.id.rating_stars);
+        txt_see_reviews = findViewById(R.id.txt_see_reviews);
+        txt_num_ratings = findViewById(R.id.txt_num_ratings);
         txt_licensed = findViewById(R.id.txt_licensed);
         txt_address = findViewById(R.id.txt_address);
 
@@ -85,6 +96,7 @@ public class UserViewActivity extends SignedInActivity {
 
     private void setupFields() {
         service_provider_info.setVisibility(View.GONE);
+        grp_rating.setVisibility(View.GONE);
         if (null == currentUser) {
             txt_account_type.setText("");
             txt_username.setText("");
@@ -98,9 +110,18 @@ public class UserViewActivity extends SignedInActivity {
             if (currentUser instanceof ServiceProvider) {
                 ServiceProvider provider = (ServiceProvider) currentUser;
                 service_provider_info.setVisibility(View.VISIBLE);
+                grp_rating.setVisibility(View.VISIBLE);
                 txt_company_name.setText(provider.getCompanyName());
                 txt_phone.setText(provider.getPhoneNumber());
                 txt_description.setText(provider.getDescription());
+                rating_stars.setRating((float)provider.getRating() / 100);
+                if (provider.getNumRatings() > 0) { txt_see_reviews.setVisibility(View.VISIBLE); }
+                else { txt_see_reviews.setVisibility(View.GONE); }
+                String numRatings = "";
+                if (0 == provider.getNumRatings()) { numRatings = getString(R.string.rating_template_none); }
+                else if (1 == provider.getNumRatings()) { numRatings = getString(R.string.rating_template_single); }
+                else { numRatings = String.format(Locale.CANADA, getString(R.string.rating_template), provider.getNumRatings()); }
+                txt_num_ratings.setText(numRatings);
                 txt_licensed.setText(provider.isLicensed() ? getText(R.string.yes) : getText(R.string.no));
                 txt_address.setText(provider.getAddress().toString());
             }
@@ -114,7 +135,7 @@ public class UserViewActivity extends SignedInActivity {
         if (null != user && user.getType() == User.Type.ADMIN) {
             menu.setGroupVisible(R.id.grp_user_edit_controls, false);
         }
-        if (!State.getInstance().getSignedInUser().equals(currentUser)) {
+        if (!currentUser.equals(State.getInstance().getSignedInUser())) {
             menu.setGroupVisible(R.id.grp_user_password_controls, false);
         }
         return true;
@@ -175,6 +196,14 @@ public class UserViewActivity extends SignedInActivity {
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.text_primary_dark));
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.dialog_red));
         }
+    }
+
+    public void onSeeReviewsClick(View v) {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
+        Intent intent = new Intent(getApplicationContext(), ReviewListActivity.class);
+        intent.putExtra("provider", currentUser);
+        startActivity(intent);
     }
 
 }
