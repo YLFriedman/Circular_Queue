@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,6 +52,7 @@ public class BookingViewActivity extends SignedInActivity {
     private TextView txt_service_rate;
     private TextView txt_created_on;
     private TextView txt_status;
+    private ImageView img_status_icon;
     private TextView txt_approved_on;
     private TextView txt_cancelled_on;
     private TextView txt_cancelled_reason;
@@ -106,6 +108,7 @@ public class BookingViewActivity extends SignedInActivity {
         txt_service_rate = findViewById(R.id.txt_service_rate);
         txt_created_on = findViewById(R.id.txt_created_on);
         txt_status = findViewById(R.id.txt_status);
+        img_status_icon = findViewById(R.id.img_status_icon);
         txt_approved_on = findViewById(R.id.txt_approved_on);
         txt_cancelled_on = findViewById(R.id.txt_cancelled_on);
         txt_cancelled_reason = findViewById(R.id.txt_cancelled_reason);
@@ -172,6 +175,14 @@ public class BookingViewActivity extends SignedInActivity {
         else { txt_service_rate.setText(String.format(Locale.CANADA, getString(R.string.service_rate_template), currentBooking.getServiceRate())); }
         txt_created_on.setText(DATE_FORMAT.format(currentBooking.getDateCreated()));
         txt_status.setText(currentBooking.getStatus().toString());
+        switch (currentBooking.getStatus()) {
+            case CANCELLED: img_status_icon.setImageResource(R.drawable.ic_delete_med_24); break;
+            case APPROVED: img_status_icon.setImageResource(R.drawable.ic_event_available_green_24); break;
+            case REQUESTED: img_status_icon.setImageResource(R.drawable.ic_event_orange_24); break;
+            case EXPIRED: img_status_icon.setImageResource(R.drawable.ic_event_busy_red_24); break;
+            case COMPLETED: img_status_icon.setImageResource(R.drawable.ic_check_circle_green_24); break;
+            default: img_status_icon.setVisibility(View.GONE);
+        }
 
         if (Booking.Status.CANCELLED == currentBooking.getStatus()) {
             txt_cancelled_on.setText(DATE_FORMAT.format(currentBooking.getDateCancelledOrApproved()));

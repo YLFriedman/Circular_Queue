@@ -44,6 +44,7 @@ public class ReviewListActivity extends SignedInActivity {
         setContentView(R.layout.activity_review_list);
 
         txt_sub_title = findViewById(R.id.txt_sub_title);
+        divider_txt_sub_title = findViewById(R.id.divider_txt_sub_title);
         recycler_list = findViewById(R.id.recycler_list);
         recycler_list.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
