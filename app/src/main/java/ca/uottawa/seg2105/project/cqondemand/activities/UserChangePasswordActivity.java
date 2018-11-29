@@ -54,7 +54,7 @@ public class UserChangePasswordActivity extends SignedInActivity {
         final String password = field_password.getText().toString();
         final String passwordConfirm = field_password_confirm.getText().toString();
 
-        if (!oldPassword.equals(currentUser.getPassword())) {
+        if (!Authentication.checkPassword(oldPassword, currentUser.getPassword())) {
             field_password_old.setError(getString(R.string.incorrect_password_error));
             field_password_old.requestFocus();
             field_password_old.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
