@@ -44,6 +44,7 @@ public class ReviewListActivity extends SignedInActivity {
         setContentView(R.layout.activity_review_list);
 
         txt_sub_title = findViewById(R.id.txt_sub_title);
+        divider_txt_sub_title = findViewById(R.id.divider_txt_sub_title);
         recycler_list = findViewById(R.id.recycler_list);
         recycler_list.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
@@ -60,7 +61,7 @@ public class ReviewListActivity extends SignedInActivity {
             return;
         }
 
-        txt_sub_title.setText(String.format(getString(R.string.review_template), currentProvider.getCompanyName()));
+        setSubTitle(String.format(getString(R.string.review_template), currentProvider.getCompanyName()));
 
         //Defining UI behaviour when list is received
         dbListenerHandle = DbReview.getReviewsLive(currentProvider.getKey(), new AsyncValueEventListener<Review>() {
@@ -90,7 +91,7 @@ public class ReviewListActivity extends SignedInActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // Cleanup the data listener for the services list
+        // Cleanup the data listener
         if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
     }
 

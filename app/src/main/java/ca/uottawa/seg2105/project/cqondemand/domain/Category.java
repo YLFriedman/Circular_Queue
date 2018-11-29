@@ -10,12 +10,23 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 /**
  * This represents service categories. Categories have a name and a key. In the database, each category
  * is associated with a set of Services.
- */
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ * */
 public class Category implements Serializable {
 
     private static final long serialVersionUID = 1;
-    //Associated database key
+    /**
+     * Stores the database key associated with the category
+     */
     protected String key;
+    /**
+     * Stores the name of the category
+     */
     protected String name;
 
     /**

@@ -12,10 +12,19 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 /**
  * This class is used to represent a Service which can be provided by Service Providers.
- */
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ * */
 public class Service implements Serializable {
 
     private static final long serialVersionUID = 1;
+    /**
+     * Stores the database key assoicated with a Service
+     */
     protected String key;
     protected String name;
     protected int rate;

@@ -22,21 +22,61 @@ import java.util.Date;
 public class Booking implements Serializable {
 
     private static final long serialVersionUID = 1;
-    //Associated database key
+    /**
+     * Stores the database key associated with this booking
+     */
     protected String key;
-
+    /**
+     * Stores the booking status
+     */
     protected Status status;
+    /**
+     * Stores the booking start time
+     */
     protected Date startTime;
+    /**
+     * Stores the booking end time
+     */
     protected Date endTime;
+    /**
+     * Stores the date the booking was created
+     */
     protected Date dateCreated;
+    /**
+     * Stores the date the booking was cancelled or approved
+     */
     protected Date dateCancelledOrApproved;
+    /**
+     * Stores the reason the booking was cancelled
+     */
     protected String cancelledReason;
+    /**
+     * Stores the name of the user who cancelled the booking
+     */
     protected String cancelledBy;
+    /**
+     * Stores the service provider associated with the booking
+     */
     protected ServiceProvider serviceProvider;
+    /**
+     * Stores the service provider key associated with the booking
+     */
     protected String serviceProviderKey;
+    /**
+     * Stores the homeowner object associated with the booking
+     */
     protected User homeowner;
+    /**
+     * Stores the homeowner key associated with the booking
+     */
     protected String homeownerKey;
+    /**
+     * Stores the name of the service associated with the booking
+     */
     protected String serviceName;
+    /**
+     * Stores the hourly service rate associated with the booking
+     */
     protected int serviceRate;
 
     /**

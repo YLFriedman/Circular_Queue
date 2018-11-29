@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -80,7 +81,10 @@ public class BookingCreateActivity extends SignedInActivity {
         txt_service_provider.setText(currentProvider.getCompanyName());
         txt_service_name.setText(currentService.getName());
         txt_date.setText(DAY_FORMAT.format(startTime));
-        txt_time.setText(String.format("%s to %s", TIME_FORMAT.format(startTime), TIME_FORMAT.format(endTime)));
+        Calendar cal = Calendar.getInstance(Locale.CANADA);
+        cal.setTime(endTime);
+        String endTimeStr = cal.get(Calendar.HOUR_OF_DAY) == 0 ? "Midnight" : TIME_FORMAT.format(endTime);
+        txt_time.setText(String.format("%s to %s", TIME_FORMAT.format(startTime), endTimeStr));
 
     }
 

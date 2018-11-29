@@ -60,10 +60,15 @@ public class ReviewCreateActivity extends SignedInActivity {
         String comments = field_comments.getText().toString().trim();
         final Button btn_create_review = findViewById(R.id.btn_create_review);
 
+        if (!FieldValidation.ratingIsValid((int)stars_rating.getRating())) {
+            Toast.makeText(getApplicationContext(), getString(R.string.invalid_rating_message), Toast.LENGTH_LONG).show();
+            stars_rating.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake_custom));
+            return;
+        }
+
         final Review newReview = new Review((int)stars_rating.getRating(), comments, State.getInstance().getSignedInUser(), currentBooking);
 
         btn_create_review.setEnabled(false);
-
 
         DbReview.createReview(newReview, currentProvider, new AsyncActionEventListener() {
             @Override

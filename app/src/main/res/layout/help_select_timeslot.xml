@@ -71,6 +71,60 @@
                     android:textSize="18sp" />
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/cell_booked"
+                    style="@style/availability_grid_cell.booked"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="4dp"
+                    android:layout_weight="0"
+                    android:contentDescription="@string/availability" />
+
+                <TextView
+                    android:id="@+id/txt_booked"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:text="@string/booked"
+                    android:textColor="@color/text_primary_dark"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/cell_requested"
+                    style="@style/availability_grid_cell.requested"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="4dp"
+                    android:layout_weight="0"
+                    android:contentDescription="@string/availability" />
+
+                <TextView
+                    android:id="@+id/txt_requested"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:text="@string/requested"
+                    android:textColor="@color/text_primary_dark"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/txt_title_tips"
                 android:layout_width="match_parent"
@@ -86,7 +140,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
-                android:text="@string/avail_tip_1"
+                android:text="@string/timeslot_tip_1"
                 android:textColor="@color/text_primary_dark"
                 android:textSize="18sp" />
 
@@ -96,7 +150,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
-                android:text="@string/avail_tip_2"
+                android:text="@string/timeslot_tip_2"
                 android:textColor="@color/text_primary_dark"
                 android:textSize="18sp" />
 
@@ -106,7 +160,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
-                android:text="@string/avail_tip_3"
+                android:text="@string/timeslot_tip_3"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txt_avail_tip_"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/timeslot_tip_4"
                 android:textColor="@color/text_primary_dark"
                 android:textSize="18sp" />
 

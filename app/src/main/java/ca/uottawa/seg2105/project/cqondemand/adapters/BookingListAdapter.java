@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -65,8 +64,14 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
                     TIME_FORMAT.format(new Date(item.getEndTime().getTime()))
             ));
         }
-        //viewHolder.img_item_image.setImageResource(R.drawable.ic_account_circle_med_40);
-        viewHolder.img_item_image.setVisibility(View.GONE);
+        switch (item.getStatus()) {
+            case CANCELLED: viewHolder.img_item_image.setImageResource(R.drawable.ic_delete_med_24); break;
+            case APPROVED: viewHolder.img_item_image.setImageResource(R.drawable.ic_event_available_green_24); break;
+            case REQUESTED: viewHolder.img_item_image.setImageResource(R.drawable.ic_event_orange_24); break;
+            case EXPIRED: viewHolder.img_item_image.setImageResource(R.drawable.ic_event_busy_red_24); break;
+            case COMPLETED: viewHolder.img_item_image.setImageResource(R.drawable.ic_check_circle_green_24); break;
+            default: viewHolder.img_item_image.setVisibility(View.GONE);
+        }
         viewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_med_30);
     }
 

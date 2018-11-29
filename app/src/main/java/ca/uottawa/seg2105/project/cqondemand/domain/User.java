@@ -8,26 +8,48 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation.PasswordValidationResult;
 
+/**
+ * The class User allows for the creation of User objects, and stores the pertinent values for each User.
+ * Users can be of type Homeowner, Service Provider or Admin. Getters for all mutable values
+ * are also provided.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
+
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1;
-
+    /**
+     * Stores the database key of the user
+     */
     protected String key;
     /**
-     * The class User allows for the creation of User objects, and stores the pertinent values for each User.
-     * Users can be of type Homeowner, Service Provider or Admin. Getters for all mutable values
-     * are also provided.
+     * Stores the first name of the user
      */
     protected String firstName;
-
+    /**
+     * Stores the last name of the user
+     */
     protected String lastName;
-
+    /**
+     * Stores the username of the user
+     */
     protected String username;
-
+    /**
+     * Stores the email of the user
+     */
     protected String email;
-
+    /**
+     * Stores the user password
+     */
     protected String password;
-
+    /**
+     * Stores the account type of the user
+     */
     protected final Type type;
 
     /**
