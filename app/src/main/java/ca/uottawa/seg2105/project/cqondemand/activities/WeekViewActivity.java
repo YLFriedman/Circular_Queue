@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -24,12 +25,15 @@ import java.util.LinkedList;
 import java.util.Locale;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
+import ca.uottawa.seg2105.project.cqondemand.database.DbBooking;
 import ca.uottawa.seg2105.project.cqondemand.database.DbUser;
 import ca.uottawa.seg2105.project.cqondemand.domain.Availability;
+import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
+import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class WeekViewActivity extends SignedInActivity implements DatePickerDialog.OnDateSetListener {
@@ -60,6 +64,8 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
     protected TextView txt_month_name;
     protected TextView[] txt_day_nums;
     protected Date currentDate;
+    protected Date startOfPeriod;
+    protected Date endOfPeriod;
     protected Calendar cal;
     protected int startAtDayOfWeek;
     protected int[] requestedCell;
@@ -171,6 +177,7 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
         cal.set(Calendar.SECOND, 0);
         int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
         if (dayOfWeek != 1) { cal.add(Calendar.DAY_OF_MONTH, 1 - dayOfWeek); }
+        startOfPeriod = cal.getTime();
         txt_month_name.setText(MONTH_FORMAT.format(cal.getTime()).substring(0, 3));
         for (TextView txt: txt_day_nums) {
             if (today.equals(TODAY_FORMAT.format(cal.getTime()))) { startAtDayOfWeek = cal.get(Calendar.DAY_OF_WEEK) - 1; }
@@ -178,6 +185,7 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
             txt.setTag(cal.getTime());
             cal.add(Calendar.DAY_OF_MONTH, 1);
         }
+        endOfPeriod = cal.getTime();
         loadProviderAvailabilities();
     }
 
@@ -298,7 +306,32 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
         } else {
             setAvailabilities(Availability.toArrays(currentProvider.getAvailabilities()));
         }
+        setBookings();
         itemClickEnabled = true;
+    }
+
+    private void setBookings() {
+        if (null == startOfPeriod || null == endOfPeriod || Mode.SELECT_TIMESLOT != mode) { return; }
+        DbBooking.getBookingsInTimeRange(currentProvider, startOfPeriod, endOfPeriod, new AsyncValueEventListener<Booking>() {
+            @Override
+            public void onSuccess(@NonNull ArrayList<Booking> data) {
+                int day, start, end;
+                for (Booking b: data) {
+                    if (b.getStatus() != Booking.Status.APPROVED) { continue; }
+                    cal.setTime(b.getStartTime());
+                    day = cal.get(Calendar.DAY_OF_WEEK) - 1;
+                    start = cal.get(Calendar.HOUR_OF_DAY);
+                    cal.setTime(b.getEndTime());
+                    end = cal.get(Calendar.HOUR_OF_DAY);
+                    if (0 == end) { end = 24; }
+                    while (start < end) { setCell(day, start++, CellState.BOOKED); }
+                }
+            }
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {
+
+            }
+        });
     }
 
     private boolean[][] getAvailabilities() {

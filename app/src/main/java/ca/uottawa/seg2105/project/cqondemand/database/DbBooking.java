@@ -1,5 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand.database;
 
+import android.widget.ArrayAdapter;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -99,7 +101,7 @@ public class DbBooking extends DbItem<Booking> {
         // Add the lookup paths for both the homeowner and service provider
         map.put(String.format("%s/%s/%s/%s", DbUtilRelational.LookupType.USER_BOOKINGS, homeownerKey, serviceProviderKey, bookingKey), true);
         map.put(String.format("%s/%s/%s/%s", DbUtilRelational.LookupType.USER_BOOKINGS, serviceProviderKey, homeownerKey, bookingKey), true);
-        // Send the updates to the databse
+        // Send the updates to the database
         DbUtilRelational.multiPathUpdate(map, listener);
     }
 
@@ -201,28 +203,19 @@ public class DbBooking extends DbItem<Booking> {
         DbUtilRelational.multiPathUpdate(deletionMap, listener);
     }
 
-    public static void getBookingsAfterTime(@NonNull ServiceProvider provider, @NonNull Date dateTime, @NonNull AsyncValueEventListener<Booking> listener) {
-        DatabaseReference dbRef = DbUtil.getRef(String.format("%s/%s", DbUtilRelational.RelationType.USER_BOOKINGS, provider.getKey()));
-        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+    public static void getBookingsInTimeRange(@NonNull ServiceProvider provider, @NonNull Date startTime, @NonNull Date endTime, @NonNull AsyncValueEventListener<Booking> listener) {
+        DbQuery query = DbQuery.createChildValueQuery("start_time").setRangeFilter(startTime.getTime(), endTime.getTime());
+        DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.USER_BOOKINGS, provider.getKey(), query, listener);
+        /*DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.USER_BOOKINGS, provider.getKey(), query, new AsyncValueEventListener<Booking>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<Booking> returnValue = new ArrayList<>();
-                for(DataSnapshot candidate : dataSnapshot.getChildren()){
-                    if(candidate.child("end_time").getValue(Long.class) > dateTime.getTime()){
-                        DbBooking dbVersion = candidate.getValue(DbBooking.class);
-                        dbVersion.setKey(candidate.getKey());
-                        Booking current = dbVersion.toDomainObj();
-                        returnValue.add(current);
-                    }
-                }
-                listener.onSuccess(returnValue);
-            }
+            public void onSuccess(ArrayList<Booking> data) {
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                listener.onFailure(AsyncEventFailureReason.DATABASE_ERROR);
             }
-        });
+            @Override
+            public void onFailure(AsyncEventFailureReason reason) {
+
+            }
+        });*/
     }
 
 }

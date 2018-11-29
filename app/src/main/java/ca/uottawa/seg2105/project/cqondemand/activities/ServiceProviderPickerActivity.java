@@ -155,6 +155,7 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
     }
 
     protected void setListAdapter() {
+        txt_filter_no_providers_message.setVisibility(View.GONE);
         if (null == allProviders) { return; }
         ArrayList<ServiceProvider> filteredProviders;
         // If we have no data, or there are no filters set, use the full list.
@@ -176,7 +177,6 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
                 filteredProviders.add(provider);
             }
             if (filteredProviders.size() < 1) { txt_filter_no_providers_message.setVisibility(View.VISIBLE); }
-            else { txt_filter_no_providers_message.setVisibility(View.GONE); }
         }
         if (allProviders.size() > 0 && filteredProviders.size() < 1) {
             // TODO: Display message to adjust filters
