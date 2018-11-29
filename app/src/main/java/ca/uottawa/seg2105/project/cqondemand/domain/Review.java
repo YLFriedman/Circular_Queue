@@ -10,18 +10,43 @@ import java.util.Date;
 
 /**
  * Class to represent a user review of a service that has been provided
- */
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ * */
 public class Review implements Serializable {
 
     private static final long serialVersionUID = 1;
-    //Associated database key
+    /**
+     * Stores the database key associated with the review
+     */
     protected String key;
-
+    /**
+     * Stores the name of the service associated with the review
+     */
     protected String serviceName;
+    /**
+     * Stores the name of the reviewer
+     */
     protected String reviewerName;
+    /**
+     * Stores the key of the reviewer
+     */
     protected String reviewerKey;
+    /**
+     * Stores the rating associated with the review
+     */
     protected int rating;
+    /**
+     * Stores the comment associated with the review
+     */
     protected String comment;
+    /**
+     * Stores the date the review was created
+     */
     protected Date dateCreated;
 
     /**

@@ -10,6 +10,12 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 /**
  * Class to represent a ServiceProvider's availability
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
  */
 public class Availability implements Serializable {
 
@@ -81,8 +87,17 @@ public class Availability implements Serializable {
     }
 
     private static final long serialVersionUID = 1;
+    /**
+     * Stores the day of the week
+     */
     protected Day day;
+    /**
+     * Stores the availability start
+     */
     protected int startTime;
+    /**
+     * Stores the availability end
+     */
     protected int endTime;
 
     /**

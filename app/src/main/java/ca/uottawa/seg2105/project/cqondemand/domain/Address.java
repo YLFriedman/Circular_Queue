@@ -10,16 +10,42 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 /**
  * Class to represent a real world address, implements serializable so as to be better suited for Intents
  *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
  */
 public class Address implements Serializable {
 
     private static final long serialVersionUID = 1;
+    /**
+     * Stores the Unit number
+     */
     protected String unit;
+    /**
+     * Stores the street number
+     */
     protected int streetNumber;
+    /**
+     * Stores the street name
+     */
     protected String street;
+    /**
+     * Stores the city name
+     */
     protected String city;
+    /**
+     * Stores the country name
+     */
     protected String country;
+    /**
+     * Stores the province name
+     */
     protected String province;
+    /**
+     * Stores the postal code
+     */
     protected String postalCode;
 
     //List to store province names in full and shortened versions

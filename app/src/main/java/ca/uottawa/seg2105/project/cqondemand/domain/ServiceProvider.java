@@ -21,21 +21,37 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 public class ServiceProvider extends User implements Serializable {
 
     private static final long serialVersionUID = 1;
-
+    /**
+     * Stores the name of the service provider's company
+     */
     protected String companyName;
-
+    /**
+     * Stores the service provider's description
+     */
     protected String description;
-
+    /**
+     * Stores the license status of the service provider
+     */
     protected boolean licensed;
-
+    /**
+     * Stores the phone number of the service provider
+     */
     protected String phoneNumber;
-
+    /**
+     * Stores the address of the service provider
+     */
     protected Address address;
-
+    /**
+     * Stores the overall rating of the service provider
+     */
     protected int rating;
-
+    /**
+     * Stores the running total of ratings of the service provider
+     */
     protected long runningRatingTotal;
-
+    /**
+     * Stores the number of ratings that are associated with the service provider
+     */
     protected int numRatings;
 
     List<Availability> availabilities;
