@@ -5,9 +5,9 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingLeft="16dp"
-    android:paddingTop="48dp"
+    android:paddingTop="24dp"
     android:paddingRight="16dp"
-    android:paddingBottom="16dp">
+    android:paddingBottom="68dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginRight="8dp"
         android:numStars="5"
         android:stepSize="1" />
@@ -46,7 +46,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="16dp"
         android:orientation="horizontal">
 
         <TextView
@@ -74,17 +73,34 @@
         android:id="@+id/spinner_day_filter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:entries="@array/week_day_filter_list" />
 
-    <TextView
-        android:id="@+id/txt_time_filter"
+    <LinearLayout
+        android:id="@+id/grp_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:paddingLeft="8dp"
-        android:text="@string/any_time"
-        android:textColor="@color/text_primary_dark"
-        android:textSize="16sp" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/txt_time_filter"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingLeft="8dp"
+            android:text="@string/any_time"
+            android:textColor="@color/text_primary_dark"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/txt_set_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/set"
+            android:textAllCaps="true"
+            android:textColor="@color/text_link"
+            android:textSize="14sp" />
+    </LinearLayout>
 
 </LinearLayout>
