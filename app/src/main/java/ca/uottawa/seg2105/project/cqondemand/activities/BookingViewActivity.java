@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -37,6 +38,7 @@ public class BookingViewActivity extends SignedInActivity {
     private Mode mode;
     private boolean itemClickEnabled;
     private Booking currentBooking;
+    private Review currentReview;
     private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMMM d, yyyy  h:mm a", Locale.CANADA);
     private SimpleDateFormat DAY_FORMAT = new SimpleDateFormat("MMMM d, yyyy", Locale.CANADA);
     private SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h:mm a", Locale.CANADA);
@@ -57,6 +59,7 @@ public class BookingViewActivity extends SignedInActivity {
     private TextView txt_cancelled_on;
     private TextView txt_cancelled_reason;
     private TextView txt_cancelled_by;
+    private TextView txt_see_review;
     private Button btn_submit_review;
     private Button btn_approve_booking;
 
@@ -113,6 +116,8 @@ public class BookingViewActivity extends SignedInActivity {
         txt_cancelled_on = findViewById(R.id.txt_cancelled_on);
         txt_cancelled_reason = findViewById(R.id.txt_cancelled_reason);
         txt_cancelled_by = findViewById(R.id.txt_cancelled_by);
+        txt_see_review = findViewById(R.id.txt_see_review);
+        txt_see_review.setVisibility(View.GONE);
 
         configureView();
 
@@ -123,16 +128,18 @@ public class BookingViewActivity extends SignedInActivity {
         super.onResume();
         btn_submit_review.setVisibility(View.GONE);
         itemClickEnabled = true;
-        if (Mode.HOMEOWNER == mode && Booking.Status.COMPLETED == currentBooking.getStatus()) {
-            DbReview.getReview(currentBooking.getServiceProvider().getKey(), currentBooking.getKey(), new AsyncSingleValueEventListener<Review>() {
+        if (Booking.Status.COMPLETED == currentBooking.getStatus()) {
+            DbReview.getReview(currentBooking.getServiceProviderKey(), currentBooking.getKey(), new AsyncSingleValueEventListener<Review>() {
                 @Override
                 public void onSuccess(@NonNull Review item) {
-                    // If a review already exists for this booking, do nothing
+                    // If a review already exists for this booking, show the see review button
+                    txt_see_review.setVisibility(View.VISIBLE);
+                    currentReview = item;
                 }
                 @Override
                 public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                    // If there is no review, show the button to submit a review
-                    if (AsyncEventFailureReason.DOES_NOT_EXIST == reason) {
+                    // If there is no review, and we are in homeowner mode, show the button to submit a review
+                    if (AsyncEventFailureReason.DOES_NOT_EXIST == reason && Mode.HOMEOWNER == mode) {
                         btn_submit_review.setVisibility(View.VISIBLE);
                     }
                 }
@@ -290,6 +297,19 @@ public class BookingViewActivity extends SignedInActivity {
                 itemClickEnabled = true;
             }
         });
+    }
+
+    public void onSeeReviewClick(View v) {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
+        Intent intent = new Intent(getApplicationContext(), ReviewViewActivity.class);
+        intent.putExtra("review", currentReview);
+        if (State.getInstance().getSignedInUser() instanceof ServiceProvider) {
+            intent.putExtra("provider", State.getInstance().getSignedInUser());
+        } else {
+            intent.putExtra("provider", currentBooking.getServiceProvider());
+        }
+        startActivity(intent);
     }
 
 }
