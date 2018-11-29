@@ -166,7 +166,7 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
             filteredProviders = new ArrayList<ServiceProvider>(allProviders.size());
             for (ServiceProvider provider: allProviders) {
                 // First, test the rating filter
-                if (filterMinRating > 0 && Math.round((provider.getRating() / (float) 100)) < filterMinRating) { continue; }
+                if (filterMinRating > 0 && provider.getRating() < (filterMinRating * 100)) { continue; }
                 // Check if a day filter is set
                 if (filterDay >= 0) {
                     // Check if a time filter is set
@@ -177,9 +177,6 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
                 filteredProviders.add(provider);
             }
             if (filteredProviders.size() < 1) { txt_filter_no_providers_message.setVisibility(View.VISIBLE); }
-        }
-        if (allProviders.size() > 0 && filteredProviders.size() < 1) {
-            // TODO: Display message to adjust filters
         }
         recycler_list.setAdapter(new ServiceProviderPickerListAdapter(getApplicationContext(), filteredProviders, new View.OnClickListener() {
             public void onClick(final View view) {
