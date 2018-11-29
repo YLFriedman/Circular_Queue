@@ -4,24 +4,27 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RatingBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Arrays;
 
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.adapters.ServiceProviderPickerListAdapter;
+import ca.uottawa.seg2105.project.cqondemand.adapters.SpinnerAdapter;
 import ca.uottawa.seg2105.project.cqondemand.database.DbListenerHandle;
 import ca.uottawa.seg2105.project.cqondemand.database.DbService;
-import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
+import ca.uottawa.seg2105.project.cqondemand.domain.Availability;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
@@ -29,17 +32,26 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
-public class ServiceProviderPickerActivity extends SignedInActivity implements DialogProviderFiltersFragment.OnFragmentInteractionListener {
+public class ServiceProviderPickerActivity extends SignedInActivity {
 
-    protected boolean itemClickEnabled = true;
-    protected RecyclerView recycler_list;
-    protected DbListenerHandle<?> dbListenerHandle;
-    protected Service currentService;
-    protected TextView txt_empty_list_message;
-    protected int minRating;
-    protected Date startTime;
-    protected Date endTime;
-    protected ArrayList<ServiceProvider> allProviders;
+    private boolean itemClickEnabled = true;
+    private RecyclerView recycler_list;
+    private DbListenerHandle<?> dbListenerHandle;
+    private Service currentService;
+    private TextView txt_empty_list_message;
+    private int filterMinRating;
+    private int filterDate = -1;
+    private int filterStartTime = -1;
+    private int filterEndTime = -1;
+    private ArrayList<ServiceProvider> allProviders;
+    private AlertDialog filterDialog;
+    private View filterView;
+    private TextView txt_clear_availability;
+    private TextView txt_clear_rating;
+    private RatingBar stars_filter_rating;
+    private Spinner spinner_day_filter;
+    private SpinnerAdapter<Availability.Day> dayFilterAdapter;
+    private TextView txt_time_filter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,12 +128,12 @@ public class ServiceProviderPickerActivity extends SignedInActivity implements D
     protected void setListAdapter() {
         if (null == allProviders) { return; }
         ArrayList<ServiceProvider> filteredProviders;
-        if (allProviders.size() < 1 || (0 == minRating && null == startTime && null == endTime)) {
+        if (allProviders.size() < 1 || (0 == filterMinRating)) {
             filteredProviders = allProviders;
         } else {
             filteredProviders = new ArrayList<ServiceProvider>(allProviders.size());
             for (ServiceProvider provider: allProviders) {
-                if ((provider.getRating() / 100) < minRating) { continue; }
+                if ((provider.getRating() / 100) < filterMinRating) { continue; }
                 filteredProviders.add(provider);
             }
         }
@@ -140,28 +152,78 @@ public class ServiceProviderPickerActivity extends SignedInActivity implements D
         }));
     }
 
-    protected void showFilterSettings() {
-        itemClickEnabled = false;
-        long start = null != startTime ? startTime.getTime() : -1;
-        long end = null != endTime ? endTime.getTime() : -1;
-        FragmentManager fm = getSupportFragmentManager();
-        DialogProviderFiltersFragment providerFilterDialog = DialogProviderFiltersFragment.newInstance(minRating, start, end);
-        providerFilterDialog.show(fm, "fragment_filter_providers");
-    }
-
-    @Override
-    public void onFiltersApply(int minRating, Date startTime, Date endTime) {
-        this.minRating = minRating;
+    /*@Override
+    public void onFiltersApply(int filterMinRating, Date startTime, Date endTime) {
+        this.filterMinRating = filterMinRating;
         this.startTime = startTime;
         this.endTime = endTime;
         setListAdapter();
-        //Toast.makeText(getApplicationContext(), "Min Rating: " + minRating, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "Min Rating: " + filterMinRating, Toast.LENGTH_LONG).show();
+    }*/
 
-    }
-
-    @Override
+    /*@Override
     public void onFiltersDialogDismiss() {
         itemClickEnabled = true;
+    }*/
+
+    private void setupFilterView() {
+        filterView = getLayoutInflater().inflate(R.layout.dialog_provider_filters, null);
+        txt_clear_availability = filterView.findViewById(R.id.txt_clear_availability);
+        txt_clear_rating = filterView.findViewById(R.id.txt_clear_rating);
+        stars_filter_rating = filterView.findViewById(R.id.stars_filter_rating);
+        spinner_day_filter = filterView.findViewById(R.id.spinner_day_filter);
+        txt_time_filter = filterView.findViewById(R.id.txt_time_filter);
+
+        txt_clear_rating.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { stars_filter_rating.setRating(0); }
+        });
+        ArrayList<Availability.Day> dayList = new ArrayList<Availability.Day>(Arrays.asList(Availability.Day.values()));
+        dayList.add(0, null);
+        dayFilterAdapter = new SpinnerAdapter<Availability.Day>(getApplicationContext(), R.layout.spinner_item_title, getString(R.string.any_day), dayList);
+        spinner_day_filter.setAdapter(dayFilterAdapter);
+
+        txt_clear_availability.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { spinner_day_filter.setSelection(0); }
+        });
+    }
+
+    private void setFilterValues() {
+        stars_filter_rating.setRating(filterMinRating);
+    }
+
+    private void getFilterValues() {
+        int newMinRating = (int) stars_filter_rating.getRating();
+        filterMinRating = newMinRating;
+    }
+
+    protected void showFilterSettings() {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
+        if (null == filterView) { setupFilterView(); }
+        setFilterValues();
+        if (null == filterDialog) {
+            filterDialog = new AlertDialog.Builder(this)
+                    .setTitle(R.string.filters)
+                    .setView(filterView)
+                    .setIcon(R.drawable.ic_filter_list_med_24)
+                    .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            getFilterValues();
+                            setListAdapter();
+                        }
+                    })
+                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
+                    })
+                    .setNegativeButton(R.string.cancel, null).show();
+            filterDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.text_primary_dark));
+            filterDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.dialog_red));
+        } else {
+            filterDialog.show();
+        }
     }
 
 }
