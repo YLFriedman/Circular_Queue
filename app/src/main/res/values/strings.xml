@@ -284,6 +284,16 @@
     <string-array name="empty_category_spinner">
         <item>Select Category</item>
     </string-array>
+    <string-array name="week_day_filter_list">
+        <item>Any Day</item>
+        <item>Sunday</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+    </string-array>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="loading_">Loading...</string>
@@ -300,6 +310,7 @@
     <string name="any_date_time">Any date and time</string>
     <string name="any_date">Any Date</string>
     <string name="any_time">Any Time</string>
+    <string name="any_day">Any Day</string>
     <string name="set_date_time">Set Date and Time</string>
     <string name="see_reviews">See Reviews</string>
     <string name="owner">Owner</string>
