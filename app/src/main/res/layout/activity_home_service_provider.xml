@@ -59,6 +59,13 @@
                         android:onClick="onClickHandler"
                         android:text="@string/my_bookings" />
 
+                    <Button
+                        android:id="@+id/btn_my_account"
+                        style="@style/panel_button"
+                        android:drawableTop="@drawable/ic_account_circle_light_75"
+                        android:onClick="onClickHandler"
+                        android:text="@string/my_account" />
+
                 </TableRow>
 
                 <TableRow
@@ -67,18 +74,15 @@
                     android:layout_height="match_parent">
 
                     <Button
-                        android:id="@+id/btn_my_account"
-                        style="@style/panel_button"
-                        android:drawableTop="@drawable/ic_account_circle_light_75"
-                        android:onClick="onClickHandler"
-                        android:text="@string/my_account" />
-
-                    <Button
                         android:id="@+id/btn_sign_out"
                         style="@style/panel_button"
                         android:drawableTop="@drawable/ic_sign_out_light_75"
                         android:onClick="onClickHandler"
                         android:text="@string/sign_out" />
+
+                    <Button
+                        android:id="@+id/btn_sp_blank"
+                        style="@style/panel_button.clear" />
 
                 </TableRow>
 

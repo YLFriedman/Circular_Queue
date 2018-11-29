@@ -36,39 +36,40 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
-public class WeekViewActivity extends SignedInActivity implements DatePickerDialog.OnDateSetListener {
+public class WeekViewActivity extends SignedInActivity {
 
-    protected enum CellState { UNAVAILABLE, AVAILABLE, BOOKED, REQUESTED }
-    protected class Cell {
-        public String[] dayNames = new String[] { "sun", "mon", "tue", "wed", "thu", "fri", "sat" };
-        public String[] timeNames = new String[] { "00", "01", "02", "03", "04", "05", "06", "07", "08", "09" };
-        public int day;
-        public int time;
-        public CellState cellState;
-        public Cell() { cellState = CellState.UNAVAILABLE; }
-        public Cell(int day, int time) { this.day = day; this.time = time; cellState = CellState.UNAVAILABLE; }
-        public Cell(int day, int time, CellState cellState) { this.day = day; this.time = time; this.cellState = cellState; }
-        public String getCellName() { return "cell_" + dayNames[day] + "_" + ((time < 10) ? timeNames[time] : time); }
+    private enum CellState { UNAVAILABLE, AVAILABLE, BOOKED, REQUESTED }
+    private class Cell {
+        String[] dayNames = new String[] { "sun", "mon", "tue", "wed", "thu", "fri", "sat" };
+        String[] timeNames = new String[] { "00", "01", "02", "03", "04", "05", "06", "07", "08", "09" };
+        int day;
+        int time;
+        CellState state;
+        CellState toggleState;
+        Cell() { state = CellState.UNAVAILABLE; }
+        Cell(int day, int time) { this.day = day; this.time = time; state = CellState.UNAVAILABLE; }
+        Cell(int day, int time, CellState state) { this.day = day; this.time = time; this.state = state; }
+        String getCellName() { return "cell_" + dayNames[day] + "_" + ((time < 10) ? timeNames[time] : time); }
     }
 
-    protected enum Mode { SELECT_TIMESLOT, AVAILABILITY }
-    protected Mode mode;
-    protected boolean itemClickEnabled;
-    protected View[][] cellViews;
-    protected Cell[][] cells;
-    protected ServiceProvider currentProvider;
-    protected Service currentService;
-    protected SimpleDateFormat MONTH_FORMAT = new SimpleDateFormat("MMM", Locale.CANADA);
-    protected SimpleDateFormat DAY_FORMAT = new SimpleDateFormat("d", Locale.CANADA);
-    protected SimpleDateFormat TODAY_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.CANADA);
-    protected TextView txt_month_name;
-    protected TextView[] txt_day_nums;
-    protected Date currentDate;
-    protected Date startOfPeriod;
-    protected Date endOfPeriod;
-    protected Calendar cal;
-    protected int startAtDayOfWeek;
-    protected int[] requestedCell;
+    private enum Mode { SELECT_TIMESLOT, AVAILABILITY }
+    private Mode mode;
+    private boolean itemClickEnabled;
+    private View[][] cellViews;
+    private Cell[][] cells;
+    private ServiceProvider currentProvider;
+    private Service currentService;
+    private SimpleDateFormat MONTH_FORMAT = new SimpleDateFormat("MMM", Locale.CANADA);
+    private SimpleDateFormat DAY_FORMAT = new SimpleDateFormat("d", Locale.CANADA);
+    private SimpleDateFormat TODAY_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.CANADA);
+    private TextView txt_month_name;
+    private TextView[] txt_day_nums;
+    private Date currentDate;
+    private Date startOfPeriod;
+    private Date endOfPeriod;
+    private Calendar cal;
+    private int startAtDayOfWeek;
+    private int[] requestedStart;
 
 
     @Override
@@ -165,7 +166,71 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
         return super.onOptionsItemSelected(item);
     }
 
-    protected void setDate(Date date) {
+    private void setAvailabilities(@NonNull boolean[][] availabilities) {
+        requestedStart = null;
+        for (int day = 0; day < 7; day++) {
+            for (int time = 0; time < 24; time++) {
+                if (day < startAtDayOfWeek) {
+                    setCell(day, time, CellState.UNAVAILABLE);
+                    cells[day][time].toggleState = CellState.UNAVAILABLE;
+                } else {
+                    setCell(day, time, availabilities[day][time] ? CellState.AVAILABLE : CellState.UNAVAILABLE);
+                    cells[day][time].toggleState = availabilities[day][time] ? CellState.AVAILABLE : CellState.UNAVAILABLE;
+                }
+            }
+        }
+    }
+
+    private void resetAllCells() {
+        for (int day = 0; day < 7; day++) {
+            for (int time = 0; time < 24; time++) {
+                setCell(day, time, cells[day][time].toggleState);
+            }
+        }
+    }
+
+    private void setAllCells(@NonNull CellState cellState) {
+        for (int day = 0; day < 7; day++) {
+            for (int time = 0; time < 24; time++) {
+                setCell(day, time, cellState);
+            }
+        }
+    }
+
+    private void setCell(int day, int time, CellState cellState) {
+        if (cells[day][time].state == cellState) { return; }
+        cells[day][time].state = cellState;
+        updateCellView(day, time);
+    }
+
+    private void updateCellView(int day, int time) {
+        switch (cells[day][time].state) {
+            case AVAILABLE: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_available); break;
+            case BOOKED: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_booked); break;
+            case REQUESTED: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_requested); break;
+            case UNAVAILABLE:
+            default: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_default);
+        }
+    }
+
+    private void toggleRequested(int day, int time) {
+        if (CellState.REQUESTED == cells[day][time].state) {
+            setCell(day, time, cells[day][time].toggleState);
+        } else {
+            setCell(day, time, CellState.REQUESTED);
+        }
+    }
+
+    private void toggleAvailability(int day, int time) {
+        Cell cell = cells[day][time];
+        if (CellState.UNAVAILABLE != cell.state) {
+            setCell(cell.day, cell.time, CellState.UNAVAILABLE);
+        } else {
+            setCell(cell.day, cell.time, CellState.AVAILABLE);
+        }
+    }
+
+    private void setDate(Date date) {
         startAtDayOfWeek = 0;
         currentDate = date;
         txt_month_name.setText("");
@@ -189,43 +254,148 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
         loadProviderAvailabilities();
     }
 
-    @Override
-    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        setDate(new GregorianCalendar(year, monthOfYear, dayOfMonth).getTime());
+    private void loadProviderAvailabilities() {
+        if (!itemClickEnabled) { return; }
+        itemClickEnabled = false;
+        if (null == currentProvider.getAvailabilities()) {
+            setAvailabilities(Availability.toArrays(new LinkedList<Availability>()));
+        } else {
+            setAvailabilities(Availability.toArrays(currentProvider.getAvailabilities()));
+        }
+        loadBookings();
+        itemClickEnabled = true;
     }
 
-    public void onSelectDateClick() {
-        cal.setTime(currentDate);
-        DatePickerDialog dpd = DatePickerDialog.newInstance(this, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-        dpd.setAccentColor(getResources().getColor(R.color.colorPrimary));
-        dpd.setOkColor(getResources().getColor(R.color.dialog_red));
-        dpd.setCancelColor(getResources().getColor(R.color.text_secondary_dark));
-        cal.setTime(new Date());
-        dpd.setMinDate(cal);
-        dpd.show(getSupportFragmentManager(), "date_select");
-    }
-
-    private void setAvailabilities(@NonNull boolean[][] availabilities) {
-        requestedCell = null;
-        for (int day = 0; day < 7; day++) {
-            for (int time = 0; time < 24; time++) {
-                if (day < startAtDayOfWeek) {
-                    setCell(day, time, CellState.UNAVAILABLE);
-                } else {
-                    setCell(day, time, availabilities[day][time] ? CellState.AVAILABLE : CellState.UNAVAILABLE);
+    private void loadBookings() {
+        if (null == startOfPeriod || null == endOfPeriod || Mode.SELECT_TIMESLOT != mode) { return; }
+        DbBooking.getBookingsInTimeRange(currentProvider, startOfPeriod, endOfPeriod, new AsyncValueEventListener<Booking>() {
+            @Override
+            public void onSuccess(@NonNull ArrayList<Booking> data) {
+                int day, start, end;
+                for (Booking b: data) {
+                    if (b.getStatus() != Booking.Status.APPROVED) { continue; }
+                    cal.setTime(b.getStartTime());
+                    day = cal.get(Calendar.DAY_OF_WEEK) - 1;
+                    start = cal.get(Calendar.HOUR_OF_DAY);
+                    cal.setTime(b.getEndTime());
+                    end = cal.get(Calendar.HOUR_OF_DAY);
+                    if (0 == end) { end = 24; }
+                    while (start < end) {
+                        if (CellState.AVAILABLE == cells[day][start].state) {
+                            cells[day][start].toggleState = CellState.BOOKED;
+                            setCell(day, start, CellState.BOOKED);
+                        }
+                        start++;
+                    }
                 }
             }
+            @Override
+            public void onFailure(@NonNull AsyncEventFailureReason reason) {}
+        });
+    }
+
+    private void setRequested(int day, int time) {
+        Cell cell = cells[day][time];
+        boolean continuous;
+        int t;
+        if (CellState.AVAILABLE == cell.state || CellState.BOOKED == cell.state) {
+            // If there is currently no requested cell, set the requested cell
+            if (null == requestedStart) {
+                //setCell(cell.day, cell.time, CellState.REQUESTED);
+                toggleRequested(day, time);
+                requestedStart = new int[]{ day, time };
+            } else { // If there is already a requested cell
+                // Assume it is not continuous unless the clicked cell is the same day and there are no gaps
+                continuous = false;
+                if (requestedStart[0] == day) {
+                    t = time;
+                    continuous = true;
+                    while (t != requestedStart[1]) {
+                        if (CellState.UNAVAILABLE == cells[day][t].state) { continuous = false; break; }
+                        if (requestedStart[1] > t) { t++; } else {t--; }
+                    }
+                }
+                // If there are no gaps, set the cells from the clicked cell to the closest requested cell to requested
+                if (continuous) {
+                    t = time;
+                    while (t != requestedStart[1]) {
+                        if (CellState.REQUESTED == cells[day][t].state) { break; }
+                        toggleRequested(day, t);
+                        if (requestedStart[1] > t) { t++; } else {t--; }
+                    }
+                    // If the clicked cell was earlier than the requested cell, change the requested cell to be the start time
+                    if (time < requestedStart[1]) { requestedStart[1] = time; }
+                } else {
+                    // If the selection is not continuous, reset all the cells then set the clicked cell and move the requested cell
+                    resetAllCells();
+                    toggleRequested(day, time);
+                    requestedStart = new int[]{ day, time };
+                }
+            }
+        } else if (CellState.REQUESTED == cell.state) {
+            if (0 != time && 23 != time && CellState.REQUESTED == cells[day][time+1].state && CellState.REQUESTED == cells[day][time-1].state) {
+                // If we are clicking on a middle requested range, remove all requested cells
+                resetAllCells();
+                requestedStart = null;
+                return;
+            } else if (0 == time) {
+                if (CellState.REQUESTED == cells[day][time+1].state) { requestedStart[1]++; }
+                else { requestedStart = null; }
+            } else if (23 == time) {
+                if (CellState.REQUESTED != cells[day][time-1].state) { requestedStart = null; }
+            } else if (CellState.REQUESTED == cells[day][time+1].state) {
+                requestedStart[1]++;
+            }
+            toggleRequested(day, time);
+        }
+    }
+
+    public void onCellClick(View view) {
+        Cell cell;
+        if (view.getTag() instanceof Cell) { cell = (Cell) view.getTag(); }
+        else { return; }
+        if (Mode.AVAILABILITY == mode) {
+            toggleAvailability(cell.day, cell.time);
+        } else if (Mode.SELECT_TIMESLOT == mode) {
+            setRequested(cell.day, cell.time);
+        }
+    }
+
+    private class CellLongClickListener implements View.OnLongClickListener {
+        public boolean onLongClick(View view) {
+            if (Mode.AVAILABILITY == mode) {
+                Cell cell;
+                if (view.getTag() instanceof Cell) { cell = (Cell) view.getTag(); }
+                else { return false; }
+
+                int time = cell.time;
+                int day = cell.day;
+
+                if (CellState.UNAVAILABLE == cell.state) {
+                    do { setCell(day, time--, CellState.AVAILABLE); }
+                    while (time >= 0 && CellState.UNAVAILABLE == cells[day][time].state);
+                } else if (CellState.AVAILABLE == cell.state) {
+                    do { setCell(day, time--, CellState.UNAVAILABLE); }
+                    while (time >= 0 && CellState.AVAILABLE == cells[day][time].state);
+                    time = cell.time + 1;
+                    while (time <= 23 && CellState.AVAILABLE == cells[day][time].state) {
+                        setCell(day, time++, CellState.UNAVAILABLE);
+                    }
+                }
+            }
+
+            return true;
         }
     }
 
     public void onNextClick(View view) {
         if (!itemClickEnabled) { return; }
-        if (null == requestedCell) {
+        if (null == requestedStart) {
             Toast.makeText(getApplicationContext(), getString(R.string.timeslot_required), Toast.LENGTH_LONG).show();
             return;
         }
-        cal.setTime((Date) txt_day_nums[requestedCell[0]].getTag());
-        cal.set(Calendar.HOUR_OF_DAY, requestedCell[1]);
+        cal.setTime((Date) txt_day_nums[requestedStart[0]].getTag());
+        cal.set(Calendar.HOUR_OF_DAY, requestedStart[1]);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         if (cal.getTimeInMillis() < System.currentTimeMillis()) {
@@ -233,12 +403,15 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
             return;
         }
         long startTime = cal.getTimeInMillis();
-        int day = requestedCell[0];
-        int time = requestedCell[1] + 1;
-        while (CellState.REQUESTED == cells[day][time].cellState) {
-            time++;
+        int day = requestedStart[0];
+        int time = requestedStart[1] + 1;
+        while (time < 24 && CellState.REQUESTED == cells[day][time].state) { time++; }
+        if (24 == time) {
+            cal.add(Calendar.DAY_OF_MONTH, 1);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+        } else {
+            cal.set(Calendar.HOUR_OF_DAY, time);
         }
-        cal.set(Calendar.HOUR_OF_DAY, time);
         long endTime = cal.getTimeInMillis();
 
         itemClickEnabled = false;
@@ -298,154 +471,30 @@ public class WeekViewActivity extends SignedInActivity implements DatePickerDial
         itemClickEnabled = true;
     }
 
-    private void loadProviderAvailabilities() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
-        if (null == currentProvider.getAvailabilities()) {
-            setAvailabilities(Availability.toArrays(new LinkedList<Availability>()));
-        } else {
-            setAvailabilities(Availability.toArrays(currentProvider.getAvailabilities()));
-        }
-        setBookings();
-        itemClickEnabled = true;
-    }
-
-    private void setBookings() {
-        if (null == startOfPeriod || null == endOfPeriod || Mode.SELECT_TIMESLOT != mode) { return; }
-        DbBooking.getBookingsInTimeRange(currentProvider, startOfPeriod, endOfPeriod, new AsyncValueEventListener<Booking>() {
+    private void onSelectDateClick() {
+        cal.setTime(currentDate);
+        DatePickerDialog dpd = DatePickerDialog.newInstance(new DatePickerDialog.OnDateSetListener() {
             @Override
-            public void onSuccess(@NonNull ArrayList<Booking> data) {
-                int day, start, end;
-                for (Booking b: data) {
-                    if (b.getStatus() != Booking.Status.APPROVED) { continue; }
-                    cal.setTime(b.getStartTime());
-                    day = cal.get(Calendar.DAY_OF_WEEK) - 1;
-                    start = cal.get(Calendar.HOUR_OF_DAY);
-                    cal.setTime(b.getEndTime());
-                    end = cal.get(Calendar.HOUR_OF_DAY);
-                    if (0 == end) { end = 24; }
-                    while (start < end) { setCell(day, start++, CellState.BOOKED); }
-                }
+            public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+                setDate(new GregorianCalendar(year, monthOfYear, dayOfMonth).getTime());
             }
-            @Override
-            public void onFailure(@NonNull AsyncEventFailureReason reason) {
-
-            }
-        });
+        }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+        dpd.setAccentColor(getResources().getColor(R.color.colorPrimary));
+        dpd.setOkColor(getResources().getColor(R.color.dialog_red));
+        dpd.setCancelColor(getResources().getColor(R.color.text_secondary_dark));
+        cal.setTime(new Date());
+        dpd.setMinDate(cal);
+        dpd.show(getSupportFragmentManager(), "date_select");
     }
 
     private boolean[][] getAvailabilities() {
         boolean[][] availabilities = new boolean[7][24];
         for (int day = 0; day < 7; day++) {
             for (int time = 0; time < 24; time++) {
-                availabilities[day][time] = (CellState.AVAILABLE == cells[day][time].cellState);
+                availabilities[day][time] = (CellState.AVAILABLE == cells[day][time].state);
             }
         }
         return availabilities;
-    }
-
-    private void setAllCells(@NonNull CellState cellState) {
-        for (int day = 0; day < 7; day++) {
-            for (int time = 0; time < 24; time++) {
-                setCell(day, time, cellState);
-            }
-        }
-    }
-
-    private void updateCellView(int day, int time) {
-        switch (cells[day][time].cellState) {
-            case AVAILABLE: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_available); break;
-            case BOOKED: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_booked); break;
-            case REQUESTED: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_requested); break;
-            case UNAVAILABLE:
-            default: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_default);
-        }
-    }
-
-    private void setCell(int day, int time, CellState cellState) {
-        cells[day][time].cellState = cellState;
-        updateCellView(day, time);
-    }
-
-    public void onCellClick(View view) {
-        Cell cell;
-        if (view.getTag() instanceof Cell) { cell = (Cell) view.getTag(); }
-        else { return; }
-        if (Mode.AVAILABILITY == mode) {
-            toggleAvailability(cell.day, cell.time);
-        } else if (Mode.SELECT_TIMESLOT == mode) {
-            setRequested(cell.day, cell.time);
-        }
-    }
-
-    public void setRequested(int day, int time) {
-        //TODO: detect clicks with a break in the availability and move the requested block
-        Cell cell = cells[day][time];
-        if (CellState.AVAILABLE == cell.cellState) {
-            if (null == requestedCell) {
-                setCell(cell.day, cell.time, CellState.REQUESTED);
-                requestedCell = new int[]{ day, time };
-            } else if (requestedCell[0] == day) {
-                int cursor = requestedCell[1];
-                if (time < requestedCell[1]) {
-                    do { requestedCell[1] = cursor; setCell(day, cursor--, CellState.REQUESTED); }
-                    while (cursor >= time && (CellState.AVAILABLE == cells[day][cursor].cellState || CellState.REQUESTED == cells[day][cursor].cellState));
-                } else {
-                    do { setCell(day, cursor++, CellState.REQUESTED); }
-                    while (cursor <= time && (CellState.AVAILABLE == cells[day][cursor].cellState || CellState.REQUESTED == cells[day][cursor].cellState));
-                }
-            } else {
-                loadProviderAvailabilities();
-                setCell(cell.day, cell.time, CellState.REQUESTED);
-                requestedCell = new int[]{ day, time };
-            }
-
-        } else if (CellState.REQUESTED == cell.cellState) {
-            int cursor = time;
-            do { setCell(day, cursor--, CellState.AVAILABLE); }
-            while (cursor >= 0 && CellState.REQUESTED == cells[day][cursor].cellState);
-            cursor = time + 1;
-            while (cursor <= 23 && CellState.REQUESTED == cells[day][cursor].cellState) {
-                setCell(day, cursor++, CellState.AVAILABLE);
-            }
-            requestedCell = null;
-        }
-    }
-
-    public void toggleAvailability(int day, int time) {
-        Cell cell = cells[day][time];
-        if (CellState.UNAVAILABLE != cell.cellState) {
-            setCell(cell.day, cell.time, CellState.UNAVAILABLE);
-        } else {
-            setCell(cell.day, cell.time, CellState.AVAILABLE);
-        }
-    }
-
-    private class CellLongClickListener implements View.OnLongClickListener {
-        public boolean onLongClick(View view) {
-            if (Mode.AVAILABILITY == mode) {
-                Cell cell;
-                if (view.getTag() instanceof Cell) { cell = (Cell) view.getTag(); }
-                else { return false; }
-
-                int time = cell.time;
-                int day = cell.day;
-
-                if (CellState.UNAVAILABLE == cell.cellState) {
-                    do { setCell(day, time--, CellState.AVAILABLE); }
-                    while (time >= 0 && CellState.UNAVAILABLE == cells[day][time].cellState);
-                } else if (CellState.AVAILABLE == cell.cellState) {
-                    do { setCell(day, time--, CellState.UNAVAILABLE); }
-                    while (time >= 0 && CellState.AVAILABLE == cells[day][time].cellState);
-                    time = cell.time + 1;
-                    while (time <= 23 && CellState.AVAILABLE == cells[day][time].cellState) {
-                        setCell(day, time++, CellState.UNAVAILABLE);
-                    }
-                }
-            }
-
-            return true;
-        }
     }
 
     public void onZoomInClick(View view) {

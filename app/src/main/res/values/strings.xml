@@ -358,4 +358,9 @@
     <string name="cancelled_by">Cancelled By</string>
     <string name="set">Set</string>
     <string name="service_template">Service: %s</string>
+    <string name="timeslot_tip_1">- Tap on a cell to request that timeslot.</string>
+    <string name="timeslot_tip_2">- Tap on a cell above or below the requested timeslot to expand the selection.</string>
+    <string name="timeslot_tip_3">- Tap on a cell in the middle of a selection to de-select the whole selection.</string>
+    <string name="timeslot_tip_4">- A \'booked\' cell indicates that the service provider has a booking during that timslot.  The timeslot can still be requested, but the service provider may not be able to approve the request.</string>
+    <string name="requested">Requested</string>
 </resources>

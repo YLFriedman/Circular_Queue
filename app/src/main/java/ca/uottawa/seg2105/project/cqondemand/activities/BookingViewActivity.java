@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
@@ -162,7 +163,11 @@ public class BookingViewActivity extends SignedInActivity {
 
         txt_service_name.setText(currentBooking.getServiceName());
         txt_date.setText(DAY_FORMAT.format(currentBooking.getStartTime()));
-        txt_time.setText(String.format("%s to %s", TIME_FORMAT.format(currentBooking.getStartTime()), TIME_FORMAT.format(currentBooking.getEndTime())));
+
+        Calendar cal = Calendar.getInstance(Locale.CANADA);
+        cal.setTime(currentBooking.getEndTime());
+        String endTimeStr = cal.get(Calendar.HOUR_OF_DAY) == 0 ? "Midnight" : TIME_FORMAT.format(currentBooking.getEndTime());
+        txt_time.setText(String.format("%s to %s", TIME_FORMAT.format(currentBooking.getStartTime()), endTimeStr));
         if (0 == currentBooking.getServiceRate()) { txt_service_rate.setText(getString(R.string.zero_value_service)); }
         else { txt_service_rate.setText(String.format(Locale.CANADA, getString(R.string.service_rate_template), currentBooking.getServiceRate())); }
         txt_created_on.setText(DATE_FORMAT.format(currentBooking.getDateCreated()));

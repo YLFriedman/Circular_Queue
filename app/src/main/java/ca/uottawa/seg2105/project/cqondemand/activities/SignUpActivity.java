@@ -113,7 +113,7 @@ public class SignUpActivity extends AppCompatActivity {
         btn_create_account = findViewById(R.id.btn_create_account);
         btn_next = findViewById(R.id.btn_next);
 
-        // Setup initial cellState for UI elements
+        // Setup initial state for UI elements
         setScreen(Screen.FIELDS_1, true);
         // Get username from the sign in activity
         Intent intent = getIntent();

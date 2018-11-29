@@ -38,6 +38,13 @@
         <item name="android:textColor">@color/White</item>
     </style>
 
+    <style name="panel_button.clear" parent="panel_button">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:drawableTop">@color/transparent</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:text">""</item>
+    </style>
+
     <style name="input_field">
         <item name="android:textColor">@color/text_primary_dark</item>
         <item name="android:textColorHint">@color/text_secondary_dark</item>
@@ -62,6 +69,10 @@
 
     <style name="availability_grid_cell.booked" parent="availability_grid_cell">
         <item name="android:background">@drawable/btn_bg_avail_cell_bkrd_booked</item>
+    </style>
+
+    <style name="availability_grid_cell.requested" parent="availability_grid_cell">
+        <item name="android:background">@drawable/btn_bg_avail_cell_bkrd_requested</item>
     </style>
 
     <style name="availability_txt_time">
