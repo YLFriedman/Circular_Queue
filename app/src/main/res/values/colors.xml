@@ -22,6 +22,7 @@
     <color name="icon_medium">#8C8C8C</color>
     <color name="icon_dark">#000000</color>
     <color name="dialog_red">#BB5555</color>
+    <color name="star_color">#FBC02D</color>
 
     <color name="black_overlay">#66000000</color>
     <color name="transparent">#00000000</color>

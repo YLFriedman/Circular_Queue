@@ -54,7 +54,8 @@
                     android:layout_height="wrap_content"
                     android:isIndicator="true"
                     android:numStars="5"
-                    android:rating="0"
+                    android:theme="@style/RatingBar"
+                    android:rating="2"
                     android:stepSize="0.5" />
 
                 <TextView
