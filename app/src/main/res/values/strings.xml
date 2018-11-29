@@ -1,9 +1,9 @@
 <resources>
-    <string name="version">v0.4.1</string>
+    <string name="version">v0.4.2</string>
     <string name="environment">PRD</string>
     <string name="app_name">CQ On Demand</string>
     <string name="title_activity_splash_screen">CQ On Demand</string>
-    <string name="title_activity_sign_in">CQ On Demand - v0.4.1</string>
+    <string name="title_activity_sign_in">CQ On Demand - v0.4.2</string>
     <string name="title_activity_home">Home</string>
     <string name="title_activity_create_account">Sign Up</string>
     <string name="title_activity_user_account_view">Account Details</string>
