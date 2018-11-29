@@ -302,6 +302,7 @@
     <string name="booking">Booking</string>
     <string name="book_service">Book a Service</string>
     <string name="no_providers_found">Sorry, no one is currently providing this service.  \nPlease press back to select a different service or check back later.</string>
+    <string name="no_providers_found_with_filter">Sorry, no service providers meet the filter criteria. </string>
     <string name="filter_providers">Filter Providers</string>
     <string name="filter_list">Filter List</string>
     <string name="min_rating">Minimum Rating</string>
@@ -356,4 +357,5 @@
     <string name="cancellation_reason">Cancellation Reason</string>
     <string name="cancelled_by">Cancelled By</string>
     <string name="set">Set</string>
+    <string name="service_template">Service: %s</string>
 </resources>

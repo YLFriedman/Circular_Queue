@@ -219,7 +219,7 @@ public class BookingViewActivity extends SignedInActivity {
                 .setIcon(R.drawable.ic_report_red_30)
                 .setPositiveButton(R.string.cancel_booking, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        DbBooking.cancelBooking(currentBooking, cancelReasonField.getText().toString(), new AsyncActionEventListener() {
+                        DbBooking.cancelBooking(currentBooking, cancelReasonField.getText().toString().trim(), new AsyncActionEventListener() {
                             @Override
                             public void onSuccess() {
                                 itemClickEnabled = true;

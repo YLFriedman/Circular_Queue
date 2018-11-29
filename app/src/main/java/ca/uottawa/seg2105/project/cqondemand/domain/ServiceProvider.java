@@ -220,10 +220,27 @@ public class ServiceProvider extends User implements Serializable {
         if (null != key && null != other.key) { return key.equals(other.key); }
         if (!super.equals(otherObj)) { return false; }
         if ((null == companyName) != (null == other.companyName) || (null != companyName && !companyName.equals(other.companyName))) { return false; }
-        if ((null == phoneNumber)  != (null == other.phoneNumber)  || (null != phoneNumber  && !phoneNumber.equals(other.phoneNumber))) { return false; }
+        if ((null == phoneNumber) != (null == other.phoneNumber) || (null != phoneNumber && !phoneNumber.equals(other.phoneNumber))) { return false; }
         if ((null == address)     != (null == other.address)     || (null != address     && !address.equals(other.address))) { return false; }
-        if ((null == description)  != (null == other.description)  || (null != description  && !description.equals(other.description))) { return false; }
+        if ((null == description) != (null == other.description) || (null != description && !description.equals(other.description))) { return false; }
         return licensed == other.licensed;
+    }
+
+    public boolean isAvailable(Availability.Day day) {
+        if (null == availabilities || availabilities.size() < 1) { return false; }
+        for (Availability a: availabilities) {
+            if (a.day == day) { return true; }
+        }
+        return false;
+    }
+
+    public boolean isAvailable(Availability.Day day, int startTime, int endTime) {
+        if (null == availabilities || availabilities.size() < 1 || startTime < 0 || endTime > 24 || startTime >= endTime) { return false; }
+        for (Availability a: availabilities) {
+            if (a.day != day) { continue; }
+            if (a.startTime <= startTime && endTime <= a.endTime) { return true; }
+        }
+        return false;
     }
 
 }

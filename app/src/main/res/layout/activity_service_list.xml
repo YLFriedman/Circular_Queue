@@ -38,7 +38,7 @@
             android:layout_marginRight="16dp"
             android:background="?android:attr/listDivider" />
 
-        <androidx.core.widget.NestedScrollView
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:layout_editor_absoluteX="8dp"
@@ -46,7 +46,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
@@ -62,7 +62,8 @@
 
             </LinearLayout>
 
-        </androidx.core.widget.NestedScrollView>
+        </ScrollView>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

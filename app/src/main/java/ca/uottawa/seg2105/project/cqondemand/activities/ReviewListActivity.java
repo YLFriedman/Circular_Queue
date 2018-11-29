@@ -60,7 +60,7 @@ public class ReviewListActivity extends SignedInActivity {
             return;
         }
 
-        txt_sub_title.setText(String.format(getString(R.string.review_template), currentProvider.getCompanyName()));
+        setSubTitle(String.format(getString(R.string.review_template), currentProvider.getCompanyName()));
 
         //Defining UI behaviour when list is received
         dbListenerHandle = DbReview.getReviewsLive(currentProvider.getKey(), new AsyncValueEventListener<Review>() {
@@ -90,7 +90,7 @@ public class ReviewListActivity extends SignedInActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // Cleanup the data listener for the services list
+        // Cleanup the data listener
         if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
     }
 

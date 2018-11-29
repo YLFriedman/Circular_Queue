@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
-import com.wdullaer.materialdatetimepicker.time.Timepoint;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -44,10 +43,13 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 public class ServiceProviderPickerActivity extends SignedInActivity {
 
     private boolean itemClickEnabled = true;
+    protected TextView txt_sub_title;
+    protected View divider_txt_sub_title;
     private RecyclerView recycler_list;
     private DbListenerHandle<?> dbListenerHandle;
     private Service currentService;
     private TextView txt_empty_list_message;
+    private TextView txt_filter_no_providers_message;
     private int filterMinRating;
     private int filterDay = -1;
     private int filterStartTime = -1;
@@ -68,7 +70,6 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
     private SpinnerAdapter<Availability.Day> dayFilterAdapter;
     private TextView txt_time_filter;
     private LinearLayout grp_time;
-    private Timepoint[] selectableTimes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,7 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
         setContentView(R.layout.activity_service_provider_picker);
         recycler_list = findViewById(R.id.recycler_list);
         txt_empty_list_message = findViewById(R.id.txt_empty_list_message);
+        txt_filter_no_providers_message = findViewById(R.id.txt_filter_no_providers_message);
         User signedInUser = State.getInstance().getSignedInUser();
         if (null == signedInUser) { return; }
 
@@ -93,12 +95,9 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
             return;
         }
 
-        selectableTimes = new Timepoint[24];
-        for (int i = 0; i < 24; i++) {
-
-        }
-        //Timepoint[] = new Timepoint()
-        //(new Timepoint(4)).
+        txt_sub_title = findViewById(R.id.txt_sub_title);
+        divider_txt_sub_title = findViewById(R.id.divider_txt_sub_title);
+        setSubTitle(String.format(getString(R.string.service_template), currentService.getName()));
 
         recycler_list.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
@@ -123,7 +122,7 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // Cleanup the data listener for the users list
+        // Cleanup the data listener
         if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
     }
 
@@ -149,17 +148,35 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void setSubTitle(@NonNull String subTitle) {
+        txt_sub_title.setVisibility(View.VISIBLE);
+        divider_txt_sub_title.setVisibility(View.VISIBLE);
+        txt_sub_title.setText(subTitle);
+    }
+
     protected void setListAdapter() {
         if (null == allProviders) { return; }
         ArrayList<ServiceProvider> filteredProviders;
-        if (allProviders.size() < 1 || (0 == filterMinRating)) {
+        // If we have no data, or there are no filters set, use the full list.
+        if (allProviders.size() < 1 || (filterMinRating < 1 && filterDay < 0 && filterStartTime < 0 && filterEndTime < 0)) {
             filteredProviders = allProviders;
         } else {
+            // If filters are set and we have data, apply the filters
             filteredProviders = new ArrayList<ServiceProvider>(allProviders.size());
             for (ServiceProvider provider: allProviders) {
-                if ((provider.getRating() / 100) < filterMinRating) { continue; }
+                // First, test the rating filter
+                if (filterMinRating > 0 && Math.round((provider.getRating() / (float) 100)) < filterMinRating) { continue; }
+                // Check if a day filter is set
+                if (filterDay >= 0) {
+                    // Check if a time filter is set
+                    if (filterStartTime >= 0 && filterEndTime > filterStartTime) {
+                        if (!provider.isAvailable(Availability.Day.parse(filterDay), filterStartTime, filterEndTime)) { continue; }
+                    } else if (!provider.isAvailable(Availability.Day.parse(filterDay))) { continue; }
+                }
                 filteredProviders.add(provider);
             }
+            if (filteredProviders.size() < 1) { txt_filter_no_providers_message.setVisibility(View.VISIBLE); }
+            else { txt_filter_no_providers_message.setVisibility(View.GONE); }
         }
         if (allProviders.size() > 0 && filteredProviders.size() < 1) {
             // TODO: Display message to adjust filters
@@ -175,20 +192,6 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
             }
         }));
     }
-
-    /*@Override
-    public void onFiltersApply(int filterMinRating, Date startTime, Date endTime) {
-        this.filterMinRating = filterMinRating;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        setListAdapter();
-        //Toast.makeText(getApplicationContext(), "Min Rating: " + filterMinRating, Toast.LENGTH_LONG).show();
-    }*/
-
-    /*@Override
-    public void onFiltersDialogDismiss() {
-        itemClickEnabled = true;
-    }*/
 
     protected void showFilterSettings() {
         if (!itemClickEnabled) { return; }
@@ -233,8 +236,14 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
 
     private boolean getFilterValues() {
         int newMinRating = (int) stars_filter_rating.getRating();
+        int newDay = spinner_day_filter.getSelectedItemPosition() - 1;
+        // If there were no changes made, return false
+        if (filterMinRating == newMinRating && filterDay == newDay && filterStartTime == selectedStartTime && filterEndTime == selectedEndTime) {
+            return false;
+        }
+        // If changes were made, set the new values and return true
         filterMinRating = newMinRating;
-        filterDay = spinner_day_filter.getSelectedItemPosition() - 1;
+        filterDay = newDay;
         filterStartTime = selectedStartTime;
         filterEndTime = selectedEndTime;
         return true;
@@ -293,7 +302,6 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
                 tpd.show(getSupportFragmentManager(), "start_time");
             }
         });
-
     }
 
     private TimePickerDialog.OnTimeSetListener getStartTimeListener() {
@@ -317,7 +325,6 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
         return new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
-                Toast.makeText(getApplicationContext(), "ST: " + tempStartTime + ", ET: " + hourOfDay, Toast.LENGTH_LONG).show();
                 selectedStartTime = tempStartTime;
                 selectedEndTime = hourOfDay;
                 txt_time_filter.setText(getTimeString(selectedStartTime, selectedEndTime));

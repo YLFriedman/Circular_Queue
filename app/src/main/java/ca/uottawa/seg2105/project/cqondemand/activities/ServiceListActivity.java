@@ -144,7 +144,7 @@ public class ServiceListActivity extends SignedInActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // Cleanup the data listener for the services list
+        // Cleanup the data listener
         if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
     }
 
