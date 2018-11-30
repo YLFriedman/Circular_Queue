@@ -23,7 +23,7 @@ public class ReviewViewActivity extends SignedInActivity {
     protected TextView txt_created_on;
     protected RatingBar rating_stars;
     protected TextView txt_comments;
-    protected SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMMM d, yyyy  h:m a", Locale.CANADA);
+    protected SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMMM d, yyyy  h:mm a", Locale.CANADA);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
