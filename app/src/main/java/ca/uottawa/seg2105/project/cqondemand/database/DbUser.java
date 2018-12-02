@@ -22,6 +22,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
+import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class DbUser extends DbItem<User> {
@@ -75,6 +76,9 @@ public class DbUser extends DbItem<User> {
     @NonNull
     public User toDomainObj() {
         if (User.Type.parse(type) == User.Type.SERVICE_PROVIDER) {
+            if (null == rating || null == running_rating_total || null == num_ratings) {
+                throw new InvalidDataException("One of the number values is null in the database. Unable to create Service Provider object.");
+            }
             if (null == address) { throw new IllegalArgumentException("The address cannot be null"); }
             List<Availability> availabilities = null;
             if (null != this.availabilities) {
@@ -82,7 +86,7 @@ public class DbUser extends DbItem<User> {
                 for (DbAvailability availability: this.availabilities) { availabilities.add(availability.toDomainObj()); }
             }
             return new ServiceProvider(getKey(), first_name, last_name, username, email, password, company_name, licensed,
-                    phone_number,address.toDomainObj(), description, rating, running_rating_total, num_ratings, availabilities);
+                    phone_number, address.toDomainObj(), description, rating, running_rating_total, num_ratings, availabilities);
         }
         return new User(getKey(), first_name, last_name, username, email, User.Type.parse(type), password);
     }
