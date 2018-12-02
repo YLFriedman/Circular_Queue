@@ -22,7 +22,7 @@ import ca.uottawa.seg2105.project.cqondemand.adapters.UserListAdapter;
 
 public class UserListActivity extends SignedInActivity {
 
-    protected boolean itemClickEnabled = true;
+    protected boolean onClickEnabled = true;
     protected RecyclerView recycler_list;
     protected DbListenerHandle<?> dbListenerHandle;
 
@@ -42,8 +42,8 @@ public class UserListActivity extends SignedInActivity {
                 //user_list_adapter.notifyItemRangeRemoved(0, user_list_adapter.getItemCount());
                 recycler_list.setAdapter(new UserListAdapter(getApplicationContext(), data, new View.OnClickListener() {
                     public void onClick(final View view) {
-                        if (!itemClickEnabled) { return; }
-                        itemClickEnabled = false;
+                        if (!onClickEnabled) { return; }
+                        onClickEnabled = false;
                         Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
                         intent.putExtra("user", (Serializable) view.getTag());
                         startActivity(intent);
@@ -67,7 +67,7 @@ public class UserListActivity extends SignedInActivity {
     @Override
     public void onResume() {
         super.onResume();
-        itemClickEnabled = true;
+        onClickEnabled = true;
     }
 
 }

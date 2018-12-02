@@ -1,15 +1,7 @@
 package ca.uottawa.seg2105.project.cqondemand.database;
 
-import android.widget.ArrayAdapter;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
-
 import androidx.annotation.NonNull;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 

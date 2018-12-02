@@ -23,7 +23,7 @@ import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class SignInActivity extends AppCompatActivity {
 
-    protected boolean itemClickEnabled = true;
+    protected boolean onClickEnabled = true;
     protected Button btn_sign_in;
     protected Button btn_sign_up;
     protected Button btn_create_admin_account;
@@ -77,7 +77,7 @@ public class SignInActivity extends AppCompatActivity {
             startActivity(loginIntent);
             finish();
         } else {
-            itemClickEnabled = true;
+            onClickEnabled = true;
         }
     }
 
@@ -166,33 +166,33 @@ public class SignInActivity extends AppCompatActivity {
      * @param view the create account button which was clicked
      */
     public void onCreateAccountClick(View view)  {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
         intent.putExtra("username", field_username.getText().toString());
         startActivityForResult(intent,0);
     }
 
     public void onCreateAdminAccountClick(View view) {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         User user = new User("Admin", "User", "admin", "yfrie071@uottawa.ca", User.Type.ADMIN, Authentication.genHash("admin"));
         DbUser.createUser(user, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), "The admin user has been created successfully. Login with the username and password 'admin'.", Toast.LENGTH_LONG).show();
                 btn_create_admin_account.setVisibility(View.GONE);
-                itemClickEnabled = true;
+                onClickEnabled = true;
             }
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 if (AsyncEventFailureReason.ALREADY_EXISTS == reason) {
                     Toast.makeText(getApplicationContext(), "The admin account already exists.", Toast.LENGTH_LONG).show();
                     btn_create_admin_account.setVisibility(View.GONE);
-                    itemClickEnabled = true;
+                    onClickEnabled = true;
                 } else {
                     Toast.makeText(getApplicationContext(), "There was an error creating the admin account. Please try again later.", Toast.LENGTH_LONG).show();
-                    itemClickEnabled = true;
+                    onClickEnabled = true;
                 }
             }
         });

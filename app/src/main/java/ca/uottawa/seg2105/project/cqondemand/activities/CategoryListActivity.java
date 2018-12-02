@@ -25,7 +25,7 @@ import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class CategoryListActivity extends SignedInActivity {
 
-    protected boolean itemClickEnabled = true;
+    protected boolean onClickEnabled = true;
     protected RecyclerView recycler_list;
     protected DbListenerHandle<?> dbListenerHandle;
 
@@ -41,8 +41,8 @@ public class CategoryListActivity extends SignedInActivity {
             public void onSuccess(@NonNull ArrayList<Category> data) {
                 recycler_list.setAdapter(new CategoryListAdapter(getApplicationContext(), data, new View.OnClickListener() {
                     public void onClick(final View view) {
-                        if (!itemClickEnabled) { return; }
-                        itemClickEnabled = false;
+                        if (!onClickEnabled) { return; }
+                        onClickEnabled = false;
                         Intent intent = new Intent(getApplicationContext(), ServiceListActivity.class);
                         intent.putExtra("category", (Serializable) view.getTag());
                         startActivityForResult(intent, 0);
@@ -59,7 +59,7 @@ public class CategoryListActivity extends SignedInActivity {
     @Override
     public void onResume() {
         super.onResume();
-        itemClickEnabled = true;
+        onClickEnabled = true;
     }
 
     @Override
@@ -70,14 +70,14 @@ public class CategoryListActivity extends SignedInActivity {
     }
 
     public void onCreateCategoryClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         startActivity(new Intent(getApplicationContext(), CategoryCreateActivity.class));
     }
 
     public void onCreateServiceClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         startActivity(new Intent(getApplicationContext(), ServiceCreateActivity.class));
     }
 

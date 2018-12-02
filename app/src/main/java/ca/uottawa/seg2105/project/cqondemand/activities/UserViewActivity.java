@@ -25,7 +25,7 @@ import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class UserViewActivity extends SignedInActivity {
 
-    protected boolean itemClickEnabled = true;
+    protected boolean onClickEnabled = true;
     protected TextView txt_account_type;
     protected TextView txt_username;
     protected TextView txt_full_name;
@@ -84,7 +84,7 @@ public class UserViewActivity extends SignedInActivity {
     public void onResume() {
         super.onResume();
         if (isFinishing()) { return; }
-        itemClickEnabled = true;
+        onClickEnabled = true;
     }
 
     @Override
@@ -152,24 +152,24 @@ public class UserViewActivity extends SignedInActivity {
     }
 
     public void onEditAccountClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), UserEditActivity.class);
         intent.putExtra("user", currentUser);
         startActivity(intent);
     }
 
     public void onChangePasswordClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), UserChangePasswordActivity.class);
         intent.putExtra("user", currentUser);
         startActivity(intent);
     }
 
     public void onDeleteAccountClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         if (null != currentUser) {
             AlertDialog dialog = new AlertDialog.Builder(this)
                     .setTitle(R.string.delete_account)
@@ -190,7 +190,7 @@ public class UserViewActivity extends SignedInActivity {
                     })
                     .setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
-                        public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
+                        public void onDismiss(DialogInterface dialog) { onClickEnabled = true; }
                     })
                     .setNegativeButton(R.string.cancel, null).show();
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.text_primary_dark));
@@ -199,8 +199,8 @@ public class UserViewActivity extends SignedInActivity {
     }
 
     public void onSeeReviewsClick(View v) {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ReviewListActivity.class);
         intent.putExtra("provider", currentUser);
         startActivity(intent);

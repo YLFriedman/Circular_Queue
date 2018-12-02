@@ -54,7 +54,7 @@ public class WeekViewActivity extends SignedInActivity {
 
     private enum Mode { SELECT_TIMESLOT, AVAILABILITY }
     private Mode mode;
-    private boolean itemClickEnabled;
+    private boolean onClickEnabled;
     private View[][] cellViews;
     private Cell[][] cells;
     private ServiceProvider currentProvider;
@@ -113,7 +113,7 @@ public class WeekViewActivity extends SignedInActivity {
             }
         }
 
-        itemClickEnabled = true;
+        onClickEnabled = true;
         cal = Calendar.getInstance(Locale.CANADA);
 
         if (Mode.SELECT_TIMESLOT == mode) {
@@ -141,7 +141,7 @@ public class WeekViewActivity extends SignedInActivity {
     @Override
     public void onResume() {
         super.onResume();
-        itemClickEnabled = true;
+        onClickEnabled = true;
     }
 
     @Override
@@ -255,15 +255,15 @@ public class WeekViewActivity extends SignedInActivity {
     }
 
     private void loadProviderAvailabilities() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         if (null == currentProvider.getAvailabilities()) {
             setAvailabilities(Availability.toArrays(new LinkedList<Availability>()));
         } else {
             setAvailabilities(Availability.toArrays(currentProvider.getAvailabilities()));
         }
         loadBookings();
-        itemClickEnabled = true;
+        onClickEnabled = true;
     }
 
     private void loadBookings() {
@@ -389,7 +389,7 @@ public class WeekViewActivity extends SignedInActivity {
     }
 
     public void onNextClick(View view) {
-        if (!itemClickEnabled) { return; }
+        if (!onClickEnabled) { return; }
         if (null == requestedStart) {
             Toast.makeText(getApplicationContext(), getString(R.string.timeslot_required), Toast.LENGTH_LONG).show();
             return;
@@ -414,7 +414,7 @@ public class WeekViewActivity extends SignedInActivity {
         }
         long endTime = cal.getTimeInMillis();
 
-        itemClickEnabled = false;
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), BookingCreateActivity.class);
         intent.putExtra("provider", currentProvider);
         intent.putExtra("service", currentService);
@@ -424,33 +424,33 @@ public class WeekViewActivity extends SignedInActivity {
     }
 
     public void onSaveClick(View view) {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         currentProvider.setAvailabilities(Availability.toList(getAvailabilities()));
         DbUser.updateUser(currentProvider, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), getString(R.string.availability_saved_successfully), Toast.LENGTH_LONG).show();
-                itemClickEnabled = true;
+                onClickEnabled = true;
             }
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), getString(R.string.availability_save_failed), Toast.LENGTH_LONG).show();
-                itemClickEnabled = true;
+                onClickEnabled = true;
             }
         });
     }
 
     private void onHelpClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         View helpView;
         if (Mode.AVAILABILITY == mode) {
             helpView = getLayoutInflater().inflate(R.layout.help_availabilities, null);
         } else if (Mode.SELECT_TIMESLOT == mode) {
             helpView = getLayoutInflater().inflate(R.layout.help_select_timeslot, null);
         } else {
-            itemClickEnabled = true;
+            onClickEnabled = true;
             return;
         }
         AlertDialog dialog = new AlertDialog.Builder(this)
@@ -458,17 +458,17 @@ public class WeekViewActivity extends SignedInActivity {
                 .setPositiveButton(R.string.ok, null)
                 .setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
-                    public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
+                    public void onDismiss(DialogInterface dialog) { onClickEnabled = true; }
                 })
                 .show();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.dialog_red));
     }
 
     private void onClearClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         setAllCells(CellState.UNAVAILABLE);
-        itemClickEnabled = true;
+        onClickEnabled = true;
     }
 
     private void onSelectDateClick() {

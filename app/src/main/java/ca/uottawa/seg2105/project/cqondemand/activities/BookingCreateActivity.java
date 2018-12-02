@@ -23,21 +23,72 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
+/**
+ * The class <b>BookingCreateActivity</b> is a UI class that allows the admin user to create bookings.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class BookingCreateActivity extends SignedInActivity {
 
-    protected boolean itemClickEnabled;
-    protected ServiceProvider currentProvider;
-    protected Service currentService;
-    protected Date startTime;
-    protected Date endTime;
-    protected SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMMM d, yyyy  hh:mm a", Locale.CANADA);
-    protected SimpleDateFormat DAY_FORMAT = new SimpleDateFormat("MMMM d, yyyy", Locale.CANADA);
-    protected SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h:mm a", Locale.CANADA);
-    protected TextView txt_service_provider;
-    protected TextView txt_service_name;
-    protected TextView txt_date;
-    protected TextView txt_time;
+    /**
+     * The service provider that the new booking will be associated with
+     */
+    private ServiceProvider currentProvider;
 
+    /**
+     * The service that the new booking will be associated with
+     */
+    private Service currentService;
+
+    /**
+     * The start time of the booking
+     */
+    private Date startTime;
+
+    /**
+     * The end time of the booking
+     */
+    private Date endTime;
+
+    /**
+     * The format to be used for the day (month day, year)
+     */
+    private SimpleDateFormat DAY_FORMAT = new SimpleDateFormat("MMMM d, yyyy", Locale.CANADA);
+
+    /**
+     * The format to be used for the time (hour:minute am/pm)
+     */
+    private SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h:mm a", Locale.CANADA);
+
+    /**
+     * The view that displays the service provider
+     */
+    private TextView txt_service_provider;
+
+    /**
+     * The view that displays the service name
+     */
+    private TextView txt_service_name;
+
+    /**
+     * The view that displays the booking date
+     */
+    private TextView txt_date;
+
+    /**
+     * The view that displays the booking start and end time
+     */
+    private TextView txt_time;
+
+
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,17 +118,13 @@ public class BookingCreateActivity extends SignedInActivity {
         txt_date = findViewById(R.id.txt_date);
         txt_time = findViewById(R.id.txt_time);
 
-        setFields();
-
+        configureViews();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        itemClickEnabled = true;
-    }
-
-    protected void setFields() {
+    /**
+     * Sets up the views contained within the activity
+     */
+    private void configureViews() {
         txt_service_provider.setText(currentProvider.getCompanyName());
         txt_service_name.setText(currentService.getName());
         txt_date.setText(DAY_FORMAT.format(startTime));
@@ -85,10 +132,13 @@ public class BookingCreateActivity extends SignedInActivity {
         cal.setTime(endTime);
         String endTimeStr = cal.get(Calendar.HOUR_OF_DAY) == 0 ? "Midnight" : TIME_FORMAT.format(endTime);
         txt_time.setText(String.format("%s to %s", TIME_FORMAT.format(startTime), endTimeStr));
-
     }
 
-    public void onSubmitBookingClick(View v) {
+    /**
+     * The on-click handler for the submit booking button
+     * @param view the view object that was clicked
+     */
+    public void onSubmitBookingClick(View view) {
 
         if (startTime.compareTo(new Date()) <= 0) {
             Toast.makeText(getApplicationContext(), getString(R.string.start_time_in_the_past), Toast.LENGTH_LONG).show();

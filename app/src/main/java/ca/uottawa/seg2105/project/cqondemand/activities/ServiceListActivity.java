@@ -37,7 +37,7 @@ import ca.uottawa.seg2105.project.cqondemand.domain.User;
 public class ServiceListActivity extends SignedInActivity {
 
     protected enum Mode { LIST_SERVICES, MANAGE_SERVICES, ADD_PROVIDER_SERVICES, REMOVE_PROVIDER_SERVICES, LIST_PROVIDER_SERVICES, PICK_FOR_BOOKING }
-    protected boolean itemClickEnabled = true;
+    protected boolean onClickEnabled = true;
     protected Mode mode;
     protected boolean useCategory;
     TextView txt_sub_title;
@@ -151,7 +151,7 @@ public class ServiceListActivity extends SignedInActivity {
     @Override
     public void onResume() {
         super.onResume();
-        itemClickEnabled = true;
+        onClickEnabled = true;
     }
 
     private void setSubTitle(@NonNull String subTitle) {
@@ -164,8 +164,8 @@ public class ServiceListActivity extends SignedInActivity {
         if (Mode.ADD_PROVIDER_SERVICES == mode) {
             return new View.OnClickListener() {
                 public void onClick(final View view) {
-                    if (!itemClickEnabled) { return; }
-                    itemClickEnabled = false;
+                    if (!onClickEnabled) { return; }
+                    onClickEnabled = false;
                     final Service service = (Service) view.getTag();
                     DbUtilRelational.linkServiceAndProvider(service, currentProvider, new AsyncActionEventListener() {
                         @Override
@@ -178,7 +178,7 @@ public class ServiceListActivity extends SignedInActivity {
                         }
                         @Override
                         public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                            itemClickEnabled = true;
+                            onClickEnabled = true;
                             Toast.makeText(getApplicationContext(), String.format(getString(R.string.service_added_to_provider_fail_template), service.getName()), Toast.LENGTH_LONG).show();
                         }
                     });
@@ -188,8 +188,8 @@ public class ServiceListActivity extends SignedInActivity {
         } else if (Mode.REMOVE_PROVIDER_SERVICES == mode) {
             return new View.OnClickListener() {
                 public void onClick(final View view) {
-                    if (!itemClickEnabled) { return; }
-                    itemClickEnabled = false;
+                    if (!onClickEnabled) { return; }
+                    onClickEnabled = false;
                     final Service service = (Service) view.getTag();
                     AlertDialog dialog = new AlertDialog.Builder(ServiceListActivity.this)
                             .setTitle(R.string.remove_service)
@@ -211,7 +211,7 @@ public class ServiceListActivity extends SignedInActivity {
                             })
                             .setOnDismissListener(new DialogInterface.OnDismissListener() {
                                 @Override
-                                public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
+                                public void onDismiss(DialogInterface dialog) { onClickEnabled = true; }
                             })
                             .setNegativeButton(R.string.cancel, null).show();
                     dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.text_primary_dark));
@@ -221,8 +221,8 @@ public class ServiceListActivity extends SignedInActivity {
         } else if (Mode.PICK_FOR_BOOKING == mode) {
             return new View.OnClickListener() {
                 public void onClick(final View view) {
-                    if (!itemClickEnabled) { return; }
-                    itemClickEnabled = false;
+                    if (!onClickEnabled) { return; }
+                    onClickEnabled = false;
                     Intent intent = new Intent(getApplicationContext(), ServiceProviderPickerActivity.class);
                     intent.putExtra("service", (Serializable) view.getTag());
                     startActivity(intent);
@@ -231,8 +231,8 @@ public class ServiceListActivity extends SignedInActivity {
         } else {
             return new View.OnClickListener() {
                 public void onClick(final View view) {
-                    if (!itemClickEnabled) { return; }
-                    itemClickEnabled = false;
+                    if (!onClickEnabled) { return; }
+                    onClickEnabled = false;
                     Intent intent = new Intent(getApplicationContext(), ServiceViewActivity.class);
                     intent.putExtra("service", (Serializable) view.getTag());
                     startActivity(intent);
@@ -266,28 +266,28 @@ public class ServiceListActivity extends SignedInActivity {
     }
 
     public void onLinkServiceToProviderClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         startActivity(new Intent(getApplicationContext(), CategoryListActivity.class));
     }
 
     public void onCreateCategoryClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         startActivity(new Intent(getApplicationContext(), CategoryCreateActivity.class));
     }
 
     public void onCreateServiceClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ServiceCreateActivity.class);
         if (null != currentCategory) { intent.putExtra("category", currentCategory); }
         startActivity(intent);
     }
 
     public void onDeleteCategoryClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         if (useCategory) {
             AlertDialog dialog = new AlertDialog.Builder(this)
                     .setTitle(R.string.delete_category)
@@ -323,7 +323,7 @@ public class ServiceListActivity extends SignedInActivity {
                     })
                     .setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
-                        public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
+                        public void onDismiss(DialogInterface dialog) { onClickEnabled = true; }
                     })
                     .setNegativeButton(R.string.cancel, null).show();
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.text_primary_dark));

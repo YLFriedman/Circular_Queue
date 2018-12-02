@@ -42,7 +42,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class ServiceProviderPickerActivity extends SignedInActivity {
 
-    private boolean itemClickEnabled = true;
+    private boolean onClickEnabled = true;
     protected TextView txt_sub_title;
     protected View divider_txt_sub_title;
     private RecyclerView recycler_list;
@@ -129,7 +129,7 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
     @Override
     public void onResume() {
         super.onResume();
-        itemClickEnabled = true;
+        onClickEnabled = true;
     }
 
     @Override
@@ -180,8 +180,8 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
         }
         recycler_list.setAdapter(new ServiceProviderPickerListAdapter(getApplicationContext(), filteredProviders, new View.OnClickListener() {
             public void onClick(final View view) {
-                if (!itemClickEnabled) { return; }
-                itemClickEnabled = false;
+                if (!onClickEnabled) { return; }
+                onClickEnabled = false;
                 Intent intent = new Intent(getApplicationContext(), ServiceProviderProfileActivity.class);
                 intent.putExtra("provider", (Serializable) view.getTag());
                 intent.putExtra("service", currentService);
@@ -191,8 +191,8 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
     }
 
     protected void showFilterSettings() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         if (null == filterView) { setupFilterView(); }
         setFilterValues();
         if (null == filterDialog) {
@@ -207,7 +207,7 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
                     })
                     .setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
-                        public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
+                        public void onDismiss(DialogInterface dialog) { onClickEnabled = true; }
                     })
                     .setNegativeButton(R.string.cancel, null).show();
             filterDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.text_primary_dark));
