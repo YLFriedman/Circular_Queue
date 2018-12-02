@@ -58,6 +58,12 @@ public class ServiceViewActivity extends SignedInActivity {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        itemClickEnabled = true;
+    }
+
+    @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         currentService = (Service) intent.getSerializableExtra("service");
