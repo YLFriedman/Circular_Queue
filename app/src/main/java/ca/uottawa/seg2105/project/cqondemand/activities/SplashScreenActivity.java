@@ -39,7 +39,6 @@ public class SplashScreenActivity extends Activity {
         if (null != state.getSignedInUser()) {
             launchHomeScreen();
         } else if (null == state.getSignedInUserKey()) {
-            
             progress.setMax(100);
             progress.setProgress(1);
             timer = new CountDownTimer(2500, 25) {
@@ -65,6 +64,10 @@ public class SplashScreenActivity extends Activity {
                 }
                 @Override
                 public void onFailure(@NonNull AsyncEventFailureReason reason) {
+                    // If the user no longer exists, remove the saved ID
+                    if (reason == AsyncEventFailureReason.DOES_NOT_EXIST) {
+                        State.getInstance().setSignedInUser(null);
+                    }
                     launchSignInScreen();
                 }
             });
