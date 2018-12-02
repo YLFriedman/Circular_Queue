@@ -206,16 +206,6 @@ public class DbBooking extends DbItem<Booking> {
     public static void getBookingsInTimeRange(@NonNull ServiceProvider provider, @NonNull Date startTime, @NonNull Date endTime, @NonNull AsyncValueEventListener<Booking> listener) {
         DbQuery query = DbQuery.createChildValueQuery("start_time").setRangeFilter(startTime.getTime(), endTime.getTime());
         DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.USER_BOOKINGS, provider.getKey(), query, listener);
-        /*DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.USER_BOOKINGS, provider.getKey(), query, new AsyncValueEventListener<Booking>() {
-            @Override
-            public void onSuccess(ArrayList<Booking> data) {
-
-            }
-            @Override
-            public void onFailure(AsyncEventFailureReason reason) {
-
-            }
-        });*/
     }
 
 }

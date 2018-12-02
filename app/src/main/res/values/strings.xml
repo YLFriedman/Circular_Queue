@@ -1,9 +1,9 @@
 <resources>
-    <string name="version">v0.4.3</string>
+    <string name="version">v0.5.0</string>
     <string name="environment">PRD</string>
     <string name="app_name">CQ On Demand</string>
     <string name="title_activity_splash_screen">CQ On Demand</string>
-    <string name="title_activity_sign_in">CQ On Demand - v0.4.3</string>
+    <string name="title_activity_sign_in">CQ On Demand - v0.5.0</string>
     <string name="title_activity_home">Home</string>
     <string name="title_activity_create_account">Sign Up</string>
     <string name="title_activity_user_account_view">Account Details</string>
@@ -363,4 +363,5 @@
     <string name="timeslot_tip_3">- Tap on a cell in the middle of a selection to de-select the whole selection.</string>
     <string name="timeslot_tip_4">- A \'booked\' cell indicates that the service provider has a booking during that timslot.  The timeslot can still be requested, but the service provider may not be able to approve the request.</string>
     <string name="requested">Requested</string>
+    <string name="see_review">See Review</string>
 </resources>
