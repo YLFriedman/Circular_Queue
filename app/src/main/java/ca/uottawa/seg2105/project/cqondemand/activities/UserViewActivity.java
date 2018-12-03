@@ -42,6 +42,10 @@ public class UserViewActivity extends SignedInActivity {
     protected LinearLayout grp_rating;
     protected User currentUser;
 
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +84,10 @@ public class UserViewActivity extends SignedInActivity {
 
     }
 
+    /**
+     * Enables the relevant onClick actions within this activity.
+     * This is run during the resume phase of the activity lifecycle.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -128,6 +136,10 @@ public class UserViewActivity extends SignedInActivity {
         }
     }
 
+    /**
+     * Sets the menu to be used in the action bar
+     * @return true if the options menu is created, false otherwise
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         User user = State.getInstance().getSignedInUser();
@@ -141,6 +153,11 @@ public class UserViewActivity extends SignedInActivity {
         return true;
     }
 
+    /**
+     * The onClick handler for the action bar menu items
+     * @param item the menu item that was clicked
+     * @return true if the menu item onClick was handled, the result of the super class method otherwise
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

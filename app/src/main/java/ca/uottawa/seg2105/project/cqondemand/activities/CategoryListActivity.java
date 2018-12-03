@@ -23,12 +23,36 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
+/**
+ * The class <b>CategoryListActivity</b> is a UI class that allows a user to see a list of bookings.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class CategoryListActivity extends SignedInActivity {
 
+    /**
+     * Whether or not relevant onClick actions are enabled for within this activity
+     */
     protected boolean onClickEnabled = true;
+
+    /**
+     * The view that displays the list of categories
+     */
     protected RecyclerView recycler_list;
+
+    /**
+     * Stores the handle to the database callback so that it can be cleaned up when the activity ends
+     */
     protected DbListenerHandle<?> dbListenerHandle;
 
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,12 +80,20 @@ public class CategoryListActivity extends SignedInActivity {
         });
     }
 
+    /**
+     * Enables the relevant onClick actions within this activity.
+     * This is run during the resume phase of the activity lifecycle.
+     */
     @Override
     public void onResume() {
         super.onResume();
         onClickEnabled = true;
     }
 
+    /**
+     * Removes the listener for data from the database.
+     * This is run during the destroy phase of the activity lifecycle.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -69,18 +101,28 @@ public class CategoryListActivity extends SignedInActivity {
         if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
     }
 
+    /**
+     * Loads the category creation activity
+     */
     public void onCreateCategoryClick() {
         if (!onClickEnabled) { return; }
         onClickEnabled = false;
         startActivity(new Intent(getApplicationContext(), CategoryCreateActivity.class));
     }
 
+    /**
+     * Loads the service creation activity
+     */
     public void onCreateServiceClick() {
         if (!onClickEnabled) { return; }
         onClickEnabled = false;
         startActivity(new Intent(getApplicationContext(), ServiceCreateActivity.class));
     }
 
+    /**
+     * Sets the menu to be used in the action bar
+     * @return true if the options menu is created, false otherwise
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         User user = State.getInstance().getSignedInUser();
@@ -91,6 +133,11 @@ public class CategoryListActivity extends SignedInActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * The onClick handler for the action bar menu items
+     * @param item the menu item that was clicked
+     * @return true if the menu item onClick was handled, the result of the super class method otherwise
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -100,6 +147,9 @@ public class CategoryListActivity extends SignedInActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Handles results from an activity that was launched and finished
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (RESULT_OK == resultCode && intent.getBooleanExtra("finish", false)) {

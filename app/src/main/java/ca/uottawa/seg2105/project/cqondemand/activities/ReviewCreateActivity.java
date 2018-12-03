@@ -5,7 +5,6 @@ import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.database.DbReview;
 import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
 import ca.uottawa.seg2105.project.cqondemand.domain.Review;
-import ca.uottawa.seg2105.project.cqondemand.domain.Service;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
@@ -22,11 +21,31 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * The class <b>ReviewCreateActivity</b> is a UI class that allows a user to create a review of a booking.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class ReviewCreateActivity extends SignedInActivity {
 
+    /**
+     * The service provider that is being reviewed
+     */
     protected ServiceProvider currentProvider;
+
+    /**
+     * The booking that contains the details of the job that is being reviewed
+     */
     protected Booking currentBooking;
 
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +72,10 @@ public class ReviewCreateActivity extends SignedInActivity {
         txt_service_name.setText(currentBooking.getServiceName());
     }
 
+    /**
+     * The on-click handler for the create review button
+     * @param view the view object that was clicked
+     */
     public void onCreateReviewClick(View view) {
 
         RatingBar stars_rating = findViewById(R.id.rating_stars);

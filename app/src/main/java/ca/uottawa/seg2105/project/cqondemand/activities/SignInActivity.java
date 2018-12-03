@@ -32,6 +32,10 @@ public class SignInActivity extends AppCompatActivity {
 
     private CheckBox box_remember;
 
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -21,23 +21,52 @@ import ca.uottawa.seg2105.project.cqondemand.domain.Review;
 import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
-import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 /**
- * work in progress
- * might need something like DbCategory.getReviewsLive
+ * The class <b>ReviewListActivity</b> is a UI class that allows a user to see a list of reviews for a given service provider.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
  */
-
 public class ReviewListActivity extends SignedInActivity {
 
+    /**
+     * Whether or not relevant onClick actions are enabled for within this activity
+     */
     protected boolean onClickEnabled = true;
+
+    /**
+     * A view that displays the service provider that the reviews are for
+     */
     protected TextView txt_sub_title;
+
+    /**
+     * A view that divides the subtitle and the list
+     */
     protected View divider_txt_sub_title;
+
+    /**
+     * The view that displays the list of reviews
+     */
     protected RecyclerView recycler_list;
-    protected ReviewListAdapter review_list_adapter;
+
+    /**
+     * The service provider that the reviews are for
+     */
     protected ServiceProvider currentProvider;
+
+    /**
+     * Stores the handle to the database callback so that it can be cleaned up when the activity ends
+     */
     protected DbListenerHandle<?> dbListenerHandle;
 
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +96,7 @@ public class ReviewListActivity extends SignedInActivity {
         dbListenerHandle = DbReview.getReviewsLive(currentProvider.getKey(), new AsyncValueEventListener<Review>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Review> data) {
-                review_list_adapter = new ReviewListAdapter(getApplicationContext(), data, new View.OnClickListener() {
+                ReviewListAdapter review_list_adapter = new ReviewListAdapter(getApplicationContext(), data, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         if (!onClickEnabled) { return; }
@@ -88,6 +117,10 @@ public class ReviewListActivity extends SignedInActivity {
 
     }
 
+    /**
+     * Removes the listener for data from the database.
+     * This is run during the destroy phase of the activity lifecycle.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -95,12 +128,20 @@ public class ReviewListActivity extends SignedInActivity {
         if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
     }
 
+    /**
+     * Enables the relevant onClick actions within this activity.
+     * This is run during the resume phase of the activity lifecycle.
+     */
     @Override
     public void onResume() {
         super.onResume();
         onClickEnabled = true;
     }
 
+    /**
+     * Makes the subtitle views visible and sets the subtitle text
+     * @param subTitle the subtitle to be set in the sub_title view
+     */
     private void setSubTitle(@NonNull String subTitle) {
         txt_sub_title.setVisibility(View.VISIBLE);
         divider_txt_sub_title.setVisibility(View.VISIBLE);

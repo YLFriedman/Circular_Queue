@@ -25,6 +25,10 @@ public class SplashScreenActivity extends Activity {
     protected TextView txt_sub_title;
     protected CountDownTimer timer;
 
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

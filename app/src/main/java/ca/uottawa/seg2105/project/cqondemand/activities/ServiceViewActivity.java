@@ -22,15 +22,51 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
+/**
+ * The class <b>ServiceViewActivity</b> is a UI class that allows a user to see the details of an individual service.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class ServiceViewActivity extends SignedInActivity {
 
-    protected boolean onClickEnabled = true;
-    protected TextView txt_name;
-    protected TextView txt_rate;
-    protected TextView txt_category;
-    protected Category currentCategory;
-    protected Service currentService;
+    /**
+     * Whether or not relevant onClick actions are enabled for within this activity
+     */
+    private boolean onClickEnabled = true;
 
+    /**
+     * A view that displays the service name
+     */
+    private TextView txt_name;
+
+    /**
+     * A view that displays the service rate
+     */
+    private TextView txt_rate;
+
+    /**
+     * A view that displays the service category
+     */
+    private TextView txt_category;
+
+    /**
+     * The category that the service is under
+     */
+    private Category currentCategory;
+
+    /**
+     * The service that is being displayed
+     */
+    private Service currentService;
+
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,33 +86,45 @@ public class ServiceViewActivity extends SignedInActivity {
         }
 
         if (null != currentService) {
-            setupFields();
+            configureViews();
         }  else {
             Toast.makeText(getApplicationContext(), R.string.current_service_empty, Toast.LENGTH_LONG).show();
             finish();
         }
     }
 
+    /**
+     * Enables the relevant onClick actions within this activity.
+     * This is run during the resume phase of the activity lifecycle.
+     */
     @Override
     public void onResume() {
         super.onResume();
         onClickEnabled = true;
     }
 
+
+    /**
+     * Refreshes the activity when a new intent is received
+     * @param intent the intent containing the new information used to update the activity
+     */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         currentService = (Service) intent.getSerializableExtra("service");
         currentCategory = (Category) intent.getSerializableExtra("category");
         if (null != currentService) {
-            setupFields();
+            configureViews();
         }  else {
             Toast.makeText(getApplicationContext(), R.string.current_service_empty, Toast.LENGTH_LONG).show();
             finish();
         }
     }
 
-    private void setupFields() {
+    /**
+     * Configures the view items within this activity
+     */
+    private void configureViews() {
         txt_name.setText("");
         txt_rate.setText("");
         txt_category.setText("");
@@ -101,6 +149,10 @@ public class ServiceViewActivity extends SignedInActivity {
         }
     }
 
+    /**
+     * Sets the menu to be used in the action bar
+     * @return true if the options menu is created, false otherwise
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         User user = State.getInstance().getSignedInUser();
@@ -112,6 +164,11 @@ public class ServiceViewActivity extends SignedInActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * The onClick handler for the action bar menu items
+     * @param item the menu item that was clicked
+     * @return true if the menu item onClick was handled, the result of the super class method otherwise
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -122,6 +179,9 @@ public class ServiceViewActivity extends SignedInActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * The on-click handler to launch the service creation activity
+     */
     public void onCreateServiceClick() {
         if (!onClickEnabled) { return; }
         onClickEnabled = false;
@@ -130,6 +190,9 @@ public class ServiceViewActivity extends SignedInActivity {
         startActivity(intent);
     }
 
+    /**
+     * The on-click handler to launch the service edit activity
+     */
     public void onEditServiceClick() {
         if (!onClickEnabled) { return; }
         onClickEnabled = false;
@@ -138,6 +201,9 @@ public class ServiceViewActivity extends SignedInActivity {
         startActivity(intent);
     }
 
+    /**
+     * Prompts the user with the delete service confirmation screen and triggers the deletion process if confirmed.
+     */
     public void onDeleteServiceClick() {
         if (!onClickEnabled) { return; }
         onClickEnabled = false;

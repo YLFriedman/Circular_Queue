@@ -54,6 +54,9 @@ public class WeekViewActivity extends SignedInActivity {
 
     private enum Mode { SELECT_TIMESLOT, AVAILABILITY }
     private Mode mode;
+    /**
+     * Whether or not relevant onClick actions are enabled for within this activity
+     */
     private boolean onClickEnabled;
     private View[][] cellViews;
     private Cell[][] cells;
@@ -71,7 +74,10 @@ public class WeekViewActivity extends SignedInActivity {
     private int startAtDayOfWeek;
     private int[] requestedStart;
 
-
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,12 +144,20 @@ public class WeekViewActivity extends SignedInActivity {
         grid_scroll_view.scrollTo(0, dpToPx(252));
     }
 
+    /**
+     * Enables the relevant onClick actions within this activity.
+     * This is run during the resume phase of the activity lifecycle.
+     */
     @Override
     public void onResume() {
         super.onResume();
         onClickEnabled = true;
     }
 
+    /**
+     * Sets the menu to be used in the action bar
+     * @return true if the options menu is created, false otherwise
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.week_view_options, menu);
@@ -155,6 +169,11 @@ public class WeekViewActivity extends SignedInActivity {
         return true;
     }
 
+    /**
+     * The onClick handler for the action bar menu items
+     * @param item the menu item that was clicked
+     * @return true if the menu item onClick was handled, the result of the super class method otherwise
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

@@ -40,37 +40,141 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
+/**
+ * The class <b>ServiceProviderProfileActivity</b> is a UI class that allows a homeowner to pick a service provider from a list.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class ServiceProviderPickerActivity extends SignedInActivity {
 
+    /**
+     * Whether or not relevant onClick actions are enabled for within this activity
+     */
     private boolean onClickEnabled = true;
-    protected TextView txt_sub_title;
-    protected View divider_txt_sub_title;
+
+    /**
+     * A view that displays the service name
+     */
+    private TextView txt_sub_title;
+
+    /**
+     * A view that divides the service name from the provider list
+     */
+    private View divider_txt_sub_title;
+
+    /**
+     * The view that displays the list of providers
+     */
     private RecyclerView recycler_list;
+
+    /**
+     * Stores the handle to the database callback so that it can be cleaned up when the activity ends
+     */
     private DbListenerHandle<?> dbListenerHandle;
+
+    /**
+     * The service that is used to filter the providers
+     */
     private Service currentService;
+
+    /**
+     * A view that displays the no providers message
+     */
     private TextView txt_empty_list_message;
+
+    /**
+     * A view that displays the filter caused no providers message
+     */
     private TextView txt_filter_no_providers_message;
+
+    /**
+     * The current filter value for the minimum rating
+     */
     private int filterMinRating;
+
+    /**
+     * The current filter value for the day of the week
+     */
     private int filterDay = -1;
+
+    /**
+     * The current filter value for start time
+     */
     private int filterStartTime = -1;
+
+    /**
+     * The current filter value for the end time
+     */
     private int filterEndTime = -1;
+
+    /**
+     * The selected start time value for the filter modal
+     */
     private int selectedStartTime = -1;
+
+    /**
+     * The selected end time value for the filter modal
+     */
     private int selectedEndTime = -1;
+
+    /**
+     * Stores the select start time temporarily when closing the start time widget and launching the end time widget
+     */
     private int tempStartTime;
-    protected Calendar cal = Calendar.getInstance(Locale.CANADA);
+
+    /**
+     * A calendar instance set to the CANADA locale
+     */
+    private Calendar cal = Calendar.getInstance(Locale.CANADA);
+
+    /**
+     * The format to be used for the time (hour:minute am/pm)
+     */
     private SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h:mm a", Locale.CANADA);
+
+    /**
+     * The list of all providers returned from the database before filtering
+     */
     private ArrayList<ServiceProvider> allProviders;
+
+    /**
+     * The modal dialog used to set filters on the provider list
+     */
     private AlertDialog filterDialog;
+
+    /**
+     * The parent view that contains the filter view objects
+     */
     private View filterView;
-    private TextView txt_clear_availability;
-    private TextView txt_clear_rating;
-    private TextView txt_set_time;
+
+    /**
+     * The view that allows the minimum rating to be set
+     */
     private RatingBar stars_filter_rating;
+
+    /**
+     * The view that allows the day filter to be selected from a list of days
+     */
     private Spinner spinner_day_filter;
-    private SpinnerAdapter<Availability.Day> dayFilterAdapter;
+
+    /**
+     * The view that displays the currently set time filter
+     */
     private TextView txt_time_filter;
+
+    /**
+     * A view group that contains the time filter view object
+     */
     private LinearLayout grp_time;
 
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,6 +223,10 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
         });
     }
 
+    /**
+     * Removes the listener for data from the database.
+     * This is run during the destroy phase of the activity lifecycle.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -126,35 +234,53 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
         if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
     }
 
+    /**
+     * Enables the relevant onClick actions within this activity.
+     * This is run during the resume phase of the activity lifecycle.
+     */
     @Override
     public void onResume() {
         super.onResume();
         onClickEnabled = true;
     }
 
+    /**
+     * Sets the menu to be used in the action bar
+     * @return true if the options menu is created, false otherwise
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.pick_service_provider, menu);
         return true;
     }
 
+    /**
+     * The onClick handler for the action bar menu items
+     * @param item the menu item that was clicked
+     * @return true if the menu item onClick was handled, the result of the super class method otherwise
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_item_filter_providers:
-                showFilterSettings();
-                return true;
+            case R.id.menu_item_filter_providers: showFilterSettings(); return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Makes the subtitle views visible and sets the subtitle text
+     * @param subTitle the subtitle to be set in the sub_title view
+     */
     private void setSubTitle(@NonNull String subTitle) {
         txt_sub_title.setVisibility(View.VISIBLE);
         divider_txt_sub_title.setVisibility(View.VISIBLE);
         txt_sub_title.setText(subTitle);
     }
 
-    protected void setListAdapter() {
+    /**
+     * Sets the adapter for the data contained in the service provider list.  The service provider filters are applied here.
+     */
+    private void setListAdapter() {
         txt_filter_no_providers_message.setVisibility(View.GONE);
         if (null == allProviders) { return; }
         ArrayList<ServiceProvider> filteredProviders;
@@ -190,7 +316,10 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
         }));
     }
 
-    protected void showFilterSettings() {
+    /**
+     * Displays the service provider filter dialog
+     */
+    private void showFilterSettings() {
         if (!onClickEnabled) { return; }
         onClickEnabled = false;
         if (null == filterView) { setupFilterView(); }
@@ -217,6 +346,9 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
         }
     }
 
+    /**
+     * Sets the view values for the service provider filter dialog (using the filter value vars) when it is opened.
+     */
     private void setFilterValues() {
         stars_filter_rating.setRating(filterMinRating);
         spinner_day_filter.setSelection(filterDay + 1);
@@ -231,6 +363,10 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
         }
     }
 
+    /**
+     * Gets the filter values from the service provider filter dialog (using the filter value vars) when the apply options is selected.
+     * @return true if the filter values are updated, false otherwises
+     */
     private boolean getFilterValues() {
         int newMinRating = (int) stars_filter_rating.getRating();
         int newDay = spinner_day_filter.getSelectedItemPosition() - 1;
@@ -246,11 +382,14 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
         return true;
     }
 
+    /**
+     * Sets up the filter view when it is first opened.
+     */
     private void setupFilterView() {
         filterView = getLayoutInflater().inflate(R.layout.dialog_provider_filters, null);
-        txt_clear_availability = filterView.findViewById(R.id.txt_clear_availability);
-        txt_clear_rating = filterView.findViewById(R.id.txt_clear_rating);
-        txt_set_time = filterView.findViewById(R.id.txt_set_time);
+        TextView txt_clear_availability = filterView.findViewById(R.id.txt_clear_availability);
+        TextView txt_clear_rating = filterView.findViewById(R.id.txt_clear_rating);
+        TextView txt_set_time = filterView.findViewById(R.id.txt_set_time);
         stars_filter_rating = filterView.findViewById(R.id.stars_filter_rating);
         spinner_day_filter = filterView.findViewById(R.id.spinner_day_filter);
         txt_time_filter = filterView.findViewById(R.id.txt_time_filter);
@@ -263,7 +402,7 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
         });
         ArrayList<Availability.Day> dayList = new ArrayList<Availability.Day>(Arrays.asList(Availability.Day.values()));
         dayList.add(0, null);
-        dayFilterAdapter = new SpinnerAdapter<Availability.Day>(getApplicationContext(), R.layout.spinner_item_title, getString(R.string.any_day), dayList);
+        SpinnerAdapter<Availability.Day> dayFilterAdapter = new SpinnerAdapter<Availability.Day>(getApplicationContext(), R.layout.spinner_item_title, getString(R.string.any_day), dayList);
         spinner_day_filter.setAdapter(dayFilterAdapter);
         spinner_day_filter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -301,6 +440,10 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
         });
     }
 
+    /**
+     * Creates an onTimeSet listener for the start time picker.
+     * @return the onTimeSet listener
+     */
     private TimePickerDialog.OnTimeSetListener getStartTimeListener() {
         return new TimePickerDialog.OnTimeSetListener() {
             @Override
@@ -318,6 +461,10 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
         };
     }
 
+    /**
+     * Creates the an onTimeSet listener for the end time picker.
+     * @return the onTimeSet listener
+     */
     private TimePickerDialog.OnTimeSetListener getEndTimeListener() {
         return new TimePickerDialog.OnTimeSetListener() {
             @Override
@@ -329,9 +476,15 @@ public class ServiceProviderPickerActivity extends SignedInActivity {
         };
     }
 
+    /**
+     * Creates a time range string from the start and end times provided.
+     * @param start the start time to display
+     * @param end the end time to display
+     * @return the formatted time range string
+     */
     private String getTimeString(int start, int end) {
         String time = "";
-        if (start >=0 && end >= 0) {
+        if (start >= 0 && end >= 0) {
             cal.setTime(new Date());
             cal.set(0, 0, 0, start, 0, 0);
             time += TIME_FORMAT.format(cal.getTime());

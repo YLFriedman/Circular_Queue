@@ -275,6 +275,7 @@ public class BookingViewActivity extends SignedInActivity {
 
     /**
      * Sets the menu to be used in the action bar
+     * @return true if the options menu is created, false otherwise
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -288,6 +289,7 @@ public class BookingViewActivity extends SignedInActivity {
     /**
      * The onClick handler for the action bar menu items
      * @param item the menu item that was clicked
+     * @return true if the menu item onClick was handled, the result of the super class method otherwise
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

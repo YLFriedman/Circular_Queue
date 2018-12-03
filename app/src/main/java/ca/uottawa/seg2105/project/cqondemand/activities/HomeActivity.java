@@ -10,12 +10,25 @@ import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
+/**
+ * The class <b>HomeActivity</b> is a UI class that presents the user with buttons that launch the main functions of the application.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class HomeActivity extends AppCompatActivity {
 
+    /**
+     * Whether or not relevant onClick actions are enabled for within this activity
+     */
     protected boolean onClickEnabled = true;
 
-    /*
-     * Fills in layout for UserHome activity
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,11 +44,18 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Overrides the back button to move the activity to the background instead of finishing it
+     */
     @Override
     public void onBackPressed () {
         moveTaskToBack(false);
     }
 
+    /**
+     * Enables the relevant onClick actions within this activity and signs out of the app if there is no signed in user.
+     * This is run during the resume phase of the activity lifecycle.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -48,6 +68,10 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * The on-click handler for the main function buttons
+     * @param view the view object that was clicked
+     */
     public void onClickHandler(View view) {
         if (!onClickEnabled) { return; }
         onClickEnabled = false;

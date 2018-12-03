@@ -24,8 +24,16 @@ public class UserListActivity extends SignedInActivity {
 
     protected boolean onClickEnabled = true;
     protected RecyclerView recycler_list;
+
+    /**
+     * Stores the handle to the database callback so that it can be cleaned up when the activity ends
+     */
     protected DbListenerHandle<?> dbListenerHandle;
 
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +65,10 @@ public class UserListActivity extends SignedInActivity {
         });
     }
 
+    /**
+     * Removes the listener for data from the database.
+     * This is run during the destroy phase of the activity lifecycle.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -64,6 +76,10 @@ public class UserListActivity extends SignedInActivity {
         if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
     }
 
+    /**
+     * Enables the relevant onClick actions within this activity.
+     * This is run during the resume phase of the activity lifecycle.
+     */
     @Override
     public void onResume() {
         super.onResume();

@@ -19,23 +19,49 @@ import ca.uottawa.seg2105.project.cqondemand.adapters.SpinnerAdapter;
 import ca.uottawa.seg2105.project.cqondemand.database.DbCategory;
 import ca.uottawa.seg2105.project.cqondemand.database.DbListenerHandle;
 import ca.uottawa.seg2105.project.cqondemand.database.DbService;
-import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
 import ca.uottawa.seg2105.project.cqondemand.domain.Category;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
-import ca.uottawa.seg2105.project.cqondemand.domain.ServiceProvider;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncActionEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 
+/**
+ * The class <b>ServiceEditActivity</b> is a UI class that allows the admin user to edit a service.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class ServiceEditActivity extends SignedInActivity {
 
+    /**
+     * The view that displays the list of categories to choose from
+     */
     protected Spinner spinner_categories;
+
+    /**
+     * The category that the service is being created under
+     */
     protected Category currentCategory;
+
+    /**
+     * The service that is being edited
+     */
     protected Service currentService;
+
+    /**
+     * Stores the handle to the database callback so that it can be cleaned up when the activity ends
+     */
     protected DbListenerHandle<?> dbListenerHandle;
 
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +85,26 @@ public class ServiceEditActivity extends SignedInActivity {
             dbListenerHandle = DbCategory.getCategoriesLive(new AsyncValueEventListener<Category>() {
                 @Override
                 public void onSuccess(@NonNull ArrayList<Category> data) {
-                    loadSpinnerData(data);
+                    data.add(0, null);
+                    // Check if there was already a selection made
+                    Object currentSelection = spinner_categories.getSelectedItem();
+                    if (null != currentSelection && !currentSelection.toString().equals(getString(R.string.category_list_select))) {
+                        currentCategory = (Category) currentSelection;
+                    }
+                    // Create the adapter and pass it to the spinner
+                    final SpinnerAdapter<Category> dataAdapter = new SpinnerAdapter<Category>(getApplicationContext(), R.layout.spinner_item_title, getString(R.string.category_select), data);
+                    spinner_categories.setAdapter(dataAdapter);
+                    // Set the spinner to be the previously selected or initial category
+                    if (null != currentCategory) { spinner_categories.setSelection(dataAdapter.getPosition(currentCategory)); }
+                    else {
+                        // If no category exists, attempt to get one from the currentService object
+                        currentService.getCategory(new AsyncSingleValueEventListener<Category>() {
+                            @Override
+                            public void onSuccess(@NonNull Category item) { spinner_categories.setSelection(dataAdapter.getPosition(item)); }
+                            @Override
+                            public void onFailure(@NonNull AsyncEventFailureReason reason) { }
+                        });
+                    }
                 }
                 @Override
                 public void onFailure(@NonNull AsyncEventFailureReason reason) {
@@ -72,6 +117,10 @@ public class ServiceEditActivity extends SignedInActivity {
         }
     }
 
+    /**
+     * Removes the listener for data from the database.
+     * This is run during the destroy phase of the activity lifecycle.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -79,29 +128,10 @@ public class ServiceEditActivity extends SignedInActivity {
         if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
     }
 
-    private void loadSpinnerData(ArrayList<Category> data) {
-        data.add(0, null);
-        // Check if there was already a selection made
-        Object currentSelection = spinner_categories.getSelectedItem();
-        if (null != currentSelection && !currentSelection.toString().equals(getString(R.string.category_list_select))) {
-            currentCategory = (Category) currentSelection;
-        }
-        // Create the adapter and pass it to the spinner
-        final SpinnerAdapter<Category> dataAdapter = new SpinnerAdapter<Category>(getApplicationContext(), R.layout.spinner_item_title, getString(R.string.category_select), data);
-        spinner_categories.setAdapter(dataAdapter);
-        // Set the spinner to be the previously selected or initial category
-        if (null != currentCategory) { spinner_categories.setSelection(dataAdapter.getPosition(currentCategory)); }
-        else {
-            // If no category exists, attempt to get one from the currentService object
-            currentService.getCategory(new AsyncSingleValueEventListener<Category>() {
-                @Override
-                public void onSuccess(@NonNull Category item) { spinner_categories.setSelection(dataAdapter.getPosition(item)); }
-                @Override
-                public void onFailure(@NonNull AsyncEventFailureReason reason) { }
-            });
-        }
-    }
-
+    /**
+     * The on-click handler for the save service button
+     * @param view the view object that was clicked
+     */
     public void onSaveService(View view) {
         final EditText field_service_name = findViewById(R.id.field_service_name);
         final String name = field_service_name.getText().toString().trim();

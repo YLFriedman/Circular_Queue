@@ -18,8 +18,21 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
+/**
+ * The class <b>CategoryCreateActivity</b> is a UI class that allows the admin user to create categories.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class CategoryCreateActivity extends SignedInActivity {
 
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +41,10 @@ public class CategoryCreateActivity extends SignedInActivity {
         if (null == signedInUser || User.Type.ADMIN != signedInUser.getType()) { finish(); return; }
     }
 
+    /**
+     * The on-click handler for the create category button
+     * @param view the view object that was clicked
+     */
     public void onCreateCategoryClick(View view) {
         final EditText field_category_name = findViewById(R.id.field_category_name);
         final String categoryName = field_category_name.getText().toString().trim();

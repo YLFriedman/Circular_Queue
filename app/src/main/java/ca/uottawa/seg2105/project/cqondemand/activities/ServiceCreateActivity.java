@@ -26,12 +26,36 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 
+/**
+ * The class <b>ServiceCreateActivity</b> is a UI class that allows the admin user to create services.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class ServiceCreateActivity extends SignedInActivity {
 
-    protected Spinner spinner_categories;
-    protected Category currentCategory;
-    protected DbListenerHandle<?> dbListenerHandle;
+    /**
+     * The view that displays the list of categories to choose from
+     */
+    private Spinner spinner_categories;
 
+    /**
+     * The category that the service is being created under
+     */
+    private Category currentCategory;
+
+    /**
+     * Stores the handle to the database callback so that it can be cleaned up when the activity ends
+     */
+    private DbListenerHandle<?> dbListenerHandle;
+
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +75,17 @@ public class ServiceCreateActivity extends SignedInActivity {
         dbListenerHandle = DbCategory.getCategoriesLive(new AsyncValueEventListener<Category>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Category> data) {
-                loadSpinnerData(data);
+                data.add(0, null);
+                // Check if there was already a selection made
+                Object currentSelection = spinner_categories.getSelectedItem();
+                if (null != currentSelection && !currentSelection.toString().equals(getString(R.string.category_list_select))) {
+                    currentCategory = (Category) currentSelection;
+                }
+                // Create the adapter and pass it to the spinner
+                SpinnerAdapter<Category> dataAdapter = new SpinnerAdapter<Category>(getApplicationContext(), R.layout.spinner_item_title, getString(R.string.category_select), data);
+                spinner_categories.setAdapter(dataAdapter);
+                // Set the spinner to be the previously selected or initial category
+                if (null != currentCategory) { spinner_categories.setSelection(dataAdapter.getPosition(currentCategory)); }
             }
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
@@ -60,6 +94,10 @@ public class ServiceCreateActivity extends SignedInActivity {
         });
     }
 
+    /**
+     * Removes the listener for data from the database.
+     * This is run during the destroy phase of the activity lifecycle.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -67,20 +105,10 @@ public class ServiceCreateActivity extends SignedInActivity {
         if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
     }
 
-    private void loadSpinnerData(ArrayList<Category> data) {
-        data.add(0, null);
-        // Check if there was already a selection made
-        Object currentSelection = spinner_categories.getSelectedItem();
-        if (null != currentSelection && !currentSelection.toString().equals(getString(R.string.category_list_select))) {
-            currentCategory = (Category) currentSelection;
-        }
-        // Create the adapter and pass it to the spinner
-        SpinnerAdapter<Category> dataAdapter = new SpinnerAdapter<Category>(getApplicationContext(), R.layout.spinner_item_title, getString(R.string.category_select), data);
-        spinner_categories.setAdapter(dataAdapter);
-        // Set the spinner to be the previously selected or initial category
-        if (null != currentCategory) { spinner_categories.setSelection(dataAdapter.getPosition(currentCategory)); }
-    }
-
+    /**
+     * The on-click handler for the create service button
+     * @param view the view object that was clicked
+     */
     public void onCreateServiceClick(View view) {
         final EditText field_service_name = findViewById(R.id.field_service_name);
         final String name = field_service_name.getText().toString().trim();
