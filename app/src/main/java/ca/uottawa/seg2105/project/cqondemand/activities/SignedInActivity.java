@@ -6,6 +6,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
+/**
+ * The abstract class <b>SignedInActivity</b> is a parent of a UI class that expects a user to be signed in.
+ * If a user is not signed in, this class will force the activity to finish and the app will go to the sign in activity.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public abstract class SignedInActivity extends AppCompatActivity {
 
     /**
@@ -30,6 +40,10 @@ public abstract class SignedInActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Removes the signed in user from the state object, finishes the current activity and
+     * launches the home activity.
+     */
     protected void signOut() {
         State.getInstance().setSignedInUser(null);
         Intent intent = new Intent(getApplicationContext(), HomeActivity.class);

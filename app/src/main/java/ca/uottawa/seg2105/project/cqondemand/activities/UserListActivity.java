@@ -20,9 +20,25 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.adapters.UserListAdapter;
 
+/**
+ * The class <b>UserListActivity</b> is a UI class that allows the admin to see and select from list of users.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class UserListActivity extends SignedInActivity {
 
+    /**
+     * Whether or not relevant onClick actions are enabled for within this activity
+     */
     protected boolean onClickEnabled = true;
+
+    /**
+     * The view that displays the list of users
+     */
     protected RecyclerView recycler_list;
 
     /**

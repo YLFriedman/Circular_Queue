@@ -23,23 +23,95 @@ import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
+/**
+ * The class <b>UserViewActivity</b> is a UI class that allows a user to view their account details.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class UserViewActivity extends SignedInActivity {
 
+    /**
+     * Whether or not relevant onClick actions are enabled for within this activity
+     */
     protected boolean onClickEnabled = true;
+
+    /**
+     * A view that displays the account type
+     */
     protected TextView txt_account_type;
+
+    /**
+     * A view that displays the username
+     */
     protected TextView txt_username;
+
+    /**
+     * A view that displays the user's full name
+     */
     protected TextView txt_full_name;
+
+    /**
+     * A view that displays the email address
+     */
     protected TextView txt_email;
+
+    /**
+     * A view that displays the company name
+     */
     protected TextView txt_company_name;
+
+    /**
+     * A view that displays the user rating
+     */
     RatingBar rating_stars;
+
+    /**
+     * A view that displays the see reviews link
+     */
     protected TextView txt_see_reviews;
+
+    /**
+     * A view that displays the number of ratings
+     */
     protected TextView txt_num_ratings;
+
+    /**
+     * A view that displays the phone number
+     */
     protected TextView txt_phone;
+
+    /**
+     * A view that displays the description
+     */
     protected TextView txt_description;
+
+    /**
+     * A view that displays the licensed status
+     */
     protected TextView txt_licensed;
+
+    /**
+     * A view that displays the address
+     */
     protected TextView txt_address;
+
+    /**
+     * A view group containing the service provider views
+     */
     protected LinearLayout service_provider_info;
+
+    /**
+     * A view group containing the rating related views
+     */
     protected LinearLayout grp_rating;
+
+    /**
+     * The user being viewed
+     */
     protected User currentUser;
 
     /**
@@ -76,10 +148,10 @@ public class UserViewActivity extends SignedInActivity {
         }
 
         if (null != currentUser) {
-            setupFields();
+            configureViews();
         } else {
             currentUser = State.getInstance().getSignedInUser();
-            setupFields();
+            configureViews();
         }
 
     }
@@ -95,14 +167,21 @@ public class UserViewActivity extends SignedInActivity {
         onClickEnabled = true;
     }
 
+    /**
+     * Refreshes the activity when a new intent is received
+     * @param intent the intent containing the new information used to update the activity
+     */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         currentUser = (User) intent.getSerializableExtra("user");
-        if (null != currentUser) { setupFields(); }
+        if (null != currentUser) { configureViews(); }
     }
 
-    private void setupFields() {
+    /**
+     * Configures the view items within this activity
+     */
+    private void configureViews() {
         service_provider_info.setVisibility(View.GONE);
         grp_rating.setVisibility(View.GONE);
         if (null == currentUser) {
@@ -168,6 +247,9 @@ public class UserViewActivity extends SignedInActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Loads the user edit activity
+     */
     public void onEditAccountClick() {
         if (!onClickEnabled) { return; }
         onClickEnabled = false;
@@ -176,6 +258,9 @@ public class UserViewActivity extends SignedInActivity {
         startActivity(intent);
     }
 
+    /**
+     * Loads the change password activity
+     */
     public void onChangePasswordClick() {
         if (!onClickEnabled) { return; }
         onClickEnabled = false;
@@ -184,6 +269,9 @@ public class UserViewActivity extends SignedInActivity {
         startActivity(intent);
     }
 
+    /**
+     * Prompts the user with the delete user confirmation screen and triggers the deletion process if confirmed.
+     */
     public void onDeleteAccountClick() {
         if (!onClickEnabled) { return; }
         onClickEnabled = false;
@@ -215,7 +303,11 @@ public class UserViewActivity extends SignedInActivity {
         }
     }
 
-    public void onSeeReviewsClick(View v) {
+    /**
+     * The on-click handler for the see reviews link
+     * @param view the view object that was clicked
+     */
+    public void onSeeReviewsClick(View view) {
         if (!onClickEnabled) { return; }
         onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ReviewListActivity.class);

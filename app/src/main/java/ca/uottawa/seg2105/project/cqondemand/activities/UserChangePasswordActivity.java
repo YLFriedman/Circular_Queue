@@ -17,13 +17,41 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.Authentication;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
+/**
+ * The class <b>BookingViewActivity</b> is a UI class that allows a user to change their password.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class UserChangePasswordActivity extends SignedInActivity {
 
-    protected EditText field_password_old;
-    protected EditText field_password;
-    protected EditText field_password_confirm;
-    protected Button btn_save_password;
-    protected User currentUser;
+    /**
+     * A field used to enter the old password
+     */
+    private EditText field_password_old;
+
+    /**
+     * A field used to enter the new password
+     */
+    private EditText field_password;
+
+    /**
+     * A field used to enter the confirmation password
+     */
+    private EditText field_password_confirm;
+
+    /**
+     * A button used to trigger the save action
+     */
+    private Button btn_save_password;
+
+    /**
+     * The user who's password is being updated
+     */
+    private User currentUser;
 
     /**
      * Sets up the activity. This is run during the creation phase of the activity lifecycle.
@@ -53,6 +81,10 @@ public class UserChangePasswordActivity extends SignedInActivity {
         }
     }
 
+    /**
+     * The on-click handler for the save password button
+     * @param view the view object that was clicked
+     */
     public void onSavePasswordClick(View view) {
         final String oldPassword = field_password_old.getText().toString();
         final String password = field_password.getText().toString();

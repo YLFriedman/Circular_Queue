@@ -29,56 +29,240 @@ import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.utilities.Authentication;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 
+/**
+ * The class <b>SignUpActivity</b> is a UI class that allows a user to create their account.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class SignUpActivity extends AppCompatActivity {
 
+    /**
+     * An enum defining the screen configurations of this activity
+     */
     private enum Screen { FIELDS_1, FIELDS_2 }
 
+    /**
+     * The currently active screen
+     */
     protected Screen screen;
 
+    /**
+     * A field that accepts the username input
+     */
     protected EditText field_username;
+
+    /**
+     * A field that accepts the first name input
+     */
     protected EditText field_first_name;
+
+    /**
+     * A field that accepts the last name input
+     */
     protected EditText field_last_name;
+
+    /**
+     * A field that accepts the email address input
+     */
     protected EditText field_email;
+
+    /**
+     * A field that accepts the password input
+     */
     protected EditText field_password;
+
+    /**
+     * A field that accepts the confirmation password input
+     */
     protected EditText field_password_confirm;
+
+    /**
+     * A spinner that sets the user type selection
+     */
     protected Spinner spinner_user_type;
+
+    /**
+     * A field that allows the user type error to be displayed
+     */
     protected EditText field_user_type_error;
+
+    /**
+     * A field that accepts the company name input
+     */
     protected EditText field_company_name;
+
+    /**
+     * A field that is used to set the licensed status
+     */
     protected Switch switch_licensed;
+
+    /**
+     * A field that accepts the phone number input
+     */
     protected EditText field_phone;
+
+    /**
+     * A field that accepts the description input
+     */
     protected EditText field_description;
+
+    /**
+     * A field that accepts the address unit input
+     */
     protected EditText field_unit;
+
+    /**
+     * A field that accepts the street number input
+     */
     protected EditText field_street_number;
+
+    /**
+     * A field that accepts the street name input
+     */
     protected EditText field_street_name;
+
+    /**
+     * A field that accepts the city input
+     */
     protected EditText field_city;
+
+    /**
+     * A field that accepts the country input
+     */
     protected EditText field_country;
+
+    /**
+     * A spinner that allows the province to be selected
+     */
     protected Spinner spinner_province;
+
+    /**
+     * A field that allows the province error to be displayed
+     */
     protected EditText field_province_error;
+
+    /**
+     * A field that accepts the postal code input
+     */
     protected EditText field_postal;
 
+    /**
+     * A view group that contains the views associated to fields_1
+     */
     protected LinearLayout fields_1;
+
+    /**
+     * A view group that contains the views associated to fields_2
+     */
     protected LinearLayout fields_2;
+
+    /**
+     * A button that triggers the create account action
+     */
     protected Button btn_create_account;
+
+    /**
+     * A button that transitions to the next field set
+     */
     protected Button btn_next;
 
+    /**
+     * Stores the first name value
+     */
     protected String firstName;
+
+    /**
+     * Stores the lase name value
+     */
     protected String lastName;
+
+    /**
+     * Stores the username value
+     */
     protected String username;
+
+    /**
+     * Stores the email address value
+     */
     protected String email;
+
+    /**
+     * Stores the password value
+     */
     protected String password;
+
+    /**
+     * Stores the confirmation password value
+     */
     protected String passwordConfirm;
+
+    /**
+     * Stores the user type value
+     */
     protected User.Type userType;
+
+    /**
+     * Stores the company name value
+     */
     protected String companyName;
+
+    /**
+     * Stores the licensed status value
+     */
     protected boolean licensed;
+
+    /**
+     * Stores the phone number value
+     */
     protected String phoneNumber;
+
+    /**
+     * Stores the description value
+     */
     protected String description;
+
+    /**
+     * Stores the address unit value
+     */
     protected String unit;
+
+    /**
+     * Stores the street number text value
+     */
     protected String streetNumber;
+
+    /**
+     * Stores the street number integer value
+     */
     protected int streetNumberInt;
+
+    /**
+     * Stores the street name value
+     */
     protected String streetName;
+
+    /**
+     * Stores the city value
+     */
     protected String city;
+
+    /**
+     * Stores the province value
+     */
     protected String province;
+
+    /**
+     * Stores the country value
+     */
     protected String country;
+
+    /**
+     * Stores the postal code value
+     */
     protected String postalCode;
 
     /**
@@ -139,9 +323,12 @@ public class SignUpActivity extends AppCompatActivity {
         provinces.add(0, null);
         spinner_province.setAdapter(new SpinnerAdapter<String>(getApplicationContext(), R.layout.spinner_item_title, getString(R.string.select_province), provinces));
 
-        //testMode();
     }
 
+    /**
+     * Overrides the back button for this activity. When not in the fields_1 field set, go back in the list
+     * of field sets. When on the fields_1 field set, finish the activity with a canceled result.
+     */
     @Override
     public void onBackPressed() {
         if (Screen.FIELDS_2 == screen) {
@@ -153,6 +340,11 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sets the current field set
+     * @param screen
+     * @param showSubmit
+     */
     protected void setScreen(@NonNull Screen screen, boolean showSubmit) {
         this.screen = screen;
         switch (screen) {
@@ -174,6 +366,10 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Validates the fields in fields_1
+     * @return true if the fields in fields_1 have valid data
+     */
     protected boolean fields_1AreValid() {
 
         firstName = field_first_name.getText().toString().trim();
@@ -250,6 +446,10 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Validates the fields in fields_2
+     * @return true if the fields in fields_2 have valid data
+     */
     protected boolean fields_2AreValid() {
 
         companyName = field_company_name.getText().toString().trim();
@@ -353,6 +553,10 @@ public class SignUpActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * The onClick handler for the create user button.
+     * @param view the view object that was clicked
+     */
     public void onCreateClick(View view) {
 
         if (!fields_1AreValid() || (User.Type.SERVICE_PROVIDER == userType && !fields_2AreValid())) { return; }
@@ -398,19 +602,14 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * The onClick handler for the next button.  Transitions from the current field set to the next one.
+     * @param view the view object that was clicked
+     */
     public void onNextClick(View view) {
         if (fields_1AreValid()) {
             setScreen(Screen.FIELDS_2, true);
         }
-    }
-
-    private void testMode() {
-        field_username.setText("test");
-        field_first_name.setText("Test");
-        field_last_name.setText("User");
-        field_email.setText("test@email.com");
-        field_password.setText("cqpass");
-        field_password_confirm.setText("cqpass");
     }
 
 }

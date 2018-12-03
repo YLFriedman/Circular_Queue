@@ -48,7 +48,7 @@ public class HomeActivity extends AppCompatActivity {
      * Overrides the back button to move the activity to the background instead of finishing it
      */
     @Override
-    public void onBackPressed () {
+    public void onBackPressed() {
         moveTaskToBack(false);
     }
 

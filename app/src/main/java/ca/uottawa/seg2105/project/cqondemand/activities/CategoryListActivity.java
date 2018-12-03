@@ -149,6 +149,9 @@ public class CategoryListActivity extends SignedInActivity {
 
     /**
      * Handles results from an activity that was launched and finished
+     * @param requestCode the request code for the launched activity
+     * @param resultCode the result code from the finishing activity
+     * @param intent the intent object received from the finishing activity
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
