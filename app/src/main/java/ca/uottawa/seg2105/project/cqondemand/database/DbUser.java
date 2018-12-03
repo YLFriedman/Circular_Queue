@@ -25,27 +25,110 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
+/**
+ * The class <b> DbUser </b> is meant to take a ServiceProvider or User object, and put it in a form more
+ * easily stored in the database. Methods from moving between DbUser and User/ServiceProvider are provider, as
+ * well as database read/write methods
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class DbUser extends DbItem<User> {
 
+    /**
+     * The unique name associated with a DbUser
+     */
     public String unique_name;
+
+    /**
+     * The first name associated with a DbUser
+     */
     public String first_name;
+
+    /**
+     * The last name associated with a DbUser
+     */
     public String last_name;
+
+    /**
+     * The user name associated with a DbUser
+     */
     public String username;
+
+    /**
+     * The email associated with a DbUser
+     */
     public String email;
+
+    /**
+     * The encrypted password associated with a DbUser
+     */
     public String password;
+
+    /**
+     * The type associated with a DbUser (Admin, Homeowner, or ServiceProvider)
+     */
     public String type;
+
+    /**
+     * The address associated with a DbUser (service provider only)
+     */
     public DbAddress address;
+
+    /**
+     * The licensed status associated with a DbUser (service provider only)
+     */
     public Boolean licensed;
+
+    /**
+     * The phone number associated with a DbUser (service provider only)
+     */
     public String phone_number;
+
+    /**
+     * The company name associated with a DbUser (service provider only)
+     */
     public String company_name;
+
+    /**
+     * The description associated with a DbUser (service provider only)
+     */
     public String description;
+
+    /**
+     * The overall rating associated with a DbUser (service provider only)
+     */
     public Integer rating;
+
+    /**
+     * The running total of ratings associated with a DbUser (service provider only)
+     */
     public Long running_rating_total;
+
+    /**
+     * The number of ratings associated with a DbUser (service provider only)
+     */
     public Integer num_ratings;
+
+    /**
+     * The availability list  associated with a DbUser (service provider only)
+     */
     public List<DbAvailability> availabilities;
 
+    /**
+     * Empty constructor for FireBase to create a DbUser object
+     */
     public DbUser() {}
 
+    /**
+     * Constructor that creates a DbUser object based off of an input User object. If the input object
+     * is also of type ServiceProvider, the relevant fields are added.
+     *
+     * @param item the User the new DbUser object will be based off of
+     */
     public DbUser(User item) {
         super(item.getKey());
         unique_name = item.getUniqueName();
@@ -73,6 +156,11 @@ public class DbUser extends DbItem<User> {
         }
     }
 
+    /**
+     * Method to create a User object based off of this DbUser object
+     *
+     * @return a User generated from this DbUser
+     */
     @NonNull
     public User toDomainObj() {
         if (User.Type.parse(type) == User.Type.SERVICE_PROVIDER) {
@@ -91,6 +179,12 @@ public class DbUser extends DbItem<User> {
         return new User(getKey(), first_name, last_name, username, email, User.Type.parse(type), password);
     }
 
+    /**
+     * Adds a user to the database
+     *
+     * @param user the user to be added in the database
+     * @param listener the listener that will handle the success/failure of this operation
+     */
     public static void createUser(@NonNull final User user, @Nullable final AsyncActionEventListener listener) {
         getUserByUsername(user.getUsername(), new AsyncSingleValueEventListener<User>() {
             @Override
@@ -108,10 +202,23 @@ public class DbUser extends DbItem<User> {
         });
     }
 
+    /**
+     * Updates a user's database information, does not include any other updates
+     *
+     * @param user the updated user
+     * @param listener the listener that will handle the success/failure of this operations
+     */
     public static void updateUser(@NonNull final User user, @Nullable final AsyncActionEventListener listener) {
         updateUser(user, null, listener);
     }
 
+    /**
+     * Updates a user's database information, and possibly updates other locations/objects
+     *
+     * @param user the updated user
+     * @param otherUpdates a map of other updates to perform
+     * @param listener the listener that will handle the success/failure of this operations
+     */
     public static void updateUser(@NonNull final User user, @Nullable Map<String, Object> otherUpdates, @Nullable final AsyncActionEventListener listener) {
         if (null == user.getKey() || user.getKey().isEmpty()) { throw new IllegalArgumentException("A user object with a key is required. Unable to update the database without the key."); }
         final AsyncActionEventListener loggedInUserUpdateListener = new AsyncActionEventListener() {
@@ -143,6 +250,12 @@ public class DbUser extends DbItem<User> {
         });
     }
 
+    /**
+     * Deletes a user from the database, updating all related locations to reflect this deletion
+     *
+     * @param user the user to be deleted
+     * @param listener the listener that will handle the success/failure of this operation
+     */
     public static void deleteUser(final @NonNull User user, final @Nullable AsyncActionEventListener listener) {
         if (null == user.getKey() || user.getKey().isEmpty()) { throw new IllegalArgumentException("A user object with a key is required. Unable to delete from the database without the key."); }
         final AsyncActionEventListener loggedInUserUpdateListener = new AsyncActionEventListener() {
@@ -160,10 +273,20 @@ public class DbUser extends DbItem<User> {
         deleteUserRelational(user, loggedInUserUpdateListener);
     }
 
+    /**
+     * Retrieves a specific user from the database, based on user key
+     * @param key the user key associated with the user to be retrieved
+     * @param listener the listener that will handle the success/failure of this operation
+     */
     public static void getUser(@NonNull String key, @NonNull final AsyncSingleValueEventListener<User> listener) {
         DbUtil.getItem(DbUtil.DataType.USER, key, listener);
     }
 
+    /**
+     * Retrieves a specific user from the database, based on username
+     * @param username the username associated with the user to be retrieved
+     * @param listener the listener that will handle the success/failure of this operation
+     */
     public static void getUserByUsername(@NonNull String username, @NonNull final AsyncSingleValueEventListener<User> listener) {
         DbQuery query = DbQuery.createChildValueQuery("unique_name").setEqualsFilter(User.getUniqueName(username));
         DbUtil.getItems(DbUtil.DataType.USER, query, new AsyncValueEventListener<User>() {
@@ -178,17 +301,25 @@ public class DbUser extends DbItem<User> {
         });
     }
 
-    public static void getUsers(@NonNull AsyncValueEventListener<User> listener) {
-        DbQuery query = DbQuery.createChildValueQuery("unique_name");
-        DbUtil.getItems(DbUtil.DataType.USER, query, listener);
-    }
-
+    /**
+     * Method to retrieve the full user list from the database, updating in real time as changes are made
+     * to the database
+     *
+     * @param listener the listener that will handle the success/failure of this operation
+     * @return a DbListenerHandle that will handle the ValueEventListener attached to the database
+     */
     @NonNull
     public static DbListenerHandle<?> getUsersLive(@NonNull final AsyncValueEventListener<User> listener) {
         DbQuery query = DbQuery.createChildValueQuery("unique_name");
         return DbUtil.getItemsLive(DbUtil.DataType.USER, query, listener);
     }
 
+    /**
+     * Updates a users password, updating all relevant locations
+     * @param user the user whose password will be updated
+     * @param newPassword the new password
+     * @param listener the listener that will handle the success/failure of this operation
+     */
     public static void updatePassword(@NonNull User user, @NonNull String newPassword, @Nullable final AsyncSingleValueEventListener<User> listener) {
         final User newUser = new User(user.getKey(), user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail(), user.getType(), newPassword);
         updateUser(newUser, new AsyncActionEventListener() {
@@ -199,6 +330,13 @@ public class DbUser extends DbItem<User> {
         });
     }
 
+    /**
+     * Private method to update a user in all the relational locations that user is stored.
+     *
+     * @param user the user to be updated
+     * @param otherUpdates the update map that has been constructed thus far
+     * @param listener the listener that will handle the success/failure of this operation
+     */
     private static void updateUserRelational(@NonNull final User user, @Nullable Map<String, Object> otherUpdates, @Nullable final AsyncActionEventListener listener) {
         final String userKey = user.getKey();
         final DbUser updatedUser = new DbUser(user);
@@ -232,6 +370,13 @@ public class DbUser extends DbItem<User> {
         });
     }
 
+    /**
+     * Builds an update map for all the locations in the "service_users" node where a particular user is stored
+     *
+     * @param updatedUser the user to be updated
+     * @param pathMap the update map constructed thus far
+     * @param listener the listener that will handle the success/failure of this operation
+     */
     private static void buildServiceUsersMap(DbUser updatedUser, Map<String, Object> pathMap, AsyncSingleValueEventListener<Map<String,Object>> listener){
         String userKey = updatedUser.getKey();
         DbUtilRelational.LookupType.SERVICE_USERS.getRef().child(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -251,6 +396,13 @@ public class DbUser extends DbItem<User> {
         });
     }
 
+    /**
+     * Builds an update map for all the locations in the "user_bookings" node that a particular user is stored
+     *
+     * @param updatedUser the user to be updated
+     * @param map the update map constructed thus far
+     * @param listener the listener that will handle the success/failure of this operation
+     */
     private static void buildBookingsUpdateMap(DbUser updatedUser, Map<String, Object> map, AsyncSingleValueEventListener<Map<String, Object>> listener) {
         String userKey = updatedUser.getKey();
         String objectType;
@@ -275,6 +427,12 @@ public class DbUser extends DbItem<User> {
         });
     }
 
+    /**
+     * Deletes all the occurences of a user in relational nodes
+     *
+     * @param user the user to be deleted
+     * @param listener the listener that will handle the success/failure of this operation
+     */
     public static void deleteUserRelational(@NonNull User user, @Nullable final AsyncActionEventListener listener) {
         final String userKey = user.getKey();
         final Map<String, Object> pathMap = new HashMap<>();
@@ -304,14 +462,14 @@ public class DbUser extends DbItem<User> {
         });
     }
 
-    public static void getServicesProvided(@NonNull ServiceProvider provider, @NonNull AsyncValueEventListener<Service> listener) {
-        if (provider.getKey() == null || provider.getKey().isEmpty()) {
-            throw new IllegalArgumentException("A service provider object with a key is required. Unable to query the database without the key.");
-        }
-        DbQuery query = DbQuery.createChildValueQuery("name");
-        DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.USER_SERVICES, provider.getKey(), query, listener);
-    }
 
+    /**
+     * Retrieves all the services associated with a specific user. Data is updated in real time every time
+     * it is updated in the database
+     * @param provider the provider whose services will be retrieved
+     * @param listener the listener that will handle the success/failure of this operation
+     * @return a DbListenerHandle that will handle the ValueEventListener attached to the database
+     */
     @NonNull
     public static DbListenerHandle<?> getServicesProvidedLive(@NonNull ServiceProvider provider, @NonNull AsyncValueEventListener<Service> listener) {
         if (provider.getKey() == null || provider.getKey().isEmpty()) {
