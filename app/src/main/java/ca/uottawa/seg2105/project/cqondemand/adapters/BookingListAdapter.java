@@ -18,7 +18,7 @@ import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
 
  /**
- * An adapter class for the RecyclerView that contains a list of categories
+ * An adapter class for the RecyclerView that contains a list of Bookings
  *
  * Course: SEG 2105 B
  * Final Project
@@ -29,6 +29,9 @@ import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
 
 public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.ViewHolder> {
 
+     /**
+      * The application context that the adapter is being used in
+      */
     protected Context context;
      /**
       * Stores the list of booking objects data
