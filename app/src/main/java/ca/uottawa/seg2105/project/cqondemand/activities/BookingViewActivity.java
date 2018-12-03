@@ -13,7 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -32,38 +31,161 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
+/**
+ * The class <b>BookingViewActivity</b> is a UI class that allows a user to see the details of an individual booking.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class BookingViewActivity extends SignedInActivity {
 
+    /**
+     * An enum defining the view various modes of this activity
+     */
     private enum Mode { HOMEOWNER, SERVICE_PROVIDER }
+
+    /**
+     * The currently active mode
+     */
     private Mode mode;
-    private boolean itemClickEnabled;
+
+    /**
+     * Whether or not relevant onClick actions are enabled for within this activity
+     */
+    private boolean onClickEnabled;
+
+    /**
+     * The booking that is being displayed
+     */
     private Booking currentBooking;
+
+    /**
+     * The review associated with the current booking
+     */
     private Review currentReview;
+
+    /**
+     * The format to be used for the date (month day, year  hour:minute am/pm)
+     */
     private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMMM d, yyyy  h:mm a", Locale.CANADA);
+
+    /**
+     *The format to be used for the day (month day, year)
+     */
     private SimpleDateFormat DAY_FORMAT = new SimpleDateFormat("MMMM d, yyyy", Locale.CANADA);
+
+    /**
+     * The format to be used for the time (hour:minute am/pm)
+     */
     private SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h:mm a", Locale.CANADA);
+
+    /**
+     * A view group for service provider related views
+     */
     private LinearLayout grp_provider;
+
+    /**
+     * A view group for homeowner related views
+     */
     private LinearLayout grp_homeowner;
+
+    /**
+     * A view group for views related to a booking with a cancelled status
+     */
     private LinearLayout grp_cancelled;
+
+    /**
+     * A view group for views related to a booking with an approved status
+     */
     private LinearLayout grp_approved;
+
+    /**
+     * A view that displays the homeowner
+     */
     private TextView txt_homeowner;
+
+    /**
+     * A view that displays the service provider
+     */
     private TextView txt_service_provider;
+
+    /**
+     * A view that displays the service name
+     */
     private TextView txt_service_name;
+
+    /**
+     * A view that displays the date of the booking
+     */
     private TextView txt_date;
+
+    /**
+     * A view that displays the time of the booking
+     */
     private TextView txt_time;
+
+    /**
+     * A view that displays the rate of the service
+     */
     private TextView txt_service_rate;
+
+    /**
+     * A view that displays the date that the booking was created
+     */
     private TextView txt_created_on;
+
+    /**
+     * A view that displays the status of the booking
+     */
     private TextView txt_status;
+
+    /**
+     * A view that displays the status icon of the booking
+     */
     private ImageView img_status_icon;
+
+    /**
+     * A view that displays the date/time that the booking was approved
+     */
     private TextView txt_approved_on;
+
+    /**
+     * A view that displays the date/time that the booking was cancelled
+     */
     private TextView txt_cancelled_on;
+
+    /**
+     * A view that displays the reason that the booking was cancelled
+     */
     private TextView txt_cancelled_reason;
+
+    /**
+     * A view that displays who cancelled the booking (homeowner name or service provider company name)
+     */
     private TextView txt_cancelled_by;
+
+    /**
+     * A view that loads the review view activity when clicked
+     */
     private TextView txt_see_review;
+
+    /**
+     * A button view that loads the review creation activity
+     */
     private Button btn_submit_review;
+
+    /**
+     * A button view that changes the booking status to approved
+     */
     private Button btn_approve_booking;
 
-
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,15 +241,19 @@ public class BookingViewActivity extends SignedInActivity {
         txt_see_review = findViewById(R.id.txt_see_review);
         txt_see_review.setVisibility(View.GONE);
 
-        configureView();
+        configureViews();
 
     }
 
+    /**
+     * Enables the relevant onClick actions within this activity and checks if the submit review button can be displayed.
+     * This is run during the resume phase of the activity lifecycle.
+     */
     @Override
     public void onResume() {
         super.onResume();
         btn_submit_review.setVisibility(View.GONE);
-        itemClickEnabled = true;
+        onClickEnabled = true;
         if (Booking.Status.COMPLETED == currentBooking.getStatus()) {
             DbReview.getReview(currentBooking.getServiceProviderKey(), currentBooking.getKey(), new AsyncSingleValueEventListener<Review>() {
                 @Override
@@ -147,6 +273,10 @@ public class BookingViewActivity extends SignedInActivity {
         }
     }
 
+    /**
+     * Sets the menu to be used in the action bar
+     * @return true if the options menu is created, false otherwise
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (Booking.Status.REQUESTED == currentBooking.getStatus() || Booking.Status.APPROVED == currentBooking.getStatus()) {
@@ -156,6 +286,11 @@ public class BookingViewActivity extends SignedInActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * The onClick handler for the action bar menu items
+     * @param item the menu item that was clicked
+     * @return true if the menu item onClick was handled, the result of the super class method otherwise
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -164,7 +299,10 @@ public class BookingViewActivity extends SignedInActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void configureView() {
+    /**
+     * Sets up the views contained within the activity based on the current mode and the booking status
+     */
+    private void configureViews() {
 
         btn_submit_review.setVisibility(View.GONE);
         btn_approve_booking.setVisibility(View.GONE);
@@ -213,26 +351,37 @@ public class BookingViewActivity extends SignedInActivity {
 
     }
 
-    public void onSeeProviderProfileClick(View v) {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+    /**
+     * The on-click handler for the see provider profile link
+     * @param view the view object that was clicked
+     */
+    public void onSeeProviderProfileClick(View view) {
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ServiceProviderProfileActivity.class);
         intent.putExtra("provider", currentBooking.getServiceProvider());
         startActivity(intent);
     }
 
-    public void onRateServiceClick(View v) {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+    /**
+     * The on-click handler for the create rating button
+     * @param view the view object that was clicked
+     */
+    public void onRateServiceClick(View view) {
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ReviewCreateActivity.class);
         intent.putExtra("booking", currentBooking);
         startActivity(intent);
     }
 
+    /**
+     * Prompts the user with the cancel booking confirmation screen and triggers the cancellation process if confirmed.
+     */
     private void cancelBooking() {
-        if (Booking.Status.REQUESTED != currentBooking.getStatus() && Booking.Status.APPROVED != currentBooking.getStatus()) { configureView(); return; }
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (Booking.Status.REQUESTED != currentBooking.getStatus() && Booking.Status.APPROVED != currentBooking.getStatus()) { configureViews(); return; }
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         View cancelView = getLayoutInflater().inflate(R.layout.dialog_cancel_booking, null);
         EditText cancelReasonField = cancelView.findViewById(R.id.field_cancellation_reason);
         AlertDialog dialog = new AlertDialog.Builder(this)
@@ -245,8 +394,8 @@ public class BookingViewActivity extends SignedInActivity {
                         DbBooking.cancelBooking(currentBooking, cancelReasonField.getText().toString().trim(), new AsyncActionEventListener() {
                             @Override
                             public void onSuccess() {
-                                itemClickEnabled = true;
-                                configureView();
+                                onClickEnabled = true;
+                                configureViews();
                                 Toast.makeText(getApplicationContext(), getString(R.string.booking_cancelled_successfully), Toast.LENGTH_LONG).show();
                             }
                             @Override
@@ -258,30 +407,34 @@ public class BookingViewActivity extends SignedInActivity {
                                     default: // Some other kind of error
                                         Toast.makeText(getApplicationContext(), String.format(getString(R.string.update_generic_error_template), getString(R.string.booking).toLowerCase()), Toast.LENGTH_LONG).show();
                                 }
-                                itemClickEnabled = true;
+                                onClickEnabled = true;
                             }
                         });
                     }
                 })
                 .setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
-                    public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
+                    public void onDismiss(DialogInterface dialog) { onClickEnabled = true; }
                 })
                 .setNegativeButton(R.string.close, null).show();
         dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.text_primary_dark));
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.dialog_red));
     }
 
-    public void onApproveBookingClick(View v) {
-        if (Booking.Status.REQUESTED != currentBooking.getStatus()) { configureView(); return; }
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+    /**
+     * The on-click handler for the approve booking button.
+     * @param view the view object that was clicked
+     */
+    public void onApproveBookingClick(View view) {
+        if (Booking.Status.REQUESTED != currentBooking.getStatus()) { configureViews(); return; }
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         btn_approve_booking.setEnabled(false);
         DbBooking.approveBooking(currentBooking, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
-                itemClickEnabled = true;
-                configureView();
+                onClickEnabled = true;
+                configureViews();
                 Toast.makeText(getApplicationContext(), getString(R.string.booking_approved_successfully), Toast.LENGTH_LONG).show();
             }
             @Override
@@ -294,14 +447,18 @@ public class BookingViewActivity extends SignedInActivity {
                         Toast.makeText(getApplicationContext(), String.format(getString(R.string.update_generic_error_template), getString(R.string.booking).toLowerCase()), Toast.LENGTH_LONG).show();
                 }
                 btn_approve_booking.setEnabled(true);
-                itemClickEnabled = true;
+                onClickEnabled = true;
             }
         });
     }
 
-    public void onSeeReviewClick(View v) {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+    /**
+     * The on-click handler for the see review link
+     * @param view the view object that was clicked
+     */
+    public void onSeeReviewClick(View view) {
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ReviewViewActivity.class);
         intent.putExtra("review", currentReview);
         if (State.getInstance().getSignedInUser() instanceof ServiceProvider) {

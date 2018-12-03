@@ -20,12 +20,36 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 import ca.uottawa.seg2105.project.cqondemand.adapters.UserListAdapter;
 
+/**
+ * The class <b>UserListActivity</b> is a UI class that allows the admin to see and select from list of users.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class UserListActivity extends SignedInActivity {
 
-    protected boolean itemClickEnabled = true;
+    /**
+     * Whether or not relevant onClick actions are enabled for within this activity
+     */
+    protected boolean onClickEnabled = true;
+
+    /**
+     * The view that displays the list of users
+     */
     protected RecyclerView recycler_list;
+
+    /**
+     * Stores the handle to the database callback so that it can be cleaned up when the activity ends
+     */
     protected DbListenerHandle<?> dbListenerHandle;
 
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,8 +66,8 @@ public class UserListActivity extends SignedInActivity {
                 //user_list_adapter.notifyItemRangeRemoved(0, user_list_adapter.getItemCount());
                 recycler_list.setAdapter(new UserListAdapter(getApplicationContext(), data, new View.OnClickListener() {
                     public void onClick(final View view) {
-                        if (!itemClickEnabled) { return; }
-                        itemClickEnabled = false;
+                        if (!onClickEnabled) { return; }
+                        onClickEnabled = false;
                         Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
                         intent.putExtra("user", (Serializable) view.getTag());
                         startActivity(intent);
@@ -57,6 +81,10 @@ public class UserListActivity extends SignedInActivity {
         });
     }
 
+    /**
+     * Removes the listener for data from the database.
+     * This is run during the destroy phase of the activity lifecycle.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -64,10 +92,14 @@ public class UserListActivity extends SignedInActivity {
         if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
     }
 
+    /**
+     * Enables the relevant onClick actions within this activity.
+     * This is run during the resume phase of the activity lifecycle.
+     */
     @Override
     public void onResume() {
         super.onResume();
-        itemClickEnabled = true;
+        onClickEnabled = true;
     }
 
 }

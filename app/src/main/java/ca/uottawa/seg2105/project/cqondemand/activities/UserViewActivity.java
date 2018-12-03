@@ -23,25 +23,101 @@ import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
+/**
+ * The class <b>UserViewActivity</b> is a UI class that allows a user to view their account details.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class UserViewActivity extends SignedInActivity {
 
-    protected boolean itemClickEnabled = true;
+    /**
+     * Whether or not relevant onClick actions are enabled for within this activity
+     */
+    protected boolean onClickEnabled = true;
+
+    /**
+     * A view that displays the account type
+     */
     protected TextView txt_account_type;
+
+    /**
+     * A view that displays the username
+     */
     protected TextView txt_username;
+
+    /**
+     * A view that displays the user's full name
+     */
     protected TextView txt_full_name;
+
+    /**
+     * A view that displays the email address
+     */
     protected TextView txt_email;
+
+    /**
+     * A view that displays the company name
+     */
     protected TextView txt_company_name;
+
+    /**
+     * A view that displays the user rating
+     */
     RatingBar rating_stars;
+
+    /**
+     * A view that displays the see reviews link
+     */
     protected TextView txt_see_reviews;
+
+    /**
+     * A view that displays the number of ratings
+     */
     protected TextView txt_num_ratings;
+
+    /**
+     * A view that displays the phone number
+     */
     protected TextView txt_phone;
+
+    /**
+     * A view that displays the description
+     */
     protected TextView txt_description;
+
+    /**
+     * A view that displays the licensed status
+     */
     protected TextView txt_licensed;
+
+    /**
+     * A view that displays the address
+     */
     protected TextView txt_address;
+
+    /**
+     * A view group containing the service provider views
+     */
     protected LinearLayout service_provider_info;
+
+    /**
+     * A view group containing the rating related views
+     */
     protected LinearLayout grp_rating;
+
+    /**
+     * The user being viewed
+     */
     protected User currentUser;
 
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,29 +148,40 @@ public class UserViewActivity extends SignedInActivity {
         }
 
         if (null != currentUser) {
-            setupFields();
+            configureViews();
         } else {
             currentUser = State.getInstance().getSignedInUser();
-            setupFields();
+            configureViews();
         }
 
     }
 
+    /**
+     * Enables the relevant onClick actions within this activity.
+     * This is run during the resume phase of the activity lifecycle.
+     */
     @Override
     public void onResume() {
         super.onResume();
         if (isFinishing()) { return; }
-        itemClickEnabled = true;
+        onClickEnabled = true;
     }
 
+    /**
+     * Refreshes the activity when a new intent is received
+     * @param intent the intent containing the new information used to update the activity
+     */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         currentUser = (User) intent.getSerializableExtra("user");
-        if (null != currentUser) { setupFields(); }
+        if (null != currentUser) { configureViews(); }
     }
 
-    private void setupFields() {
+    /**
+     * Configures the view items within this activity
+     */
+    private void configureViews() {
         service_provider_info.setVisibility(View.GONE);
         grp_rating.setVisibility(View.GONE);
         if (null == currentUser) {
@@ -128,6 +215,10 @@ public class UserViewActivity extends SignedInActivity {
         }
     }
 
+    /**
+     * Sets the menu to be used in the action bar
+     * @return true if the options menu is created, false otherwise
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         User user = State.getInstance().getSignedInUser();
@@ -141,6 +232,11 @@ public class UserViewActivity extends SignedInActivity {
         return true;
     }
 
+    /**
+     * The onClick handler for the action bar menu items
+     * @param item the menu item that was clicked
+     * @return true if the menu item onClick was handled, the result of the super class method otherwise
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -151,25 +247,34 @@ public class UserViewActivity extends SignedInActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Loads the user edit activity
+     */
     public void onEditAccountClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), UserEditActivity.class);
         intent.putExtra("user", currentUser);
         startActivity(intent);
     }
 
+    /**
+     * Loads the change password activity
+     */
     public void onChangePasswordClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), UserChangePasswordActivity.class);
         intent.putExtra("user", currentUser);
         startActivity(intent);
     }
 
+    /**
+     * Prompts the user with the delete user confirmation screen and triggers the deletion process if confirmed.
+     */
     public void onDeleteAccountClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         if (null != currentUser) {
             AlertDialog dialog = new AlertDialog.Builder(this)
                     .setTitle(R.string.delete_account)
@@ -190,7 +295,7 @@ public class UserViewActivity extends SignedInActivity {
                     })
                     .setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
-                        public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
+                        public void onDismiss(DialogInterface dialog) { onClickEnabled = true; }
                     })
                     .setNegativeButton(R.string.cancel, null).show();
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.text_primary_dark));
@@ -198,9 +303,13 @@ public class UserViewActivity extends SignedInActivity {
         }
     }
 
-    public void onSeeReviewsClick(View v) {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+    /**
+     * The on-click handler for the see reviews link
+     * @param view the view object that was clicked
+     */
+    public void onSeeReviewsClick(View view) {
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ReviewListActivity.class);
         intent.putExtra("provider", currentUser);
         startActivity(intent);

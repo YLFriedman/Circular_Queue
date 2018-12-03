@@ -12,19 +12,66 @@ import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-
+/**
+ * The class <b>ReviewViewActivity</b> is a UI class that allows a user to see a review.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class ReviewViewActivity extends SignedInActivity {
 
+    /**
+     * The review that is being dispalyed
+     */
     protected Review currentReview;
+
+    /**
+     * The service provider that the review is for
+     */
     protected ServiceProvider currentProvider;
+
+    /**
+     * The view that displays the service provider
+     */
     protected TextView txt_service_provider;
+
+    /**
+     * The view that displays name of the service that was reviewed
+     */
     protected TextView txt_service_name;
+
+    /**
+     * The view that displays the homeowner who created the review
+     */
     protected TextView txt_created_by;
+
+    /**
+     * The view that displays the date and time that the review was created
+     */
     protected TextView txt_created_on;
+
+    /**
+     * The view that displays the number of stars that were set in the review
+     */
     protected RatingBar rating_stars;
+
+    /**
+     * The view that displays the homeowner comments for the review
+     */
     protected TextView txt_comments;
+
+    /**
+     * The format to be used for the date (month day, year  hour:minute am/pm)
+     */
     protected SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMMM d, yyyy  h:mm a", Locale.CANADA);
 
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,10 +99,6 @@ public class ReviewViewActivity extends SignedInActivity {
         rating_stars = findViewById(R.id.rating_stars);
         txt_comments = findViewById(R.id.txt_comments);
 
-        setupFields();
-    }
-
-    private void setupFields() {
         txt_service_provider.setText("");
         txt_service_name.setText("");
         txt_created_by.setText("");
@@ -70,6 +113,7 @@ public class ReviewViewActivity extends SignedInActivity {
             rating_stars.setRating(currentReview.getRating());
             txt_comments.setText(currentReview.getComment());
         }
+
     }
 
 }

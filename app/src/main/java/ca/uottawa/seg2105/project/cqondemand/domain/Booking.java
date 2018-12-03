@@ -21,6 +21,9 @@ import java.util.Date;
  */
 public class Booking implements Serializable {
 
+    /**
+     * Stores the class version for serialization and de-serialization
+     */
     private static final long serialVersionUID = 1;
     /**
      * Stores the database key associated with this booking

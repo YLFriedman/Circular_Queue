@@ -26,27 +26,111 @@ import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.utilities.FieldValidation;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
+/**
+ * The class <b>UserEditActivity</b> is a UI class that allows a user to edit their account details.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class UserEditActivity extends SignedInActivity {
 
+    /**
+     * The user that is being edited
+     */
     protected User currentUser;
+
+    /**
+     * A field that accepts the username value
+     */
     protected EditText field_username;
+
+    /**
+     * A field that accepts the first name value
+     */
     protected EditText field_first_name;
+
+    /**
+     * A field that accepts the last name value
+     */
     protected EditText field_last_name;
+
+    /**
+     * A field that accepts the email address value
+     */
     protected EditText field_email;
+
+    /**
+     * A view group for the service provider specific fields
+     */
     protected LinearLayout fields_2;
+
+    /**
+     * A field that accepts the company name value
+     */
     protected EditText field_company_name;
+
+    /**
+     * A field that accepts the licensed status value
+     */
     protected Switch switch_licensed;
+
+    /**
+     * A field that accepts the phone number value
+     */
     protected EditText field_phone;
+
+    /**
+     * A field that accepts the description value
+     */
     protected EditText field_description;
+
+    /**
+     * A field that accepts the address unit value
+     */
     protected EditText field_unit;
+
+    /**
+     * A field that accepts the street number value
+     */
     protected EditText field_street_number;
+
+    /**
+     * A field that accepts the street name value
+     */
     protected EditText field_street_name;
+
+    /**
+     * A field that accepts the city value
+     */
     protected EditText field_city;
+
+    /**
+     * A field that accepts the country value
+     */
     protected EditText field_country;
+
+    /**
+     * A spinner that allows the province to be selected
+     */
     protected Spinner spinner_province;
+
+    /**
+     * A field that allows the province error to be displayed
+     */
     protected EditText field_province_error;
+
+    /**
+     * A field that accepts the postal code value
+     */
     protected EditText field_postal;
 
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +198,10 @@ public class UserEditActivity extends SignedInActivity {
         }
     }
 
+    /**
+     * The on-click handler for the save button
+     * @param view the view object that was clicked
+     */
     public void onSaveUserClick(View view) {
         String firstName = field_first_name.getText().toString().trim();
         String lastName = field_last_name.getText().toString().trim();

@@ -34,22 +34,81 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
+/**
+ * The class <b>ServiceListActivity</b> is a UI class that allows a user to see and select from list of services.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class ServiceListActivity extends SignedInActivity {
 
-    protected enum Mode { LIST_SERVICES, MANAGE_SERVICES, ADD_PROVIDER_SERVICES, REMOVE_PROVIDER_SERVICES, LIST_PROVIDER_SERVICES, PICK_FOR_BOOKING }
-    protected boolean itemClickEnabled = true;
-    protected Mode mode;
-    protected boolean useCategory;
+    /**
+     * An enum defining the view various modes of this activity
+     */
+    private enum Mode { LIST_SERVICES, MANAGE_SERVICES, ADD_PROVIDER_SERVICES, REMOVE_PROVIDER_SERVICES, LIST_PROVIDER_SERVICES, PICK_FOR_BOOKING }
+
+    /**
+     * The currently active mode
+     */
+    private Mode mode;
+
+    /**
+     * Whether or not relevant onClick actions are enabled for within this activity
+     */
+    private boolean onClickEnabled = true;
+
+    /**
+     * Whether or not the category should be used to filter the services
+     */
+    private boolean useCategory;
+
+    /**
+     * A view that displays the category name
+     */
     TextView txt_sub_title;
+
+    /**
+     * A view that divides the category name from the service list
+     */
     View divider_txt_sub_title;
-    protected RecyclerView recycler_list;
-    protected ServiceListAdapter service_list_adapter;
-    protected Category currentCategory;
-    protected User currentUser;
-    protected ServiceProvider currentProvider;
-    protected DbListenerHandle<?> dbListenerHandle;
+
+    /**
+     * The view that displays the list of services
+     */
+    private RecyclerView recycler_list;
+
+    /**
+     * The category that is being used to filter the services
+     */
+    private Category currentCategory;
+
+    /**
+     * The user that is being used to filter the services
+     */
+    private User currentUser;
+
+    /**
+     * The service provider that is being used to filter the services
+     */
+    private ServiceProvider currentProvider;
+
+    /**
+     * Stores the handle to the database callback so that it can be cleaned up when the activity ends
+     */
+    private DbListenerHandle<?> dbListenerHandle;
+
+    /**
+     * The resource id of the icon to use for the action icon of each service
+     */
     int itemActionIcon;
 
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,7 +173,7 @@ public class ServiceListActivity extends SignedInActivity {
         AsyncValueEventListener<Service> listener = new AsyncValueEventListener<Service>() {
             @Override
             public void onSuccess(@NonNull ArrayList<Service> data) {
-                service_list_adapter = new ServiceListAdapter(getApplicationContext(), data, itemActionIcon, getItemClickListener());
+                ServiceListAdapter service_list_adapter = new ServiceListAdapter(getApplicationContext(), data, itemActionIcon, getItemClickListener());
                 recycler_list.setAdapter(service_list_adapter);
             }
             @Override
@@ -141,6 +200,10 @@ public class ServiceListActivity extends SignedInActivity {
         }
     }
 
+    /**
+     * Removes the listener for data from the database.
+     * This is run during the destroy phase of the activity lifecycle.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -148,24 +211,36 @@ public class ServiceListActivity extends SignedInActivity {
         if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
     }
 
+    /**
+     * Enables the relevant onClick actions within this activity.
+     * This is run during the resume phase of the activity lifecycle.
+     */
     @Override
     public void onResume() {
         super.onResume();
-        itemClickEnabled = true;
+        onClickEnabled = true;
     }
 
+    /**
+     * Makes the subtitle views visible and sets the subtitle text
+     * @param subTitle the subtitle to be set in the sub_title view
+     */
     private void setSubTitle(@NonNull String subTitle) {
         txt_sub_title.setVisibility(View.VISIBLE);
         divider_txt_sub_title.setVisibility(View.VISIBLE);
         txt_sub_title.setText(subTitle);
     }
 
+    /**
+     * Creates the View.OnClickListener used for the onClick of each item in the service list
+     * @return a View.OnClickListener object
+     */
     private View.OnClickListener getItemClickListener() {
         if (Mode.ADD_PROVIDER_SERVICES == mode) {
             return new View.OnClickListener() {
                 public void onClick(final View view) {
-                    if (!itemClickEnabled) { return; }
-                    itemClickEnabled = false;
+                    if (!onClickEnabled) { return; }
+                    onClickEnabled = false;
                     final Service service = (Service) view.getTag();
                     DbUtilRelational.linkServiceAndProvider(service, currentProvider, new AsyncActionEventListener() {
                         @Override
@@ -178,7 +253,7 @@ public class ServiceListActivity extends SignedInActivity {
                         }
                         @Override
                         public void onFailure(@NonNull AsyncEventFailureReason reason) {
-                            itemClickEnabled = true;
+                            onClickEnabled = true;
                             Toast.makeText(getApplicationContext(), String.format(getString(R.string.service_added_to_provider_fail_template), service.getName()), Toast.LENGTH_LONG).show();
                         }
                     });
@@ -188,8 +263,8 @@ public class ServiceListActivity extends SignedInActivity {
         } else if (Mode.REMOVE_PROVIDER_SERVICES == mode) {
             return new View.OnClickListener() {
                 public void onClick(final View view) {
-                    if (!itemClickEnabled) { return; }
-                    itemClickEnabled = false;
+                    if (!onClickEnabled) { return; }
+                    onClickEnabled = false;
                     final Service service = (Service) view.getTag();
                     AlertDialog dialog = new AlertDialog.Builder(ServiceListActivity.this)
                             .setTitle(R.string.remove_service)
@@ -211,7 +286,7 @@ public class ServiceListActivity extends SignedInActivity {
                             })
                             .setOnDismissListener(new DialogInterface.OnDismissListener() {
                                 @Override
-                                public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
+                                public void onDismiss(DialogInterface dialog) { onClickEnabled = true; }
                             })
                             .setNegativeButton(R.string.cancel, null).show();
                     dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.text_primary_dark));
@@ -221,8 +296,8 @@ public class ServiceListActivity extends SignedInActivity {
         } else if (Mode.PICK_FOR_BOOKING == mode) {
             return new View.OnClickListener() {
                 public void onClick(final View view) {
-                    if (!itemClickEnabled) { return; }
-                    itemClickEnabled = false;
+                    if (!onClickEnabled) { return; }
+                    onClickEnabled = false;
                     Intent intent = new Intent(getApplicationContext(), ServiceProviderPickerActivity.class);
                     intent.putExtra("service", (Serializable) view.getTag());
                     startActivity(intent);
@@ -231,8 +306,8 @@ public class ServiceListActivity extends SignedInActivity {
         } else {
             return new View.OnClickListener() {
                 public void onClick(final View view) {
-                    if (!itemClickEnabled) { return; }
-                    itemClickEnabled = false;
+                    if (!onClickEnabled) { return; }
+                    onClickEnabled = false;
                     Intent intent = new Intent(getApplicationContext(), ServiceViewActivity.class);
                     intent.putExtra("service", (Serializable) view.getTag());
                     startActivity(intent);
@@ -241,6 +316,10 @@ public class ServiceListActivity extends SignedInActivity {
         }
     }
 
+    /**
+     * Sets the menu to be used in the action bar
+     * @return true if the options menu is created, false otherwise
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (Mode.MANAGE_SERVICES == mode) {
@@ -254,6 +333,11 @@ public class ServiceListActivity extends SignedInActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * The onClick handler for the action bar menu items
+     * @param item the menu item that was clicked
+     * @return true if the menu item onClick was handled, the result of the super class method otherwise
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -265,29 +349,41 @@ public class ServiceListActivity extends SignedInActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * The on-click handler to launch the category list activity
+     */
     public void onLinkServiceToProviderClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         startActivity(new Intent(getApplicationContext(), CategoryListActivity.class));
     }
 
+    /**
+     * The on-click handler to launch the category creation activity
+     */
     public void onCreateCategoryClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         startActivity(new Intent(getApplicationContext(), CategoryCreateActivity.class));
     }
 
+    /**
+     * The on-click handler to launch the service creation activity
+     */
     public void onCreateServiceClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ServiceCreateActivity.class);
         if (null != currentCategory) { intent.putExtra("category", currentCategory); }
         startActivity(intent);
     }
 
+    /**
+     * Prompts the user with the delete category confirmation screen and triggers the deletion process if confirmed.
+     */
     public void onDeleteCategoryClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         if (useCategory) {
             AlertDialog dialog = new AlertDialog.Builder(this)
                     .setTitle(R.string.delete_category)
@@ -323,7 +419,7 @@ public class ServiceListActivity extends SignedInActivity {
                     })
                     .setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
-                        public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
+                        public void onDismiss(DialogInterface dialog) { onClickEnabled = true; }
                     })
                     .setNegativeButton(R.string.cancel, null).show();
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.text_primary_dark));

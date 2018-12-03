@@ -22,10 +22,27 @@ import android.widget.Toast;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * The class <b>BookingListActivity</b> is a UI class that allows a user to see and select from list of bookings.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class BookingListActivity extends SignedInActivity {
 
-    protected enum Screen {
+    /**
+     * An enum defining the view various view states within this activity
+     */
+    private enum Screen {
+
         BOOKED, PENDING, CANCELLED, PAST;
+
+        /**
+         * Getter for the screen's index
+         */
         public int getIdx() {
             switch (this) {
                 case BOOKED: return 0;
@@ -35,16 +52,48 @@ public class BookingListActivity extends SignedInActivity {
                 default: throw new IllegalArgumentException("Invalid screen");
             }
         }
-    }
-    protected Screen screen;
-    protected boolean itemClickEnabled = true;
-    protected RecyclerView recycler_list;
-    protected DbListenerHandle<?> dbListenerHandle;
-    protected Button[] buttons;
-    protected String[] tabTitles;
-    protected ArrayList<ArrayList<Booking>> dataLists;
 
-    @SuppressWarnings("unchecked")
+    }
+
+    /**
+     * The currently active screen
+     */
+    private Screen screen;
+
+    /**
+     * Whether or not relevant onClick actions are enabled for within this activity
+     */
+    private boolean onClickEnabled = true;
+
+    /**
+     * The view that displays the list of bookings
+     */
+    private RecyclerView recycler_list;
+
+    /**
+     * Stores the handle to the database callback so that it can be cleaned up when the activity ends
+     */
+    private DbListenerHandle<?> dbListenerHandle;
+
+    /**
+     * A set of button views that are used to select the active screen
+     */
+    private Button[] buttons;
+
+    /**
+     * A set of labels used for the buttons text
+     */
+    private String[] tabTitles;
+
+    /**
+     * A set of ArrayLists which contain the data for each screen
+     */
+    private ArrayList<ArrayList<Booking>> dataLists;
+
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,14 +148,23 @@ public class BookingListActivity extends SignedInActivity {
                 Toast.makeText(getApplicationContext(), getString(R.string.category_list_db_error), Toast.LENGTH_LONG).show();
             }
         });
+
     }
 
+    /**
+     * Enables the relevant onClick actions within this activity.
+     * This is run during the resume phase of the activity lifecycle.
+     */
     @Override
     public void onResume() {
         super.onResume();
-        itemClickEnabled = true;
+        onClickEnabled = true;
     }
 
+    /**
+     * Removes the listener for data from the database.
+     * This is run during the destroy phase of the activity lifecycle.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -114,6 +172,10 @@ public class BookingListActivity extends SignedInActivity {
         if (null != dbListenerHandle) { dbListenerHandle.removeListener(); }
     }
 
+    /**
+     * The on-click handler for the activity tabs
+     * @param view the view object that was clicked
+     */
     public void onTabPressed(View view) {
         Screen newScreen;
         switch (view.getId()) {
@@ -126,25 +188,25 @@ public class BookingListActivity extends SignedInActivity {
         if (screen != newScreen) { setScreen(newScreen); }
     }
 
-    protected void setScreen(Screen screen) {
+    /**
+     * Sets up the views contained within the activity for the specified screen
+     * @param screen the type of screen to be setup
+     */
+    private void setScreen(Screen screen) {
         for (int i = 0; i < Screen.values().length; i++) {
             buttons[i].setBackgroundColor(getResources().getColor(R.color.transparent));
             buttons[i].setTextColor(getResources().getColor(R.color.White));
             buttons[i].setText(String.format(tabTitles[i], (null == dataLists.get(i) ? 0 : dataLists.get(i).size())));
         }
-        //buttons[screen.getIdx()].setPaintFlags(buttons[bIdx].getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         buttons[screen.getIdx()].setBackgroundColor(getResources().getColor(R.color.background_default));
         buttons[screen.getIdx()].setTextColor(getResources().getColor(R.color.text_primary_dark));
         this.screen = screen;
-        setListData();
-    }
 
-    protected void setListData() {
         if (null == dataLists.get(screen.getIdx())) { return; }
         recycler_list.setAdapter(new BookingListAdapter(getApplicationContext(), dataLists.get(screen.getIdx()), new View.OnClickListener() {
             public void onClick(final View view) {
-                if (!itemClickEnabled) { return; }
-                itemClickEnabled = false;
+                if (!onClickEnabled) { return; }
+                onClickEnabled = false;
                 Intent intent = new Intent(getApplicationContext(), BookingViewActivity.class);
                 intent.putExtra("booking", (Serializable) view.getTag());
                 startActivityForResult(intent, 0);

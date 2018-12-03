@@ -15,24 +15,91 @@ import android.widget.Toast;
 
 import java.util.Locale;
 
+/**
+ * The class <b>ServiceProviderProfileActivity</b> is a UI class that displays a service provider's profile information to a homeowner.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class ServiceProviderProfileActivity extends SignedInActivity {
 
-    protected boolean itemClickEnabled = true;
+    /**
+     * Whether or not relevant onClick actions are enabled for within this activity
+     */
+    protected boolean onClickEnabled = true;
+
+    /**
+     * The Service Provider that is being displayed
+     */
     protected ServiceProvider currentProvider;
+
+    /**
+     * The Service to be used when booking an availability from this activity
+     */
     protected Service currentService;
 
+    /**
+     * A view that displays the provider's company name
+     */
     protected TextView txt_company_name;
+
+    /**
+     * A view that displays the provider's rating
+     */
     RatingBar rating_stars;
+
+    /**
+     * A view that displays a link to see the list of reviews for the service provider
+     */
     protected TextView txt_see_reviews;
+
+    /**
+     * A view that displays the provider's number of ratings
+     */
     protected TextView txt_num_ratings;
+
+    /**
+     * A view that displays the title for the provider's description
+     */
     protected TextView txt_title_description;
+
+    /**
+     * A view that displays the provider's description
+     */
     protected TextView txt_description;
+
+    /**
+     * A view that displays the provider's full name
+     */
     protected TextView txt_full_name;
+
+    /**
+     * A view group that contains the licensed image and title views
+     */
     protected LinearLayout grp_licensed;
+
+    /**
+     * A view that displays the provider's email address
+     */
     protected TextView txt_email;
+
+    /**
+     * A view that displays the provider's phone number
+     */
     protected TextView txt_phone;
+
+    /**
+     * A view that displays the provider's address
+     */
     protected TextView txt_address;
 
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,10 +138,6 @@ public class ServiceProviderProfileActivity extends SignedInActivity {
             btn_find_availability.setVisibility(View.GONE);
         }
 
-        setupFields();
-    }
-
-    private void setupFields() {
         txt_see_reviews.setVisibility(View.GONE);
         grp_licensed.setVisibility(View.GONE);
         txt_description.setVisibility(View.GONE);
@@ -107,26 +170,39 @@ public class ServiceProviderProfileActivity extends SignedInActivity {
             if (currentProvider.isLicensed()) { grp_licensed.setVisibility(View.VISIBLE); }
             txt_address.setText(currentProvider.getAddress().toString());
         }
+
     }
 
+    /**
+     * Enables the relevant onClick actions within this activity.
+     * This is run during the resume phase of the activity lifecycle.
+     */
     @Override
     public void onResume() {
         super.onResume();
-        itemClickEnabled = true;
+        onClickEnabled = true;
     }
 
-    public void onFindAvailabilityClick(View v) {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+    /**
+     * The on-click handler for the find availabilities button
+     * @param view the view object that was clicked
+     */
+    public void onFindAvailabilityClick(View view) {
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), WeekViewActivity.class);
         intent.putExtra("provider", currentProvider);
         intent.putExtra("service", currentService);
         startActivity(intent);
     }
 
-    public void onSeeReviewsClick(View v) {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+    /**
+     * The on-click handler for the see reviews link
+     * @param view the view object that was clicked
+     */
+    public void onSeeReviewsClick(View view) {
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ReviewListActivity.class);
         intent.putExtra("provider", currentProvider);
         startActivity(intent);

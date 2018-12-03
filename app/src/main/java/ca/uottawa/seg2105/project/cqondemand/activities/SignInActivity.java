@@ -21,17 +21,56 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.Authentication;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
+/**
+ * The class <b>SignInActivity</b> is a UI class that allows a user to sign in to the app with their account credentials.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class SignInActivity extends AppCompatActivity {
 
-    protected boolean itemClickEnabled = true;
+    /**
+     * Whether or not relevant onClick actions are enabled for within this activity
+     */
+    protected boolean onClickEnabled = true;
+
+    /**
+     * A button used to launch the sign in action
+     */
     protected Button btn_sign_in;
+
+    /**
+     * A button used to launch the sign up action
+     */
     protected Button btn_sign_up;
+
+    /**
+     * A button used to create the admin account
+     */
     protected Button btn_create_admin_account;
+
+    /**
+     * A field used to enter the username
+     */
     protected EditText field_username;
+
+    /**
+     * A field used to enter the password
+     */
     protected EditText field_password;
 
+    /**
+     * A field used to ask the app to remember the credentials
+     */
     private CheckBox box_remember;
 
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +108,10 @@ public class SignInActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Enables the relevant onClick actions within this activity and launches the main activity if a user is signed in.
+     * This is run during the resume phase of the activity lifecycle.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -77,15 +120,24 @@ public class SignInActivity extends AppCompatActivity {
             startActivity(loginIntent);
             finish();
         } else {
-            itemClickEnabled = true;
+            onClickEnabled = true;
         }
     }
 
+    /**
+     * Overrides the back button to move the activity to the background instead of finishing it
+     */
     @Override
-    public void onBackPressed () {
-        moveTaskToBack (false);
+    public void onBackPressed() {
+        moveTaskToBack(false);
     }
 
+    /**
+     * Handles results from an activity that was launched and finished
+     * @param requestCode the request code for the launched activity
+     * @param resultCode the result code from the finishing activity
+     * @param intent the intent object received from the finishing activity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (RESULT_CANCELED == resultCode) {
@@ -104,8 +156,7 @@ public class SignInActivity extends AppCompatActivity {
 
     /**
      * OnClick listener for the 'Sign in' button. First verifies the users credentials, then navigates
-     * to the user's home screen
-     *
+     * to the user's home screen.
      * @param view the sign in button which was clicked.
      */
     public void onSignInClick(View view) {
@@ -162,54 +213,43 @@ public class SignInActivity extends AppCompatActivity {
 
     /**
      * Navigates the user to the create account screen when the corresponding button is clicked
-     *
      * @param view the create account button which was clicked
      */
     public void onCreateAccountClick(View view)  {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
         intent.putExtra("username", field_username.getText().toString());
         startActivityForResult(intent,0);
     }
 
+    /**
+     * Creates the single admin account with the default account details.
+     * @param view the create account button which was clicked
+     */
     public void onCreateAdminAccountClick(View view) {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         User user = new User("Admin", "User", "admin", "yfrie071@uottawa.ca", User.Type.ADMIN, Authentication.genHash("admin"));
         DbUser.createUser(user, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), "The admin user has been created successfully. Login with the username and password 'admin'.", Toast.LENGTH_LONG).show();
                 btn_create_admin_account.setVisibility(View.GONE);
-                itemClickEnabled = true;
+                onClickEnabled = true;
             }
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 if (AsyncEventFailureReason.ALREADY_EXISTS == reason) {
                     Toast.makeText(getApplicationContext(), "The admin account already exists.", Toast.LENGTH_LONG).show();
                     btn_create_admin_account.setVisibility(View.GONE);
-                    itemClickEnabled = true;
+                    onClickEnabled = true;
                 } else {
                     Toast.makeText(getApplicationContext(), "There was an error creating the admin account. Please try again later.", Toast.LENGTH_LONG).show();
-                    itemClickEnabled = true;
+                    onClickEnabled = true;
                 }
             }
         });
-    }
-
-    public void onCreateTestAccountClick(View view) {
-        User user = new User("Test", "User", "test", "test@test.test", User.Type.HOMEOWNER, Authentication.genHash("cqpass"));
-        DbUser.createUser(user, new AsyncActionEventListener() {
-            @Override
-            public void onSuccess() { }
-            @Override
-            public void onFailure(@NonNull AsyncEventFailureReason reason) { }
-        });
-    }
-
-    public void onUpdateServiceTestClick(View view){
-
     }
 
 }

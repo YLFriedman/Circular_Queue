@@ -11,6 +11,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+/**
+ * The class <b> DbCategoryTest</b> tests the constructor and getters of DbCategory
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ * */
 public class DbCategoryTest {
 
     @Test

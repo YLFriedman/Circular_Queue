@@ -36,42 +36,175 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncEventFailureReason;
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
+/**
+ * The class <b>WeekViewActivity</b> is a UI class that allows a service provider to set their availabilities or a
+ * homeowner to pick a booking time for a service provider.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class WeekViewActivity extends SignedInActivity {
 
+    /**
+     * An enum defining the states that a timeslot cell can have
+     */
     private enum CellState { UNAVAILABLE, AVAILABLE, BOOKED, REQUESTED }
+
+    /**
+     * The class <b>Cell</b> maintains the state of each cell in the timeslot grid.
+     */
     private class Cell {
+
+        /**
+         * A list of day names used to convert the numeric day number to the string equivalent used in the view names
+         */
         String[] dayNames = new String[] { "sun", "mon", "tue", "wed", "thu", "fri", "sat" };
+
+        /**
+         * The numbers 0 through 9 in string form padded with a preceding 0
+         */
         String[] timeNames = new String[] { "00", "01", "02", "03", "04", "05", "06", "07", "08", "09" };
+
+        /**
+         * Stores the integer day value of the cell
+         */
         int day;
+
+        /**
+         * Stores the integer time value of the cell
+         */
         int time;
+
+        /**
+         * Stores the actual state of the cell
+         */
         CellState state;
+
+        /**
+         * Stores the state of the cell to be used when toggling
+         */
         CellState toggleState;
-        Cell() { state = CellState.UNAVAILABLE; }
+
+        /**
+         * The default constructor that creates a new cell with the default state
+         */
+        Cell() { state = toggleState = CellState.UNAVAILABLE; }
+
+        /**
+         * A constructor that creates a new cell with the provided day and time, and with the default state
+         */
         Cell(int day, int time) { this.day = day; this.time = time; state = CellState.UNAVAILABLE; }
+
+        /**
+         * A constructor that creates a new cell with the provided day, time, and state
+         */
         Cell(int day, int time, CellState state) { this.day = day; this.time = time; this.state = state; }
+
+        /**
+         * Constructs the name of the view corresponding to the cell object's day and time
+         * @return the view name for this cell's day and time
+         */
         String getCellName() { return "cell_" + dayNames[day] + "_" + ((time < 10) ? timeNames[time] : time); }
+
     }
 
+    /**
+     * An enum defining the view various modes of this activity
+     */
     private enum Mode { SELECT_TIMESLOT, AVAILABILITY }
+
+    /**
+     * The currently active mode
+     */
     private Mode mode;
-    private boolean itemClickEnabled;
+
+    /**
+     * Whether or not relevant onClick actions are enabled for within this activity
+     */
+    private boolean onClickEnabled;
+
+    /**
+     * Contains a reference for each view in the timeslot grid
+     */
     private View[][] cellViews;
+
+    /**
+     * Contains a reference for each cell in the timeslot grid
+     */
     private Cell[][] cells;
+
+    /**
+     * The provider picking their availabilities or used to select a timeslot
+     */
     private ServiceProvider currentProvider;
+
+    /**
+     * The service passed on when creating a booking
+     */
     private Service currentService;
+
+    /**
+     * The format to be used for the short month name
+     */
     private SimpleDateFormat MONTH_FORMAT = new SimpleDateFormat("MMM", Locale.CANADA);
+
+    /**
+     * The format to be used for the day number
+     */
     private SimpleDateFormat DAY_FORMAT = new SimpleDateFormat("d", Locale.CANADA);
+
+    /**
+     * The format to be used for the today's date (yearNum-monthNum-dayNum)
+     */
     private SimpleDateFormat TODAY_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.CANADA);
+
+    /**
+     * A view used to display the month name
+     */
     private TextView txt_month_name;
+
+    /**
+     * A list of views used to display the day numbers
+     */
     private TextView[] txt_day_nums;
+
+    /**
+     * Stores the currently selected date
+     */
     private Date currentDate;
+
+    /**
+     * Stores the first day in the week of the selected date
+     */
     private Date startOfPeriod;
+
+    /**
+     * Stores the last day in the week of the selected date
+     */
     private Date endOfPeriod;
+
+    /**
+     * A calendar instance set to the CANADA locale
+     */
     private Calendar cal;
+
+    /**
+     * Stores the day of the week to start showing availabilities
+     */
     private int startAtDayOfWeek;
+
+    /**
+     * Stores the day and time of the first timeslot when a homeowner selects an availability
+     */
     private int[] requestedStart;
 
-
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,7 +246,7 @@ public class WeekViewActivity extends SignedInActivity {
             }
         }
 
-        itemClickEnabled = true;
+        onClickEnabled = true;
         cal = Calendar.getInstance(Locale.CANADA);
 
         if (Mode.SELECT_TIMESLOT == mode) {
@@ -138,12 +271,20 @@ public class WeekViewActivity extends SignedInActivity {
         grid_scroll_view.scrollTo(0, dpToPx(252));
     }
 
+    /**
+     * Enables the relevant onClick actions within this activity.
+     * This is run during the resume phase of the activity lifecycle.
+     */
     @Override
     public void onResume() {
         super.onResume();
-        itemClickEnabled = true;
+        onClickEnabled = true;
     }
 
+    /**
+     * Sets the menu to be used in the action bar
+     * @return true if the options menu is created, false otherwise
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.week_view_options, menu);
@@ -155,6 +296,11 @@ public class WeekViewActivity extends SignedInActivity {
         return true;
     }
 
+    /**
+     * The onClick handler for the action bar menu items
+     * @param item the menu item that was clicked
+     * @return true if the menu item onClick was handled, the result of the super class method otherwise
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -166,6 +312,10 @@ public class WeekViewActivity extends SignedInActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Sets the cells in the view according to the provided list of availabilities.
+     * @param availabilities a 2D array of availabilities (boolean[day][time])
+     */
     private void setAvailabilities(@NonNull boolean[][] availabilities) {
         requestedStart = null;
         for (int day = 0; day < 7; day++) {
@@ -181,6 +331,9 @@ public class WeekViewActivity extends SignedInActivity {
         }
     }
 
+    /**
+     * Resets all the cells to their toggle state
+     */
     private void resetAllCells() {
         for (int day = 0; day < 7; day++) {
             for (int time = 0; time < 24; time++) {
@@ -189,6 +342,10 @@ public class WeekViewActivity extends SignedInActivity {
         }
     }
 
+    /**
+     * Sets all the cells to the provided state
+     * @param cellState the state to set all the cells to
+     */
     private void setAllCells(@NonNull CellState cellState) {
         for (int day = 0; day < 7; day++) {
             for (int time = 0; time < 24; time++) {
@@ -197,13 +354,15 @@ public class WeekViewActivity extends SignedInActivity {
         }
     }
 
+    /**
+     * Sets a specific cell to the provided state and updates the associated view
+     * @param day the day of the cell to set
+     * @param time the time of the cell to set
+     * @param cellState the state to set the cell to
+     */
     private void setCell(int day, int time, CellState cellState) {
         if (cells[day][time].state == cellState) { return; }
         cells[day][time].state = cellState;
-        updateCellView(day, time);
-    }
-
-    private void updateCellView(int day, int time) {
         switch (cells[day][time].state) {
             case AVAILABLE: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_available); break;
             case BOOKED: cellViews[day][time].setBackgroundResource(R.drawable.btn_bg_avail_cell_bkrd_booked); break;
@@ -213,6 +372,11 @@ public class WeekViewActivity extends SignedInActivity {
         }
     }
 
+    /**
+     * Toggles the cell at the specified day and time between the REQUESTED state and the toggle state.
+     * @param day the day of the cell to toggle
+     * @param time the time of the cell to toggle
+     */
     private void toggleRequested(int day, int time) {
         if (CellState.REQUESTED == cells[day][time].state) {
             setCell(day, time, cells[day][time].toggleState);
@@ -221,6 +385,11 @@ public class WeekViewActivity extends SignedInActivity {
         }
     }
 
+    /**
+     * Toggles the cell at the specified day and time between the AVAILABLE state and the UNAVAILABLE state.
+     * @param day the day of the cell to toggle
+     * @param time the time of the cell to toggle
+     */
     private void toggleAvailability(int day, int time) {
         Cell cell = cells[day][time];
         if (CellState.UNAVAILABLE != cell.state) {
@@ -230,6 +399,10 @@ public class WeekViewActivity extends SignedInActivity {
         }
     }
 
+    /**
+     * Sets the view for the week containing the provided date
+     * @param date the date to change the view to
+     */
     private void setDate(Date date) {
         startAtDayOfWeek = 0;
         currentDate = date;
@@ -254,18 +427,24 @@ public class WeekViewActivity extends SignedInActivity {
         loadProviderAvailabilities();
     }
 
+    /**
+     * Gets the availabilities list and converts it to a 2D array and loads the cells with the availability values
+     */
     private void loadProviderAvailabilities() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         if (null == currentProvider.getAvailabilities()) {
             setAvailabilities(Availability.toArrays(new LinkedList<Availability>()));
         } else {
             setAvailabilities(Availability.toArrays(currentProvider.getAvailabilities()));
         }
         loadBookings();
-        itemClickEnabled = true;
+        onClickEnabled = true;
     }
 
+    /**
+     * Gets the bookings for the currentProvider from the database and updates the cells and views to show the booked status where appropriate
+     */
     private void loadBookings() {
         if (null == startOfPeriod || null == endOfPeriod || Mode.SELECT_TIMESLOT != mode) { return; }
         DbBooking.getBookingsInTimeRange(currentProvider, startOfPeriod, endOfPeriod, new AsyncValueEventListener<Booking>() {
@@ -294,6 +473,11 @@ public class WeekViewActivity extends SignedInActivity {
         });
     }
 
+    /**
+     * Sets the current requested selection based on the clicked cell
+     * @param day the day of the clicked cell
+     * @param time the time of the clicked cell
+     */
     private void setRequested(int day, int time) {
         Cell cell = cells[day][time];
         boolean continuous;
@@ -350,6 +534,10 @@ public class WeekViewActivity extends SignedInActivity {
         }
     }
 
+    /**
+     * The onClick handler for each timeslot cell
+     * @param view the view that was clicked
+     */
     public void onCellClick(View view) {
         Cell cell;
         if (view.getTag() instanceof Cell) { cell = (Cell) view.getTag(); }
@@ -361,7 +549,16 @@ public class WeekViewActivity extends SignedInActivity {
         }
     }
 
+    /**
+     * A class that defines the long click handler for the cells
+     */
     private class CellLongClickListener implements View.OnLongClickListener {
+
+        /**
+         * The onLongClick handler for each timeslot cell
+         * @param view the view that was longClicked
+         * @return true if the onLongClick action was handled, false otherwise
+         */
         public boolean onLongClick(View view) {
             if (Mode.AVAILABILITY == mode) {
                 Cell cell;
@@ -386,10 +583,15 @@ public class WeekViewActivity extends SignedInActivity {
 
             return true;
         }
+
     }
 
+    /**
+     * The onClick handler for the next button
+     * @param view the view that was clicked
+     */
     public void onNextClick(View view) {
-        if (!itemClickEnabled) { return; }
+        if (!onClickEnabled) { return; }
         if (null == requestedStart) {
             Toast.makeText(getApplicationContext(), getString(R.string.timeslot_required), Toast.LENGTH_LONG).show();
             return;
@@ -414,7 +616,7 @@ public class WeekViewActivity extends SignedInActivity {
         }
         long endTime = cal.getTimeInMillis();
 
-        itemClickEnabled = false;
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), BookingCreateActivity.class);
         intent.putExtra("provider", currentProvider);
         intent.putExtra("service", currentService);
@@ -423,34 +625,41 @@ public class WeekViewActivity extends SignedInActivity {
         startActivity(intent);
     }
 
+    /**
+     * The onClick handler for the save button
+     * @param view the view that was clicked
+     */
     public void onSaveClick(View view) {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         currentProvider.setAvailabilities(Availability.toList(getAvailabilities()));
         DbUser.updateUser(currentProvider, new AsyncActionEventListener() {
             @Override
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), getString(R.string.availability_saved_successfully), Toast.LENGTH_LONG).show();
-                itemClickEnabled = true;
+                onClickEnabled = true;
             }
             @Override
             public void onFailure(@NonNull AsyncEventFailureReason reason) {
                 Toast.makeText(getApplicationContext(), getString(R.string.availability_save_failed), Toast.LENGTH_LONG).show();
-                itemClickEnabled = true;
+                onClickEnabled = true;
             }
         });
     }
 
+    /**
+     * Displays the appropriate help dialog
+     */
     private void onHelpClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         View helpView;
         if (Mode.AVAILABILITY == mode) {
             helpView = getLayoutInflater().inflate(R.layout.help_availabilities, null);
         } else if (Mode.SELECT_TIMESLOT == mode) {
             helpView = getLayoutInflater().inflate(R.layout.help_select_timeslot, null);
         } else {
-            itemClickEnabled = true;
+            onClickEnabled = true;
             return;
         }
         AlertDialog dialog = new AlertDialog.Builder(this)
@@ -458,19 +667,25 @@ public class WeekViewActivity extends SignedInActivity {
                 .setPositiveButton(R.string.ok, null)
                 .setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
-                    public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
+                    public void onDismiss(DialogInterface dialog) { onClickEnabled = true; }
                 })
                 .show();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.dialog_red));
     }
 
+    /**
+     * Clears the provider availabilities
+     */
     private void onClearClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         setAllCells(CellState.UNAVAILABLE);
-        itemClickEnabled = true;
+        onClickEnabled = true;
     }
 
+    /**
+     * Displays the time picker dialog to change the selected date
+     */
     private void onSelectDateClick() {
         cal.setTime(currentDate);
         DatePickerDialog dpd = DatePickerDialog.newInstance(new DatePickerDialog.OnDateSetListener() {
@@ -487,6 +702,10 @@ public class WeekViewActivity extends SignedInActivity {
         dpd.show(getSupportFragmentManager(), "date_select");
     }
 
+    /**
+     * Gets a boolean array representing the currently set availabilities in the cells
+     * @return a 2D array of availabilities by day and timeslot
+     */
     private boolean[][] getAvailabilities() {
         boolean[][] availabilities = new boolean[7][24];
         for (int day = 0; day < 7; day++) {
@@ -497,14 +716,26 @@ public class WeekViewActivity extends SignedInActivity {
         return availabilities;
     }
 
+    /**
+     * The onClick handler for the zoom in button
+     * @param view the view that was clicked
+     */
     public void onZoomInClick(View view) {
         setHeights(cellViews[0][0].getLayoutParams().height + dpToPx(8));
     }
 
+    /**
+     * The onClick handler for the zoom out button
+     * @param view the view that was clicked
+     */
     public void onZoomOutClick(View view) {
         setHeights(cellViews[0][0].getLayoutParams().height - dpToPx(8));
     }
 
+    /**
+     * The height to set for each cell in the grid
+     * @param height the height value in pixels
+     */
     private void setHeights(int height) {
         if (height < dpToPx(20) || height > dpToPx(80)) { return; }
         for (int day = 0; day < 7; day++) {
@@ -522,6 +753,11 @@ public class WeekViewActivity extends SignedInActivity {
         }
     }
 
+    /**
+     * Converts a display-independent pixel value to pixels on the current device
+     * @param dp
+     * @return
+     */
     private int dpToPx(int dp) {
         float density = getResources().getDisplayMetrics().density;
         return Math.round((float) dp * density);

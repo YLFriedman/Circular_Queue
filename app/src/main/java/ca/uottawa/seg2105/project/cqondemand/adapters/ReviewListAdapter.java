@@ -18,25 +18,56 @@ import ca.uottawa.seg2105.project.cqondemand.domain.Review;
 
 /**
  * An adapter class for the RecyclerView that contains a list of reviews
- * work in progress
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
  */
 
 public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.ViewHolder> {
 
+    /**
+     * The application context that the adapter is being used in
+     */
     private Context context;
+    /**
+     * Stores the list of Review objects data
+     */
     private ArrayList<Review> data;
+    /**
+     * Stores callback when a view is clicked
+     */
     private View.OnClickListener clickListener;
 
+    /**
+     * Constructor for the ReviewListAdapter, does not have an OnClickListener
+     * @param context   Collection of relevant application data for the Review list adapter
+     * @param data      ArrayList of category data to be adapted
+     */
     public ReviewListAdapter(Context context, ArrayList<Review> data) {
         this.context = context;
         this.data = data;
     }
 
+    /**
+     * Constructor for the ReviewListAdapter
+     * @param context       Collection of relevant application data for the Review list adapter
+     * @param data          ArrayList of category data to be adapted
+     * @param clickListener Callback invoked when a view is clicked
+     */
     public ReviewListAdapter(Context context, ArrayList<Review> data, View.OnClickListener clickListener) {
         this(context, data);
         this.clickListener = clickListener;
     }
 
+    /**
+     * Creates a new viewHolder when there are no existing viewHolders avaliable that the recycler can reuse
+     * @param parent    The ViewGroup into which the new View will be added after it is bound to an adapter position
+     * @param viewType  For different types of cells in list - not needed here
+     * @return  new ViewHolder
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -45,6 +76,11 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Vi
         return new ViewHolder(view);
     }
 
+    /**
+     * For each recycler holder, populate recycler with data and update the viewholder
+     * @param viewHolder    viewHolder to be updated
+     * @param i Position index from where the data is to be received
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         Review item = data.get(i);
@@ -59,11 +95,18 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Vi
         viewHolder.img_item_image.setVisibility(View.GONE);
     }
 
+    /**
+     * Get the total data size associated with the review list
+     * @return size of data
+     */
     @Override
     public int getItemCount() {
         return data.size();
     }
 
+    /**
+     * ViewHolder class to be used with the recycler view
+     */
     class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView txt_title;
@@ -72,6 +115,10 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Vi
         ImageView img_item_image;
         RatingBar rating_stars;
 
+        /**
+         * ViewHolder constructor
+         * @param itemView  itemView data to be used
+         */
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txt_subtitle = itemView.findViewById(R.id.txt_subtitle);

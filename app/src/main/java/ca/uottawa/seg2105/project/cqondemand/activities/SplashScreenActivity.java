@@ -16,22 +16,28 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventList
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 /**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
+ * The class <b>SplashScreenActivity</b> is a UI class that shows the app title, icon and a loading bar while the app is starting.
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
  */
 public class SplashScreenActivity extends Activity {
 
-    protected ProgressBar progress;
-    protected TextView txt_sub_title;
-    protected CountDownTimer timer;
-
+    /**
+     * Sets up the activity. This is run during the creation phase of the activity lifecycle.
+     * @param savedInstanceState a bundle containing the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        progress = (ProgressBar) findViewById(R.id.progress_loading);
-        txt_sub_title = findViewById(R.id.txt_sub_title);
+        CountDownTimer timer;
+        ProgressBar progress = (ProgressBar) findViewById(R.id.progress_loading);
+        TextView txt_sub_title = findViewById(R.id.txt_sub_title);
 
         // Get the state
         final State state = State.getInstance(getApplicationContext());
@@ -75,12 +81,18 @@ public class SplashScreenActivity extends Activity {
 
     }
 
+    /**
+     * Launches the sign in activity
+     */
     protected void launchSignInScreen() {
         Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
         startActivity(intent);
         finish();
     }
 
+    /**
+     * Launches the home activity
+     */
     protected void launchHomeScreen() {
         Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
         startActivity(intent);
