@@ -11,11 +11,18 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+/**
+ * The class <b> ServiceProviderFunctionTest </b> tests all functions related to the Service Provider class
+ */
 public class ServiceProviderFunctionTest {
+
 
     public static Address testAddressA = new Address( "2a", 12, "Bullvue", "Ottawa", "Ontario", "Canada", "K0A1A0");
     public static Address testAddressB = new Address( "2b", 15, "King Edward", "Ottawa", "Ontario", "Canada", "K0A1A0");
 
+    /**
+     * This method test the construction of a service provider without a key
+     */
     @Test
     public void ServiceProvider_constructor_test() {
 
@@ -37,20 +44,30 @@ public class ServiceProviderFunctionTest {
         } catch (InvalidDataException e) {
             fail("ServiceProvider construction failed. Error: " + e.getMessage());
         }
+    }
 
-        // Make sure InvalidDataException is thrown for invalid data
-        try {
-            new ServiceProvider("firstName", "lastName", "username", "{@TEST}", "passtest", "companyName!", true, "{@TEST}", testAddressA, "description");
-            fail("ServiceProvider Constructor Failed - Illegal companyName");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new ServiceProvider("firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", null, "description");
-            fail("ServiceProvider Constructor Failed - Illegal address");
-        } catch (InvalidDataException ignore) {}
+    /**
+     * This method ensures that an exception will be thrown if an invalid company name is passed to the constructor
+     */
+    @Test(expected = InvalidDataException.class)
+    public void invalidCompanyNameTest() {
+        new ServiceProvider("firstName", "lastName", "username", "{@TEST}", "passtest", "companyName!", true, "{@TEST}", testAddressA, "description");
+        fail("ServiceProvider Constructor Failed - Illegal companyName");
+    }
+
+    /**
+     * This method ensures that an exception will be thrown if an null address is passed to the constructor
+     */
+    @Test(expected = InvalidDataException.class)
+    public void illegalAddressTest() {
+        new ServiceProvider("firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", null, "description");
+        fail("ServiceProvider Constructor Failed - Illegal address");
 
     }
 
-
+    /**
+     * This method tests the Key Constructor and getters
+     */
     @Test
     public void ServiceProvider_constructorKey_test() {
 
@@ -74,18 +91,11 @@ public class ServiceProviderFunctionTest {
             fail("ServiceProvider construction failed. Error: " + e.getMessage());
         }
 
-        // Make sure InvalidDataException is thrown for invalid data
-        try {
-            new ServiceProvider("key", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyName!", true, "{@TEST}", testAddressA, "description", 0, 0, 0, null);
-            fail("ServiceProvider Constructor Failed - Illegal companyName");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new ServiceProvider("key", "firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", null, "description", 0, 0, 0, null);
-            fail("ServiceProvider Constructor Failed - Illegal address");
-        } catch (InvalidDataException ignore) {}
-
     }
 
+    /**
+     * This method ensures that the equals method works as expected
+     */
     @Test
     public void validate_Equals() {
         ServiceProvider testServiceProvider1a = new ServiceProvider("firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", testAddressA, "description");

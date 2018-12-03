@@ -9,8 +9,20 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+/**
+ * The class <b> AvailabilityFunctionTest</b> is used to test all functions in the Availability class
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ * */
 public class AvailabilityFunctionTest {
 
+    /**
+     * This method tests the contructors and getter of Availability
+     */
     @Test
     public void validate_Constructor() {
 
@@ -23,22 +35,39 @@ public class AvailabilityFunctionTest {
         } catch (InvalidDataException e) {
             fail("Availability construction failed. Error: " + e.getMessage());
         }
-
-        // Make sure InvalidDataException is thrown for invalid data
-        try {
-            new Availability(Availability.Day.WEDNESDAY, 24, 18);
-            fail("Availability Constructor Failed - Illegal Start Time");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new Availability(Availability.Day.WEDNESDAY, 0, 0);
-            fail("Availability Constructor Failed - Illegal End Time");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new Availability(Availability.Day.WEDNESDAY, 8, 5);
-            fail("Availability Constructor Failed - End Time before Start Time");
-        } catch (InvalidDataException ignore) {}
     }
 
+    /**
+     * This method is used to make sure an exception is thrown when an invalid start time is provided
+     */
+    @Test(expected = InvalidDataException.class)
+    public void invalidStartTimeTest() {
+        new Availability(Availability.Day.WEDNESDAY, 24, 18);
+        fail("Availability Constructor Failed - Illegal Start Time");
+    }
+
+    /**
+     * This method is used to make sure an exception is thrown when an invalid end time is provided
+     */
+    @Test(expected = InvalidDataException.class)
+    public void invalidEndTimeTest() {
+        new Availability(Availability.Day.WEDNESDAY, 0, 0);
+        fail("Availability Constructor Failed - Illegal End Time");
+    }
+
+    /**
+     * This method is used to make sure an exception is thrown when the end time is before the start time
+     */
+    @Test(expected = InvalidDataException.class)
+    public void endTimeBeforeStartTimeTest() {
+    new Availability(Availability.Day.WEDNESDAY, 8, 5);
+    fail("Availability Constructor Failed - End Time before Start Time");
+
+    }
+
+    /**
+     * This method makes sure that the parseDay(String) method works as expected
+     */
     @Test
     public void validate_ParseDayString() {
         assertEquals("Availability parseDay failed - String sunDay", Availability.Day.SUNDAY, Availability.Day.parse("sunDay"));
@@ -50,6 +79,9 @@ public class AvailabilityFunctionTest {
         assertEquals("Availability parseDay failed - String saTURday", Availability.Day.SATURDAY, Availability.Day.parse("saTURday"));
     }
 
+    /**
+     * This method makes sure that the parseDay(int) method works as expected
+     */
     @Test
     public void validate_ParseDayInt() {
         assertEquals("Availability parseDay failed - int 0", Availability.Day.SUNDAY, Availability.Day.parse(0));
@@ -61,6 +93,9 @@ public class AvailabilityFunctionTest {
         assertEquals("Availability parseDay failed - int 6", Availability.Day.SATURDAY, Availability.Day.parse(6));
     }
 
+    /**
+     * This method makes sure that the availability equals method works as expected
+     */
     @Test
     public void validate_Equals() {
         Availability testAvailability = new Availability(Availability.Day.SUNDAY, 12, 15);
