@@ -40,7 +40,7 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
     private View.OnClickListener clickListener;
 
     /**
-     * Constructor for the BookingListAdapter, does not have an OnClickListener
+     * Constructor for the CategoryListAdapter, does not have an OnClickListener
      * @param context   Collection of relevant application data for the Category list adapter
      * @param data      ArrayList of category data to be adapted
      */
@@ -50,7 +50,7 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
     }
 
     /**
-     * Constructor for the BookingListAdapter
+     * Constructor for the CategoryListAdapter
      * @param context       Collection of relevant application data for the Category list adapter
      * @param data          ArrayList of category data to be adapted
      * @param clickListener Callback invoked when a view is clicked
