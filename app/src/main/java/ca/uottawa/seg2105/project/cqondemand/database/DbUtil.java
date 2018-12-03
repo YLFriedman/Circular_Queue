@@ -25,13 +25,21 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 /**
- * This class is a utility class for interfacing with the FireBase real-time database. It defines
- * database classes which are adapted from the classes in the domain package.
+ * The class <b> DbUtil</b> is a utility class for interfacing with the FireBase real-time database.
+ * It defines all database read/write operation that are used by various DbItem extending classes
  *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
  */
 
 public class DbUtil {
 
+    /**
+     * Map of database references
+     */
     private static final HashMap<String, DatabaseReference> references = new HashMap<String, DatabaseReference>();
 
     /**
@@ -66,6 +74,11 @@ public class DbUtil {
         }
     }
 
+    /**
+     * Method to create a DatabaseReference based on the string name of that database location
+     * @param refName the name of the location to be accessed
+     * @return a DatabaseReference to the specificed location
+     */
     static DatabaseReference getRef(String refName) {
         DatabaseReference ref = references.get(refName);
         if (null == ref) {
@@ -75,6 +88,11 @@ public class DbUtil {
         return ref;
     }
 
+    /**
+     * Method to generate a unique key using FireBase's key generation
+     *
+     * @return the generated key
+     */
     static String generateKey() {
         return FirebaseDatabase.getInstance().getReference().push().getKey();
     }
@@ -112,6 +130,13 @@ public class DbUtil {
         throw new IllegalArgumentException("Unsupported type.");
     }
 
+    /**
+     * Generic method for retrieving an item from the database
+     * @param type the type of object being retrieved
+     * @param key the key of the object to be retrieved
+     * @param listener the listener that will handle the success/failure of this operation
+     * @param <T> the class of object which is being retrieved
+     */
     @SuppressWarnings("unchecked")
     static <T> void getItem(@NonNull final DataType type, @NonNull String key, @NonNull final AsyncSingleValueEventListener<T> listener) {
         type.getRef().child(key).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -145,15 +170,43 @@ public class DbUtil {
         });
     }
 
+    /**
+     * Generic method to retrieve items of a specific type, based on a DbQuery
+     *
+     * @param type the item type
+     * @param queryDb the query to filter by
+     * @param listener  the listener that will handle the success/failure of this operation
+     * @param <T> the class of the retrived Items
+     */
     static <T> void getItems(@NonNull final DataType type, @NonNull DbQuery queryDb, @NonNull final AsyncValueEventListener<T> listener) {
         getItems(type, queryDb, listener, true);
     }
 
+    /**
+     * Generic method to retrieve items of a specific type, based on a DbQuery. Retrieved data is updated
+     * in real time as changes are made to the database
+     *
+     * @param type the item type
+     * @param queryDb the query to filter by
+     * @param listener  the listener that will handle the success/failure of this operation
+     * @param <T> the class of the retrieved Items
+     * @return a DbListenerHandle that handles the ValueEventListener attached to the database
+     */
     @NonNull
     static <T> DbListenerHandle<ValueEventListener> getItemsLive(@NonNull final DataType type, @NonNull DbQuery queryDb, @NonNull final AsyncValueEventListener<T> listener) {
         return getItems(type, queryDb, listener, false);
     }
 
+    /**
+     * Private generic method that retrieves items of a certain type based on a query
+     *
+     * @param type the type of item to be retrieved
+     * @param queryDb the query to filter retrieved items by
+     * @param listener the listener that will handle the success/failure of this operation
+     * @param singleEvent boolean, whether or not this retrieval operation is 'live' or not
+     * @param <T> the class of the retrieved Items
+     * @return
+     */
     @SuppressWarnings("unchecked")
     private static <T> DbListenerHandle<ValueEventListener> getItems(@NonNull final DataType type, @Nullable DbQuery queryDb, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
         Query query;
@@ -194,6 +247,13 @@ public class DbUtil {
         }
     }
 
+    /**
+     * Generic method to delete an item from the database
+     *
+     * @param item the item to delete
+     * @param listener the listener that will handle the success/failure of this operation
+     * @param <T> the class of object to be deleted
+     */
     static <T> void deleteItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(item);
         final DbItem<?> dbItem = objectToDbItem(item);
@@ -209,6 +269,13 @@ public class DbUtil {
         });
     }
 
+    /**
+     * Generic method to add an item to the database
+     *
+     * @param item the item to be added
+     * @param listener the listener that will handle the failure/success of this operation
+     * @param <T> the class of item to be created
+     */
     static <T> void createItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(item);
         final DbItem<?> dbItem = objectToDbItem(item);
@@ -227,6 +294,13 @@ public class DbUtil {
         });
     }
 
+    /**
+     * Generic method to update an Item in the database
+     *
+     * @param item the item to be updated
+     * @param listener the listener that will handle the success/failure of this operation
+     * @param <T> the class item to update
+     */
     static <T> void updateItem(@NonNull T item, @Nullable final AsyncActionEventListener listener) {
         final DataType type = getType(item);
         final DbItem<?> dbItem = objectToDbItem(item);

@@ -22,8 +22,22 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncSingleValueEventList
 import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
+/**
+ * The class <b> DbUtilRelational </b> is a utility class for handling all operations on relational nodes
+ * in the database. Methods for read/write are implemented in generic form, with enums to specify the relation
+ * type
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class DbUtilRelational extends DbUtil {
 
+    /**
+     * Enum to define the different association types in the database
+     */
     enum RelationType {
         SERVICE_USERS, USER_SERVICES, USER_BOOKINGS, PROVIDER_REVIEWS;
         @NonNull
@@ -51,6 +65,9 @@ public class DbUtilRelational extends DbUtil {
         }
     }
 
+    /**
+     * Enum to define the various lookup node types in the database
+     */
     enum LookupType {
         SERVICE_USERS, USER_SERVICES, USER_BOOKINGS;
         @NonNull
@@ -67,6 +84,14 @@ public class DbUtilRelational extends DbUtil {
         }
     }
 
+    /**
+     * Generic method to retrieve all the items stored in a specific relational node
+     *
+     * @param relationType the type of relation
+     * @param path the relational node these items will be found on
+     * @param listener the listener that will handle the success/failure of this operation
+     * @param <T> the class of objects to retrieve
+     */
     @SuppressWarnings("unchecked")
     static <T> void getItemRelational(@NonNull final RelationType relationType, @NonNull String path, @NonNull final AsyncSingleValueEventListener<T> listener) {
         relationType.getRef().child(path).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -100,15 +125,48 @@ public class DbUtilRelational extends DbUtil {
         });
     }
 
+    /**
+     * Generic method to retrieve all the items stored in a specific relational node, filtered by a specified
+     * DbQuery and child key
+     *
+     * @param relationType the relation type for this read call
+     * @param childKey the association key
+     * @param queryDb the query to filter results by
+     * @param listener the listener that will handle the success/failure of this operation
+     * @param <T> the class of objects to be retrieved
+     */
     static <T> void getItemsRelational(@NonNull final RelationType relationType, @NonNull String childKey, @NonNull DbQuery queryDb, @NonNull final AsyncValueEventListener<T> listener) {
         getItemsRelational(relationType, childKey, queryDb, listener, true);
     }
 
+    /**
+     * Generic method to retrieve all the items stored in a specific relational node, filtered by a specified
+     * DbQuery and child key. Retrieved data is updated whenever changes are made to the database
+     *
+     * @param relationType the relation type for this read call
+     * @param childKey the association key
+     * @param queryDb the query to filter results by
+     * @param listener the listener that will handle the success/failure of this operation
+     * @param <T> the class of objects to be retrieved
+     * @return the DbListenerHandle that will handle the ValueEventListener attached to the database
+     */
     @NonNull
     static <T> DbListenerHandle<ValueEventListener> getItemsRelationalLive(@NonNull final RelationType relationType, @NonNull String childKey, @NonNull DbQuery queryDb, @NonNull final AsyncValueEventListener<T> listener) {
         return getItemsRelational(relationType, childKey, queryDb, listener, false);
     }
 
+    /**
+     * Private generic method to retrieve all the items stored in a specific relational node, filtered by a specified
+     * DbQuery and child key. Allows for selection of static or "live" retrieval of data
+     *
+     * @param relationType the relation type for this read call
+     * @param childKey the association key
+     * @param queryDb the query to filter results by
+     * @param listener the listener that will handle the success/failure of this operation
+     * @param <T> the class of objects to be retrieved
+     * @param singleEvent boolean, whether this retrieval will be live or not
+     * @return the DbListenerHandle that will handle the ValueEventListener attached to the database
+     */
     @SuppressWarnings("unchecked")
     @NonNull
     private static <T> DbListenerHandle<ValueEventListener> getItemsRelational(@NonNull final RelationType relationType, @NonNull String childKey, @Nullable DbQuery queryDb, @NonNull final AsyncValueEventListener<T> listener, boolean singleEvent) {
@@ -148,6 +206,12 @@ public class DbUtilRelational extends DbUtil {
         }
     }
 
+    /**
+     * Method for applying a multipath update to the database, given an update map
+     *
+     * @param pathMap a HashMap containing paths to update and objects to store
+     * @param listener the listener that will handle the success/failure of this operation
+     */
     static void multiPathUpdate(@NonNull Map<String,Object> pathMap, @Nullable final AsyncActionEventListener listener) {
         FirebaseDatabase.getInstance().getReference().updateChildren(pathMap, new DatabaseReference.CompletionListener() {
             @Override
@@ -160,14 +224,36 @@ public class DbUtilRelational extends DbUtil {
         });
     }
 
+    /**
+     * Method to associate a Service Provider and a Service
+     *
+     * @param service the service to be linked
+     * @param provider the service provider to be linked
+     * @param listener the listener that will handle the success/failure of this operation
+     */
     public static void linkServiceAndProvider(@NonNull Service service, @NonNull ServiceProvider provider, @Nullable final AsyncActionEventListener listener) {
         multiPathUpdate(createServiceWithProviderMap(service.getKey(), new DbService(service), provider.getKey(), new DbUser(provider)), listener);
     }
 
+    /**
+     * Method to de - associate a Service Provider and a Service
+     *
+     * @param service the service to be unlinked
+     * @param provider the service provider to be unlinked
+     * @param listener the listener that will handle the success/failure of this operation
+     */
     public static void unlinkServiceAndProvider(@NonNull Service service, @NonNull ServiceProvider provider, @Nullable final AsyncActionEventListener listener) {
         multiPathUpdate(createServiceWithProviderMap(service.getKey(), null, provider.getKey(), null), listener);
     }
 
+    /**
+     * Method for creating an update map for operations relating a service and a service provider
+     * @param serviceKey the key of the associated service
+     * @param serviceDb the associated DbService object
+     * @param userKey the key of the associated service provider
+     * @param userDb the associated DbUser object
+     * @return
+     */
     private static Map<String,Object> createServiceWithProviderMap(@NonNull String serviceKey, @Nullable DbService serviceDb, @NonNull String userKey, @Nullable DbUser userDb) {
         HashMap<String, Object> pathMap = new HashMap<String, Object>();
         String path = "%s/%s/%s";
