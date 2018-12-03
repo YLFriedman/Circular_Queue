@@ -17,29 +17,67 @@ import androidx.recyclerview.widget.RecyclerView;
 import ca.uottawa.seg2105.project.cqondemand.R;
 import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
 
-/**
- * An adapter class for the RecyclerView that contains a list of categories
+ /**
+ * An adapter class for the RecyclerView that contains a list of Bookings
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
  */
 
 public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.ViewHolder> {
 
+     /**
+      * The application context that the adapter is being used in
+      */
     protected Context context;
+     /**
+      * Stores the list of booking objects data
+      */
     protected ArrayList<Booking> data;
+     /**
+      * Stores callback when a view is clicked
+      */
     protected View.OnClickListener clickListener;
+     /**
+      * Standard date format in Canada
+      */
     protected SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMMM d, yyyy", Locale.CANADA);
+     /**
+      * Standard time format in Canada
+      */
     protected SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h a", Locale.CANADA);
 
+    /**
+     * Constructor for the BookingListAdapter, does not have an OnClickListener
+     * @param context   Collection of relevant application data for the booking list adapter
+     * @param data      ArrayList of booking data to be adapted
+     */
     public BookingListAdapter(Context context, ArrayList<Booking> data) {
         this.context = context;
         this.data = data;
     }
 
+    /**
+     * Constructor for the BookingListAdapter
+     * @param context       Collection of relevant data for the booking list adapter
+     * @param data          ArrayList of booking data to be adapted
+     * @param clickListener Callback invoked when a view is clicked
+     */
     public BookingListAdapter(Context context, ArrayList<Booking> data, View.OnClickListener clickListener) {
         this.context = context;
         this.data = data;
         this.clickListener = clickListener;
     }
 
+    /**
+     * Creates a new viewHolder when there are no existing viewHolders avaliable that the recycler can reuse
+     * @param parent    The ViewGroup into which the new View will be added after it is bound to an adapter position
+     * @param viewType  For different types of cells in list - not needed here
+     * @return  new ViewHolder
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -90,7 +128,7 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
     }
 
     /**
-     * ViewHolder constructor to be used with the recycler view
+     * ViewHolder class to be used with the recycler view
      */
     class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -99,6 +137,10 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
         ImageView img_item_image;
         ImageView img_nav;
 
+        /**
+         * ViewHolder constructor
+         * @param itemView  itemView data to be used
+         */
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txt_title = itemView.findViewById(R.id.txt_title);

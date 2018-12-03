@@ -11,8 +11,20 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+/**
+ * The class <b> DbAvailabilityFunctionTest </b> tests functions belonging to the DbAvailability class
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ * */
 public class DbAvailabilityFunctionTest {
 
+    /**
+     * This method tests the constructor and getters of DbAvailability
+     */
     @Test
     public void validate_Constructor() {
         DbAvailability testDbAvailability = new DbAvailability(new Availability(Availability.Day.parse("SUNDAY"), 12, 15));

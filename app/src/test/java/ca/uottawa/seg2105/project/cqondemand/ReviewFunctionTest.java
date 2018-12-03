@@ -6,6 +6,7 @@ import java.util.Date;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.TextViewCompat;
 import ca.uottawa.seg2105.project.cqondemand.domain.Address;
 import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
 import ca.uottawa.seg2105.project.cqondemand.domain.Service;
@@ -19,8 +20,32 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-
+/**
+ * The class <b> ReviewFunctionTest</b> tests all methods belonging to the Review Class
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ * */
 public class ReviewFunctionTest {
+
+    public static Address genericAddress =  new Address("2a", 12, "Bullvue", "Ottawa", "Ontario", "Canada", "K0A1A0");
+    public static User genericHomeowner = new User( "key", "firstName", "lastName", "username", "{@TEST}",
+            User.Type.HOMEOWNER, "passtest");
+    public static ServiceProvider genericProvider = new ServiceProvider("firstName", "lastName", "username", "{@TEST}", "passtest",
+            "companyName", true, "{@TEST}", genericAddress, "description");
+
+    public static Service genericService = new Service("serviceName", 10, "key");
+    public static Date now = new Date(System.currentTimeMillis() + 100000);
+    public static Date later = new Date(System.currentTimeMillis() + 1000000);
+
+    public static Booking genericBooking = new Booking(now, later, genericHomeowner, genericProvider, genericService);
+
+    /**
+     * This method tests the Review constructor (with key) and various getters
+     */
     @Test
     public void validate_ConstructorRawInputs() {
 
@@ -38,62 +63,44 @@ public class ReviewFunctionTest {
         } catch (InvalidDataException e) {
             fail("Review construction failed. Error: " + e.getMessage());
         }
-
-        // Make sure InvalidDataException is thrown for invalid data
-        /*try {
-            new Review("", new Date(2018), 5, "Good", "Fixing", "Jeff", "123");
-            fail("Review Constructor Failed - Illegal key");
-        } catch (InvalidDataException ignore) {}
-
-        try {
-            new Review("111", new Date(-2000), 5, "Good", "Fixing", "Jeff", "123");
-            fail("Review Constructor Failed - Illegal Date");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new Review("111", new Date(2018), 50000, "Good", "Fixing", "Jeff", "123");
-            fail("Address Constructor Failed - Illegal Rating");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new Review("111", new Date(2018), 5, "IllegalDate", "Fixing", "Jeff", "123");
-            fail("Address Constructor Failed - Illegal Comment");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new Review("111", new Date(2018), 5, "Good", "Illegal+NAME___", "Jeff", "123");
-            fail("Address Constructor Failed - Illegal ServiceName");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new Review("111", new Date(2018), 5, "Good", "Fixing", "Jeff___+++Illegal", "123");
-            fail("Address Constructor Failed - Illegal ReviewerName");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new Review("111", new Date(2018), 5, "Good", "Fixing", "Jeff", "");
-            fail("Address Constructor Failed - Illegal ReviewerKey");
-        } catch (InvalidDataException ignore) {}
-        */
-
     }
 
-    public void validate_Constructor() {
-
-        User user = new User("firstName", "lastName", "username", "email",
-                User.Type.ADMIN, "password");
-        Address testAddressA = new Address( "2a", 12, "Bullvue", "Ottawa", "Ontario", "Canada", "K0A1A0");
-        ServiceProvider provider = new ServiceProvider("firstName", "lastName", "username", "{@TEST}", "passtest", "companyName", true, "{@TEST}", testAddressA, "description");
-
-        Booking booked = new Booking(new Date(2018), new Date(2019), user, provider, new Service("serviceName", 10, ""));
-
-        // Test the creation of an object and its getters
+    /**
+     * This method ensures that the keyless constructor works as expected
+     */
+    @Test
+    public void validateConstructorNoKey() {
         try {
-            Review testReview = new Review(5, "Good", user, booked);
-            assertEquals("Review getter Failed - Rating", 5, testReview.getRating());
-            assertEquals("Review getter Failed - comment", "Good", testReview.getComment());
-            assertEquals("Review getter Failed - serviceName", booked.getServiceName(), testReview.getServiceName());
-            assertEquals("Review getter Failed - reviewerName", user.getFullName(), testReview.getReviewerName());
-            assertEquals("Review getter Failed - reviewerKey", user.getKey(), testReview.getReviewerKey());
-            assertEquals("Review getter Failed - Key", booked.getKey(), testReview.getKey());
+            Review testReview = new Review(5, "good", genericHomeowner, genericBooking);
+            assertEquals("Review getter Failed - rating", 5, testReview.getRating());
+            assertEquals("Review getter Failed - comment", "good", testReview.getComment());
+            assertEquals("Review getter Failed - serviceName", genericService.getName(), testReview.getServiceName());
+            assertEquals("Review getter Failed - reviewerName", genericHomeowner.getFullName(), testReview.getReviewerName());
+            assertEquals("Review getter Failed - reviewerKey", genericHomeowner.getKey(), testReview.getReviewerKey());
 
         } catch (InvalidDataException e) {
             fail("Review construction failed. Error: " + e.getMessage());
         }
     }
+
+    /**
+     * This method ensures that an exception will be thrown if an empty key is passed to the constructor
+     */
+    @Test(expected = InvalidDataException.class)
+    public void invalidKeyTest() {
+
+        new Review("", new Date(2018), 5, "Good", "Fixing", "Jeff", "123");
+        fail("Review Constructor Failed - Illegal key");
+    }
+
+    /**
+     * This method ensures that an exception will be thrown if an illegal rating is passed to the constructor
+     */
+    @Test(expected = InvalidDataException.class)
+    public void invalidRatingTest() {
+        new Review(50000, "Good", genericHomeowner, genericBooking);
+        fail("Address Constructor Failed - Illegal Rating");
+    }
+
+
 }

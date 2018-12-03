@@ -15,24 +15,94 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.AsyncValueEventListener;
 import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
+/**
+ * The class <b> DbBooking </b> is a class used to take information from a Booking object, and
+ * put it into a form more easily stored in the database. Methods to go back and forth between Booking
+ * and DbBooking are provided, as well as the methods needed to read and write DbBookings from and to
+ * the database
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ */
 public class DbBooking extends DbItem<Booking> {
 
+    /**
+     * The status associated with a DbBooking
+     */
     public String status;
+
+    /**
+     * The service name associated with a DbBooking
+     */
     public String service_name;
+
+    /**
+     * The service rate associated with a DbBooking
+     */
     public Integer service_rate;
+
+    /**
+     * The start time associated with a DbBooking
+     */
     public Long start_time;
+
+    /**
+     * The end time associated with a DbBooking
+     */
     public Long end_time;
+
+    /**
+     * The creation date associated with a DbBooking
+     */
     public Long date_created;
+
+    /**
+     * The cancellation/approval date associated with a DbBooking
+     */
     public Long date_cancelled_approved;
+
+    /**
+     * The cancellation reason associated with a DbBooking
+     */
     public String cancelled_reason;
+
+    /**
+     * The name of the user who cancelled a DbBOOKING
+     */
     public String cancelled_by;
+
+    /**
+     * The service provider object associated with a DbBooking
+     */
     public DbUser service_provider;
+
+    /**
+     * The service provider key associated with a DbBooking
+     */
     public String service_provider_key;
+
+    /**
+     * The homeowner object associated with a DbBooking
+     */
     public DbUser homeowner;
+
+    /**
+     * The homeowner key associated with a DbBooking
+     */
     public String homeowner_key;
 
+    /**
+     * Empty constructor for FireBase to construct new DbBooking objects
+     */
     public DbBooking() {}
 
+    /**
+     * Constructor that takes in a Booking and makes a DbBooking based on it
+     * @param item the Booking the new DbBooking will be based off of
+     */
     public DbBooking(Booking item) {
         super(item.getKey());
         status = item.getStatus().toString();
@@ -52,6 +122,10 @@ public class DbBooking extends DbItem<Booking> {
         if (item.getHomeowner() != null) { homeowner = new DbUser(item.getHomeowner()); }
     }
 
+    /**
+     * Method for converting a DbBooking into a Booking
+     * @return the Booking version of this DbBooking
+     */
     @NonNull
     public Booking toDomainObj() {
         if (null == start_time || null == end_time || null == date_created) {
@@ -70,6 +144,11 @@ public class DbBooking extends DbItem<Booking> {
         }
     }
 
+    /**
+     * Method that creates a new DbBooking, and adds it to all the necessary locations in the database
+     * @param booking the booking to be added to the database
+     * @param listener a listener that will deal with the success/failure of this operation
+      */
     public static void createBooking(@NonNull Booking booking, @Nullable AsyncActionEventListener listener) {
         if (null == booking.getHomeowner() || null == booking.getServiceProvider() ||
                 null == booking.getHomeowner().getKey() || booking.getHomeowner().getKey().isEmpty() ||
@@ -97,16 +176,26 @@ public class DbBooking extends DbItem<Booking> {
         DbUtilRelational.multiPathUpdate(map, listener);
     }
 
-    public static void getBookings(@NonNull User user, @NonNull AsyncValueEventListener<Booking> listener) {
-        DbQuery query = DbQuery.createChildValueQuery("start_time");
-        DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.USER_BOOKINGS, user.getKey(), query, listener);
-    }
 
+
+    /**
+     * Method to get all the bookings associated with a specific user. Provides the bookings in real time,
+     * updating any time the database is modified.
+     * @param user the user whose bookings you wish to access
+     * @param listener the listener that will handle the success/failure of this operation
+     * @return a DbListenerHandle that handles the ValueEventListener attached to the database
+     */
     public static DbListenerHandle<?> getBookingsLive(@NonNull User user, @NonNull AsyncValueEventListener<Booking> listener) {
         DbQuery query = DbQuery.createChildValueQuery("start_time");
         return DbUtilRelational.getItemsRelationalLive(DbUtilRelational.RelationType.USER_BOOKINGS, user.getKey(), query, listener);
     }
 
+    /**
+     * Sets a bookings' status to approved in the database
+     *
+     * @param booking the booking to approve
+     * @param listener the listener that will handle the success/failure of this operation
+     */
     public static void approveBooking(@NonNull Booking booking, @Nullable AsyncActionEventListener listener) {
         if (null == booking.getKey() || null == booking.getServiceProviderKey()) { throw new IllegalArgumentException("Booking key and provider key required to perform update"); }
         if (Booking.Status.REQUESTED != booking.getStatus()) { throw new IllegalArgumentException("Only a 'Requested' booking can be approved."); }
@@ -125,6 +214,12 @@ public class DbBooking extends DbItem<Booking> {
         });
     }
 
+    /**
+     * Method to set a bookings' status to cancelled in the database
+     * @param booking the booking to cancel
+     * @param cancelReason the reason for cancellation, can be null
+     * @param listener the listener that will handle the success/failure of this operation
+     */
     public static void cancelBooking(@NonNull Booking booking, @Nullable String cancelReason, @Nullable AsyncActionEventListener listener) {
         if (null == booking.getKey() || null == booking.getServiceProviderKey()) { throw new IllegalArgumentException("Booking key and provider key required to perform update"); }
         if (Booking.Status.REQUESTED != booking.getStatus() && Booking.Status.APPROVED != booking.getStatus()) { throw new IllegalArgumentException("Only a 'Requested' or 'Approved' booking can be cancelled."); }
@@ -147,6 +242,15 @@ public class DbBooking extends DbItem<Booking> {
         });
     }
 
+    /**
+     * Private method to update all the locations where a specific booking is stored
+     * @param booking the booking to update
+     * @param status the booking's new status
+     * @param updateTime the time this update took place
+     * @param cancelledReason the reason this booking was cancelled (null if inapplicable)
+     * @param cancelledBy the name of the user who cancelled this booking (null if inapplicable)
+     * @param listener the listener that will handle the success/failure of this operation
+     */
     private static void setBookingStatus(@NonNull Booking booking, @NonNull Booking.Status status, Date updateTime, @Nullable String cancelledReason, @Nullable String cancelledBy, @Nullable AsyncActionEventListener listener) {
         if (null == booking.getKey() || null == booking.getServiceProviderKey()) { throw new IllegalArgumentException("Booking key and provider key required to perform update"); }
         String homeownerKey = booking.getHomeownerKey();
@@ -178,6 +282,11 @@ public class DbBooking extends DbItem<Booking> {
         DbUtilRelational.multiPathUpdate(updateMap, listener);
     }
 
+    /**
+     * Method to delete a booking from the database, updating all relevant locations
+     * @param booking the booking to be deleted
+     * @param listener the listener that will handle the success/failure of this operation
+     */
     public static void deleteBooking(@NonNull Booking booking, @Nullable AsyncActionEventListener listener) {
         if (booking.getKey() == null) { throw new IllegalArgumentException("Booking key required to perform deletion"); }
         String homeownerKey = booking.getHomeownerKey();
@@ -195,6 +304,13 @@ public class DbBooking extends DbItem<Booking> {
         DbUtilRelational.multiPathUpdate(deletionMap, listener);
     }
 
+    /**
+     * Method to get all the bookings of a specific provider that fall in a specific time range
+     * @param provider the provider associated with these bookings
+     * @param startTime the desired start time
+     * @param endTime the desired end time
+     * @param listener the listener that will handle the success/failure of this operation
+     */
     public static void getBookingsInTimeRange(@NonNull ServiceProvider provider, @NonNull Date startTime, @NonNull Date endTime, @NonNull AsyncValueEventListener<Booking> listener) {
         DbQuery query = DbQuery.createChildValueQuery("start_time").setRangeFilter(startTime.getTime(), endTime.getTime());
         DbUtilRelational.getItemsRelational(DbUtilRelational.RelationType.USER_BOOKINGS, provider.getKey(), query, listener);

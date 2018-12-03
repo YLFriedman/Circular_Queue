@@ -8,12 +8,18 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
 
 import static org.junit.Assert.*;
 
+/**
+ * The class <b> UserFunctionTest </b> tests all methods related to the User Class
+ */
 public class UserFunctionTest {
 
+    /**
+     * This method tests the keyless User constructor, and getters
+     */
     @Test
     public void user_constructor_test() {
 
-        // Test the creation of an object and its getters
+
         try {
             User testUser = new User("firstName", "lastName", "username", "{@TEST}", User.Type.HOMEOWNER, "passtest");
             assertEquals("User getter Failed - firstName", "firstName", testUser.getFirstName());
@@ -25,36 +31,67 @@ public class UserFunctionTest {
         } catch (InvalidDataException e) {
             fail("User construction failed. Error: " + e.getMessage());
         }
+    }
 
-        // Make sure InvalidDataException is thrown for invalid data
-        try {
-            new User("firstName1", "lastName", "username", "{@TEST}", User.Type.HOMEOWNER, "passtest");
-            fail("User Constructor Failed - Illegal firstName");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new User("firstName", "lastName2", "username", "{@TEST}", User.Type.HOMEOWNER, "passtest");
-            fail("User Constructor Failed - Illegal lastName");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new User("firstName", "lastName", "username^", "{@TEST}", User.Type.HOMEOWNER, "passtest");
-            fail("User Constructor Failed - Illegal username");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new User("firstName", "lastName", "username", "{@TEST}", User.Type.HOMEOWNER, "password");
-            fail("User Constructor Failed - Illegal password");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new User("firstName", "lastName", "username", "{@TEST}", User.Type.HOMEOWNER, "username");
-            fail("User Constructor Failed - Illegal password");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new User("firstName", "lastName", "username", "{@TEST}", User.Type.HOMEOWNER, "");
-            fail("User Constructor Failed - Illegal password");
-        } catch (InvalidDataException ignore) {}
+    /**
+     * This method ensures that an exception will be thrown if an invalid first name is passed to the constructor
+     */
+    @Test(expected = InvalidDataException.class)
+    public void invalidFirstNameTest() {
+
+        new User("firstName1", "lastName", "username", "{@TEST}", User.Type.HOMEOWNER, "passtest");
+        fail("User Constructor Failed - Illegal firstName");
+    }
+
+    /**
+     * This method ensures that an exception will be thrown if an invalid last name is passed to the constructor
+     */
+    @Test(expected = InvalidDataException.class)
+    public void invalidLastNameTest() {
+        new User("firstName", "lastName2", "username", "{@TEST}", User.Type.HOMEOWNER, "passtest");
+        fail("User Constructor Failed - Illegal lastName");
+    }
+
+    /**
+     * This method ensures that an exception will be thrown if an invalid username name is passed to the constructor
+     */
+    @Test(expected = InvalidDataException.class)
+    public void invalidUsernameNameTest() {
+        new User("firstName", "lastName", "username^", "{@TEST}", User.Type.HOMEOWNER, "passtest");
+        fail("User Constructor Failed - Illegal username");
+    }
+
+    /**
+     * This method ensures that an exception will be thrown if the password "password" is passed to the constructor
+     */
+    @Test(expected = InvalidDataException.class)
+    public void invalidPasswordTest() {
+        new User("firstName", "lastName", "username", "{@TEST}", User.Type.HOMEOWNER, "password");
+        fail("User Constructor Failed - Illegal password");
+    }
+
+    /**
+     * This method ensures that an exception will be thrown if a password containing the username is passed to the constructor
+     */
+    @Test(expected = InvalidDataException.class)
+    public void invalidPasswordTest2() {
+        new User("firstName", "lastName", "username", "{@TEST}", User.Type.HOMEOWNER, "username");
+        fail("User Constructor Failed - Illegal password");
+    }
+
+    /**
+     * This method ensures that an exception will be thrown if an empty password is passed to the constructor
+     */
+    @Test(expected = InvalidDataException.class)
+    public void emptyPasswordTest() {
+        new User("firstName", "lastName", "username", "{@TEST}", User.Type.HOMEOWNER, "");
+        fail("User Constructor Failed - Illegal password");
 
     }
 
-
+    /**
+     * Method that tests key constructor and getters
+     */
     @Test
     public void user_constructorKey_test() {
 
@@ -71,39 +108,72 @@ public class UserFunctionTest {
         } catch (InvalidDataException e) {
             fail("User construction failed. Error: " + e.getMessage());
         }
-
-        // Make sure InvalidDataException is thrown for invalid data
-        try {
-            new User("", "firstName1", "lastName", "username", "{@TEST}", User.Type.HOMEOWNER, "passtest");
-            fail("User Constructor Failed - Illegal key");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new User("key", "firstName1", "lastName", "username", "{@TEST}", User.Type.HOMEOWNER, "passtest");
-            fail("User Constructor Failed - Illegal firstName");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new User("key", "firstName", "lastName2", "username", "{@TEST}", User.Type.HOMEOWNER, "passtest");
-            fail("User Constructor Failed - Illegal lastName");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new User("key", "firstName", "lastName", "username^", "{@TEST}", User.Type.HOMEOWNER, "passtest");
-            fail("User Constructor Failed - Illegal username");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new User("key", "firstName", "lastName", "username", "{@TEST}", User.Type.HOMEOWNER, "password");
-            fail("User Constructor Failed - Illegal password");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new User("key", "firstName", "lastName", "username", "{@TEST}", User.Type.HOMEOWNER, "username");
-            fail("User Constructor Failed - Illegal password");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new User("key", "firstName", "lastName", "username", "{@TEST}", User.Type.HOMEOWNER, "");
-            fail("User Constructor Failed - Illegal password");
-        } catch (InvalidDataException ignore) {}
-
     }
 
+    @Test(expected = InvalidDataException.class)
+    public void emptyKeyTest() {
+        new User("", "firstName1", "lastName", "username", "{@TEST}", User.Type.HOMEOWNER, "passtest");
+        fail("User Constructor Failed - Illegal key");
+    }
+
+    /**
+     * This method ensures that an exception will be thrown if an invalid first name is passed to the constructor
+     */
+    @Test(expected = InvalidDataException.class)
+    public void invalidFirstNameTestKey() {
+
+        new User("firstName1", "lastName", "username", "{@TEST}", User.Type.HOMEOWNER, "passtest");
+        fail("User Constructor Failed - Illegal firstName");
+    }
+
+    /**
+     * This method ensures that an exception will be thrown if an invalid last name is passed to the constructor
+     */
+    @Test(expected = InvalidDataException.class)
+    public void invalidLastNameTestKey() {
+        new User("firstName", "lastName2", "username", "{@TEST}", User.Type.HOMEOWNER, "passtest");
+        fail("User Constructor Failed - Illegal lastName");
+    }
+
+    /**
+     * This method ensures that an exception will be thrown if an invalid username name is passed to the constructor
+     */
+    @Test(expected = InvalidDataException.class)
+    public void invalidUsernameNameTestKey() {
+        new User("firstName", "lastName", "username^", "{@TEST}", User.Type.HOMEOWNER, "passtest");
+        fail("User Constructor Failed - Illegal username");
+    }
+
+    /**
+     * This method ensures that an exception will be thrown if the password "password" is passed to the constructor
+     */
+    @Test(expected = InvalidDataException.class)
+    public void invalidPasswordTestKey() {
+        new User("firstName", "lastName", "username", "{@TEST}", User.Type.HOMEOWNER, "password");
+        fail("User Constructor Failed - Illegal password");
+    }
+
+    /**
+     * This method ensures that an exception will be thrown if a password containing the username is passed to the constructor
+     */
+    @Test(expected = InvalidDataException.class)
+    public void invalidPasswordTestKey2() {
+        new User("firstName", "lastName", "username", "{@TEST}", User.Type.HOMEOWNER, "username");
+        fail("User Constructor Failed - Illegal password");
+    }
+
+    /**
+     * This method ensures that an exception will be thrown if an empty password is passed to the constructor
+     */
+    @Test(expected = InvalidDataException.class)
+    public void emptyPasswordTestKey() {
+        new User("firstName", "lastName", "username", "{@TEST}", User.Type.HOMEOWNER, "");
+        fail("User Constructor Failed - Illegal password");
+    }
+
+    /**
+     * This method ensures that the user equals method works as expected
+     */
     @Test
     public void validate_Equals() {
         User testUser1a = new User("firstName", "lastName", "username", "{@TEST}", User.Type.HOMEOWNER, "passtest");

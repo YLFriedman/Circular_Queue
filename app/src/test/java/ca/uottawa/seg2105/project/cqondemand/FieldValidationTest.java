@@ -13,19 +13,34 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+/**
+ * The class <b> FieldValidationTest </b> extensively tests all field validation methods
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ * */
 public class FieldValidationTest {
-
+    /**
+     * Stores all letters
+     */
     public String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    /**
+     * Stores all numbers
+     */
     public String numbers = "1234567890";
+
+    /**
+     * Stores special characters
+     */
     public String stdSpecialChars = "<>,./?;:/\"|[]{}`~=_+@#$%^&*()\\";
 
-    /*@Test
-    public void email_validation() {
-        assertEquals("usernameIsValid failed - empty string",false, FieldValidation.emailIsValid(""));
-        assertEquals("usernameIsValid failed - good address",true, FieldValidation.emailIsValid("david@uottawa.ca"));
-        assertEquals("usernameIsValid failed - missing TLD",false, FieldValidation.emailIsValid("david@uottawa"));
-    }*/
 
+    /**
+     * This method tests the username validation method
+     */
     @Test
     public void username_validation() {
         assertFalse("usernameIsValid failed - empty string", FieldValidation.usernameIsValid(""));
@@ -34,6 +49,9 @@ public class FieldValidationTest {
         assertTrue("usernameIsValid failed - valid username", FieldValidation.usernameIsValid("cq_on_demand"));
     }
 
+    /**
+     * This method tests the password validation method
+     */
     @Test
     public void password_validation() {
         assertEquals("PasswordValidationResult failed - VALID", PasswordValidationResult.VALID, FieldValidation.validatePassword("test", "thisismypassword", "thisismypassword"));
@@ -45,6 +63,9 @@ public class FieldValidationTest {
         assertEquals("PasswordValidationResult failed - CONTAINS_USERNAME",PasswordValidationResult.CONTAINS_USERNAME, FieldValidation.validatePassword("test", "passwordtest", "passwordtest"));
     }
 
+    /**
+     * This method tests the name validation method
+     */
     @Test
     public void person_name_validation() {
         // Illegal Name Characters: 0-9 < > ] [ } { \ / ! @ # $ % ^ & * _ + = ) ( : ;
@@ -77,6 +98,9 @@ public class FieldValidationTest {
         assertTrue("personNameIsValid failed - valid name2: -", FieldValidation.personNameIsValid("My-Dashed-Name"));
     }
 
+    /**
+     * This method tests the service name validation method
+     */
     @Test
     public void service_name_validation() {
         assertTrue("name validation failed - apostrophe returns invalid", FieldValidation.serviceNameIsValid("'"));
@@ -88,6 +112,9 @@ public class FieldValidationTest {
         assertFalse("name validation failed - symbols return valid", FieldValidation.serviceNameIsValid(stdSpecialChars));
     }
 
+    /**
+     * This method tests the category name validation method
+     */
     @Test
     public void category_name_validation() {
         assertTrue("name validation failed - apostrophe returns invalid", FieldValidation.categoryNameIsValid("'"));
@@ -99,6 +126,9 @@ public class FieldValidationTest {
         assertFalse("name validation failed - symbols return valid", FieldValidation.serviceNameIsValid(stdSpecialChars));
     }
 
+    /**
+     * This method tests the address unit validation method
+     */
     @Test
     public void address_unit_validation() {
         assertTrue("address unit validation failed - empty", FieldValidation.unitIsValid(""));
@@ -107,6 +137,9 @@ public class FieldValidationTest {
         assertFalse("address unit validation failed - stdSpecialChars", FieldValidation.unitIsValid(stdSpecialChars));
     }
 
+    /**
+     * This method tests the postal code validation method
+     */
     @Test
     public void postal_code_validation() {
         assertFalse("address unit validation failed - empty", FieldValidation.postalCodeIsValid(""));
