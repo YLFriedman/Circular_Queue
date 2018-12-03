@@ -10,8 +10,20 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+/**
+ * The class <b> DbAddressFunctionTest </b> tests all methods in the DbAddress class
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ * */
 public class DbAddressFunctionTest {
 
+    /**
+     * This method tests the constructor and getters of DbAddress
+     */
     @Test
     public void validate_Constructor() {
 

@@ -10,6 +10,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+/**
+ * The class <b> ServiceFunctionTest</b> is used to test the various methods contained in the Service class
+ */
 public class ServiceFunctionTest {
 
     @Test

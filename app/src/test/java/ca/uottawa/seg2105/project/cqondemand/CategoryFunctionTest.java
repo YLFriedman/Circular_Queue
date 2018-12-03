@@ -11,31 +11,47 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+/**
+ * The class <b> CategoryFunctionTest </b> is used to test all methods of the Category class
+ *
+ * Course: SEG 2105 B
+ * Final Project
+ * Group: CircularQueue
+ *
+ * @author CircularQueue
+ * */
 public class CategoryFunctionTest {
 
+    /**
+     * This method tests Category key-less constructor and getters
+     */
     @Test
     public void validate_constructor() {
 
-        // Test the creation of an object and its getters
         try {
             Category testCategory = new Category("Test Name");
             assertEquals("Category getter Failed - name", "Test Name", testCategory.getName());
         } catch (InvalidDataException e) {
             fail("Category construction failed. Error: " + e.getMessage());
         }
-
-        // Make sure InvalidDataException is thrown for invalid data
-        try {
-            new Category("Illegal-category+name");
-            fail("Category Constructor Failed - Illegal Name");
-        } catch (InvalidDataException ignore) {}
-
     }
 
+    /**
+     * This method tests that an exception will be thrown when an invalid name is passed to the constructor
+     */
+    @Test(expected = InvalidDataException.class)
+    public void invalidNameTest() {
+        new Category("Illegal-category+name");
+        fail("Category Constructor Failed - Illegal Name");
+    }
+
+
+    /**
+     * This method tests that the category key constructor and getters work
+     */
     @Test
     public void validate_key_constructor() {
 
-        // Test the creation of an object and its getters
         try {
             Category testCategory = new Category("key", "Test Name");
             assertEquals("Category getter Failed - key", "key", testCategory.getKey());
@@ -43,19 +59,21 @@ public class CategoryFunctionTest {
         } catch (InvalidDataException e) {
             fail("Category construction failed. Error: " + e.getMessage());
         }
+    }
 
-        // Make sure InvalidDataException is thrown for invalid data
-        try {
-            new Category("1234", "Illegal-category+name");
-            fail("Category Constructor Failed - Illegal Name");
-        } catch (InvalidDataException ignore) {}
-        try {
-            new Category("", "catName");
-            fail("Category Constructor Failed - Illegal Key");
-        } catch (InvalidDataException ignore) {}
+    /**
+     * This method tests that an exception will be thrown when an empty key is passed to the constructor
+     */
+    @Test(expected = InvalidDataException.class)
+    public void emptyKeyTest() {
+        new Category("", "catName");
+        fail("Category Constructor Failed - Illegal Key");
 
     }
 
+    /**
+     * This method tests that the category equals function works as expected
+     */
     @Test
     public void validate_Equals() {
         
