@@ -21,6 +21,9 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.InvalidDataException;
  * */
 public class Service implements Serializable {
 
+    /**
+     * Stores the class version for serialization and de-serialization
+     */
     private static final long serialVersionUID = 1;
     /**
      * Stores the database key assoicated with a Service

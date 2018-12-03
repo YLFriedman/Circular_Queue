@@ -17,7 +17,7 @@ import java.util.Locale;
 
 public class ServiceProviderProfileActivity extends SignedInActivity {
 
-    protected boolean itemClickEnabled = true;
+    protected boolean onClickEnabled = true;
     protected ServiceProvider currentProvider;
     protected Service currentService;
 
@@ -112,12 +112,12 @@ public class ServiceProviderProfileActivity extends SignedInActivity {
     @Override
     public void onResume() {
         super.onResume();
-        itemClickEnabled = true;
+        onClickEnabled = true;
     }
 
     public void onFindAvailabilityClick(View v) {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), WeekViewActivity.class);
         intent.putExtra("provider", currentProvider);
         intent.putExtra("service", currentService);
@@ -125,8 +125,8 @@ public class ServiceProviderProfileActivity extends SignedInActivity {
     }
 
     public void onSeeReviewsClick(View v) {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ReviewListActivity.class);
         intent.putExtra("provider", currentProvider);
         startActivity(intent);

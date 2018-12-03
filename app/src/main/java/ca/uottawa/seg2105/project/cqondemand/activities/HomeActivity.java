@@ -12,7 +12,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class HomeActivity extends AppCompatActivity {
 
-    protected boolean itemClickEnabled = true;
+    protected boolean onClickEnabled = true;
 
     /*
      * Fills in layout for UserHome activity
@@ -39,18 +39,18 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        itemClickEnabled = true;
+        onClickEnabled = true;
         User user = State.getInstance().getSignedInUser();
         if (null == user) {
             onClickHandler(findViewById(R.id.btn_sign_out));
         } else {
-            itemClickEnabled = true;
+            onClickEnabled = true;
         }
     }
 
     public void onClickHandler(View view) {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         Context ctx = getApplicationContext();
         Intent intent;
         switch (view.getId()) {

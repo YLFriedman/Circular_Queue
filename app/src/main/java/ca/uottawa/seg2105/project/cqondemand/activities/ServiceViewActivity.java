@@ -24,7 +24,7 @@ import ca.uottawa.seg2105.project.cqondemand.utilities.State;
 
 public class ServiceViewActivity extends SignedInActivity {
 
-    protected boolean itemClickEnabled = true;
+    protected boolean onClickEnabled = true;
     protected TextView txt_name;
     protected TextView txt_rate;
     protected TextView txt_category;
@@ -55,6 +55,12 @@ public class ServiceViewActivity extends SignedInActivity {
             Toast.makeText(getApplicationContext(), R.string.current_service_empty, Toast.LENGTH_LONG).show();
             finish();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        onClickEnabled = true;
     }
 
     @Override
@@ -117,24 +123,24 @@ public class ServiceViewActivity extends SignedInActivity {
     }
 
     public void onCreateServiceClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ServiceCreateActivity.class);
         if (null != currentCategory) { intent.putExtra("category", currentCategory); }
         startActivity(intent);
     }
 
     public void onEditServiceClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         Intent intent = new Intent(getApplicationContext(), ServiceEditActivity.class);
         intent.putExtra("service", currentService);
         startActivity(intent);
     }
 
     public void onDeleteServiceClick() {
-        if (!itemClickEnabled) { return; }
-        itemClickEnabled = false;
+        if (!onClickEnabled) { return; }
+        onClickEnabled = false;
         if (null != currentService) {
             AlertDialog dialog = new AlertDialog.Builder(this)
                     .setTitle(R.string.delete_service)
@@ -157,7 +163,7 @@ public class ServiceViewActivity extends SignedInActivity {
                     })
                     .setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
-                        public void onDismiss(DialogInterface dialog) { itemClickEnabled = true; }
+                        public void onDismiss(DialogInterface dialog) { onClickEnabled = true; }
                     })
                     .setNegativeButton(R.string.cancel, null).show();
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.text_primary_dark));

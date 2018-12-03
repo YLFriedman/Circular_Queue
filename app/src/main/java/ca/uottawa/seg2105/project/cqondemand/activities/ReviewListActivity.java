@@ -30,7 +30,7 @@ import ca.uottawa.seg2105.project.cqondemand.domain.User;
 
 public class ReviewListActivity extends SignedInActivity {
 
-    protected boolean itemClickEnabled = true;
+    protected boolean onClickEnabled = true;
     protected TextView txt_sub_title;
     protected View divider_txt_sub_title;
     protected RecyclerView recycler_list;
@@ -70,8 +70,8 @@ public class ReviewListActivity extends SignedInActivity {
                 review_list_adapter = new ReviewListAdapter(getApplicationContext(), data, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (!itemClickEnabled) { return; }
-                        itemClickEnabled = false;
+                        if (!onClickEnabled) { return; }
+                        onClickEnabled = false;
                         Intent intent = new Intent(getApplicationContext(), ReviewViewActivity.class);
                         intent.putExtra("review", (Serializable) view.getTag());
                         intent.putExtra("provider", currentProvider);
@@ -98,7 +98,7 @@ public class ReviewListActivity extends SignedInActivity {
     @Override
     public void onResume() {
         super.onResume();
-        itemClickEnabled = true;
+        onClickEnabled = true;
     }
 
     private void setSubTitle(@NonNull String subTitle) {

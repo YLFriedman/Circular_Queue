@@ -86,6 +86,9 @@ public class Availability implements Serializable {
         }
     }
 
+    /**
+     * Stores the class version for serialization and de-serialization
+     */
     private static final long serialVersionUID = 1;
     /**
      * Stores the day of the week
