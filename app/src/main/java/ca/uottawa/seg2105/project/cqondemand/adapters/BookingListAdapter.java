@@ -30,9 +30,21 @@ import ca.uottawa.seg2105.project.cqondemand.domain.Booking;
 public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.ViewHolder> {
 
     protected Context context;
+     /**
+      * Stores the list of booking objects data
+      */
     protected ArrayList<Booking> data;
+     /**
+      * Stores callback when a view is clicked
+      */
     protected View.OnClickListener clickListener;
+     /**
+      * Standard date format in Canada
+      */
     protected SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMMM d, yyyy", Locale.CANADA);
+     /**
+      * Standard time format in Canada
+      */
     protected SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h a", Locale.CANADA);
 
     /**
