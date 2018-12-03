@@ -48,6 +48,11 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
         return new ViewHolder(view);
     }
 
+    /**
+     * For each recycler holder, populate recycler with data and update the viewholder
+     * @param viewHolder    viewHolder to be updated
+     * @param i Position index from where the data is to be received
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         Booking item = data.get(i);
@@ -75,11 +80,18 @@ public class BookingListAdapter extends RecyclerView.Adapter<BookingListAdapter.
         viewHolder.img_nav.setImageResource(R.drawable.ic_chevron_right_med_30);
     }
 
+    /**
+     * Get the total data size associated with the booking list
+     * @return size of data
+     */
     @Override
     public int getItemCount() {
         return data.size();
     }
 
+    /**
+     * ViewHolder constructor to be used with the recycler view
+     */
     class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView txt_title;
